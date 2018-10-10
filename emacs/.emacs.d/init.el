@@ -8,30 +8,44 @@
 ;; Don't display the help screen at start-up
 (setq inhibit-startup-screen t)
 
-;; disable bell
+;; Disable bell
 (setq ring-bell-function 'ignore)
-;; Disable the menu
-(menu-bar-mode -1)
-;; Disable the scrollbar
-(toggle-scroll-bar -1) 
-;; Disable the toolbar
-(tool-bar-mode -1)
 
-;; Lets use Melpa for package mangement
+;; Minimal UI
+(scroll-bar-mode -1)
+(tool-bar-mode   -1)
+(tooltip-mode    -1)
+(menu-bar-mode   -1)
+
+;; Package configs
 (require 'package)
-(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
-                    (not (gnutls-available-p))))
-       (proto (if no-ssl "http" "https")))
-  (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
-  (when (< emacs-major-version 24)
-    ;; For important compatibility libraries like cl-lib
-    (add-to-list 'package-archives '("gnu" . (concat proto "://elpa.gnu.org/packages/")))))
+(setq package-enable-at-startup nil)
+(setq package-archives '(("org"   . "http://orgmode.org/elpa/")
+                         ("gnu"   . "http://elpa.gnu.org/packages/")
+                         ("melpa" . "https://melpa.org/packages/")))
 (package-initialize)
 
-;; If use-package is not installed, get it.
+;; Bootstrap `use-package`
 (unless (package-installed-p 'use-package)
-    (package-refresh-contents)
-    (package-install 'use-package))
+  (package-refresh-contents)
+  (package-install 'use-package))
+(require 'use-package)
+
+;; Color Theme
+(use-package apropospriate-theme
+  :ensure t
+  :config
+  ;;(load-theme 'apropospriate-dark t)
+  ;; or
+  (load-theme 'apropospriate-light t))
+
+;; Set default font
+; Test char and monospace:
+; 0123456789abcdefghijklmnopqrstuvwxyz [] () :;,. !@#$^&*
+; 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ {} <> "'`  ~-_/|\?
+(set-face-attribute 'default t :font "InputMono-12" )
+
+;; Packages
 
 ;; Enable Ido
 (ido-mode t)
@@ -73,19 +87,6 @@
   (add-hook 'pdf-view-mode-hook (lambda ()
                                   (pdf-view-midnight-minor-mode))))
 
-(use-package apropospriate-theme
-  :ensure t
-  :config 
-  ;;(load-theme 'apropospriate-dark t)
-  ;; or
-  (load-theme 'apropospriate-light t))
-
-;; Set default font
-; Test char and monospace:
-; 0123456789abcdefghijklmnopqrstuvwxyz [] () :;,. !@#$^&*
-; 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ {} <> "'`  ~-_/|\?
-(set-face-attribute 'default t :font "InputMono-12" )
-
 ;; Let us centralize where emac's keeps backups
 (setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
     backup-by-copying t    ; Don't delink hardlinks
@@ -100,7 +101,7 @@
   ;; Use local Emacs instance as $EDITOR (e.g. in `git commit' or `crontab -e')
   :hook ((shell-mode eshell-mode term-exec) . with-editor-export-editor))
 
-;; remove whitespace, but only if I put it there.
+;; ws-butler: Remove whitespace, but only if I put it there.
 (use-package ws-butler
   :hook ((text-mode prog-mode) . ws-butler-mode)
   :config (setq ws-butler-keep-whitespace-before-point nil))
