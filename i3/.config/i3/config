@@ -177,5 +177,5 @@ bindsym XF86AudioNext exec playerctl next
 bindsym XF86AudioPrev exec playerctl previous
 
 # i3lock, keybind and autolock after 10 minutes
-bindsym s-print exec --no-startup-id i3lock -e -c 000000
+bindsym $mod+Shift+F12 exec --no-startup-id i3lock -e -c 000000
 exec --no-startup-id xautolock -time 10 -locker 'i3lock -e -c 000000'
