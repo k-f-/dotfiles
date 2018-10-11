@@ -5,6 +5,12 @@
 ;;       --- Hunter S. Thompson, Fear and Loathing in Las Vegas
 
 
+;; org-mode is my savior
+(setq-default major-mode 'org-mode)
+
+;; flyspell in all text modes
+(add-hook 'text-mode-hook 'flyspell-mode)
+
 ;; Don't display the help screen at start-up
 (setq inhibit-startup-screen t)
 
@@ -16,6 +22,21 @@
 (tool-bar-mode   -1)
 (tooltip-mode    -1)
 (menu-bar-mode   -1)
+
+;; Set default font
+; Test char and monospace:
+; 0123456789abcdefghijklmnopqrstuvwxyz [] () :;,. !@#$^&*
+; 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ {} <> "'`  ~-_/|\?
+(set-face-attribute 'default t :font "InputMono-12" )
+
+;; Let us centralize where emac's keeps backups
+(setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
+    backup-by-copying t    ; Don't delink hardlinks
+    version-control t      ; Use version numbers on backups
+    delete-old-versions t  ; Automatically delete excess backups
+    kept-new-versions 20   ; how many of the newest versions to keep
+    kept-old-versions 5    ; and how many of the old
+    )
 
 ;; Package configs
 (require 'package)
@@ -38,12 +59,6 @@
   ;;(load-theme 'apropospriate-dark t)
   ;; or
   (load-theme 'apropospriate-light t))
-
-;; Set default font
-; Test char and monospace:
-; 0123456789abcdefghijklmnopqrstuvwxyz [] () :;,. !@#$^&*
-; 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ {} <> "'`  ~-_/|\?
-(set-face-attribute 'default t :font "InputMono-12" )
 
 ;; Packages
 
@@ -87,24 +102,16 @@
   (add-hook 'pdf-view-mode-hook (lambda ()
                                   (pdf-view-midnight-minor-mode))))
 
-;; Let us centralize where emac's keeps backups
-(setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
-    backup-by-copying t    ; Don't delink hardlinks
-    version-control t      ; Use version numbers on backups
-    delete-old-versions t  ; Automatically delete excess backups
-    kept-new-versions 20   ; how many of the newest versions to keep
-    kept-old-versions 5    ; and how many of the old
-    )
-
 ;; with-editor: Use local Emacs instance as $EDITOR (e.g. in `git commit’ or `crontab -e’)
 (use-package with-editor
   ;; Use local Emacs instance as $EDITOR (e.g. in `git commit' or `crontab -e')
   :hook ((shell-mode eshell-mode term-exec) . with-editor-export-editor))
 
-;; ws-butler: Remove whitespace, but only if I put it there.
-(use-package ws-butler
-  :hook ((text-mode prog-mode) . ws-butler-mode)
-  :config (setq ws-butler-keep-whitespace-before-point nil))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
