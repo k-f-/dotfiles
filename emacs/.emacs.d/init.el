@@ -78,12 +78,14 @@
                          ("melpa" . "https://melpa.org/packages/")))
 (package-initialize)
 
+;; --------------------------------------------------
 ;; Bootstrap `use-package`
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
 (require 'use-package)
 
+;; --------------------------------------------------
 ;; Color Themes
 ;; apropospriate, nord, dracula
 ;; apropospriate nord-theme dracula-theme solarized-theme
@@ -99,15 +101,36 @@
 ;; Enable Ido
 (ido-mode t)
 
+;; --------------------------------------------------
 ;; Ranger 4 Emacs
 (use-package ranger :ensure :defer)
 
+;; --------------------------------------------------
 ;; Magit
 (use-package magit :ensure :defer)
 
+;; --------------------------------------------------
 ;; Company
 (use-package company :ensure :defer)
 
+;; --------------------------------------------------
+;; Deft
+(use-package deft
+  :bind ("<f8>" . deft)
+  :commands (deft)
+  :config (setq deft-directory "~/Dropbox/org/notes/"
+                deft-extensions '("md" "org" "txt")
+                deft-text-mode 'org-mode))
+;; filenames - replace space and slash with - lcase
+(setq deft-file-naming-rules
+      '((noslash . "-")
+        (nospace . "-")
+        (case-fn . downcase)))
+
+;; give new deft files org-mode titles to start
+(setq deft-org-mode-title-prefix 1)
+
+;; --------------------------------------------------
 ;; PDF-Tools
 ;; Better pdf viewer with search, annotate, highlighting etc
 ;; 'poppler' and 'poppler-glib' must be installed
