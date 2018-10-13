@@ -4,30 +4,54 @@
 
 ;;       --- Hunter S. Thompson, Fear and Loathing in Las Vegas
 
+;; --------------------------------------------------
+;; Set global user
+(setq user-full-name "Kyle Fring"
+      user-mail-address "me@kfring.com")
 
+;; --------------------------------------------------
+;; org-mode
+;; --------------------------------------------------
 ;; org-mode is my savior
 (setq-default major-mode 'org-mode)
 
-;; flyspell in all text modes
+;; org-mode auto save only
+;;(add-hook 'org-mode-hook 'my-org-mode-autosave-settings)
+;;(defun my-org-mode-autosave-settings ()
+;;  (set (make-local-variable 'auto-save-visited-file-name) t)
+;;  (setq auto-save-interval 20))
+
+;; --------------------------------------------------
+;; flyspell - in all text modes
 (add-hook 'text-mode-hook 'flyspell-mode)
 
+;; --------------------------------------------------
+;; User Interface
+;; --------------------------------------------------
 ;; Don't display the help screen at start-up
 (setq inhibit-startup-screen t)
 
+;; --------------------------------------------------
 ;; Disable bell
 (setq ring-bell-function 'ignore)
 
+;; --------------------------------------------------
 ;; Minimal UI
 (scroll-bar-mode -1)
 (tool-bar-mode   -1)
 (tooltip-mode    -1)
 (menu-bar-mode   -1)
 
-;; Set default font
-; Test char and monospace:
-; 0123456789abcdefghijklmnopqrstuvwxyz [] () :;,. !@#$^&*
-; 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ {} <> "'`  ~-_/|\?
-(set-face-attribute 'default t :font "InputMono-12" )
+;; Time in modeline
+(display-time-mode 1)
+
+;; --------------------------------------------------
+;; Fonts
+;; --------------------------------------------------
+;; Test char and monospace:
+;; 0123456789abcdefghijklmnopqrstuvwxyz [] () :;,. !@#$^&*
+;; 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ {} <> "'`  ~-_/|\?
+(set-face-attribute 'default t :font "InputMono-13" )
 
 ;; Let us centralize where emac's keeps backups
 (setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
@@ -38,6 +62,9 @@
     kept-old-versions 5    ; and how many of the old
     )
 
+;; --------------------------------------------------
+;; Packages
+;; --------------------------------------------------
 ;; Package configs
 (require 'package)
 (setq package-enable-at-startup nil)
@@ -52,16 +79,18 @@
   (package-install 'use-package))
 (require 'use-package)
 
-;; Color Theme
+;; Color Themes
+;; apropospriate, nord, dracula
+;; apropospriate nord-theme dracula-theme solarized-theme
 (use-package apropospriate-theme
   :ensure t
   :config
-  ;;(load-theme 'apropospriate-dark t)
+  ;;(load-theme 'apropospriate-dark t))
   ;; or
   (load-theme 'apropospriate-light t))
-
+  
 ;; Packages
-
+;; --------------------------------------------------
 ;; Enable Ido
 (ido-mode t)
 
@@ -109,21 +138,5 @@
 
 
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (ws-butler pdf-tools company powerline-evil ranger ## magit powerline nord-theme apropospriate-theme use-package))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+;; --------------------------------------------------
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

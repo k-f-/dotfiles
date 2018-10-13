@@ -159,7 +159,6 @@ bindsym $mod+r mode "resize"
 
 bar {
     font pango:FontAwesome 10
-    #verbose yes
     #tray_output LVDS1
     status_command i3status -c ~/.config/i3/i3status.conf
     colors {
