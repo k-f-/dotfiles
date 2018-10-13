@@ -159,7 +159,6 @@ bindsym $mod+r mode "resize"
 
 bar {
     font pango:FontAwesome 10
-    #tray_output LVDS1
     status_command i3status -c ~/.config/i3/i3status.conf
     colors {
     	   background #3c3b37
@@ -172,6 +171,8 @@ bar {
   }
 }
 
+## Start-up applications
+exec --no-startup-id blueman-applet
 exec --no-startup-id nm-applet
 exec --no-startup-id python /home/kef/.scripts/dropbox.py start
 exec --no-startup-id xrdb -merge /home/kef/.Xresources

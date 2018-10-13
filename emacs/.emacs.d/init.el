@@ -13,13 +13,15 @@
 ;; org-mode
 ;; --------------------------------------------------
 ;; org-mode is my savior
+(require 'org)
 (setq-default major-mode 'org-mode)
+(add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode))
 
 ;; org-mode auto save only
-;;(add-hook 'org-mode-hook 'my-org-mode-autosave-settings)
-;;(defun my-org-mode-autosave-settings ()
-;;  (set (make-local-variable 'auto-save-visited-file-name) t)
-;;  (setq auto-save-interval 20))
+(add-hook 'org-mode-hook 'my-org-mode-autosave-settings)
+(defun my-org-mode-autosave-settings ()
+  (set (make-local-variable 'auto-save-visited-file-name) t)
+  (setq auto-save-interval 20))
 
 ;; --------------------------------------------------
 ;; flyspell - in all text modes
