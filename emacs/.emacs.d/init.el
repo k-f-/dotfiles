@@ -23,6 +23,9 @@
   (set (make-local-variable 'auto-save-visited-file-name) t)
   (setq auto-save-interval 20))
 
+;; org files in dropbox
+(setq org-agenda-files (list "~/Dropbox/org/"))
+
 ;; --------------------------------------------------
 ;; flyspell - in all text modes
 (add-hook 'text-mode-hook 'flyspell-mode)
@@ -138,7 +141,11 @@
   ;; Use local Emacs instance as $EDITOR (e.g. in `git commit' or `crontab -e')
   :hook ((shell-mode eshell-mode term-exec) . with-editor-export-editor))
 
+;; undo-tree
+(use-package undo-tree :ensure :defer)
 
+(add-to-list 'load-path "~/.emacs.d/undo-tree")
+(global-undo-tree-mode)
 
 ;; --------------------------------------------------
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
