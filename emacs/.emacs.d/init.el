@@ -14,8 +14,7 @@
 ;; --------------------------------------------------
 ;; org-mode is my savior
 (require 'org)
-(setq-default major-mode 'org-mode)
-(add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode))
+(add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\)$" . org-mode))
 
 ;; org-mode auto save only
 ;;(add-hook 'org-mode-hook 'my-org-mode-autosave-settings)
@@ -119,17 +118,20 @@
   :bind ("<f8>" . deft)
   :commands (deft)
   :config (setq deft-directory "~/Dropbox/org/notes/"
-                deft-extensions '("md" "org" "txt")
-                deft-text-mode 'org-mode))
+                deft-extensions '("md" "org" "txt")))
+(setq deft-default-extension "org")
+(setq deft-use-filename-as-title nil)
+(setq deft-use-filter-string-for-filename t)
+(setq deft-file-naming-rules '((noslash . "-")
+                               (nospace . "-")
+                               (case-fn . downcase)))
+(setq deft-text-mode 'org-mode)
+
 ;; filenames - replace space and slash with - lcase
 (setq deft-file-naming-rules
       '((noslash . "-")
         (nospace . "-")
         (case-fn . downcase)))
-
-;; give new deft files org-mode titles to start
-(setq deft-use-filter-string-for-filename t)
-(setq deft-org-mode-title-prefix t)
 
 ;; --------------------------------------------------
 ;; PDF-Tools
