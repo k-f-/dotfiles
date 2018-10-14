@@ -18,10 +18,10 @@
 (add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode))
 
 ;; org-mode auto save only
-(add-hook 'org-mode-hook 'my-org-mode-autosave-settings)
-(defun my-org-mode-autosave-settings ()
-  (set (make-local-variable 'auto-save-visited-file-name) t)
-  (setq auto-save-interval 20))
+;;(add-hook 'org-mode-hook 'my-org-mode-autosave-settings)
+;;(defun my-org-mode-autosave-settings ()
+;;  (set (make-local-variable 'auto-save-visited-file-name) t)
+;;  (setq auto-save-interval 20))
 
 ;; org files in dropbox
 (setq org-agenda-files (list "~/Dropbox/org/"))
@@ -56,7 +56,7 @@
 ;; Test char and monospace:
 ;; 0123456789abcdefghijklmnopqrstuvwxyz [] () :;,. !@#$^&*
 ;; 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ {} <> "'`  ~-_/|\?
-(set-face-attribute 'default t :font "InputMono-13" )
+(set-face-attribute 'default t :font "InputMono-12" )
 
 ;; Let us centralize where emac's keeps backups
 (setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
@@ -128,7 +128,8 @@
         (case-fn . downcase)))
 
 ;; give new deft files org-mode titles to start
-(setq deft-org-mode-title-prefix 1)
+(setq deft-use-filter-string-for-filename t)
+(setq deft-org-mode-title-prefix t)
 
 ;; --------------------------------------------------
 ;; PDF-Tools
