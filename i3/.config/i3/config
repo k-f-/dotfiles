@@ -172,6 +172,7 @@ bar {
 }
 
 ## Start-up applications
+exec feh --bg-fill /home/kef/Dropbox/cern.png
 exec --no-startup-id blueman-applet
 exec --no-startup-id nm-applet
 exec --no-startup-id python /home/kef/.scripts/dropbox.py start
@@ -195,3 +196,15 @@ bindsym XF86AudioPrev exec playerctl previous
 # i3lock, keybind and autolock after 10 minutes
 bindsym $mod+Shift+F12 exec --no-startup-id i3lock -e -c 000000
 exec --no-startup-id xautolock -time 10 -locker 'i3lock -e -c 000000'
+
+# Firefox keeps making dialog windows huge
+# and while resizing them with mod+r, jl and return
+# will save the previous size, let us make some sane constraits from i3 itself
+floating_minimum_size 150 x 100
+floating_maximum_size 3840 x 2160
+
+# changing how borders look
+hide_edge_borders smart
+for_window [class="^.*"] border pixel 0
+#default_border pixel 0 
+#default_floating_border pixel 3

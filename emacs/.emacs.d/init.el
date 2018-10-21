@@ -56,8 +56,8 @@
 ;; 0123456789abcdefghijklmnopqrstuvwxyz [] () :;,. !@#$^&*
 ;; 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ {} <> "'`  ~-_/|\?
 (set-face-attribute 'default t :font "InputMono-12" )
-
-;; Let us centralize where emac's keeps backups
+;
+; Let us centralize where emac's keeps backups
 (setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
     backup-by-copying t    ; Don't delink hardlinks
     version-control t      ; Use version numbers on backups
