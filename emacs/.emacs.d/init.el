@@ -86,7 +86,7 @@
 
 ;; --------------------------------------------------
 ;; Color Themes
-;; apropospriate, nord, dracula
+;; apropospriate, nord, dracula, one-dark
 ;; apropospriate nord-theme dracula-theme solarized-theme
 (use-package apropospriate-theme
   :ensure t
@@ -111,6 +111,10 @@
 ;; --------------------------------------------------
 ;; Company
 (use-package company :ensure :defer)
+
+;; --------------------------------------------------
+;; smart-mode-line
+(use-package smart-mode-line :ensure :defer)
 
 ;; --------------------------------------------------
 ;; Deft
