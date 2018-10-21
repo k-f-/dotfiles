@@ -86,19 +86,26 @@
 
 ;; --------------------------------------------------
 ;; Color Themes
-;; apropospriate, nord, dracula, one-dark
-;; apropospriate nord-theme dracula-theme solarized-theme
-(use-package apropospriate-theme
-  :ensure t
-  :config
+;; apropospriate, nord, dracula
+(use-package apropospriate-theme)
+  ;;:ensure t
+  ;;:config
   ;;(load-theme 'apropospriate-dark t))
-  ;; or
-  (load-theme 'apropospriate-light t))
+  ;;(load-theme 'apropospriate-light t))
   
 ;; Packages
 ;; --------------------------------------------------
 ;; Enable Ido
 (ido-mode t)
+
+;; --------------------------------------------------
+;; theme-changer
+(use-package theme-changer :ensure :defer)
+(setq calendar-location-name "Philadelphia, PA")
+(setq calendar-latitude 39.95)
+(setq calendar-longitude -75.16)
+(require 'theme-changer)
+(change-theme 'apropospriate-light 'aproposriate-dark)
 
 ;; --------------------------------------------------
 ;; Ranger 4 Emacs
@@ -179,3 +186,17 @@
 
 ;; --------------------------------------------------
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (smart-mode-line use-package undo-tree theme-changer solarized-theme ranger nord-theme magit dracula-theme deft company apropospriate-theme))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
