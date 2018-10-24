@@ -88,11 +88,7 @@
 ;; Color Themes
 ;; apropospriate, nord, dracula
 (use-package apropospriate-theme)
-  ;;:ensure t
-  ;;:config
-  ;;(load-theme 'apropospriate-dark t))
-  ;;(load-theme 'apropospriate-light t))
-  
+
 ;; Packages
 ;; --------------------------------------------------
 ;; Enable Ido
@@ -105,11 +101,11 @@
 (setq calendar-latitude 39.95)
 (setq calendar-longitude -75.16)
 (require 'theme-changer)
-(change-theme 'apropospriate-light 'aproposriate-dark)
+(change-theme 'apropospriate-light 'apropospriate-dark)
 
 ;; --------------------------------------------------
 ;; Ranger 4 Emacs
-(use-package ranger :ensure :defer)
+;;(use-package ranger :ensure :defer)
 
 ;; --------------------------------------------------
 ;; Magit
@@ -120,8 +116,11 @@
 (use-package company :ensure :defer)
 
 ;; --------------------------------------------------
-;; smart-mode-line
-(use-package smart-mode-line :ensure :defer)
+;; spaceline
+(use-package spaceline :ensure :defer)
+
+;; --------------------------------------------------
+(use-package org-pomodoro :ensure :defer)
 
 ;; --------------------------------------------------
 ;; Deft
