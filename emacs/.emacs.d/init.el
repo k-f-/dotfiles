@@ -55,8 +55,9 @@
 ;; Test char and monospace:
 ;; 0123456789abcdefghijklmnopqrstuvwxyz [] () :;,. !@#$^&*
 ;; 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ {} <> "'`  ~-_/|\?
-(set-face-attribute 'default t :font "InputMono-12" )
-
+;;(set-face-attribute 'default t :font "InputMono-12" )
+(add-to-list 'default-frame-alist
+             '(font . "InputMono-12"))
 
 ;; --------------------------------------------------
 ;; Backups
@@ -187,27 +188,27 @@ If the new path's directories does not exist, create them."
 ;; Deft-Mode custom functions via: http://pragmaticemacs.com/emacs/tweaking-deft-quicker-notes/
 ;; Custom function to save window-layout when launching deft-mode
 ;; advise deft to save window config
-;; (defun my-deft-save-windows (orig-fun &rest args)
-;;   (setq my-pre-deft-window-config (current-window-configuration))
-;;   (apply orig-fun args)
-;;   )
+(defun kef-deft-save-windows (orig-fun &rest args)
+  (setq kef-pre-deft-window-config (current-window-configuration))
+  (apply orig-fun args)
+  )
 
-;; (advice-add 'deft :around #'my-deft-save-windows)
+(advice-add 'deft :around #'kef-deft-save-windows)
 
-;; ;; function to quit a deft edit cleanly back to pre deft window
-;; (defun my-quit-deft ()
-;;   "Save buffer, kill buffer, kill deft buffer, and restore window config to the way it was before deft was invoked"
-;;   (interactive)
-;;   (save-buffer)
-;;   (kill-this-buffer)
-;;   (switch-to-buffer "*Deft*")
-;;   (kill-this-buffer)
-;;   (when (window-configuration-p my-pre-deft-window-config)
-;;     (set-window-configuration my-pre-deft-window-config)
-;;     )
-;;   )
+;; function to quit a deft edit cleanly back to pre deft window
+(defun kef-quit-deft ()
+  "Save buffer, kill buffer, kill deft buffer, and restore window config to the way it was before deft was invoked"
+  (interactive)
+  (save-buffer)
+  (kill-this-buffer)
+  (switch-to-buffer "*Deft*")
+  (kill-this-buffer)
+  (when (window-configuration-p kef-pre-deft-window-config)
+    (set-window-configuration kef-pre-deft-window-config)
+    )
+  )
 
-;; (global-set-key (kbd "C-c q") 'my-quit-deft)
+(global-set-key (kef "C-c q") 'kef-quit-deft)
 
 ;; --------------------------------------------------
 ;; PDF-Tools
@@ -256,6 +257,9 @@ If the new path's directories does not exist, create them."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(org-agenda-files
+   (quote
+	("/home/kef/Dropbox/org/Evernote.org" "/home/kef/Dropbox/org/inbox.org" "/home/kef/Dropbox/org/journal.org" "/home/kef/Dropbox/org/projects.org" "/home/kef/Dropbox/org/someday.org" "/home/kef/Dropbox/org/timeclock.org")))
  '(package-selected-packages
    (quote
 	(pdf-tools smart-mode-line use-package undo-tree theme-changer magit dracula-theme deft company apropospriate-theme)))
