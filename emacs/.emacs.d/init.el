@@ -8,26 +8,9 @@
 ;; Set global user
 (setq user-full-name "Kyle Fring"
 	  user-mail-address "me@kfring.com")
-
-;; --------------------------------------------------
-;; org-mode
-;; --------------------------------------------------
-;; org-mode is my savior
-(require 'org)
-(add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\)$" . org-mode))
-
-;; org-mode auto save only
-;;(add-hook 'org-mode-hook 'my-org-mode-autosave-settings)
-;;(defun my-org-mode-autosave-settings ()
-;;  (set (make-local-variable 'auto-save-visited-file-name) t)
-;;  (setq auto-save-interval 20))
-
-;; org files in dropbox
-(setq org-agenda-files (list "~/Dropbox/org/"))
-
-;; --------------------------------------------------
-;; flyspell - in all text modes
-(add-hook 'text-mode-hook 'flyspell-mode)
+(setq calendar-location-name "Philadelphia, PA")
+(setq calendar-latitude 39.95)
+(setq calendar-longitude -75.16)
 
 ;; --------------------------------------------------
 ;; User Interface
@@ -73,7 +56,7 @@
 
 ;; make backup to a designated dir, mirroring the full path
 ;; ala ergomacs
-(defun my-backup-file-name (fpath)
+(defun kef-backup-file-name (fpath)
   "Return a new file path of a given file path.
 If the new path's directories does not exist, create them."
   (let* (
@@ -86,7 +69,7 @@ If the new path's directories does not exist, create them."
   )
 )
 
-(setq make-backup-file-name-function 'my-backup-file-name)
+(setq make-backup-file-name-function 'kef-backup-file-name)
 
 ;; --------------------------------------------------
 ;; Movement & Formatting
@@ -130,8 +113,11 @@ If the new path's directories does not exist, create them."
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
-(require 'use-package)
 
+(setq use-package-verbose t)
+(setq use-package-always-ensure t)
+
+(require 'use-package)
 ;; --------------------------------------------------
 ;; Color Themes
 ;; apropospriate, nord, dracula
@@ -144,11 +130,27 @@ If the new path's directories does not exist, create them."
 (ido-mode t)
 
 ;; --------------------------------------------------
+;; org-mode
+;; --------------------------------------------------
+(use-package org)
+;; org files in dropbox
+(setq org-agenda-files (list "~/Dropbox/org/work.org"
+                             "~/Dropbox/org/life.org" ))
+(add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\)$" . org-mode))
+
+;; org-mode auto save only
+;;(add-hook 'org-mode-hook 'my-org-mode-autosave-settings)
+;;(defun my-org-mode-autosave-settings ()
+;;  (set (make-local-variable 'auto-save-visited-file-name) t)
+;;  (setq auto-save-interval 20))
+
+;; --------------------------------------------------
+;; flyspell - in all text modes
+(add-hook 'text-mode-hook 'flyspell-mode)
+
+;; --------------------------------------------------
 ;; theme-changer
 (use-package theme-changer :ensure :defer)
-(setq calendar-location-name "Philadelphia, PA")
-(setq calendar-latitude 39.95)
-(setq calendar-longitude -75.16)
 (require 'theme-changer)
 (change-theme 'apropospriate-light 'dracula)
 
@@ -188,6 +190,7 @@ If the new path's directories does not exist, create them."
 ;; Deft-Mode custom functions via: http://pragmaticemacs.com/emacs/tweaking-deft-quicker-notes/
 ;; Custom function to save window-layout when launching deft-mode
 ;; advise deft to save window config
+
 (defun kef-deft-save-windows (orig-fun &rest args)
   (setq kef-pre-deft-window-config (current-window-configuration))
   (apply orig-fun args)
@@ -195,7 +198,7 @@ If the new path's directories does not exist, create them."
 
 (advice-add 'deft :around #'kef-deft-save-windows)
 
-;; function to quit a deft edit cleanly back to pre deft window
+;;function to quit a deft edit cleanly back to pre deft window
 (defun kef-quit-deft ()
   "Save buffer, kill buffer, kill deft buffer, and restore window config to the way it was before deft was invoked"
   (interactive)
@@ -208,36 +211,7 @@ If the new path's directories does not exist, create them."
     )
   )
 
-(global-set-key (kef "C-c q") 'kef-quit-deft)
-
-;; --------------------------------------------------
-;; PDF-Tools
-;; Better pdf viewer with search, annotate, highlighting etc
-;; 'poppler' and 'poppler-glib' must be installed
-(use-package pdf-tools :ensure :defer
-  ;; manually update
-  ;; after each update we have to call:
-  ;; Install pdf-tools but don't ask or raise error (otherwise daemon mode will wait for input)
-  ;; (pdf-tools-install t t t)
-  :magic ("%PDF" . pdf-view-mode)
-  :mode (("\\.pdf\\'" . pdf-view-mode))
-  :bind (:map pdf-view-mode-map
-		 ("C-s" . isearch-forward)
-		 ("M-p" . print-pdf))
-  :config
-  ;; Use `gtklp' to print as it has better cups support
-  (defun print-pdf (&optional pdf)
-	"Print PDF using external program `gtklp'."
-	(interactive "P")
-	(start-process-shell-command "gtklp" nil (format "gtklp %s" (shell-quote-argument (buffer-file-name)))))
-
-  ;; more fine-grained zooming; +/- 10% instead of default 25%
-  (setq pdf-view-resize-factor 1.1)
-  ;; Always use midnight-mode and almost same color as default font.
-  ;; Just slightly brighter background to see the page boarders
-  (setq pdf-view-midnight-colors '("#c6c6c6" . "#363636"))
-  (add-hook 'pdf-view-mode-hook (lambda ()
-								  (pdf-view-midnight-minor-mode))))
+(global-set-key (kbd "C-c q") 'kef-quit-deft)
 
 ;; with-editor: Use local Emacs instance as $EDITOR (e.g. in `git commit’ or `crontab -e’)
 (use-package with-editor :ensure :defer
@@ -257,12 +231,9 @@ If the new path's directories does not exist, create them."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-agenda-files
-   (quote
-	("/home/kef/Dropbox/org/Evernote.org" "/home/kef/Dropbox/org/inbox.org" "/home/kef/Dropbox/org/journal.org" "/home/kef/Dropbox/org/projects.org" "/home/kef/Dropbox/org/someday.org" "/home/kef/Dropbox/org/timeclock.org")))
  '(package-selected-packages
    (quote
-	(pdf-tools smart-mode-line use-package undo-tree theme-changer magit dracula-theme deft company apropospriate-theme)))
+	(use-package undo-tree theme-changer magit dracula-theme deft company apropospriate-theme)))
  '(spaceline-info-mode t)
  '(tab-stop-list (quote (4 8 12))))
 (custom-set-faces
