@@ -2,4 +2,5 @@ undo-tree/
 backup/
 elpa/
 auto-save-list
+config.el
 ido.last
