@@ -164,6 +164,9 @@ If the new path's directories does not exist, create them."
                              "~/Dropbox/org/life.org" ))
 (add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\)$" . org-mode))
 
+;; colorize src blocks in org-mode
+(setq org-src-fontify-natively t)
+
 ;; org-mode auto save only
 ;;(add-hook 'org-mode-hook 'my-org-mode-autosave-settings)
 ;;(defun my-org-mode-autosave-settings ()
