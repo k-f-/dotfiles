@@ -82,9 +82,9 @@ If the new path's directories does not exist, create them."
 ;; --------------------------------------------------
 ;; functions for auto-tangle after changes to config.org
 ;; -------------------------------------------------
-(add-hook ‘after-save-hook ‘org-babel-tangle)
 
-;; But we only want to tangle if we’ve just saved the Emacs config org file, so let’s build a new function to check that before running tangle, and hook to that instead:
+;; Only want to tangle if we’ve just saved the Emacs config.org file, 
+;; so let’s build a new function to check that before running tangle, and hook to that instead:
 
 (defun kef-tangle-on-save-emacs-config-org-file()
 (when (string= buffer-file-name (file-truename "~/.emacs.d/config.org"))
