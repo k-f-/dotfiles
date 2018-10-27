@@ -20,6 +20,11 @@
 (setq calendar-latitude 39.95)
 (setq calendar-longitude -75.16)
 
+;; Create custom file elsewhere.
+;; keep customize settings in their own file 
+(setq custom-file "~/.emacs.d/custom.el")
+(when (file-exists-p custom-file) (load custom-file))
+
 ;; --------------------------------------------------
 ;; User Interface
 ;; --------------------------------------------------
@@ -86,11 +91,11 @@ If the new path's directories does not exist, create them."
 ;; Only want to tangle if we’ve just saved the Emacs config.org file, 
 ;; so let’s build a new function to check that before running tangle, and hook to that instead:
 
-(defun kef-tangle-on-save-emacs-config-org-file()
-(when (string= buffer-file-name (file-truename "~/.emacs.d/config.org"))
-(org-babel-tangle)))
+;; (defun kef-tangle-on-save-emacs-config-org-file()
+;; (when (string= buffer-file-name (file-truename "~/.emacs.d/config.org"))
+;; (org-babel-tangle)))
 
-(add-hook ‘after-save-hook ‘kef-tangle-on-save-emacs-config-org-file)
+;; (add-hook ‘after-save-hook ‘kef-tangle-on-save-emacs-config-org-file)
 
 ;; --------------------------------------------------
 ;; Movement & Formatting
@@ -245,5 +250,8 @@ If the new path's directories does not exist, create them."
 (add-to-list 'load-path "~/.emacs.d/undo-tree")
 (global-undo-tree-mode)
 #+END_SRC
+
+#+RESULTS:
+: t
 
 * Configure =use-package=
