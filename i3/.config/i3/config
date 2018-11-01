@@ -149,24 +149,24 @@ bindsym $mod+r mode "resize"
 
 bar {
 	font pango:San Francisco Display 11
-	#font pango:FontAwesome 11
 	position top
-	tray_output primary
     status_command i3status -c ~/.config/i3/i3status.conf
-    colors {
-		   background #16161d
-    	   #background #3c3b37
-    	   statusline #dcdccc
-	   
-    	   focused_workspace #93b3a3 #16161d #93b3a3
-    	   active_workspace #ffcfaf #3c3b37 #ffcfaf
-    	   inactive_workspace #636363 #3c3b37 #dcdccc
-    	   urgent_workspace #dca3a3 #3c3b37 #dca3a3
-  }
+	tray_output primary
+	colors {
+    	   background #16161d
+    	   statusline #F8F8F2
+    	   separator  #44475A
+		   focused_workspace  #44475A #44475A #F8F8F2
+    	   active_workspace   #282A36 #44475A #F8F8F2
+    	   inactive_workspace #282A36 #282A36 #BFBFBF
+    	   urgent_workspace   #FF5555 #FF5555 #F8F8F2
+    	   binding_mode       #FF5555 #FF5555 #F8F8F2
+  		   }
 }
 
 ## Start-up applications
-exec feh --bg-fill /home/kef/.wallpaper/noir.jpg
+exec feh --bg-fill /home/kef/.wallpaper/sworcery.png
+
 exec --no-startup-id blueman-applet
 exec --no-startup-id nm-applet
 exec --no-startup-id python /home/kef/.scripts/dropbox.py start
@@ -226,17 +226,3 @@ client.urgent           #44475A #FF5555 #F8F8F2 #FF5555   #FF5555
 client.placeholder      #282A36 #282A36 #F8F8F2 #282A36   #282A36
 
 client.background       #F8F8F2
-
-bar {
-  colors {
-    background #282A36
-    statusline #F8F8F2
-    separator  #44475A
-
-    focused_workspace  #44475A #44475A #F8F8F2
-    active_workspace   #282A36 #44475A #F8F8F2
-    inactive_workspace #282A36 #282A36 #BFBFBF
-    urgent_workspace   #FF5555 #FF5555 #F8F8F2
-    binding_mode       #FF5555 #FF5555 #F8F8F2
-  }
-}
