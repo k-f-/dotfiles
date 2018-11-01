@@ -96,7 +96,7 @@ bindsym $mod+2 workspace 2
 bindsym $mod+3 workspace 3
 bindsym $mod+4 workspace 4
 bindsym $mod+5 workspace 5
-bindsym $mod+6 workspace 6
+bindsym $mod+6 workspace 6n
 bindsym $mod+7 workspace 7
 bindsym $mod+8 workspace 8
 bindsym $mod+9 workspace 9
@@ -150,7 +150,7 @@ bindsym $mod+r mode "resize"
 bar {
 	font pango:San Francisco Display 11
 	position top
-    status_command i3status -c ~/.config/i3/i3status.conf
+    status_command i3status -c ~/.config/i3/i3bar.conf
 	tray_output primary
 	colors {
     	   background #16161d
@@ -165,12 +165,21 @@ bar {
 }
 
 ## Start-up applications
-exec feh --bg-fill /home/kef/.wallpaper/sworcery.png
 
+# Set the wallpaper
+exec --no-startup-id ~/.bin/set-wallpaper
+
+# Bluetooth
 exec --no-startup-id blueman-applet
+
+# Network Manager
 exec --no-startup-id nm-applet
-exec --no-startup-id python /home/kef/.scripts/dropbox.py start
-exec --no-startup-id xrdb -merge /home/kef/.Xresources
+
+# dropbox
+exec --no-startup-id python ~/.bin/dropbox.py start
+
+# Load up config in .Xresources (for DPI, urxvt, and rofi)
+exec --no-startup-id xrdb -merge ~/.Xresources
 
 # Hide the mouse cursor after a second
 exec --no-startup-id unclutter -idle 1 -noevents &

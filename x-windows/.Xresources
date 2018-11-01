@@ -1,5 +1,8 @@
 #include ".Xresources.d/rxvt-unicode"
 
+!---------------------------------------
+! Xft settings
+!---------------------------------------
 ! HiDPI for XPS15
 
 Xft.dpi: 180
@@ -14,6 +17,7 @@ Xft.rgba: rgb
 ! Dracula Theme
 !---------------------------------------
 ! Dracula Xresources palette
+
 *.foreground: #F8F8F2
 *.background: #282A36
 *.color0:     #000000
