@@ -6,7 +6,7 @@
 * Starting with literate emac's configuration.
 
 #+BEGIN_SRC emacs-lisp
-;; Not that we needed all that for the trip,
+
 ;; but once you get locked into a serious drug collection,
 ;; the tendency is to push it as far as you can.
 
@@ -147,8 +147,12 @@ If the new path's directories does not exist, create them."
 ;; --------------------------------------------------
 ;; Color Themes
 ;; apropospriate, nord, dracula
-(use-package apropospriate-theme :ensure :defer)
-(use-package dracula-theme :ensure :defer)
+(use-package apropospriate-theme)
+(use-package dracula-theme)
+
+;; --------------------------------------------------
+;; Formating Themes
+(use-package org-beautify-theme)
 
 ;; Packages
 ;; --------------------------------------------------
@@ -167,11 +171,15 @@ If the new path's directories does not exist, create them."
 ;; colorize src blocks in org-mode
 (setq org-src-fontify-natively t)
 
-;; org-mode auto save only
-;;(add-hook 'org-mode-hook 'my-org-mode-autosave-settings)
-;;(defun my-org-mode-autosave-settings ()
-;;  (set (make-local-variable 'auto-save-visited-file-name) t)
-;;  (setq auto-save-interval 20))
+;; org-bullets
+(use-package org-bullets)
+(setq org-bullets-bullet-list '("◉" "◎" "⚫" "○" "►" "◇"))
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+
+;; org-todo-keywords
+;;(setq org-todo-keywords '((sequence "☛ TODO(t)" "|" "✔ DONE(d)")
+;;(sequence "⚑ WAITING(w)" "|")
+;;(sequence "|" "✘ CANCELED(c)")))
 
 ;; --------------------------------------------------
 ;; flyspell - in all text modes

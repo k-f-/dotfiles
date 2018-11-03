@@ -1,6 +1,6 @@
 # -*- mode: sh -*-
 
-alias spotify="spotify --force-device-scale-factor=2" # xps15
+alias spotify="spotify --force-device-scale-factor=2 &" # xps15
 alias dc="docker-compose"
 alias gg="git grep -n"
 alias gs="git status -s"

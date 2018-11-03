@@ -166,17 +166,20 @@ bar {
 
 ## Start-up applications
 
+# Start the Compton compositor (for i3bar transparency)
+exec --no-startup-id compton &
+
 # Set the wallpaper
-exec --no-startup-id ~/.bin/set-wallpaper
+exec --no-startup-id ~/.bin/set-wallpaper &
 
 # Bluetooth
-exec --no-startup-id blueman-applet
+exec --no-startup-id blueman-applet &
 
 # Network Manager
-exec --no-startup-id nm-applet
+exec --no-startup-id nm-applet &
 
 # dropbox
-exec --no-startup-id python ~/.bin/dropbox.py start
+exec --no-startup-id python ~/.bin/dropbox.py start &
 
 # Load up config in .Xresources (for DPI, urxvt, and rofi)
 exec --no-startup-id xrdb -merge ~/.Xresources
