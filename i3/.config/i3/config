@@ -196,6 +196,9 @@ exec --no-startup-id redshift &
 # Invoke the Emacs daemon
 exec --no-startup-id emacs --daemon
 
+# Start spotify with some HiDPI settings
+exec --no-startup-id spotify --force-device-scale-factor=2 &
+
 # Keybinds
 # Pulse Audio controls
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5% #increase sound volume

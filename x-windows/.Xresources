@@ -42,8 +42,7 @@ Xft.rgba: rgb
 !---------------------------------------
 
 rofi.font: San Francisco Display 24
+rofi.lines: 7
+rofi.matching: fuzzy
+rofi.location: 7 !https://github.com/DaveDavenport/rofi/wiki/WindowPosition
 rofi.color-enabled: true
-rofi.color-window: #16161d, #e2e2e9, #2c2c3a
-rofi.color-normal: #16161d, #e2e2e9, #2c2c3a, #f0f0f4, #16161d
-rofi.color-active: #16161d, #e2e2e9, #2c2c3a, #f0f0f4, #16161d
-rofi.color-urgent: #002b37, #e2e2e9, #003642, #f0f0f4, #16161d
