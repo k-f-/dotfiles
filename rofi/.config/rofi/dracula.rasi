@@ -38,7 +38,6 @@
 #window {
     border:           0;
     padding:          25;
-	transparent:     90;
 }
 #mainbox {
     background-color: inherit;

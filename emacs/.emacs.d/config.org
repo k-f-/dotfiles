@@ -85,17 +85,22 @@ If the new path's directories does not exist, create them."
 (setq make-backup-file-name-function 'kef-backup-file-name)
 
 ;; --------------------------------------------------
-;; functions for auto-tangle after changes to config.org
+;; Functions
 ;; -------------------------------------------------
+(defun kef-kill-current-buffer ()
+  "Kill the current buffer without prompting."
+  (interactive)
+  (kill-buffer (current-buffer)))
 
-;; Only want to tangle if we’ve just saved the Emacs config.org file, 
-;; so let’s build a new function to check that before running tangle, and hook to that instead:
+(defun kef-visit-emacs-config ()
+  (interactive)
+  (find-file "~/.emacs.d/config.org"))
 
-;; (defun kef-tangle-on-save-emacs-config-org-file()
-;; (when (string= buffer-file-name (file-truename "~/.emacs.d/config.org"))
-;; (org-babel-tangle)))
+;; Jump to emacs config file.
+(global-set-key (kbd "C-c e") 'kef-visit-emacs-config)
 
-;; (add-hook ‘after-save-hook ‘kef-tangle-on-save-emacs-config-org-file)
+;; Don't comfirm on kill buffer, just close it.
+(global-set-key (kbd "C-x k") 'kef-kill-current-buffer)
 
 ;; --------------------------------------------------
 ;; Movement & Formatting
@@ -198,6 +203,10 @@ If the new path's directories does not exist, create them."
 ;; --------------------------------------------------
 ;; Company
 (use-package company)
+;; Use company-mode everywhere
+(add-hook 'after-init-hook 'global-company-mode)
+;; Use M-/ for completion.
+(global-set-key (kbd "M-/") 'company-complete-common)
 
 ;; --------------------------------------------------
 (use-package org-pomodoro)
