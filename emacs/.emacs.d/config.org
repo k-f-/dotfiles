@@ -3,15 +3,13 @@
 #+EMAIL: me@kfring.com
 #+OPTIONS: toc:nil num:nil
 
-* Starting with literate emac's configuration.
+* A quote from Hunter S. Thompson
+'but once you get locked into a serious drug collection,
+the tendency is to push it as far as you can.'
 
+       --- Hunter S. Thompson, Fear and Loathing in Las Vegas
+* Set global user
 #+BEGIN_SRC emacs-lisp
-
-;; but once you get locked into a serious drug collection,
-;; the tendency is to push it as far as you can.
-
-;;       --- Hunter S. Thompson, Fear and Loathing in Las Vegas
-
 ;; --------------------------------------------------
 ;; Set global user
 (setq user-full-name "Kyle Fring"
@@ -19,46 +17,48 @@
 (setq calendar-location-name "Philadelphia, PA")
 (setq calendar-latitude 39.95)
 (setq calendar-longitude -75.16)
-
+#+END_SRC
+* Customize File Location
+#+BEGIN_SRC emacs-lisp
 ;; Create custom file elsewhere.
 ;; keep customize settings in their own file 
 (setq custom-file "~/.emacs.d/custom.el")
 (when (file-exists-p custom-file) (load custom-file))
-
-;; --------------------------------------------------
-;; User Interface
-;; --------------------------------------------------
-;; Don't display the help screen at start-up
-(setq inhibit-startup-screen t)
-
-;; --------------------------------------------------
-;; Disable bell
-(setq ring-bell-function 'ignore)
-
-;; --------------------------------------------------
-;; Minimal UI
+#+END_SRC
+* User Interface
+** Minimal UI
+#+BEGIN_SRC emacs-lisp
 (scroll-bar-mode -1)
 (tool-bar-mode   -1)
 (tooltip-mode    -1)
 (menu-bar-mode   -1)
-
-;; Time in modeline
+#+END_SRC
+** Time in modeline
+#+BEGIN_SRC emacs-lisp
 (display-time-mode 1)
+#+END_SRC
+** Startup screen
+Don't display the help screen at start-up
+#+BEGIN_SRC emacs-lisp
+(setq inhibit-startup-screen t)
+#+END_SRC
 
-;; --------------------------------------------------
-;; Fonts
-;; --------------------------------------------------
+** No Bell
+#+BEGIN_SRC emacs-lisp
+(setq ring-bell-function 'ignore)
+#+END_SRC
+* Fonts
+#+BEGIN_SRC emacs-lisp
 ;; Test char and monospace:
 ;; 0123456789abcdefghijklmnopqrstuvwxyz [] () :;,. !@#$^&*
 ;; 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ {} <> "'`  ~-_/|\?
-;;(set-face-attribute 'default t :font "InputMono-12" )
 (add-to-list 'default-frame-alist
              '(font . "InputMono-12"))
-
-;; --------------------------------------------------
-;; Backups
-;; --------------------------------------------------
-; Let us centralize where emac's keeps backups
+#+END_SRC
+* Backups
+** Config Backups
+Let us centralize where emac's keeps backups
+#+BEGIN_SRC emacs-lisp
 (setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
 	backup-by-copying t    ; Don't delink hardlinks
 	version-control t      ; Use version numbers on backups
@@ -66,9 +66,10 @@
 	kept-new-versions 20   ; how many of the newest versions to keep
 	kept-old-versions 5    ; and how many of the old
 	)
-
-;; make backup to a designated dir, mirroring the full path
-;; ala ergomacs
+#+END_SRC
+** Backup Function
+make backup to a designated dir, mirroring the full path ala ergomacs
+#+BEGIN_SRC emacs-lisp
 (defun kef-backup-file-name (fpath)
   "Return a new file path of a given file path.
 If the new path's directories does not exist, create them."
@@ -84,14 +85,17 @@ If the new path's directories does not exist, create them."
 
 (setq make-backup-file-name-function 'kef-backup-file-name)
 
-;; --------------------------------------------------
-;; Functions
-;; -------------------------------------------------
+#+END_SRC
+* Functions
+** Kill current buffer.
+#+BEGIN_SRC emacs-lisp
 (defun kef-kill-current-buffer ()
   "Kill the current buffer without prompting."
   (interactive)
   (kill-buffer (current-buffer)))
-
+#+END_SRC
+** visit emacs config
+#+BEGIN_SRC emacs-lisp
 (defun kef-visit-emacs-config ()
   (interactive)
   (find-file "~/.emacs.d/config.org"))
@@ -101,19 +105,14 @@ If the new path's directories does not exist, create them."
 
 ;; Don't comfirm on kill buffer, just close it.
 (global-set-key (kbd "C-x k") 'kef-kill-current-buffer)
-
-;; --------------------------------------------------
-;; Movement & Formatting
-;; --------------------------------------------------
-
-;; --------------------------------------------------
-;; Page Down
-
-;; Smooth scrolling means when you hit C-n to go to the next line
-;; at the bottom of the page, instead of doing a page-down,
-;; it shifts down by a single line. The margin means that
-;; much space is kept between the cursor and the bottom of the buffer.
-
+#+END_SRC
+* Movement & Formatting
+** Smooth Scrolling
+Smooth scrolling means when you hit C-n to go to the next line
+at the bottom of the page, instead of doing a page-down,
+it shifts down by a single line. The margin means that
+much space is kept between the cursor and the bottom of the buffer.
+#+BEGIN_SRC emacs-lisp
 (setq scroll-margin 3
 	  scroll-conservatively 101
 	  scroll-up-aggressively 0.01
@@ -122,25 +121,23 @@ If the new path's directories does not exist, create them."
 	  auto-window-vscroll nil
 	  hscroll-margin 5
 	  hscroll-step 5)
-
-;; --------------------------------------------------
-;; Tabs as 4 spaces
+#+END_SRC
+** Tabs
+#+BEGIN_SRC emacs-lisp
 (setq-default tab-width 4)
 (setq-default tab-stop-list (list 4 8 12))
-
-;; --------------------------------------------------
-;; Packages
-;; --------------------------------------------------
-;; Package configs
+#+END_SRC
+* Package repos
+#+BEGIN_SRC emacs-lisp
 (require 'package)
 (setq package-enable-at-startup nil)
 (setq package-archives '(("org"   . "http://orgmode.org/elpa/")
 						 ("gnu"   . "http://elpa.gnu.org/packages/")
 						 ("melpa" . "https://melpa.org/packages/")))
 (package-initialize)
-
-;; --------------------------------------------------
-;; Bootstrap `use-package`
+#+END_SRC
+* Bootstrap =use-package=
+#+BEGIN_SRC emacs-lisp
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
@@ -149,24 +146,25 @@ If the new path's directories does not exist, create them."
 (setq use-package-always-ensure t)
 (setq use-package-always-defer t)
 (require 'use-package)
-;; --------------------------------------------------
-;; Color Themes
-;; apropospriate, nord, dracula
+#+END_SRC
+
+* Themes and Display
+** Themes
+#+BEGIN_SRC emacs-lisp
 (use-package apropospriate-theme)
 (use-package dracula-theme)
-
-;; --------------------------------------------------
-;; Formating Themes
+#+END_SRC 
+** org-beautify-theme
+#+BEGIN_SRC emacs-lisp
 (use-package org-beautify-theme)
-
-;; Packages
-;; --------------------------------------------------
-;; Enable Ido
+#+END_SRC
+* Packages
+** IDO
+#+BEGIN_SRC emacs-lisp
 (ido-mode t)
-
-;; --------------------------------------------------
-;; org-mode
-;; --------------------------------------------------
+#+END_SRC
+** org-mode
+#+BEGIN_SRC emacs-lisp
 (use-package org)
 ;; org files in dropbox
 (setq org-agenda-files (list "~/Dropbox/org/work.org"
@@ -175,62 +173,104 @@ If the new path's directories does not exist, create them."
 
 ;; colorize src blocks in org-mode
 (setq org-src-fontify-natively t)
-
-;; org-bullets
+#+END_SRC
+** org-bullets
+#+BEGIN_SRC emacs-lisp
 (use-package org-bullets)
 (setq org-bullets-bullet-list '("◉" "◎" "⚫" "○" "►" "◇"))
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-
-;; org-todo-keywords
-;;(setq org-todo-keywords '((sequence "☛ TODO(t)" "|" "✔ DONE(d)")
-;;(sequence "⚑ WAITING(w)" "|")
-;;(sequence "|" "✘ CANCELED(c)")))
-
-;; --------------------------------------------------
+#+END_SRC
+** Flyspell
+#+BEGIN_SRC emacs-lisp
 ;; flyspell - in all text modes
 (add-hook 'text-mode-hook 'flyspell-mode)
-
-;; --------------------------------------------------
-;; theme-changer
+#+END_SRC 
+** theme-changer
+#+BEGIN_SRC emacs-lisp
 (use-package theme-changer)
 (require 'theme-changer)
 (change-theme 'apropospriate-light 'dracula)
-
-;; --------------------------------------------------
-;; Magit
+#+END_SRC
+** Magit
+#+BEGIN_SRC emacs-lisp
 (use-package magit)
-
-;; --------------------------------------------------
-;; Company
+#+END_SRC
+** Company Mode
+#+BEGIN_SRC emacs-lisp
 (use-package company)
-;; Use company-mode everywhere
+;; Use =company-mode= everywhere
 (add-hook 'after-init-hook 'global-company-mode)
-;; Use M-/ for completion.
-(global-set-key (kbd "M-/") 'company-complete-common)
+#+END_SRC
 
-;; --------------------------------------------------
-(use-package org-pomodoro)
+** Use =M-/= for completion.
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "M-/") 'company-complete-common)
+#+END_SRC
 
-;; --------------------------------------------------
-;; Deft
+** Save my location within a file
+
+Using =save-place-mode= saves the location of point for every file I visit. If I
+close the file or close the editor, then later re-open it, point will be at the
+last place I visited.
+
+#+BEGIN_SRC emacs-lisp
+  (save-place-mode t)
+#+END_SRC
+
+** Always indent with spaces
+
+Never use tabs. Tabs are the devil’s whitespace.
+
+#+BEGIN_SRC emacs-lisp
+  (setq-default indent-tabs-mode nil)
+#+END_SRC
+
+** Install and configure =which-key=
+
+=which-key= displays the possible completions for a long keybinding. That's
+really helpful for some modes (like =projectile=, for example).
+
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key
+    :diminish
+    :config
+    (which-key-mode))
+#+END_SRC
+
+** Configure yasnippet
+
+I keep my snippets in =~/.emacs/snippets/text-mode=, and I always want =yasnippet=
+enabled.
+
+#+BEGIN_SRC emacs-lisp
+(use-package yasnippet)  
+(setq yas-snippet-dirs '("~/.emacs.d/snippets/text-mode"))
+(yas-global-mode 1)
+#+END_SRC
+** org-pomodoro 
+#+BEGIN_SRC emacs-lisp
+  (use-package org-pomodoro)
+#+END_SRC
+** Deft
+#+BEGIN_SRC emacs-lisp
 (use-package deft
   :bind ("<f8>" . deft)
   :commands (deft)
-  :config (setq deft-directory "~/Dropbox/org/notes/"
-				deft-extensions '("md" "org" "txt")))
+  :config (setq deft-directory "~/Dropbox/org/" deft-extensions
+                '("md" "org" "txt")))
 (setq deft-default-extension "org")
 (setq deft-use-filename-as-title nil)
 (setq deft-use-filter-string-for-filename t)
 (setq deft-file-naming-rules '((noslash . "-")
-							   (nospace . "-")
-							   (case-fn . downcase)))
+                               (nospace . "-")
+                               (case-fn . downcase)))
 (setq deft-text-mode 'org-mode)
 
 ;; filenames - replace space and slash with - lcase
 (setq deft-file-naming-rules
-	  '((noslash . "-")
-		(nospace . "-")
-		(case-fn . downcase)))
+      '((noslash . "-")
+        (nospace . "-")
+        (case-fn . downcase)))
 
 ;; --------------------------------------------------
 ;; Deft-Mode custom functions via: http://pragmaticemacs.com/emacs/tweaking-deft-quicker-notes/
@@ -258,20 +298,18 @@ If the new path's directories does not exist, create them."
   )
 
 (global-set-key (kbd "C-c q") 'kef-quit-deft)
-
+#+END_SRC
+** with-editor
+#+BEGIN_SRC emacs_lisp
 ;; with-editor: Use local Emacs instance as $EDITOR (e.g. in `git commit’ or `crontab -e’)
 (use-package with-editor :ensure :defer
-  ;; Use local Emacs instance as $EDITOR (e.g. in `git commit' or `crontab -e')
-  :hook ((shell-mode eshell-mode term-exec) . with-editor-export-editor))
-
-;; undo-tree
+;; Use local Emacs instance as $EDITOR (e.g. in `git commit' or `crontab -e')
+:hook ((shell-mode eshell-mode term-exec) . with-editor-export-editor))
+#+END_SRC
+** undo-tree
+#+BEGIN_SRC emacs-lisp
 (use-package undo-tree)
 
 (add-to-list 'load-path "~/.emacs.d/undo-tree")
 (global-undo-tree-mode)
 #+END_SRC
-
-#+RESULTS:
-: t
-
-* Configure =use-package=
