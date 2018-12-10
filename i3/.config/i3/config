@@ -230,7 +230,6 @@ floating_minimum_size 150 x 100
 floating_maximum_size 3840 x 2160
 
 # changing how borders look
-# hide_edge_borders smart
 for_window [class="^.*"] border normal 0
 # window colors
 # class                 border  bground text    indicator child_border
