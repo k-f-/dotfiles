@@ -286,9 +286,9 @@ And show changes in the gutter (fringe).
   (set-face-foreground 'git-gutter:deleted "red"))
 #+END_SRC
 ** Company Mode
+Use =company-mode= everywhere
 #+BEGIN_SRC emacs-lisp
 (use-package company)
-;; Use =company-mode= everywhere
 (add-hook 'after-init-hook 'global-company-mode)
 #+END_SRC
 
@@ -327,7 +327,7 @@ really helpful for some modes (like =projectile=, for example).
   (setq which-key-idle-delay 1.0))
 #+END_SRC
 
-** Configure yasnippetK
+** Configure yasnippet
 
 I keep my snippets in =~/.emacs/snippets/text-mode=, and I always want =yasnippet=
 enabled.
