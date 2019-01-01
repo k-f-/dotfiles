@@ -27,13 +27,14 @@ the tendency is to push it as far as you can.'
 #+END_SRC
 * User Interface
 ** Minimal UI
+   Drop scroll bar, Toolbar, Tooltips and Menu-Bar
 #+BEGIN_SRC emacs-lisp
 (scroll-bar-mode -1)
 (tool-bar-mode   -1)
 (tooltip-mode    -1)
 (menu-bar-mode   -1)
 #+END_SRC
-** Time in modeline
+** Modeline
 #+BEGIN_SRC emacs-lisp
 (display-time-mode 1)
 #+END_SRC
@@ -42,7 +43,6 @@ Don't display the help screen at start-up
 #+BEGIN_SRC emacs-lisp
 (setq inhibit-startup-screen t)
 #+END_SRC
-
 ** No Bell
 #+BEGIN_SRC emacs-lisp
 (setq ring-bell-function 'ignore)
@@ -68,7 +68,7 @@ Let us centralize where emac's keeps backups
 	)
 #+END_SRC
 ** Backup Function
-make backup to a designated dir, mirroring the full path ala ergomacs
+   Create a backup to a designated dir, mirroring the full path ala ergomacs
 #+BEGIN_SRC emacs-lisp
 (defun kef-backup-file-name (fpath)
   "Return a new file path of a given file path.
@@ -84,7 +84,6 @@ If the new path's directories does not exist, create them."
 )
 
 (setq make-backup-file-name-function 'kef-backup-file-name)
-
 #+END_SRC
 * Functions
 ** Kill current buffer.
@@ -94,7 +93,7 @@ If the new path's directories does not exist, create them."
   (interactive)
   (kill-buffer (current-buffer)))
 #+END_SRC
-** visit emacs config
+** Visit emacs config
 #+BEGIN_SRC emacs-lisp
 (defun kef-visit-emacs-config ()
   (interactive)
@@ -123,6 +122,7 @@ much space is kept between the cursor and the bottom of the buffer.
 	  hscroll-step 5)
 #+END_SRC
 ** Tabs
+Tabs should be four spaces.
 #+BEGIN_SRC emacs-lisp
 (setq-default tab-width 4)
 (setq-default tab-stop-list (list 4 8 12))
@@ -154,21 +154,96 @@ much space is kept between the cursor and the bottom of the buffer.
 (use-package apropospriate-theme)
 (use-package dracula-theme)
 #+END_SRC 
-** org-beautify-theme
-#+BEGIN_SRC emacs-lisp
-(use-package org-beautify-theme)
-#+END_SRC
 * Packages
-** IDO
+** Projectile
+Install and configure projectile.
+Super+P pulls up projectiles command map.
+search in $HOME/code for projects.
 #+BEGIN_SRC emacs-lisp
-(ido-mode t)
+  (use-package projectile
+  :config
+  (define-key projectile-mode-map (kbd "s-P") 'projectile-command-map)
+  (projectile-mode +1)
+  (setq projectile-project-search-path '("~/code/")))
 #+END_SRC
+** Ivy, Swiper and Counsel
+#+BEGIN_SRC emacs-lisp
+(use-package ivy
+  :config
+  (ivy-mode 1)
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-count-format "(%d/%d) ")
+  (setq enable-recursive-minibuffers t)
+  (setq ivy-initial-inputs-alist nil)
+  (setq ivy-re-builders-alist
+      '((swiper . ivy--regex-plus)
+        (t      . ivy--regex-fuzzy)))   ;; enable fuzzy searching everywhere except for Swiper
+
+  (global-set-key (kbd "s-b") 'ivy-switch-buffer)
+  ;; (global-set-key (kbd "M-s-b") 'ivy-resume)
+  )
+
+(use-package swiper
+  :config
+  ;; (global-set-key "\C-s" 'swiper)
+  ;; (global-set-key "\C-r" 'swiper)
+  (global-set-key (kbd "s-f") 'swiper))
+
+(use-package counsel
+  :config
+  (global-set-key (kbd "M-x") 'counsel-M-x)
+  (global-set-key (kbd "s-y") 'counsel-yank-pop)
+  (global-set-key (kbd "C-x C-f") 'counsel-find-file))
+
+(use-package smex)
+(use-package flx)
+(use-package avy)
+#+END_SRC
+
+Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g. description of commands in =M-x=, meta info about buffers in =ivy-switch-buffer=, etc.
+
+#+BEGIN_SRC emacs-lisp
+(use-package ivy-rich
+  :config
+  (ivy-rich-mode 1)
+  (setq ivy-rich-path-style 'abbrev)) ;; To abbreviate paths using abbreviate-file-name (e.g. replace “/home/username” with “~”
+#+END_SRC
+
+** Counsel integration for Projectile
+#+BEGIN_SRC emacs-lisp
+(use-package counsel-projectile
+  :config
+  (counsel-projectile-mode 1)
+  (global-set-key (kbd "s-F") 'counsel-projectile-ag)
+  (global-set-key (kbd "s-p") 'counsel-projectile))
+
+(setq projectile-completion-system 'ivy)
+#+END_SRC  
 ** org-mode
 #+BEGIN_SRC emacs-lisp
-(use-package org)
-;; org files in dropbox
-(setq org-agenda-files (list "~/Dropbox/org/work.org"
-                             "~/Dropbox/org/life.org" ))
+(use-package org
+  :config
+  (setq org-startup-indented t))
+#+END_SRC
+
+Store all my org files in =~/Dropbox/org=.
+
+#+BEGIN_SRC emacs-lisp
+(setq org-directory "~/Dropbox/org")
+#+END_SRC
+
+And all of those files should be in included agenda.
+
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-files '("~/Dropbox/org"))
+#+END_SRC
+
+Refile targets should include files and down to 9 levels into them.
+
+#+BEGIN_SRC emacs-lisp
+(setq org-refile-targets (quote ((nil :maxlevel . 9)
+                                 (org-agenda-files :maxlevel . 9))))
+
 (add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\)$" . org-mode))
 
 ;; colorize src blocks in org-mode
@@ -193,7 +268,22 @@ much space is kept between the cursor and the bottom of the buffer.
 #+END_SRC
 ** Magit
 #+BEGIN_SRC emacs-lisp
-(use-package magit)
+(use-package magit
+  :config
+  (global-set-key (kbd "s-g") 'magit-status))
+#+END_SRC
+
+#+RESULTS:
+
+And show changes in the gutter (fringe).
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(use-package git-gutter
+  :config
+  (global-git-gutter-mode 't)
+  (set-face-background 'git-gutter:modified 'nil) ;; background color
+  (set-face-foreground 'git-gutter:added "green4")
+  (set-face-foreground 'git-gutter:deleted "red"))
 #+END_SRC
 ** Company Mode
 #+BEGIN_SRC emacs-lisp
@@ -231,13 +321,13 @@ Never use tabs. Tabs are the devil’s whitespace.
 really helpful for some modes (like =projectile=, for example).
 
 #+BEGIN_SRC emacs-lisp
-  (use-package which-key
-    :diminish
-    :config
-    (which-key-mode))
+(use-package which-key
+  :config
+  (which-key-mode)
+  (setq which-key-idle-delay 1.0))
 #+END_SRC
 
-** Configure yasnippet
+** Configure yasnippetK
 
 I keep my snippets in =~/.emacs/snippets/text-mode=, and I always want =yasnippet=
 enabled.

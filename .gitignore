@@ -5,3 +5,6 @@ auto-save-list
 config.el
 ido.last
 custom.el
+smex-items
+projectile-bookmarks.eld
+places
