@@ -92,6 +92,9 @@ If the new path's directories does not exist, create them."
   "Kill the current buffer without prompting."
   (interactive)
   (kill-buffer (current-buffer)))
+
+;; Don't comfirm on kill buffer, just close it.
+(global-set-key (kbd "C-x k") 'kef-kill-current-buffer)
 #+END_SRC
 ** Visit emacs config
 #+BEGIN_SRC emacs-lisp
@@ -101,9 +104,6 @@ If the new path's directories does not exist, create them."
 
 ;; Jump to emacs config file.
 (global-set-key (kbd "C-c e") 'kef-visit-emacs-config)
-
-;; Don't comfirm on kill buffer, just close it.
-(global-set-key (kbd "C-x k") 'kef-kill-current-buffer)
 #+END_SRC
 * Movement & Formatting
 ** Smooth Scrolling
@@ -256,8 +256,9 @@ Refile targets should include files and down to 9 levels into them.
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+END_SRC
 ** Flyspell
+flyspell - in all text modes
 #+BEGIN_SRC emacs-lisp
-;; flyspell - in all text modes
+(use-package flyspell :diminish)
 (add-hook 'text-mode-hook 'flyspell-mode)
 #+END_SRC 
 ** theme-changer
@@ -272,8 +273,6 @@ Refile targets should include files and down to 9 levels into them.
   :config
   (global-set-key (kbd "s-g") 'magit-status))
 #+END_SRC
-
-#+RESULTS:
 
 And show changes in the gutter (fringe).
 
@@ -327,21 +326,15 @@ really helpful for some modes (like =projectile=, for example).
   (setq which-key-idle-delay 1.0))
 #+END_SRC
 
-** Configure yasnippet
-
-I keep my snippets in =~/.emacs/snippets/text-mode=, and I always want =yasnippet=
-enabled.
-
-#+BEGIN_SRC emacs-lisp
-(use-package yasnippet)  
-(setq yas-snippet-dirs '("~/.emacs.d/snippets/text-mode"))
-(yas-global-mode 1)
-#+END_SRC
 ** org-pomodoro 
 #+BEGIN_SRC emacs-lisp
   (use-package org-pomodoro)
 #+END_SRC
 ** Deft
+Deft-Mode custom functions via: http://pragmaticemacs.com/emacs/tweaking-deft-quicker-notes/
+Custom function to save window-layout when launching deft-mode
+advise deft to save window config
+
 #+BEGIN_SRC emacs-lisp
 (use-package deft
   :bind ("<f8>" . deft)
@@ -362,11 +355,6 @@ enabled.
         (nospace . "-")
         (case-fn . downcase)))
 
-;; --------------------------------------------------
-;; Deft-Mode custom functions via: http://pragmaticemacs.com/emacs/tweaking-deft-quicker-notes/
-;; Custom function to save window-layout when launching deft-mode
-;; advise deft to save window config
-
 (defun kef-deft-save-windows (orig-fun &rest args)
   (setq kef-pre-deft-window-config (current-window-configuration))
   (apply orig-fun args)
@@ -376,7 +364,7 @@ enabled.
 
 ;;function to quit a deft edit cleanly back to pre deft window
 (defun kef-quit-deft ()
-  "Save buffer, kill buffer, kill deft buffer, and restore window config to the way it was before deft was invoked"
+;;  "Save buffer, kill buffer, kill deft buffer, and restore window config to the way it was before deft was invoked"
   (interactive)
   (save-buffer)
   (kill-this-buffer)
@@ -388,18 +376,4 @@ enabled.
   )
 
 (global-set-key (kbd "C-c q") 'kef-quit-deft)
-#+END_SRC
-** with-editor
-#+BEGIN_SRC emacs_lisp
-;; with-editor: Use local Emacs instance as $EDITOR (e.g. in `git commit’ or `crontab -e’)
-(use-package with-editor :ensure :defer
-;; Use local Emacs instance as $EDITOR (e.g. in `git commit' or `crontab -e')
-:hook ((shell-mode eshell-mode term-exec) . with-editor-export-editor))
-#+END_SRC
-** undo-tree
-#+BEGIN_SRC emacs-lisp
-(use-package undo-tree)
-
-(add-to-list 'load-path "~/.emacs.d/undo-tree")
-(global-undo-tree-mode)
 #+END_SRC
