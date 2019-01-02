@@ -127,34 +127,12 @@ Tabs should be four spaces.
 (setq-default tab-width 4)
 (setq-default tab-stop-list (list 4 8 12))
 #+END_SRC
-* Package repos
-#+BEGIN_SRC emacs-lisp
-(require 'package)
-(setq package-enable-at-startup nil)
-(setq package-archives '(("org"   . "http://orgmode.org/elpa/")
-						 ("gnu"   . "http://elpa.gnu.org/packages/")
-						 ("melpa" . "https://melpa.org/packages/")))
-(package-initialize)
-#+END_SRC
-* Bootstrap =use-package=
-#+BEGIN_SRC emacs-lisp
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
+** Always indent with spaces
 
-(setq use-package-verbose t)
-(setq use-package-always-ensure t)
-(setq use-package-always-defer t)
-(require 'use-package)
-#+END_SRC
-
-* Themes and Display
-** Themes
+Never use tabs. Tabs are the devil’s white space.
 #+BEGIN_SRC emacs-lisp
-(use-package apropospriate-theme)
-(use-package dracula-theme)
-#+END_SRC 
-* Packages
+  (setq-default indent-tabs-mode nil)
+#+END_SRC
 ** Projectile
 Install and configure projectile.
 Super+P pulls up projectiles command map.
@@ -306,14 +284,6 @@ last place I visited.
   (save-place-mode t)
 #+END_SRC
 
-** Always indent with spaces
-
-Never use tabs. Tabs are the devil’s whitespace.
-
-#+BEGIN_SRC emacs-lisp
-  (setq-default indent-tabs-mode nil)
-#+END_SRC
-
 ** Install and configure =which-key=
 
 =which-key= displays the possible completions for a long keybinding. That's
@@ -377,3 +347,31 @@ advise deft to save window config
 
 (global-set-key (kbd "C-c q") 'kef-quit-deft)
 #+END_SRC
+* Package repos
+#+BEGIN_SRC emacs-lisp
+(require 'package)
+(setq package-enable-at-startup nil)
+(setq package-archives '(("org"   . "http://orgmode.org/elpa/")
+						 ("gnu"   . "http://elpa.gnu.org/packages/")
+						 ("melpa" . "https://melpa.org/packages/")))
+(package-initialize)
+#+END_SRC
+* Bootstrap =use-package=
+#+BEGIN_SRC emacs-lisp
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+(setq use-package-verbose t)
+(setq use-package-always-ensure t)
+(setq use-package-always-defer t)
+(require 'use-package)
+#+END_SRC
+
+* Themes and Display
+** Themes
+#+BEGIN_SRC emacs-lisp
+(use-package apropospriate-theme)
+(use-package dracula-theme)
+#+END_SRC 
+* Packages
