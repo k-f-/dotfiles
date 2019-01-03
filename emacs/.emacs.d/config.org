@@ -9,6 +9,7 @@ the tendency is to push it as far as you can.'
 
        --- Hunter S. Thompson, Fear and Loathing in Las Vegas
 * Set global user
+
 #+BEGIN_SRC emacs-lisp
 ;; --------------------------------------------------
 ;; Set global user
@@ -135,6 +136,7 @@ Never use tabs. Tabs are the devil’s whitespace.
   (setq-default indent-tabs-mode nil)
 #+END_SRC
 * Package repos
+
 #+BEGIN_SRC emacs-lisp
 (require 'package)
 (setq package-enable-at-startup nil)
@@ -158,8 +160,9 @@ Never use tabs. Tabs are the devil’s whitespace.
 * Themes and Display
 ** Themes
 #+BEGIN_SRC emacs-lisp
-(use-package apropospriate-theme)
-(use-package dracula-theme)
+(use-package apropospriate-theme :ensure)
+(use-package dracula-theme :ensure)
+(use-package poet-theme :ensure)
 #+END_SRC 
 * Packages
 ** Projectile
@@ -167,15 +170,16 @@ Install and configure projectile.
 Super+P pulls up projectiles command map.
 search in $HOME/code for projects.
 #+BEGIN_SRC emacs-lisp
-  (use-package projectile
+  (use-package projectile :ensure
   :config
   (define-key projectile-mode-map (kbd "s-P") 'projectile-command-map)
   (projectile-mode +1)
   (setq projectile-project-search-path '("~/code/")))
 #+END_SRC
 ** Ivy, Swiper and Counsel
+
 #+BEGIN_SRC emacs-lisp
-(use-package ivy
+(use-package ivy :ensure
   :config
   (ivy-mode 1)
   (setq ivy-use-virtual-buffers t)
@@ -190,27 +194,26 @@ search in $HOME/code for projects.
   ;; (global-set-key (kbd "M-s-b") 'ivy-resume)
   )
 
-(use-package swiper
+(use-package swiper :ensure
   :config
-  ;; (global-set-key "\C-s" 'swiper)
   ;; (global-set-key "\C-r" 'swiper)
-  (global-set-key (kbd "s-f") 'swiper))
+  (global-set-key (kbd "C-s") 'swiper))
 
-(use-package counsel
+(use-package counsel :ensure
   :config
   (global-set-key (kbd "M-x") 'counsel-M-x)
   (global-set-key (kbd "s-y") 'counsel-yank-pop)
   (global-set-key (kbd "C-x C-f") 'counsel-find-file))
 
-(use-package smex)
-(use-package flx)
-(use-package avy)
+(use-package smex :ensure)
+(use-package flx :ensure)
+(use-package avy :ensure)
 #+END_SRC
 
 Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g. description of commands in =M-x=, meta info about buffers in =ivy-switch-buffer=, etc.
 
 #+BEGIN_SRC emacs-lisp
-(use-package ivy-rich
+(use-package ivy-rich :ensure
   :config
   (ivy-rich-mode 1)
   (setq ivy-rich-path-style 'abbrev)) ;; To abbreviate paths using abbreviate-file-name (e.g. replace “/home/username” with “~”
@@ -218,7 +221,7 @@ Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g.
 
 ** Counsel integration for Projectile
 #+BEGIN_SRC emacs-lisp
-(use-package counsel-projectile
+(use-package counsel-projectile :ensure
   :config
   (counsel-projectile-mode 1)
   (global-set-key (kbd "s-F") 'counsel-projectile-ag)
@@ -265,18 +268,18 @@ Refile targets should include files and down to 9 levels into them.
 ** Flyspell
 flyspell - in all text modes
 #+BEGIN_SRC emacs-lisp
-(use-package flyspell :diminish)
+(use-package flyspell :ensure)
 (add-hook 'text-mode-hook 'flyspell-mode)
 #+END_SRC 
 ** theme-changer
 #+BEGIN_SRC emacs-lisp
-(use-package theme-changer)
+(use-package theme-changer :ensure)
 (require 'theme-changer)
 (change-theme 'apropospriate-light 'dracula)
 #+END_SRC
 ** Magit
 #+BEGIN_SRC emacs-lisp
-(use-package magit
+(use-package magit :ensure
   :config
   (global-set-key (kbd "s-g") 'magit-status))
 #+END_SRC
@@ -294,7 +297,7 @@ And show changes in the gutter (fringe).
 ** Company Mode
 Use =company-mode= everywhere
 #+BEGIN_SRC emacs-lisp
-(use-package company)
+(use-package company :ensure)
 (add-hook 'after-init-hook 'global-company-mode)
 #+END_SRC
 
@@ -319,7 +322,7 @@ last place I visited.
 really helpful for some modes (like =projectile=, for example).
 
 #+BEGIN_SRC emacs-lisp
-(use-package which-key
+(use-package which-key :ensure
   :config
   (which-key-mode)
   (setq which-key-idle-delay 1.0))
@@ -327,7 +330,7 @@ really helpful for some modes (like =projectile=, for example).
 
 ** org-pomodoro 
 #+BEGIN_SRC emacs-lisp
-  (use-package org-pomodoro)
+  (use-package org-pomodoro :ensure)
 #+END_SRC
 
 ** Deft
@@ -336,7 +339,7 @@ Custom function to save window-layout when launching deft-mode
 advise deft to save window config
 
 #+BEGIN_SRC emacs-lisp
-(use-package deft
+(use-package deft :ensure
   :bind ("<f8>" . deft)
   :commands (deft)
   :config (setq deft-directory "~/Dropbox/org/" deft-extensions
