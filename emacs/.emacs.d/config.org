@@ -19,13 +19,22 @@ the tendency is to push it as far as you can.'
 (setq calendar-latitude 39.95)
 (setq calendar-longitude -75.16)
 #+END_SRC
+
+* Start the server
+
+#+BEGIN_SRC emacs-lisp
+(server-start)
+#+END_SRC
+
 * Customize File Location
+
 #+BEGIN_SRC emacs-lisp
 ;; Create custom file elsewhere.
 ;; keep customize settings in their own file 
 (setq custom-file "~/.emacs.d/custom.el")
 (when (file-exists-p custom-file) (load custom-file))
 #+END_SRC
+
 * User Interface
 ** Minimal UI
    Drop scroll bar, Toolbar, Tooltips and Menu-Bar
@@ -35,20 +44,25 @@ the tendency is to push it as far as you can.'
 (tooltip-mode    -1)
 (menu-bar-mode   -1)
 #+END_SRC
+
 ** Modeline
 #+BEGIN_SRC emacs-lisp
 (display-time-mode 1)
 #+END_SRC
+
 ** Startup screen
 Don't display the help screen at start-up
 #+BEGIN_SRC emacs-lisp
 (setq inhibit-startup-screen t)
 #+END_SRC
+
 ** No Bell
 #+BEGIN_SRC emacs-lisp
 (setq ring-bell-function 'ignore)
 #+END_SRC
+
 * Fonts
+
 #+BEGIN_SRC emacs-lisp
 ;; Test char and monospace:
 ;; 0123456789abcdefghijklmnopqrstuvwxyz [] () :;,. !@#$^&*
@@ -56,9 +70,11 @@ Don't display the help screen at start-up
 (add-to-list 'default-frame-alist
              '(font . "InputMono-12"))
 #+END_SRC
+
 * Backups
 ** Config Backups
 Let us centralize where emac's keeps backups
+
 #+BEGIN_SRC emacs-lisp
 (setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
 	backup-by-copying t    ; Don't delink hardlinks
@@ -70,6 +86,7 @@ Let us centralize where emac's keeps backups
 #+END_SRC
 ** Backup Function
    Create a backup to a designated dir, mirroring the full path ala ergomacs
+
 #+BEGIN_SRC emacs-lisp
 (defun kef-backup-file-name (fpath)
   "Return a new file path of a given file path.
@@ -88,6 +105,7 @@ If the new path's directories does not exist, create them."
 #+END_SRC
 * Functions
 ** Kill current buffer.
+
 #+BEGIN_SRC emacs-lisp
 (defun kef-kill-current-buffer ()
   "Kill the current buffer without prompting."
@@ -97,7 +115,9 @@ If the new path's directories does not exist, create them."
 ;; Don't comfirm on kill buffer, just close it.
 (global-set-key (kbd "C-x k") 'kef-kill-current-buffer)
 #+END_SRC
+
 ** Visit emacs config
+
 #+BEGIN_SRC emacs-lisp
 (defun kef-visit-emacs-config ()
   (interactive)
@@ -106,6 +126,7 @@ If the new path's directories does not exist, create them."
 ;; Jump to emacs config file.
 (global-set-key (kbd "C-c e") 'kef-visit-emacs-config)
 #+END_SRC
+
 * Movement & Formatting
 ** Smooth Scrolling
 Smooth scrolling means when you hit C-n to go to the next line
@@ -145,7 +166,9 @@ Never use tabs. Tabs are the devil’s whitespace.
 						 ("melpa" . "https://melpa.org/packages/")))
 (package-initialize)
 #+END_SRC
+
 * Bootstrap =use-package=
+
 #+BEGIN_SRC emacs-lisp
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -153,17 +176,21 @@ Never use tabs. Tabs are the devil’s whitespace.
 
 (setq use-package-verbose t)
 (setq use-package-always-ensure t)
-(setq use-package-always-defer t)
+;; (setq use-package-always-defer t)
 (require 'use-package)
 #+END_SRC
 
 * Themes and Display
 ** Themes
+
 #+BEGIN_SRC emacs-lisp
 (use-package apropospriate-theme :ensure)
 (use-package dracula-theme :ensure)
 (use-package poet-theme :ensure)
+(use-package spacemacs-theme :ensure)
+(load-theme 'spacemacs-dark t)
 #+END_SRC 
+
 * Packages
 ** Projectile
 Install and configure projectile.
@@ -272,10 +299,11 @@ flyspell - in all text modes
 (add-hook 'text-mode-hook 'flyspell-mode)
 #+END_SRC 
 ** theme-changer
+We where changing theme based on time, but let us stick with Dracula for now.
 #+BEGIN_SRC emacs-lisp
-(use-package theme-changer :ensure)
-(require 'theme-changer)
-(change-theme 'apropospriate-light 'dracula)
+;; (use-package theme-changer :ensure)
+;; (require 'theme-changer)
+;; (change-theme 'apropospriate-light 'dracula)
 #+END_SRC
 ** Magit
 #+BEGIN_SRC emacs-lisp
