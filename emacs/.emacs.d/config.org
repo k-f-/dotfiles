@@ -20,12 +20,6 @@ the tendency is to push it as far as you can.'
 (setq calendar-longitude -75.16)
 #+END_SRC
 
-* Start the server
-
-#+BEGIN_SRC emacs-lisp
-(server-start)
-#+END_SRC
-
 * Customize File Location
 
 #+BEGIN_SRC emacs-lisp
@@ -188,6 +182,7 @@ Never use tabs. Tabs are the devil’s whitespace.
 (use-package dracula-theme :ensure)
 (use-package poet-theme :ensure)
 (use-package spacemacs-theme :ensure)
+(use-package poet-theme :ensure)
 (load-theme 'spacemacs-dark t)
 #+END_SRC 
 
