@@ -31,7 +31,7 @@ the tendency is to push it as far as you can.'
 
 * User Interface
 ** Minimal UI
-   Drop scroll bar, Toolbar, Tooltips and Menu-Bar
+Drop scroll bar, Toolbar, Tooltips and Menu-Bar
 #+BEGIN_SRC emacs-lisp
 (scroll-bar-mode -1)
 (tool-bar-mode   -1)
@@ -191,6 +191,7 @@ Never use tabs. Tabs are the devil’s whitespace.
 Install and configure projectile.
 Super+P pulls up projectiles command map.
 search in $HOME/code for projects.
+
 #+BEGIN_SRC emacs-lisp
   (use-package projectile :ensure
   :config
@@ -198,6 +199,7 @@ search in $HOME/code for projects.
   (projectile-mode +1)
   (setq projectile-project-search-path '("~/code/")))
 #+END_SRC
+
 ** Ivy, Swiper and Counsel
 
 #+BEGIN_SRC emacs-lisp
@@ -242,6 +244,7 @@ Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g.
 #+END_SRC
 
 ** Counsel integration for Projectile
+
 #+BEGIN_SRC emacs-lisp
 (use-package counsel-projectile :ensure
   :config
@@ -251,7 +254,9 @@ Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g.
 
 (setq projectile-completion-system 'ivy)
 #+END_SRC  
+
 ** org-mode
+
 #+BEGIN_SRC emacs-lisp
 (use-package org
   :config
@@ -281,26 +286,36 @@ Refile targets should include files and down to 9 levels into them.
 ;; colorize src blocks in org-mode
 (setq org-src-fontify-natively t)
 #+END_SRC
+
 ** org-bullets
+
 #+BEGIN_SRC emacs-lisp
 (use-package org-bullets)
 (setq org-bullets-bullet-list '("◉" "◎" "⚫" "○" "►" "◇"))
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+END_SRC
+
 ** Flyspell
+
 flyspell - in all text modes
+
 #+BEGIN_SRC emacs-lisp
 (use-package flyspell :ensure)
 (add-hook 'text-mode-hook 'flyspell-mode)
 #+END_SRC 
+
 ** theme-changer
+
 We where changing theme based on time, but let us stick with Dracula for now.
+
 #+BEGIN_SRC emacs-lisp
 ;; (use-package theme-changer :ensure)
 ;; (require 'theme-changer)
 ;; (change-theme 'apropospriate-light 'dracula)
 #+END_SRC
+
 ** Magit
+
 #+BEGIN_SRC emacs-lisp
 (use-package magit :ensure
   :config
@@ -317,7 +332,9 @@ And show changes in the gutter (fringe).
   (set-face-foreground 'git-gutter:added "green4")
   (set-face-foreground 'git-gutter:deleted "red"))
 #+END_SRC
+
 ** Company Mode
+
 Use =company-mode= everywhere
 #+BEGIN_SRC emacs-lisp
 (use-package company :ensure)
@@ -352,11 +369,13 @@ really helpful for some modes (like =projectile=, for example).
 #+END_SRC
 
 ** org-pomodoro 
+
 #+BEGIN_SRC emacs-lisp
   (use-package org-pomodoro :ensure)
 #+END_SRC
 
 ** Deft
+
 Deft-Mode custom functions via: http://pragmaticemacs.com/emacs/tweaking-deft-quicker-notes/
 Custom function to save window-layout when launching deft-mode
 advise deft to save window config
@@ -403,3 +422,15 @@ advise deft to save window config
 
 (global-set-key (kbd "C-c q") 'kef-quit-deft)
 #+END_SRC
+
+** ox-hugo
+
+Auto-install the package from Melpa.
+
+#+BEGIN_SRC emacs-lisp
+(use-package ox-hugo
+  :ensure t 
+  :after ox)
+#+END_SRC
+
+
