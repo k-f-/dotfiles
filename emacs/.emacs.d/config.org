@@ -47,6 +47,12 @@ Drop scroll bar, Toolbar, Tooltips and Menu-Bar
 ** Startup screen
 Don't display the help screen at start-up
 #+BEGIN_SRC emacs-lisp
+(setq initial-scratch-message nil)
+
+;; Set momentary title.
+(when (display-graphic-p)
+    (setq frame-title-format "loading..."))
+
 (setq inhibit-startup-screen t)
 #+END_SRC
 
@@ -78,6 +84,7 @@ Let us centralize where emac's keeps backups
 	kept-old-versions 5    ; and how many of the old
 	)
 #+END_SRC
+
 ** Backup Function
    Create a backup to a designated dir, mirroring the full path ala ergomacs
 
@@ -97,6 +104,7 @@ If the new path's directories does not exist, create them."
 
 (setq make-backup-file-name-function 'kef-backup-file-name)
 #+END_SRC
+
 * Functions
 ** Kill current buffer.
 
@@ -121,6 +129,14 @@ If the new path's directories does not exist, create them."
 (global-set-key (kbd "C-c e") 'kef-visit-emacs-config)
 #+END_SRC
 
+* Keybinds
+Set some keybindings
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-c l") 'org-store-link)
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c c") 'org-capture)
+#+END_SRC
+
 * Movement & Formatting
 ** Smooth Scrolling
 Smooth scrolling means when you hit C-n to go to the next line
@@ -137,12 +153,14 @@ much space is kept between the cursor and the bottom of the buffer.
 	  hscroll-margin 5
 	  hscroll-step 5)
 #+END_SRC
+
 ** Tabs
 Tabs should be four spaces.
 #+BEGIN_SRC emacs-lisp
 (setq-default tab-width 4)
 (setq-default tab-stop-list (list 4 8 12))
 #+END_SRC
+
 ** Always indent with spaces
 
 Never use tabs. Tabs are the devil’s whitespace.
@@ -150,6 +168,7 @@ Never use tabs. Tabs are the devil’s whitespace.
 #+BEGIN_SRC emacs-lisp
   (setq-default indent-tabs-mode nil)
 #+END_SRC
+
 * Package repos
 
 #+BEGIN_SRC emacs-lisp
@@ -162,7 +181,7 @@ Never use tabs. Tabs are the devil’s whitespace.
 #+END_SRC
 
 * Bootstrap =use-package=
-
+Install and load *use-package*
 #+BEGIN_SRC emacs-lisp
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -304,16 +323,6 @@ flyspell - in all text modes
 (add-hook 'text-mode-hook 'flyspell-mode)
 #+END_SRC 
 
-** theme-changer
-
-We where changing theme based on time, but let us stick with Dracula for now.
-
-#+BEGIN_SRC emacs-lisp
-;; (use-package theme-changer :ensure)
-;; (require 'theme-changer)
-;; (change-theme 'apropospriate-light 'dracula)
-#+END_SRC
-
 ** Magit
 
 #+BEGIN_SRC emacs-lisp
@@ -431,6 +440,26 @@ Auto-install the package from Melpa.
 (use-package ox-hugo
   :ensure t 
   :after ox)
+#+END_SRC
+
+** yasnippet
+
+I keep my snippets in =~/.emacs/yasnippets/personal=, and I always want =yasnippet=
+enabled.
+#+BEGIN_SRC emacs-lisp
+(use-package yasnippet)  
+(setq yas-snippet-dirs '("~/.emacs.d/yasnippets/personal"))
+(yas-global-mode 1)
+#+END_SRC
+
+** theme-changer
+
+We where changing theme based on time, but let us stick with Dracula for now.
+
+#+BEGIN_SRC emacs-lisp
+;; (use-package theme-changer :ensure)
+;; (require 'theme-changer)
+;; (change-theme 'apropospriate-light 'dracula)
 #+END_SRC
 
 
