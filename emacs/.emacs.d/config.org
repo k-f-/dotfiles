@@ -48,11 +48,6 @@ Drop scroll bar, Toolbar, Tooltips and Menu-Bar
 Don't display the help screen at start-up
 #+BEGIN_SRC emacs-lisp
 (setq initial-scratch-message nil)
-
-;; Set momentary title.
-(when (display-graphic-p)
-    (setq frame-title-format "loading..."))
-
 (setq inhibit-startup-screen t)
 #+END_SRC
 
@@ -129,7 +124,7 @@ If the new path's directories does not exist, create them."
 (global-set-key (kbd "C-c e") 'kef-visit-emacs-config)
 #+END_SRC
 
-* Keybinds
+* Keybinding
 Set some keybindings
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-c l") 'org-store-link)
@@ -162,9 +157,7 @@ Tabs should be four spaces.
 #+END_SRC
 
 ** Always indent with spaces
-
 Never use tabs. Tabs are the devil’s whitespace.
-
 #+BEGIN_SRC emacs-lisp
   (setq-default indent-tabs-mode nil)
 #+END_SRC
@@ -275,25 +268,27 @@ Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g.
 #+END_SRC  
 
 ** org-mode
-
 #+BEGIN_SRC emacs-lisp
 (use-package org
   :config
   (setq org-startup-indented t))
 #+END_SRC
 
+*** Org file locations
 Store all my org files in =~/Dropbox/org=.
 
 #+BEGIN_SRC emacs-lisp
 (setq org-directory "~/Dropbox/org")
 #+END_SRC
 
+*** Org agenda 
 And all of those files should be in included agenda.
 
 #+BEGIN_SRC emacs-lisp
 (setq org-agenda-files '("~/Dropbox/org"))
 #+END_SRC
 
+*** Refile Targets
 Refile targets should include files and down to 9 levels into them.
 
 #+BEGIN_SRC emacs-lisp
@@ -301,9 +296,49 @@ Refile targets should include files and down to 9 levels into them.
                                  (org-agenda-files :maxlevel . 9))))
 
 (add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\)$" . org-mode))
+#+END_SRC
 
-;; colorize src blocks in org-mode
+*** Colorize src blocks in org-mode
+
+#+BEGIN_SRC emacs-lisp
 (setq org-src-fontify-natively t)
+#+END_SRC
+
+*** org-todo-keywords
+
+#+BEGIN_SRC emacs-lisp
+(setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
+#+END_SRC
+
+*** org-capture-templates
+
+#+BEGIN_SRC emacs-lisp
+(setq org-capture-templates '(("t" "Todo [life]" entry
+                              ;; A personal list of things to do that I do NOT get direct compensation for.
+                              (file+headline "~/Dropbox/org/life.org" "Personal")
+                               "* TODO %i%?")
+
+                              ("w" "Todo [work]" entry
+                              ;; A todo list for work related items, things I get paid money for.
+                              (file+headline "~/Dropbox/org/work.org" "Tasks")
+                               "* TODO %i%?")
+
+                              ("m" "Moonshots" entry
+                              ;; A place to keep ideas for some other time.
+                              (file+headline "~/Dropbox/org/someday.org" "Ideas")
+                               "* WAITING %i%?")
+
+;; Climbing capture templates
+;; use =%u= for non-interactive time-stamps
+;; climb.org capture templates for routes/boulder problems
+                               ("r" "Route" table-line
+                               (file+headline "~/Dropbox/org/climb.org" "Routes")
+                                "|%?%^{Route Name?|NA}|%^{Yosemite Grade?|5.}|%^{Attempts?|0}|%u|")
+ 
+                               ("b" "Boulder Problem" table-line
+                               (file+headline "~/Dropbox/org/climb.org" "Boulder Problems")
+                                "|%?%^{Problem Name?|NA}|%^{V-Grade?|NA}|%^{Attempts?|0}|%u|")
+))
 #+END_SRC
 
 ** org-bullets
@@ -461,5 +496,4 @@ We where changing theme based on time, but let us stick with Dracula for now.
 ;; (require 'theme-changer)
 ;; (change-theme 'apropospriate-light 'dracula)
 #+END_SRC
-
 
