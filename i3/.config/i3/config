@@ -96,7 +96,7 @@ bindsym $mod+2 workspace 2
 bindsym $mod+3 workspace 3
 bindsym $mod+4 workspace 4
 bindsym $mod+5 workspace 5
-bindsym $mod+6 workspace 6n
+bindsym $mod+6 workspace 6
 bindsym $mod+7 workspace 7
 bindsym $mod+8 workspace 8
 bindsym $mod+9 workspace 9
@@ -194,10 +194,16 @@ exec --no-startup-id nm-applet &
 exec --no-startup-id redshift &
 
 # Invoke the Emacs daemon
-exec --no-startup-id emacs --daemon
+exec --no-startup-id emacs --daemon &
 
+# Start the appropriate programs on the right workspaces
 # Start spotify with some HiDPI settings
-exec --no-startup-id spotify --force-device-scale-factor=2 &
+exec --no-startup-id exec spotify --force-device-scale-factor=2 &
+for_window [class="Spotify"] move container to workspace 1
+
+# Firefox and emacs side by side
+exec --no-startup-id exec firefox &
+for_window [class="Firefox"] move container to workspace 2
 
 # Keybinds
 # Pulse Audio controls

@@ -329,7 +329,7 @@ Refile targets should include files and down to 9 levels into them.
                                "* WAITING %i%?")
 
 ;; Climbing capture templates
-;; use =%u= for non-interactive time-stamps
+;; use %u for non-interactive time-stamps
 ;; climb.org capture templates for routes/boulder problems
                                ("r" "Route" table-line
                                (file+headline "~/Dropbox/org/climb.org" "Routes")
