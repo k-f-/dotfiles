@@ -56,6 +56,13 @@ Don't display the help screen at start-up
 (setq ring-bell-function 'ignore)
 #+END_SRC
 
+** y-n not Yes-No
+From http://pages.sachachua.com/.emacs.d/Sacha.html#sec-1-4-8
+
+#+BEGIN_SRC emacs-lisp
+(fset 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+
 * Fonts
 
 #+BEGIN_SRC emacs-lisp
@@ -170,6 +177,11 @@ Never use tabs. Tabs are the devil’s whitespace.
   (setq package-archives '(("org" . "http://orgmode.org/elpa/")
                            ("melpa" . "https://melpa.org/packages/")
                            ("gnu"   . "http://elpa.gnu.org/packages/"))) 
+  (setq package-archive-priorities
+      '(("melpa" .  4)
+        ("melpa-stable" . 3)
+        ("org" . 2)
+        ("gnu" . 1)))
   (package-initialize)
 #+END_SRC
 
@@ -267,6 +279,7 @@ Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g.
 #+END_SRC  
 
 ** org-mode
+
 #+BEGIN_SRC emacs-lisp
 (use-package org
   :config
@@ -284,18 +297,20 @@ Store all my org files in =~/Dropbox/org=.
 And all of those files should be in included agenda.
 
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-files '("~/Dropbox/org"))
+(setq org-agenda-files '("~/Dropbox/org/life.org"
+                         "~/Dropbox/org/work.org"
+                         "~/Dropbox/org/edu.org"))
 #+END_SRC
 
 *** Refile Targets
-Refile targets should include files and down to 9 levels into them.
+Refile targets should include all files? and down to 9 levels into them.
 
 #+BEGIN_SRC emacs-lisp
-(setq org-refile-targets (quote ((nil :maxlevel . 9)
+(setq org-refile-targets (quote (("notes.org" :maxlevel . 1) ;; Top level headings in notes
                                  (org-agenda-files :maxlevel . 9))))
 
-(setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
-(setq org-refile-use-outline-path t)                  ; Show full paths for refiling
+(setq org-outline-path-complete-in-steps nil)         ;; Refile in a single go
+(setq org-refile-use-outline-path t)                  ;; Show full paths for refiling
 
 (add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\)$" . org-mode))
 #+END_SRC
@@ -316,33 +331,36 @@ Refile targets should include files and down to 9 levels into them.
 
 #+BEGIN_SRC emacs-lisp
 (setq org-capture-templates '(("t" "Todo [life]" entry
-                              ;; A personal list of things to do that I do NOT get direct compensation for.
+;; A list of things to do that I do NOT get direct compensation for.
                               (file+headline "~/Dropbox/org/life.org" "Personal")
-                               "* TODO %i%?")
+                               "* TODO %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n")
 
-                              ("w" "Todo [work]" entry
-                              ;; A todo list for work related items, things I get paid money for.
-                              (file+headline "~/Dropbox/org/work.org" "Tasks")
-                               "* TODO %i%?")
+;; A todo list for work related items, things I get paid money for.
+                              ("w" "Todo [work]" entry (file+headline "~/Dropbox/org/work.org" "Tasks")
+                               "* TODO %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n")
 
-                              ("m" "Moonshots" entry
-                              ;; A place to keep ideas for some other time.
-                              (file+headline "~/Dropbox/org/someday.org" "Ideas")
-                               "* WAITING %i%?")
+;; A place to keep ideas for some other time.
+                              ("m" "Moonshots" entry (file+headline "~/Dropbox/org/notes.org" "Someday")
+                               "* WAITING %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n")
+;; Hyperlink Capture
+                              ("l" "Hyperlink" entry (file+headline "~/Dropbox/org/notes.org" "Notes")
+	                            "* [[%?%^{url}][%^{Description?}]] \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :empty-lines 1)
+
+;; general Note Capture
+                              ("n" "Note" entry (file+headline "~/Dropbox/org/notes.org" "Notes")
+	                            "* %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :empty-lines 1)
+
 
 ;; Climbing capture templates
 ;; use %u for non-interactive time-stamps
 ;; climb.org capture templates for routes/boulder problems
                                ("r" "Route" table-line
                                (file+headline "~/Dropbox/org/climb.org" "Routes")
-                               "|%?%^{Route Name?|NA}|%^{Yosemite Grade?|5.}|%^{Attempts?|0}|%u|%^{Style?|Sport|Trad}|%^{Notes?}")
+                               "|%?%^{Route Name?|NA}|%^{Yosemite Grade?|5.}|%^{Attempts?|0}|%u|%^{Style?|Sport|Trad}|%^{Notes?}|")
  
-                               ("p" "Boulder Problem" table-line
+                               ("b" "Boulder Problem" table-line
                                (file+headline "~/Dropbox/org/climb.org" "Boulder Problems")
-                                "|%?%^{Problem Name?|NA}|%^{V-Grade?|NA}|%^{Attempts?|0}|%u|%^{Notes?}")
-;; Bookmarks Capture
-                               ("b" "Bookmark" entry (file+headline "~/Dropbox/org/notes.org" "Bookmarks")
-	                           "* %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :empty-lines 1)
+                                "|%?%^{Problem Name?|NA}|%^{V-Grade?|NA}|%^{Attempts?|0}|%u|%^{Notes?}|")
 ))
 #+END_SRC
 
@@ -492,12 +510,6 @@ enabled.
 (yas-global-mode 1)
 #+END_SRC
 
-** emacs-speaks-statistics
-Let's get emacs talking with R.
-#+BEGIN_SRC emacs-lisp
-(use-package ess :ensure)
-#+END_SRC
-
 ** zone-nyan
 
 #+BEGIN_SRC emacs-lisp
@@ -514,5 +526,36 @@ We where changing theme based on time, but let us stick with Dracula for now.
 ;; (use-package theme-changer :ensure)
 ;; (require 'theme-changer)
 ;; (change-theme 'apropospriate-light 'dracula)
+#+END_SRC
+
+** mode-line
+*** minions
+#+BEGIN_SRC emacs-lisp
+(use-package minions :ensure t)
+(minions-mode +1)
+#+END_SRC
+
+*** moody
+#+BEGIN_SRC emacs-lisp
+(use-package moody
+  :ensure t
+  :config
+(setq x-underline-at-descent-line t)
+
+(moody-replace-mode-line-buffer-identification)
+(moody-replace-vc-mode))
+#+END_SRC
+
+*** face-remap
+#+BEGIN_SRC emacs-lisp
+(use-package face-remap
+  :bind(("C-+" . text-scale-increase)
+        ("C--" . text-scale-decrease)))
+#+END_SRC
+
+** emacs-speaks-statistics
+Let's get emacs talking with R.
+#+BEGIN_SRC emacs-lisp
+(use-package ess :ensure)
 #+END_SRC
 
