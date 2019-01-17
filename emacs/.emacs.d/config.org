@@ -165,12 +165,12 @@ Never use tabs. Tabs are the devil’s whitespace.
 * Package repos
 
 #+BEGIN_SRC emacs-lisp
-(require 'package)
-(setq package-enable-at-startup nil)
-(setq package-archives '(("org"   . "http://orgmode.org/elpa/")
-						 ("gnu"   . "http://elpa.gnu.org/packages/")
-						 ("melpa" . "https://melpa.org/packages/")))
-(package-initialize)
+  (require 'package)
+  (setq package-enable-at-startup nil)
+  (setq package-archives '(("org" . "http://orgmode.org/elpa/")
+                           ("melpa" . "https://melpa.org/packages/")
+                           ("gnu"   . "http://elpa.gnu.org/packages/"))) 
+  (package-initialize)
 #+END_SRC
 
 * Bootstrap =use-package=
@@ -194,7 +194,6 @@ Install and load *use-package*
 (use-package dracula-theme :ensure)
 (use-package poet-theme :ensure)
 (use-package spacemacs-theme :ensure)
-(use-package poet-theme :ensure)
 (load-theme 'spacemacs-dark t)
 #+END_SRC 
 
@@ -295,6 +294,9 @@ Refile targets should include files and down to 9 levels into them.
 (setq org-refile-targets (quote ((nil :maxlevel . 9)
                                  (org-agenda-files :maxlevel . 9))))
 
+(setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
+(setq org-refile-use-outline-path t)                  ; Show full paths for refiling
+
 (add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\)$" . org-mode))
 #+END_SRC
 
@@ -333,11 +335,14 @@ Refile targets should include files and down to 9 levels into them.
 ;; climb.org capture templates for routes/boulder problems
                                ("r" "Route" table-line
                                (file+headline "~/Dropbox/org/climb.org" "Routes")
-                                "|%?%^{Route Name?|NA}|%^{Yosemite Grade?|5.}|%^{Attempts?|0}|%u|")
+                               "|%?%^{Route Name?|NA}|%^{Yosemite Grade?|5.}|%^{Attempts?|0}|%u|%^{Style?|Sport|Trad}|%^{Notes?}")
  
-                               ("b" "Boulder Problem" table-line
+                               ("p" "Boulder Problem" table-line
                                (file+headline "~/Dropbox/org/climb.org" "Boulder Problems")
-                                "|%?%^{Problem Name?|NA}|%^{V-Grade?|NA}|%^{Attempts?|0}|%u|")
+                                "|%?%^{Problem Name?|NA}|%^{V-Grade?|NA}|%^{Attempts?|0}|%u|%^{Notes?}")
+;; Bookmarks Capture
+                               ("b" "Bookmark" entry (file+headline "~/Dropbox/org/notes.org" "Bookmarks")
+	                           "* %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :empty-lines 1)
 ))
 #+END_SRC
 
@@ -412,7 +417,7 @@ really helpful for some modes (like =projectile=, for example).
   (setq which-key-idle-delay 1.0))
 #+END_SRC
 
-** org-pomodoro 
+** org-pomodoro
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-pomodoro :ensure)
@@ -485,6 +490,20 @@ enabled.
 (use-package yasnippet)  
 (setq yas-snippet-dirs '("~/.emacs.d/yasnippets/personal"))
 (yas-global-mode 1)
+#+END_SRC
+
+** emacs-speaks-statistics
+Let's get emacs talking with R.
+#+BEGIN_SRC emacs-lisp
+(use-package ess :ensure)
+#+END_SRC
+
+** zone-nyan
+
+#+BEGIN_SRC emacs-lisp
+(use-package zone-nyan :ensure)
+(setq zone-programs [zone-nyan])
+(zone-when-idle 120) 
 #+END_SRC
 
 ** theme-changer
