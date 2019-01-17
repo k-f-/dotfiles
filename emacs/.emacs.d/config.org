@@ -62,6 +62,10 @@ From http://pages.sachachua.com/.emacs.d/Sacha.html#sec-1-4-8
 #+BEGIN_SRC emacs-lisp
 (fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
+** Avoid native dialogues
+#+BEGIN_SRC emacs-lisp
+(setq use-dialog-box nil)
+#+END_SRC
 
 * Fonts
 
@@ -106,7 +110,6 @@ If the new path's directories does not exist, create them."
 
 (setq make-backup-file-name-function 'kef-backup-file-name)
 #+END_SRC
-
 * Functions
 ** Kill current buffer.
 
@@ -121,7 +124,6 @@ If the new path's directories does not exist, create them."
 #+END_SRC
 
 ** Visit emacs config
-
 #+BEGIN_SRC emacs-lisp
 (defun kef-visit-emacs-config ()
   (interactive)
@@ -169,6 +171,16 @@ Never use tabs. Tabs are the devil’s whitespace.
   (setq-default indent-tabs-mode nil)
 #+END_SRC
 
+** Save my location within a file
+
+Using =save-place-mode= saves the location of point for every file I visit. If I
+close the file or close the editor, then later re-open it, point will be at the
+last place I visited.
+
+#+BEGIN_SRC emacs-lisp
+  (save-place-mode t)
+#+END_SRC
+
 * Package repos
 
 #+BEGIN_SRC emacs-lisp
@@ -186,7 +198,7 @@ Never use tabs. Tabs are the devil’s whitespace.
 #+END_SRC
 
 * Bootstrap =use-package=
-Install and load *use-package*
+Install and load =use-package=
 #+BEGIN_SRC emacs-lisp
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -202,12 +214,21 @@ Install and load *use-package*
 ** Themes
 
 #+BEGIN_SRC emacs-lisp
-(use-package apropospriate-theme :ensure)
-(use-package dracula-theme :ensure)
-(use-package poet-theme :ensure)
+;;(use-package apropospriate-theme :ensure)
+;;(use-package dracula-theme :ensure)
+;;(use-package poet-theme :ensure)
 (use-package spacemacs-theme :ensure)
 (load-theme 'spacemacs-dark t)
-#+END_SRC 
+
+(let ((line (face-attribute 'mode-line :underline)))
+    (set-face-attribute 'mode-line          nil :overline   line)
+    (set-face-attribute 'mode-line-inactive nil :overline   line)
+    (set-face-attribute 'mode-line-inactive nil :underline  line)
+    (set-face-attribute 'mode-line          nil :box        nil)
+    (set-face-attribute 'mode-line-inactive nil :box        nil)
+    (set-face-attribute 'mode-line-inactive nil :background "#b2b2b2"))
+#+END_SRC
+
 
 * Packages
 ** Projectile
@@ -413,16 +434,6 @@ Use =company-mode= everywhere
   (global-set-key (kbd "M-/") 'company-complete-common)
 #+END_SRC
 
-** Save my location within a file
-
-Using =save-place-mode= saves the location of point for every file I visit. If I
-close the file or close the editor, then later re-open it, point will be at the
-last place I visited.
-
-#+BEGIN_SRC emacs-lisp
-  (save-place-mode t)
-#+END_SRC
-
 ** Install and configure =which-key=
 
 =which-key= displays the possible completions for a long keybinding. That's
@@ -515,7 +526,7 @@ enabled.
 #+BEGIN_SRC emacs-lisp
 (use-package zone-nyan :ensure)
 (setq zone-programs [zone-nyan])
-(zone-when-idle 120) 
+(setq zone-when-idle 120) 
 #+END_SRC
 
 ** theme-changer
@@ -537,24 +548,16 @@ We where changing theme based on time, but let us stick with Dracula for now.
 
 *** moody
 #+BEGIN_SRC emacs-lisp
-(use-package moody
-  :ensure t
+(use-package moody :ensure
   :config
-(setq x-underline-at-descent-line t)
-
-(moody-replace-mode-line-buffer-identification)
-(moody-replace-vc-mode))
-#+END_SRC
-
-*** face-remap
-#+BEGIN_SRC emacs-lisp
-(use-package face-remap
-  :bind(("C-+" . text-scale-increase)
-        ("C--" . text-scale-decrease)))
+  (setq x-underline-at-descent-line t)
+  (moody-replace-mode-line-buffer-identification)
+  (moody-replace-vc-mode))
 #+END_SRC
 
 ** emacs-speaks-statistics
 Let's get emacs talking with R.
+
 #+BEGIN_SRC emacs-lisp
 (use-package ess :ensure)
 #+END_SRC
