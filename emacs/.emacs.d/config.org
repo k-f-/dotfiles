@@ -133,6 +133,47 @@ If the new path's directories does not exist, create them."
 (global-set-key (kbd "C-c e") 'kef-visit-emacs-config)
 #+END_SRC
 
+** TODO Cycle Properties drawer in org-mode
+So this is very cool, but not exactly what we want.
+
+;;#+BEGIN_SRC emacs-lisp
+(defun org-cycle-hide-drawers (state)
+  "Re-hide all drawers after a visibility state change."
+  (when (and (derived-mode-p 'org-mode)
+             (not (memq state '(overview folded contents))))
+    (save-excursion
+      (let* ((globalp (memq state '(contents all)))
+             (beg (if globalp
+                    (point-min)
+                    (point)))
+             (end (if globalp
+                    (point-max)
+                    (if (eq state 'children)
+                      (save-excursion
+                        (outline-next-heading)
+                        (point))
+                      (org-end-of-subtree t)))))
+        (goto-char beg)
+        (while (re-search-forward org-drawer-regexp end t)
+          (save-excursion
+            (beginning-of-line 1)
+            (when (looking-at org-drawer-regexp)
+              (let* ((start (1- (match-beginning 0)))
+                     (limit
+                       (save-excursion
+                         (outline-next-heading)
+                           (point)))
+                     (msg (format
+                            (concat
+                              "org-cycle-hide-drawers:  "
+                              "`:END:`"
+                              " line missing at position %s")
+                            (1+ start))))
+                (if (re-search-forward "^[ \t]*:END:" limit t)
+                  (outline-flag-region start (point-at-eol) t)
+                  (user-error msg))))))))))
+;;#+END_SRC
+
 * Keybinding
 Set some keybindings
 #+BEGIN_SRC emacs-lisp
@@ -228,7 +269,6 @@ Install and load =use-package=
     (set-face-attribute 'mode-line-inactive nil :box        nil)
     (set-face-attribute 'mode-line-inactive nil :background "#b2b2b2"))
 #+END_SRC
-
 
 * Packages
 ** Projectile
@@ -377,11 +417,11 @@ Refile targets should include all files? and down to 9 levels into them.
 ;; climb.org capture templates for routes/boulder problems
                                ("r" "Route" table-line
                                (file+headline "~/Dropbox/org/climb.org" "Routes")
-                               "|%?%^{Route Name?|NA}|%^{Yosemite Grade?|5.}|%^{Attempts?|0}|%u|%^{Style?|Sport|Trad}|%^{Notes?}|")
+                               "|%u|%?%^{Route Name?|NA}|%^{Yosemite Grade?|5.}|%^{Attempts?|0}|%^{Style?|Sport|Trad}|%^{Notes?}|")
  
                                ("b" "Boulder Problem" table-line
                                (file+headline "~/Dropbox/org/climb.org" "Boulder Problems")
-                                "|%?%^{Problem Name?|NA}|%^{V-Grade?|NA}|%^{Attempts?|0}|%u|%^{Notes?}|")
+                                "|%u|%?%^{Problem Name?|NA}|%^{V-Grade?|NA}|%^{Attempts?|0}|%^{Notes?}|")
 ))
 #+END_SRC
 
