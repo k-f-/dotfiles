@@ -198,15 +198,19 @@ exec --no-startup-id nm-applet &
 # Use Redshift to adjust screen color over the course of the day
 exec --no-startup-id redshift &
 
+# launch gotop
+# exec --no-startup-id ~/.bin/gotop & 
+
 # Invoke the Emacs daemon
-exec exec --no-startup-id "nohup emacs --daemon &> .out/emacs.out"
+exec --no-startup-id "nohup emacs --daemon &> .out/emacs.out"
 
 # Start the appropriate programs on the right workspaces
 # Start spotify with some HiDPI settings
+# spotify always on workspace 1
 exec --no-startup-id exec spotify --force-device-scale-factor=2 &
 for_window [class="Spotify"] move container to workspace 1
 
-# Firefox and emacs side by side
+# Firefox in workspace 2 - always
 exec --no-startup-id exec firefox &
 for_window [class="Firefox"] move container to workspace 2
 

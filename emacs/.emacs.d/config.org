@@ -62,9 +62,18 @@ From http://pages.sachachua.com/.emacs.d/Sacha.html#sec-1-4-8
 #+BEGIN_SRC emacs-lisp
 (fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
+
 ** Avoid native dialogues
 #+BEGIN_SRC emacs-lisp
 (setq use-dialog-box nil)
+#+END_SRC
+
+** Col-wrap
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'text-mode-hook 'turn-on-auto-fill)
+  (add-hook 'text-mode-hook
+    '(lambda() (set-fill-column 80)))
 #+END_SRC
 
 * Fonts
@@ -110,6 +119,7 @@ If the new path's directories does not exist, create them."
 
 (setq make-backup-file-name-function 'kef-backup-file-name)
 #+END_SRC
+
 * Functions
 ** Kill current buffer.
 
@@ -202,8 +212,8 @@ much space is kept between the cursor and the bottom of the buffer.
 ** Tabs
 Tabs should be four spaces.
 #+BEGIN_SRC emacs-lisp
-(setq-default tab-width 4)
-(setq-default tab-stop-list (list 4 8 12))
+(setq-default tab-width 8)
+(setq-default tab-stop-list (list 8 16 24 32 40 48 56 64 72 80 88 96 104 112 120)
 #+END_SRC
 
 ** Always indent with spaces
@@ -344,7 +354,10 @@ Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g.
 #+BEGIN_SRC emacs-lisp
 (use-package org
   :config
-  (setq org-startup-indented t))
+  (setq org-startup-indented t) ;; Indent org-file display
+;;(setq org-hide-leading-stars t)
+  (setq org-src-tab-acts-natively t)
+)
 #+END_SRC
 
 *** Org file locations
@@ -367,7 +380,7 @@ And all of those files should be in included agenda.
 Refile targets should include all files? and down to 9 levels into them.
 
 #+BEGIN_SRC emacs-lisp
-(setq org-refile-targets (quote (("notes.org" :maxlevel . 1) ;; Top level headings in notes
+(setq org-refile-targets (quote (("notes.org" :maxlevel . 2) ;; Top level headings in notes
                                  (org-agenda-files :maxlevel . 9))))
 
 (setq org-outline-path-complete-in-steps nil)         ;; Refile in a single go
@@ -405,7 +418,7 @@ Refile targets should include all files? and down to 9 levels into them.
                                "* WAITING %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n")
 ;; Hyperlink Capture
                               ("l" "Hyperlink" entry (file+headline "~/Dropbox/org/notes.org" "Notes")
-	                            "* [[%?%^{url}][%^{Description?}]] \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :empty-lines 1)
+	                            "* [[%?%^{url}][%^{Description?}]]")
 
 ;; general Note Capture
                               ("n" "Note" entry (file+headline "~/Dropbox/org/notes.org" "Notes")
@@ -564,9 +577,9 @@ enabled.
 ** zone-nyan
 
 #+BEGIN_SRC emacs-lisp
-(use-package zone-nyan :ensure)
-(setq zone-programs [zone-nyan])
-(setq zone-when-idle 120) 
+;(use-package zone-nyan :ensure)
+;(setq zone-programs [zone-nyan])
+;(setq zone-when-idle 120) 
 #+END_SRC
 
 ** theme-changer
@@ -600,5 +613,20 @@ Let's get emacs talking with R.
 
 #+BEGIN_SRC emacs-lisp
 (use-package ess :ensure)
+#+END_SRC
+
+** Alert
+Alerts for emacs
+#+BEGIN_SRC emacs-lisp
+  (use-package alert
+    :commands (alert)
+    :init
+    (setq alert-default-style 'notifier))
+#+END_SRC
+
+** htmlize
+
+#+BEGIN_SRC emacs-lisp
+(use-package htmlize :ensure)
 #+END_SRC
 
