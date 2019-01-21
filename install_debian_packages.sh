@@ -5,7 +5,7 @@ sudo apt install \
      build-essential \
      compton \
      curl \
-     emacs25 \
+     emacs26 \
      feh \
      git \
      gksu \
@@ -18,9 +18,7 @@ sudo apt install \
      libnotify-bin \
      make \
      msmtp \
-     mutt \
      notmuch \
-     notmuch-mutt \
      openssl \
      pandoc \
      pass \
@@ -51,7 +49,7 @@ sudo apt install \
      xcape \
      xdotool \
      xsel \
-     zathura
+     zathura \
 
 # For tlp power management.
 sudo apt install \
