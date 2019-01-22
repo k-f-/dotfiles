@@ -143,47 +143,6 @@ If the new path's directories does not exist, create them."
 (global-set-key (kbd "C-c e") 'kef-visit-emacs-config)
 #+END_SRC
 
-** TODO Cycle Properties drawer in org-mode
-So this is very cool, but not exactly what we want.
-
-;;#+BEGIN_SRC emacs-lisp
-(defun org-cycle-hide-drawers (state)
-  "Re-hide all drawers after a visibility state change."
-  (when (and (derived-mode-p 'org-mode)
-             (not (memq state '(overview folded contents))))
-    (save-excursion
-      (let* ((globalp (memq state '(contents all)))
-             (beg (if globalp
-                    (point-min)
-                    (point)))
-             (end (if globalp
-                    (point-max)
-                    (if (eq state 'children)
-                      (save-excursion
-                        (outline-next-heading)
-                        (point))
-                      (org-end-of-subtree t)))))
-        (goto-char beg)
-        (while (re-search-forward org-drawer-regexp end t)
-          (save-excursion
-            (beginning-of-line 1)
-            (when (looking-at org-drawer-regexp)
-              (let* ((start (1- (match-beginning 0)))
-                     (limit
-                       (save-excursion
-                         (outline-next-heading)
-                           (point)))
-                     (msg (format
-                            (concat
-                              "org-cycle-hide-drawers:  "
-                              "`:END:`"
-                              " line missing at position %s")
-                            (1+ start))))
-                (if (re-search-forward "^[ \t]*:END:" limit t)
-                  (outline-flag-region start (point-at-eol) t)
-                  (user-error msg))))))))))
-;;#+END_SRC
-
 * Keybinding
 Set some keybindings
 #+BEGIN_SRC emacs-lisp
@@ -270,7 +229,7 @@ Install and load =use-package=
 ;;(use-package poet-theme :ensure)
 (use-package spacemacs-theme :ensure)
 (load-theme 'spacemacs-dark t)
-
+;; modeline
 (let ((line (face-attribute 'mode-line :underline)))
     (set-face-attribute 'mode-line          nil :overline   line)
     (set-face-attribute 'mode-line-inactive nil :overline   line)
@@ -355,7 +314,6 @@ Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g.
 (use-package org
   :config
   (setq org-startup-indented t) ;; Indent org-file display
-;;(setq org-hide-leading-stars t)
   (setq org-src-tab-acts-natively t)
 )
 #+END_SRC
@@ -464,7 +422,7 @@ flyspell - in all text modes
 #+END_SRC
 
 And show changes in the gutter (fringe).
-
+*** TODO magit-git-gutter
 #+BEGIN_SRC emacs-lisp :tangle no
 (use-package git-gutter
   :config
@@ -477,6 +435,7 @@ And show changes in the gutter (fringe).
 ** Company Mode
 
 Use =company-mode= everywhere
+
 #+BEGIN_SRC emacs-lisp
 (use-package company :ensure)
 (add-hook 'after-init-hook 'global-company-mode)
@@ -570,28 +529,9 @@ I keep my snippets in =~/.emacs/yasnippets/personal=, and I always want =yasnipp
 enabled.
 #+BEGIN_SRC emacs-lisp
 (use-package yasnippet)  
-(setq yas-snippet-dirs '("~/.emacs.d/yasnippets/personal"))
+(setq yas-snippet-dirs '("~/.emacs.d/yasnippets/personal/"))
 (yas-global-mode 1)
 #+END_SRC
-
-** zone-nyan
-
-#+BEGIN_SRC emacs-lisp
-;(use-package zone-nyan :ensure)
-;(setq zone-programs [zone-nyan])
-;(setq zone-when-idle 120) 
-#+END_SRC
-
-** theme-changer
-
-We where changing theme based on time, but let us stick with Dracula for now.
-
-#+BEGIN_SRC emacs-lisp
-;; (use-package theme-changer :ensure)
-;; (require 'theme-changer)
-;; (change-theme 'apropospriate-light 'dracula)
-#+END_SRC
-
 ** mode-line
 *** minions
 #+BEGIN_SRC emacs-lisp
