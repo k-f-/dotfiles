@@ -21,10 +21,10 @@ the tendency is to push it as far as you can.'
 #+END_SRC
 
 * Customize File Location
+Create custom file elsewhere.
+Keep customize settings in their own file 
 
 #+BEGIN_SRC emacs-lisp
-;; Create custom file elsewhere.
-;; keep customize settings in their own file 
 (setq custom-file "~/.emacs.d/custom.el")
 (when (file-exists-p custom-file) (load custom-file))
 #+END_SRC
@@ -172,7 +172,7 @@ much space is kept between the cursor and the bottom of the buffer.
 Tabs should be four spaces.
 #+BEGIN_SRC emacs-lisp
 (setq-default tab-width 8)
-(setq-default tab-stop-list (list 8 16 24 32 40 48 56 64 72 80 88 96 104 112 120)
+(setq-default tab-stop-list (list 8 16 24 32 40 48 56 64 72 80 88 96 104 112 120))
 #+END_SRC
 
 ** Always indent with spaces
