@@ -116,6 +116,33 @@ bindsym $mod+Shift+8 move container to workspace 8
 bindsym $mod+Shift+9 move container to workspace 9
 bindsym $mod+Shift+0 move container to workspace 10
 
+#################################################################
+# Keybinds
+#################################################################
+# Use Caps Lock as an additional Control key
+exec setxkbmap -option ctrl:nocaps
+
+# Treat hitting and releasing Control without chording as Escape
+exec xcape &
+
+# Pulse Audio controls
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5% #increase sound volume
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5% #decrease sound volume
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle # mute sound
+
+# Screen brightness controls
+bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 5 # increase screen brightness
+bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 5 # decrease screen brightness
+
+# Media player controls
+bindsym XF86AudioPlay exec playerctl play-pause
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
+
+# i3lock, keybind and autolock after 10 minutes
+bindsym $mod+Shift+F12 exec --no-startup-id i3lock -e -c 000000
+exec --no-startup-id xautolock -time 10 -locker 'i3lock -e -c 000000'
+
 # reload the configuration file
 bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
@@ -151,7 +178,9 @@ mode "resize" {
 }
 
 bindsym $mod+r mode "resize"
-
+#################################################################
+# i3Bar
+#################################################################
 bar {
 	font pango:San Francisco Display 11
 	position top
@@ -168,8 +197,9 @@ bar {
     	   binding_mode       #FF5555 #FF5555 #F8F8F2
   		   }
 }
-
-## Start-up applications
+#################################################################
+# Startup Applications
+#################################################################
 
 # Start the Compton compositor (for i3bar transparency)
 exec --no-startup-id compton &
@@ -199,7 +229,7 @@ exec --no-startup-id nm-applet &
 exec --no-startup-id redshift &
 
 # launch gotop
-# exec --no-startup-id ~/.bin/gotop & 
+exec --no-startup-id "urxvt -e ~/.bin/gotop &" 
 
 # Invoke the Emacs daemon
 exec --no-startup-id "nohup emacs --daemon &> .out/emacs.out"
@@ -214,30 +244,9 @@ for_window [class="Spotify"] move container to workspace 1
 exec --no-startup-id exec firefox &
 for_window [class="Firefox"] move container to workspace 2
 
-# Keybinds
-# Pulse Audio controls
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5% #increase sound volume
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5% #decrease sound volume
-bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle # mute sound
-
-# Screen brightness controls
-bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 5 # increase screen brightness
-bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 5 # decrease screen brightness
-
-# Media player controls
-bindsym XF86AudioPlay exec playerctl play-pause
-bindsym XF86AudioNext exec playerctl next
-bindsym XF86AudioPrev exec playerctl previous
-
-# i3lock, keybind and autolock after 10 minutes
-bindsym $mod+Shift+F12 exec --no-startup-id i3lock -e -c 000000
-exec --no-startup-id xautolock -time 10 -locker 'i3lock -e -c 000000'
-
-
-########################################
-# Windows and workspaces
-########################################
-
+#################################################################
+# Windows and Workspaces
+#################################################################
 # Firefox keeps making dialog windows huge
 # and while resizing them with mod+r, jl and return
 # will save the previous size, let us make some sane constraits from i3 itself
