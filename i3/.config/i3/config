@@ -240,12 +240,15 @@ exec --no-startup-id "nohup emacs --daemon &> .out/emacs.out"
 # Start the appropriate programs on the right workspaces
 # Start spotify with some HiDPI settings
 # spotify always on workspace 1
-exec --no-startup-id exec spotify --force-device-scale-factor=2 &
+exec --no-startup-id spotify --force-device-scale-factor=2 &
 for_window [class="Spotify"] move container to workspace 1
 
 # Firefox in workspace 2 - always
-exec --no-startup-id exec firefox &
+exec --no-startup-id firefox &
 for_window [class="Firefox"] move container to workspace 2
+
+# launch an emacs instance connected to earlier server
+exec --no-startup-id emacsclient -nc
 
 #################################################################
 # Windows and Workspaces
