@@ -14,3 +14,6 @@ stow dunst
 # Link .bash_profile -> .bashrc
 rm -f ~/.bash_profile
 ln -s ~/.bashrc ~/.bash_profile
+
+# Link Some Dropbox folders
+ln -s ~/org ~/Dropbox/org

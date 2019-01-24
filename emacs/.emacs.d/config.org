@@ -319,19 +319,21 @@ Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g.
 #+END_SRC
 
 *** Org file locations
-Store all my org files in =~/Dropbox/org=.
+Store all my org files in =~/org=, which is symlinked to ~/Dropbox/org/.
 
 #+BEGIN_SRC emacs-lisp
-(setq org-directory "~/Dropbox/org")
+(setq org-directory "~/org")
 #+END_SRC
 
 *** Org agenda 
-And all of those files should be in included agenda.
+I cannot seem to make up my mind here.  I suppose with Swiper and Ivy it doesn't
+matter to much. Refile targets seem to be more important to have limits on.
 
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-files '("~/Dropbox/org/life.org"
-                         "~/Dropbox/org/work.org"
-                         "~/Dropbox/org/edu.org"))
+;;(setq org-agenda-files '("~/org/life.org"
+;;                         "~/org/work.org"
+;;                         "~/org/edu.org"))
+(setq org-agenda-files '("~/org/"))
 #+END_SRC
 
 *** Refile Targets
@@ -364,22 +366,22 @@ Refile targets should include all files? and down to 9 levels into them.
 #+BEGIN_SRC emacs-lisp
 (setq org-capture-templates '(("t" "Todo [life]" entry
 ;; A list of things to do that I do NOT get direct compensation for.
-                              (file+headline "~/Dropbox/org/life.org" "Personal")
+                              (file+headline "~/org/life.org" "Personal")
                                "* TODO %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n")
 
 ;; A todo list for work related items, things I get paid money for.
-                              ("w" "Todo [work]" entry (file+headline "~/Dropbox/org/work.org" "Tasks")
+                              ("w" "Todo [work]" entry (file+headline "~/org/work.org" "Tasks")
                                "* TODO %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n")
 
 ;; A place to keep ideas for some other time.
-                              ("m" "Moonshots" entry (file+headline "~/Dropbox/org/notes.org" "Someday")
+                              ("m" "Moonshots" entry (file+headline "~/org/notes.org" "Someday")
                                "* WAITING %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n")
 ;; Hyperlink Capture
-                              ("l" "Hyperlink" entry (file+headline "~/Dropbox/org/notes.org" "Notes")
+                              ("l" "Hyperlink" entry (file+headline "~/org/notes.org" "Notes")
 	                            "* [[%?%^{url}][%^{Description?}]]")
 
 ;; general Note Capture
-                              ("n" "Note" entry (file+headline "~/Dropbox/org/notes.org" "Notes")
+                              ("n" "Note" entry (file+headline "~/org/notes.org" "Notes")
 	                            "* %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :empty-lines 1)
 
 
@@ -387,11 +389,11 @@ Refile targets should include all files? and down to 9 levels into them.
 ;; use %u for non-interactive time-stamps
 ;; climb.org capture templates for routes/boulder problems
                                ("r" "Route" table-line
-                               (file+headline "~/Dropbox/org/climb.org" "Routes")
+                               (file+headline "~/org/climb.org" "Routes")
                                "|%u|%?%^{Route Name?|NA}|%^{Yosemite Grade?|5.}|%^{Attempts?|0}|%^{Style?|Sport|Trad}|%^{Notes?}|")
  
                                ("b" "Boulder Problem" table-line
-                               (file+headline "~/Dropbox/org/climb.org" "Boulder Problems")
+                               (file+headline "~/org/climb.org" "Boulder Problems")
                                 "|%u|%?%^{Problem Name?|NA}|%^{V-Grade?|NA}|%^{Attempts?|0}|%^{Notes?}|")
 ))
 #+END_SRC
@@ -524,7 +526,6 @@ Auto-install the package from Melpa.
 #+END_SRC
 
 ** yasnippet
-
 I keep my snippets in =~/.emacs/yasnippets/personal=, and I always want =yasnippet=
 enabled.
 #+BEGIN_SRC emacs-lisp
@@ -532,6 +533,7 @@ enabled.
 (setq yas-snippet-dirs '("~/.emacs.d/yasnippets/personal/"))
 (yas-global-mode 1)
 #+END_SRC
+
 ** mode-line
 *** minions
 #+BEGIN_SRC emacs-lisp
@@ -569,4 +571,16 @@ Alerts for emacs
 #+BEGIN_SRC emacs-lisp
 (use-package htmlize :ensure)
 #+END_SRC
+
+** shell-pop
+#+BEGIN_SRC emacs-lisp
+(use-package shell-pop
+  :bind (("C-t" . shell-pop))
+  :config
+  (setq shell-pop-shell-type (quote ("ansi-term" "*ansi-term*" (lambda nil (ansi-term shell-pop-term-shell)))))
+  (setq shell-pop-term-shell "/bin/bash")
+  ;; need to do this manually or not picked up by `shell-pop'
+  (shell-pop--set-shell-type 'shell-pop-shell-type shell-pop-shell-type))
+#+END_SRC
+
 

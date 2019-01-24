@@ -140,8 +140,11 @@ bindsym XF86AudioNext exec playerctl next
 bindsym XF86AudioPrev exec playerctl previous
 
 # i3lock, keybind and autolock after 10 minutes
+
 bindsym $mod+Shift+F12 exec --no-startup-id i3lock -e -c 000000
-exec --no-startup-id xautolock -time 10 -locker 'i3lock -e -c 000000'
+exec xautolock -detectsleep -time 5 -locker "lock" \
+  -notify 30 \
+  -notifier "notify-send -u critical -t 10000 -- 'locking screen in 30 seconds'"
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
