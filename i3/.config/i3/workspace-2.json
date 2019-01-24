@@ -1,0 +1,46 @@
+// vim:ts=4:sw=4:et
+{
+    "border": "normal",
+    "current_border_width": 0,
+    "floating": "auto_off",
+    "geometry": {
+       "height": 1796,
+       "width": 1920,
+       "x": 0,
+       "y": 0
+    },
+    "percent": 0.6,
+    "swallows": [
+       {
+       "class": "^Firefox$",
+       "instance": "^Navigator$",
+       "transient_for": "^$",
+       "window_role": "^browser$"
+       }
+    ],
+    "type": "con"
+}
+
+{
+    "border": "normal",
+    "current_border_width": 0,
+    "floating": "auto_off",
+    "geometry": {
+       "height": 1332,
+       "width": 1536,
+       "x": 0,
+       "y": 0
+    },
+    "name": "emacs@osh",
+    "percent": 0.4,
+    "swallows": [
+       {
+       "class": "^Emacs$",
+       "instance": "^emacs$",
+       "title": "^emacs\\@osh$",
+       "transient_for": "^$"
+       }
+    ],
+    "type": "con"
+}
+
