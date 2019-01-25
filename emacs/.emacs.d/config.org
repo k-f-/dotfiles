@@ -83,7 +83,7 @@ From http://pages.sachachua.com/.emacs.d/Sacha.html#sec-1-4-8
 ;; 0123456789abcdefghijklmnopqrstuvwxyz [] () :;,. !@#$^&*
 ;; 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ {} <> "'`  ~-_/|\?
 (add-to-list 'default-frame-alist
-             '(font . "InputMono-12"))
+             '(font . "InputMono-10"))
 #+END_SRC
 
 * Backups
