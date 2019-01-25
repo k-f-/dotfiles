@@ -340,13 +340,14 @@ matter to much. Refile targets seem to be more important to have limits on.
 Refile targets should include all files? and down to 9 levels into them.
 
 #+BEGIN_SRC emacs-lisp
-(setq org-refile-targets (quote (("notes.org" :maxlevel . 2) ;; Top level headings in notes
-                                 (org-agenda-files :maxlevel . 9))))
+  (setq org-refile-targets (quote (("notes.org" :maxlevel . 2) ;; Top level headings in notes
+                                   ("kfring.org" :maxlevel . 2) ;; Top level in personal blog
+                                  (org-agenda-files :maxlevel . 9))))
 
-(setq org-outline-path-complete-in-steps nil)         ;; Refile in a single go
-(setq org-refile-use-outline-path t)                  ;; Show full paths for refiling
+  (setq org-outline-path-complete-in-steps nil)         ;; Refile in a single go
+  (setq org-refile-use-outline-path t)                  ;; Show full paths for refiling
 
-(add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\)$" . org-mode))
+  (add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\)$" . org-mode))
 #+END_SRC
 
 *** Colorize src blocks in org-mode
@@ -358,7 +359,7 @@ Refile targets should include all files? and down to 9 levels into them.
 *** org-todo-keywords
 
 #+BEGIN_SRC emacs-lisp
-(setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
+(setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w@/!)" "|" "DONE(d!)" "CANCELLED(c@)")))
 #+END_SRC
 
 *** org-capture-templates
@@ -582,5 +583,4 @@ Alerts for emacs
   ;; need to do this manually or not picked up by `shell-pop'
   (shell-pop--set-shell-type 'shell-pop-shell-type shell-pop-shell-type))
 #+END_SRC
-
 

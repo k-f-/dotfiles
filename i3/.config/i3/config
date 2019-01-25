@@ -120,10 +120,10 @@ bindsym $mod+Shift+0 move container to workspace 10
 # Keybinds
 #################################################################
 # Use Caps Lock as an additional Control key
-exec setxkbmap -option ctrl:nocaps
+exec --no-startup-id setxkbmap -option ctrl:nocaps
 
 # Treat hitting and releasing Control without chording as Escape
-exec xcape &
+exec --no-startup-id xcape &
 
 # Pulse Audio controls
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5% #increase sound volume
