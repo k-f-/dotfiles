@@ -227,7 +227,7 @@ Install and load =use-package=
 ;;(use-package apropospriate-theme :ensure)
 ;;(use-package dracula-theme :ensure)
 ;;(use-package poet-theme :ensure)
-(use-package spacemacs-theme :ensure)
+;;(use-package spacemacs-theme :ensure)
 (load-theme 'spacemacs-dark t)
 ;; modeline
 (let ((line (face-attribute 'mode-line :underline)))
@@ -340,7 +340,7 @@ matter to much. Refile targets seem to be more important to have limits on.
 Refile targets should include all files? and down to 9 levels into them.
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-refile-targets (quote (("notes.org" :maxlevel . 2) ;; Top level headings in notes
+  (setq org-refile-targets (quote (("notes.org" :maxlevel . 3) ;; Top level headings in notes
                                    ("kfring.org" :maxlevel . 2) ;; Top level in personal blog
                                   (org-agenda-files :maxlevel . 9))))
 
@@ -397,6 +397,11 @@ Refile targets should include all files? and down to 9 levels into them.
                                (file+headline "~/org/climb.org" "Boulder Problems")
                                 "|%u|%?%^{Problem Name?|NA}|%^{V-Grade?|NA}|%^{Attempts?|0}|%^{Notes?}|")
 ))
+#+END_SRC
+
+*** org-log-into-drawer
+#+BEGIN_SRC emacs-lisp
+  (setq org-log-into-drawer t)
 #+END_SRC
 
 ** org-bullets
@@ -583,4 +588,3 @@ Alerts for emacs
   ;; need to do this manually or not picked up by `shell-pop'
   (shell-pop--set-shell-type 'shell-pop-shell-type shell-pop-shell-type))
 #+END_SRC
-
