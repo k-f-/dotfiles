@@ -1,6 +1,7 @@
 undo-tree/
 backup/
 elpa/
+emacs/.emacs.d/url/
 auto-save-list
 config.el
 ido.last
@@ -11,3 +12,4 @@ places
 recentf
 history
 bookmarks
+*.swp

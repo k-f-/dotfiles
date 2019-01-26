@@ -156,7 +156,12 @@ Move between open windows with =M-o= as well as =C-x o=.
   (global-set-key (kbd "M-o") 'other-window)
 #+END_SRC
 
-* Movement & Formatting
+* Movement, Formatting & Editing
+** Sentences end with a single space
+#+BEGIN_SRC emacs-lisp
+  (setq sentence-end-double-space nil)
+#+END_SRC
+
 ** Smooth Scrolling
 Smooth scrolling means when you hit C-n to go to the next line
 at the bottom of the page, instead of doing a page-down,
@@ -194,6 +199,18 @@ last place I visited.
 
 #+BEGIN_SRC emacs-lisp
   (save-place-mode t)
+#+END_SRC
+
+** Cut/copy/comment current line if no region selected
+via: https://caolan.org/dotfiles/emacs.html#org172314d
+#+BEGIN_QUOTE
+In many programs, like SlickEdit, TextMate and VisualStudio, “cut” and “copy” act on the current line if no text is visually selected. For this, I originally used code from Tim Krones Emacs config, but now I'm using the whole-line-or-region package, which can be customised to use the same line-or-region style for comments too. See comments in whole-line-or-region.el for details.
+#+END_QUOTE
+#+BEGIN_SRC emacs-lisp
+    (use-package whole-line-or-region :ensure)
+    (add-to-list 'whole-line-or-region-extensions-alist
+                 '(comment-dwim whole-line-or-region-comment-dwim nil))
+    (whole-line-or-region-mode 1)
 #+END_SRC
 
 * Package repos
@@ -417,6 +434,12 @@ Refile targets should include all files? and down to 9 levels into them.
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+END_SRC
 
+** org-pomodoro
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-pomodoro :ensure)
+#+END_SRC
+
 ** Flyspell
 
 flyspell - in all text modes
@@ -426,12 +449,18 @@ flyspell - in all text modes
 (add-hook 'text-mode-hook 'flyspell-mode)
 #+END_SRC 
 
-** Magit
-
+** Flycheck
 #+BEGIN_SRC emacs-lisp
-(use-package magit :ensure
-  :config
-  (global-set-key (kbd "s-g") 'magit-status))
+  (use-package flycheck :ensure)
+#+END_SRC
+
+** Magit
+Bind to =s-g= and =C-c m=.  Later we'll see which one we use more often.
+#+BEGIN_SRC emacs-lisp
+  (use-package magit :ensure
+    :config
+    :bind (("C-c m" . magit-status)))
+    (global-set-key (kbd "s-g") 'magit-status)
 #+END_SRC
 
 And show changes in the gutter (fringe).
@@ -469,12 +498,6 @@ really helpful for some modes (like =projectile=, for example).
   :config
   (which-key-mode)
   (setq which-key-idle-delay 1.0))
-#+END_SRC
-
-** org-pomodoro
-
-#+BEGIN_SRC emacs-lisp
-  (use-package org-pomodoro :ensure)
 #+END_SRC
 
 ** Deft
@@ -595,4 +618,97 @@ Launch a shell with C-t.
   (shell-pop--set-shell-type 'shell-pop-shell-type shell-pop-shell-type))
 #+END_SRC
 
+** web-mode & rainbow-mode
+Use web-mode for muxed html/css/js
+#+BEGIN_SRC emacs-lisp
+  (use-package web-mode
+    :ensure t
+    :mode "\\.html?\\'"
+    :config
+    (progn
+      (setq web-mode-markup-indent-offset 4)
+      (setq web-mode-code-indent-offset 4)
+      (setq web-mode-enable-current-element-highlight t)
+      (setq web-mode-enable-auto-expanding t)
+      ))
+#+END_SRC
+Rainbow-mode sets hexcodes as background color in html/css files. Handy.
+#+BEGIN_SRC emacs-lisp
+  (use-package rainbow-mode :ensure)
+#+END_SRC
+Turn on rainbow-mode for web/css.
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'web-mode-hook #'rainbow-mode)
+  (add-hook 'css-mode-hook #'rainbow-mode)
+#+END_SRC
 
+** elfeed
+Elfeed is a very nice RSS/Atom reader for emacs.
+#+BEGIN_SRC emacs-lisp
+  (use-package elfeed
+    :ensure t
+    :bind (:map elfeed-search-mode-map
+                ("A" . kef/elfeed-show-all)
+                ("U" . kef/elfeed-show-unread)
+                ("C" . kef/elfeed-show-comics)
+                ("N" . kef/elfeed-show-news)
+                ("q" . kef/elfeed-save-db-and-bury)))
+  (global-set-key (kbd "C-x w") 'kef/elfeed-load-db-and-open)
+#+END_SRC
+
+functions & hooks via: http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-emacs-with-elfeed/
+#+BEGIN_SRC emacs-lisp
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; elfeed feed reader                                                     ;;
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;shortcut functions
+  (defun kef/elfeed-show-all ()
+    (interactive)
+    (bookmark-maybe-load-default-file)
+    (bookmark-jump "elfeed-all"))
+  (defun kef/elfeed-show-unread ()
+    (interactive)
+    (bookmark-maybe-load-default-file)
+    (bookmark-jump "elfeed-unread"))
+  (defun kef/elfeed-show-comics ()
+    (interactive)
+    (bookmark-maybe-load-default-file)
+    (bookmark-jump "elfeed-comics"))
+  (defun kef/elfeed-show-news ()
+    (interactive)
+    (bookmark-maybe-load-default-file)
+    (bookmark-jump "elfeed-news"))
+
+  ;;functions to support syncing .elfeed between machines
+  ;;makes sure elfeed reads index from disk before launching
+  (defun kef/elfeed-load-db-and-open ()
+    "Wrapper to load the elfeed db from disk before opening"
+    (interactive)
+    (elfeed-db-load)
+    (elfeed)
+    (elfeed-search-update--force))
+
+  ;;write to disk when quiting
+  (defun kef/elfeed-save-db-and-bury ()
+    "Wrapper to save the elfeed db to disk before burying buffer"
+    (interactive)
+    (elfeed-db-save)
+    (quit-window))
+#+END_SRC
+
+*** elfeed-org
+Cool, we get to use org-mode to manage our feeds. <3
+#+BEGIN_SRC emacs-lisp
+  (use-package elfeed-org
+    :ensure t
+    :config
+    ;; start
+    (elfeed-org)
+    ;; location of feed orgfile
+    (setq rmh-elfeed-org-files (list "~/org/feeds.org")))
+#+END_SRC
+
+
+* Other peoples configs
+- https://caolan.org/dotfiles/emacs.html
+- https://github.com/hrs/dotfiles/blob/master/emacs/.emacs.d/configuration.org

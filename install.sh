@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Install all the necessary Debian packages, especially `stow`.
-./install_debian_packages.sh
+#./install_debian_packages.sh
 
 stow bash
 stow emacs
@@ -10,6 +10,7 @@ stow x-windows
 stow fonts
 stow i3
 stow dunst
+stow vim
 
 # Link .bash_profile -> .bashrc
 rm -f ~/.bash_profile
