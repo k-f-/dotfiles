@@ -1,7 +1,7 @@
 #+TITLE: Emacs Configuration
 #+AUTHOR: Kyle Fring
 #+EMAIL: me@kfring.com
-#+OPTIONS: toc:nil num:nil
+#+OPTIONS: toc:t num:nil
 
 * A quote from Hunter S. Thompson
 'but once you get locked into a serious drug collection,
@@ -149,6 +149,11 @@ Set some keybindings
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key (kbd "C-c c") 'org-capture)
+#+END_SRC
+
+Move between open windows with =M-o= as well as =C-x o=.
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "M-o") 'other-window)
 #+END_SRC
 
 * Movement & Formatting
