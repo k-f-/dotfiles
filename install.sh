@@ -17,4 +17,5 @@ rm -f ~/.bash_profile
 ln -s ~/.bashrc ~/.bash_profile
 
 # Link Some Dropbox folders
-ln -s ~/org ~/Dropbox/org
+ln -s ~/Dropbox/org ~/org
+ln -s ~/Dropbox/elfeed/ ~/.elfeed

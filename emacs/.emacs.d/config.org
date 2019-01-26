@@ -74,6 +74,8 @@ From http://pages.sachachua.com/.emacs.d/Sacha.html#sec-1-4-8
   (add-hook 'text-mode-hook 'turn-on-auto-fill)
   (add-hook 'text-mode-hook
     '(lambda() (set-fill-column 80)))
+;; lets just do it globally
+(setq-default fill-column 80)
 #+END_SRC
 
 * Fonts
@@ -684,6 +686,7 @@ functions & hooks via: http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-em
   (defun kef/elfeed-load-db-and-open ()
     "Wrapper to load the elfeed db from disk before opening"
     (interactive)
+    (elfeed-update)
     (elfeed-db-load)
     (elfeed)
     (elfeed-search-update--force))
@@ -707,7 +710,6 @@ Cool, we get to use org-mode to manage our feeds. <3
     ;; location of feed orgfile
     (setq rmh-elfeed-org-files (list "~/org/feeds.org")))
 #+END_SRC
-
 
 * Other peoples configs
 - https://caolan.org/dotfiles/emacs.html

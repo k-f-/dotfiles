@@ -3,12 +3,10 @@
 sudo apt install \
      aptitude \
      build-essential \
-     compton \
      curl \
      emacs26 \
      feh \
      git \
-     gksu \
      gnupg2 \
      graphviz \
      htop \
