@@ -6,6 +6,7 @@ sudo apt install \
      curl \
      emacs26 \
      feh \
+     fonts-font-awesome \
      git \
      gnupg2 \
      graphviz \
@@ -15,6 +16,7 @@ sudo apt install \
      isync \
      libnotify-bin \
      make \
+     mosh \
      msmtp \
      notmuch \
      openssl \

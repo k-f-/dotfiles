@@ -1,15 +1,22 @@
-;; load up Org-mode and Org-babel
+;; add MELPA package server
+(require 'package)
 
-;; Added by Package.el.  This must come before configurations of
-;; installed packages.  Don't delete this line.  If you don't want it,
-;; just comment it out by adding a semicolon to the start of the line.
-;; You may delete these explanatory comments.
+(add-to-list 'package-archives 
+  '("melpa" . "http://melpa.milkbox.net/packages/"))
+
+(unless package-archive-contents
+  (package-refresh-contents))
+
 (package-initialize)
 
-  (require 'org-install)
-  (require 'ob-tangle)
+;; if not yet installed, install package use-package
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
 
-;; load up all literate org-mode files in this directory
+;; load org package
+(require 'org)
+
+;; load up my literate org-mode file
 (org-babel-load-file "~/.emacs.d/config.org")
 
 ;;; init.el ends here
