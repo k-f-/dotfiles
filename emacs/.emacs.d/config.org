@@ -248,11 +248,12 @@ Install and load =use-package=
 ** Themes
 
 #+BEGIN_SRC emacs-lisp
-;;(use-package apropospriate-theme :ensure)
-;;(use-package dracula-theme :ensure)
-;;(use-package poet-theme :ensure)
-;;(use-package spacemacs-theme :ensure)
+(use-package apropospriate-theme :ensure)
+(use-package dracula-theme :ensure)
+(use-package poet-theme :ensure)
+(use-package spacemacs-theme :ensure)
 (load-theme 'spacemacs-dark t)
+
 ;; modeline
 (let ((line (face-attribute 'mode-line :underline)))
     (set-face-attribute 'mode-line          nil :overline   line)
