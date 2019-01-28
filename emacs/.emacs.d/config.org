@@ -15,7 +15,7 @@ the tendency is to push it as far as you can.'
 ;; Set global user
 (setq user-full-name "Kyle Fring"
 	  user-mail-address "me@kfring.com")
-(setq calendar-location-name "Philadelphia, PA")
+(setq calendar-location-name "Chattanooga, TN")
 (setq calendar-latitude 39.95)
 (setq calendar-longitude -75.16)
 #+END_SRC
@@ -711,6 +711,17 @@ Cool, we get to use org-mode to manage our feeds. <3
     ;; location of feed orgfile
     (setq rmh-elfeed-org-files (list "~/org/feeds.org")))
 #+END_SRC
+
+** fontawesome
+add an ivy-search for fontawesome icons. slick.
+
+#+BEGIN_SRC emacs-lisp
+(use-package fontawesome :ensure t)
+(defun insert-fontawesome ()
+  (interactive)
+  (insert (call-interactively 'fontawesome)))
+#+END_SRC 
+
 
 * Other peoples configs
 - https://caolan.org/dotfiles/emacs.html
