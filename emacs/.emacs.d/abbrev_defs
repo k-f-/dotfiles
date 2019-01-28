@@ -37,11 +37,15 @@
     ("`va" "\\value" nil 0)
    ))
 
+(define-abbrev-table 'S+-transcript-mode-abbrev-table '())
+
+(define-abbrev-table 'SAS-listing-mode-abbrev-table '())
+
+(define-abbrev-table 'SAS-log-mode-abbrev-table '())
+
+(define-abbrev-table 'SAS-mode-abbrev-table '())
+
 (define-abbrev-table 'bibtex-mode-abbrev-table '())
-
-(define-abbrev-table 'bookmark-bmenu-mode-abbrev-table '())
-
-(define-abbrev-table 'bookmark-edit-annotation-mode-abbrev-table '())
 
 (define-abbrev-table 'calendar-mode-abbrev-table '())
 
@@ -51,27 +55,13 @@
 
 (define-abbrev-table 'completion-list-mode-abbrev-table '())
 
-(define-abbrev-table 'conf-colon-mode-abbrev-table '())
-
-(define-abbrev-table 'conf-desktop-mode-abbrev-table '())
-
-(define-abbrev-table 'conf-javaprop-mode-abbrev-table '())
-
-(define-abbrev-table 'conf-ppd-mode-abbrev-table '())
-
-(define-abbrev-table 'conf-space-mode-abbrev-table '())
-
-(define-abbrev-table 'conf-toml-mode-abbrev-table '())
-
-(define-abbrev-table 'conf-unix-mode-abbrev-table '())
-
-(define-abbrev-table 'conf-windows-mode-abbrev-table '())
-
-(define-abbrev-table 'conf-xdefaults-mode-abbrev-table '())
+(define-abbrev-table 'debugger-mode-abbrev-table '())
 
 (define-abbrev-table 'diff-mode-abbrev-table '())
 
 (define-abbrev-table 'display-time-world-mode-abbrev-table '())
+
+(define-abbrev-table 'edebug-eval-mode-abbrev-table '())
 
 (define-abbrev-table 'edit-abbrevs-mode-abbrev-table '())
 
@@ -85,7 +75,19 @@
 
 (define-abbrev-table 'epa-key-mode-abbrev-table '())
 
+(define-abbrev-table 'ert-results-mode-abbrev-table '())
+
+(define-abbrev-table 'ert-simple-view-mode-abbrev-table '())
+
+(define-abbrev-table 'eshell-mode-abbrev-table '())
+
+(define-abbrev-table 'ess-bugs-mode-abbrev-table '())
+
 (define-abbrev-table 'ess-help-mode-abbrev-table '())
+
+(define-abbrev-table 'ess-jags-mode-abbrev-table '())
+
+(define-abbrev-table 'ess-julia-mode-abbrev-table '())
 
 (define-abbrev-table 'ess-mode-abbrev-table '())
 
@@ -95,15 +97,23 @@
 
 (define-abbrev-table 'ess-r-transcript-mode-abbrev-table '())
 
+(define-abbrev-table 'ess-rdired-mode-abbrev-table '())
+
+(define-abbrev-table 'ess-stata-help-mode-abbrev-table '())
+
+(define-abbrev-table 'ess-stata-mode-abbrev-table '())
+
+(define-abbrev-table 'ess-stata-transcript-mode-abbrev-table '())
+
 (define-abbrev-table 'ess-transcript-mode-abbrev-table '())
 
 (define-abbrev-table 'ess-watch-mode-abbrev-table '())
 
+(define-abbrev-table 'flycheck-error-list-mode-abbrev-table '())
+
 (define-abbrev-table 'flymake-diagnostics-buffer-mode-abbrev-table '())
 
 (define-abbrev-table 'fundamental-mode-abbrev-table '())
-
-(define-abbrev-table 'git-commit-elisp-text-mode-abbrev-table '())
 
 (define-abbrev-table 'global-abbrev-table '())
 
@@ -115,51 +125,27 @@
 
 (define-abbrev-table 'ibuffer-mode-abbrev-table '())
 
+(define-abbrev-table 'inferior-ess-julia-mode-abbrev-table '())
+
 (define-abbrev-table 'inferior-ess-mode-abbrev-table '())
 
 (define-abbrev-table 'inferior-ess-r-mode-abbrev-table '())
 
+(define-abbrev-table 'inferior-ess-stata-mode-abbrev-table '())
+
+(define-abbrev-table 'inferior-julia-mode-abbrev-table '())
+
 (define-abbrev-table 'ivy-occur-grep-mode-abbrev-table '())
 
 (define-abbrev-table 'ivy-occur-mode-abbrev-table '())
+
+(define-abbrev-table 'julia-mode-abbrev-table '())
 
 (define-abbrev-table 'lisp-mode-abbrev-table '())
 
 (define-abbrev-table 'log-edit-mode-abbrev-table '())
 
 (define-abbrev-table 'log4e-mode-abbrev-table '())
-
-(define-abbrev-table 'magit-cherry-mode-abbrev-table '())
-
-(define-abbrev-table 'magit-diff-mode-abbrev-table '())
-
-(define-abbrev-table 'magit-log-mode-abbrev-table '())
-
-(define-abbrev-table 'magit-log-select-mode-abbrev-table '())
-
-(define-abbrev-table 'magit-merge-preview-mode-abbrev-table '())
-
-(define-abbrev-table 'magit-mode-abbrev-table '())
-
-(define-abbrev-table 'magit-popup-mode-abbrev-table '())
-
-(define-abbrev-table 'magit-process-mode-abbrev-table '())
-
-(define-abbrev-table 'magit-reflog-mode-abbrev-table '())
-
-(define-abbrev-table 'magit-refs-mode-abbrev-table '())
-
-(define-abbrev-table 'magit-repolist-mode-abbrev-table '())
-
-(define-abbrev-table 'magit-revision-mode-abbrev-table '())
-
-(define-abbrev-table 'magit-stash-mode-abbrev-table '())
-
-(define-abbrev-table 'magit-stashes-mode-abbrev-table '())
-
-(define-abbrev-table 'magit-status-mode-abbrev-table '())
-
-(define-abbrev-table 'magit-submodule-list-mode-abbrev-table '())
 
 (define-abbrev-table 'message-mode-abbrev-table '())
 
@@ -168,6 +154,8 @@
 (define-abbrev-table 'occur-edit-mode-abbrev-table '())
 
 (define-abbrev-table 'occur-mode-abbrev-table '())
+
+(define-abbrev-table 'org-export-stack-mode-abbrev-table '())
 
 (define-abbrev-table 'org-mode-abbrev-table '())
 
@@ -179,6 +167,8 @@
 
 (define-abbrev-table 'prog-mode-abbrev-table '())
 
+(define-abbrev-table 'sas-dir-mode-abbrev-table '())
+
 (define-abbrev-table 'select-tags-table-mode-abbrev-table '())
 
 (define-abbrev-table 'shell-mode-abbrev-table '())
@@ -187,9 +177,13 @@
 
 (define-abbrev-table 'special-mode-abbrev-table '())
 
+(define-abbrev-table 'speedbar-mode-abbrev-table '())
+
 (define-abbrev-table 'tabulated-list-mode-abbrev-table '())
 
 (define-abbrev-table 'tar-mode-abbrev-table '())
+
+(define-abbrev-table 'term-mode-abbrev-table '())
 
 (define-abbrev-table 'text-mode-abbrev-table '())
 
@@ -197,19 +191,11 @@
 
 (define-abbrev-table 'use-package-statistics-mode-abbrev-table '())
 
-(define-abbrev-table 'vc-bzr-log-view-mode-abbrev-table '())
-
 (define-abbrev-table 'vc-git-log-edit-mode-abbrev-table '())
 
 (define-abbrev-table 'vc-git-log-view-mode-abbrev-table '())
 
 (define-abbrev-table 'vc-git-region-history-mode-abbrev-table '())
-
-(define-abbrev-table 'vc-hg-log-view-mode-abbrev-table '())
-
-(define-abbrev-table 'vc-mtn-log-view-mode-abbrev-table '())
-
-(define-abbrev-table 'vc-svn-log-view-mode-abbrev-table '())
 
 (define-abbrev-table 'xref--xref-buffer-mode-abbrev-table '())
 

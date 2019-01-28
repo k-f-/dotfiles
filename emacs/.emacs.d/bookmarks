@@ -2,7 +2,12 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("elfeed-unread"
+(("org-capture-last-stored"
+ (filename . "~/org/climb.org")
+ (front-context-string . "| [2019-01-28 Mo")
+ (rear-context-string . "              |\n")
+ (position . 8204))
+("elfeed-unread"
  (location . "+unread")
  (tags "unread")
  (handler . elfeed-search-bookmark-handler))
