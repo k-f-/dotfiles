@@ -11,6 +11,7 @@ stow fonts
 stow i3
 stow dunst
 stow vim
+stow rofi
 
 # Link .bash_profile -> .bashrc
 rm -f ~/.bash_profile
