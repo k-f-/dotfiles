@@ -255,13 +255,23 @@ exec --no-startup-id emacsclient -nc
 floating_minimum_size 150 x 100
 floating_maximum_size 1920 x 1080
 
+#################################################################
+# i3-gaps 
+#################################################################
+# Minimize window chrome: no title bar, narrow margins.
+for_window [class="^.*"] border pixel 0
+
+# Use i3-gaps.
+#gaps inner 4
+
+
 # changing how borders look
-# for_window [class="^.*"] border normal 0
-for_window [class="^.*"] border none 0
+#for_window [class="^.*"] border normal 0
+#for_window [class="^.*"] border none 0
 # window colors
 # class                 border  bground text    indicator child_border
 client.focused          #6272A4 #6272A4 #F8F8F2 #6272A4   #6272A4
-client.focused_inactive #44475A #44475A #F8F8F2 #44475A   #44475A
+client.focused_inactive #44475A #44475A  #F8F8F2 #44475A   #44475A
 client.unfocused        #282A36 #282A36 #BFBFBF #282A36   #282A36
 client.urgent           #44475A #FF5555 #F8F8F2 #FF5555   #FF5555
 client.placeholder      #282A36 #282A36 #F8F8F2 #282A36   #282A36
