@@ -187,7 +187,7 @@ bar {
 	font pango:San Francisco Display 11
 	position top
     status_command i3status -c ~/.config/i3/i3bar.conf
-	tray_output primary
+	#tray_output primary
 	colors {
     	   background #16161d
     	   statusline #F8F8F2
@@ -240,8 +240,8 @@ exec --no-startup-id spotify --force-device-scale-factor=2 &
 for_window [class="Spotify"] move container to workspace 1
 
 # Firefox in workspace 2 - always
-exec --no-startup-id firefox &
-for_window [class="Firefox"] move container to workspace 2
+exec --no-startup-id brave-browser &
+for_window [class="Brave"] move container to workspace 2
 
 # launch an emacs instance connected to earlier server
 exec --no-startup-id emacsclient -nc
@@ -253,10 +253,11 @@ exec --no-startup-id emacsclient -nc
 # and while resizing them with mod+r, jl and return
 # will save the previous size, let us make some sane constraits from i3 itself
 floating_minimum_size 150 x 100
-floating_maximum_size 3840 x 2160
+floating_maximum_size 1920 x 1080
 
 # changing how borders look
-for_window [class="^.*"] border normal 0
+# for_window [class="^.*"] border normal 0
+for_window [class="^.*"] border none 0
 # window colors
 # class                 border  bground text    indicator child_border
 client.focused          #6272A4 #6272A4 #F8F8F2 #6272A4   #6272A4
