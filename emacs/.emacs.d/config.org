@@ -661,43 +661,43 @@ Elfeed is a very nice RSS/Atom reader for emacs.
 
 functions & hooks via: http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-emacs-with-elfeed/
 #+BEGIN_SRC emacs-lisp
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;; elfeed feed reader                                                     ;;
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;;shortcut functions
-  (defun kef/elfeed-show-all ()
-    (interactive)
-    (bookmark-maybe-load-default-file)
-    (bookmark-jump "elfeed-all"))
-  (defun kef/elfeed-show-unread ()
-    (interactive)
-    (bookmark-maybe-load-default-file)
-    (bookmark-jump "elfeed-unread"))
-  (defun kef/elfeed-show-comics ()
-    (interactive)
-    (bookmark-maybe-load-default-file)
-    (bookmark-jump "elfeed-comics"))
-  (defun kef/elfeed-show-news ()
-    (interactive)
-    (bookmark-maybe-load-default-file)
-    (bookmark-jump "elfeed-news"))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; elfeed feed reader                                                     ;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;shortcut functions
+    (defun kef/elfeed-show-all ()
+      (interactive)
+      (bookmark-maybe-load-default-file)
+      (bookmark-jump "elfeed-all"))
+    (defun kef/elfeed-show-unread ()
+      (interactive)
+      (bookmark-maybe-load-default-file)
+      (bookmark-jump "elfeed-unread"))
+    (defun kef/elfeed-show-comics ()
+      (interactive)
+      (bookmark-maybe-load-default-file)
+      (bookmark-jump "elfeed-comics"))
+    (defun kef/elfeed-show-news ()
+      (interactive)
+      (bookmark-maybe-load-default-file)
+      (bookmark-jump "elfeed-news"))
 
-  ;;functions to support syncing .elfeed between machines
-  ;;makes sure elfeed reads index from disk before launching
-  (defun kef/elfeed-load-db-and-open ()
-    "Wrapper to load the elfeed db from disk before opening"
-    (interactive)
-    (elfeed-update)
-    (elfeed-db-load)
-    (elfeed)
-    (elfeed-search-update--force))
+    ;;functions to support syncing .elfeed between machines
+    ;;makes sure elfeed reads index from disk before launching
+    (defun kef/elfeed-load-db-and-open ()
+      "Wrapper to load the elfeed db from disk before opening"
+      (interactive)
+      (elfeed-db-load)
+      (elfeed)
+      (elfeed-update)
+      (elfeed-search-update--force))
 
-  ;;write to disk when quiting
-  (defun kef/elfeed-save-db-and-bury ()
-    "Wrapper to save the elfeed db to disk before burying buffer"
-    (interactive)
-    (elfeed-db-save)
-    (quit-window))
+    ;;write to disk when quiting
+    (defun kef/elfeed-save-db-and-bury ()
+      "Wrapper to save the elfeed db to disk before burying buffer"
+      (interactive)
+      (elfeed-db-save)
+      (quit-window))
 #+END_SRC
 
 *** elfeed-org
