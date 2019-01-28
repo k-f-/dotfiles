@@ -41,7 +41,7 @@ Xft.rgba: rgb
 ! Rofi
 !---------------------------------------
 
-rofi.font: San Francisco Display 24
+rofi.font: San Francisco Display 20
 rofi.lines: 7
 rofi.matching: fuzzy
 rofi.location: 7 !https://github.com/DaveDavenport/rofi/wiki/WindowPosition

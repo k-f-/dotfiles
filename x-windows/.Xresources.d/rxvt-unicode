@@ -1,7 +1,7 @@
 ! #####################################################
 ! urxvt
 ! #####################################################
-URxvt.font: xft:Input Mono:size=11
+URxvt.font: xft:Input Mono:size=9
 URxvt.scrollBar: false 
 
 ! Dracula Xresources palette
