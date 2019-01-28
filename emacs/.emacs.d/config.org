@@ -251,7 +251,7 @@ Install and load =use-package=
 (use-package apropospriate-theme :ensure)
 (use-package dracula-theme :ensure)
 (use-package poet-theme :ensure)
-(use-package spacemacs-theme :ensure)
+(use-package spacemacs-theme :ensure t :no-require t) ;; https://github.com/jwiegley/use-package/issues/545#issuecomment-349459803
 (load-theme 'spacemacs-dark t)
 
 ;; modeline
