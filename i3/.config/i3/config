@@ -1,25 +1,13 @@
 # i3 config file (v4)
 #
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
-
+# lots of credits to: https://github.com/hrs/dotfiles/blob/master/x-windows/.Xresources
 set $mod Mod4
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
 
 font pango:San Francisco Display 11
-
-
-# This font is widely installed, provides lots of unicode glyphs, right-to-left
-# text rendering and scalability on retina/hidpi displays (thanks to pango).
-#font pango:DejaVu Sans Mono 8
-
-# Before i3 v4.8, we used to recommend this one as the default:
-# font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
-# The font above is very space-efficient, that is, it looks good, sharp and
-# clear in small sizes. However, its unicode glyph coverage is limited, the old
-# X core fonts rendering does not support right-to-left and this being a bitmap
-# font, it doesn’t scale on retina/hidpi displays.
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -39,6 +27,7 @@ bindsym $mod+Shift+q kill
 # installed.
 #bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
 
+# fire rofi up with fuzzy matching
 bindsym $mod+d exec PATH=~/bin:~/.bin:$PATH rofi -matching fuzzy -show run
 
 # change focus
@@ -184,7 +173,7 @@ bindsym $mod+r mode "resize"
 # i3Bar
 #################################################################
 bar {
-	font pango:San Francisco Display 10
+	font pango:San Francisco Display 9
 	position top
         i3bar_command "i3bar -t"
         status_command i3status -c ~/.config/i3/i3bar.conf
@@ -205,7 +194,7 @@ bar {
 #################################################################
 
 # Start the Compton compositor (for i3bar transparency)
-exec --no-startup-id compton &
+exec --no-startup-id compton -b &
 
 # Set the wallpaper
 exec --no-startup-id ~/.bin/set-wallpaper &
@@ -241,11 +230,11 @@ exec --no-startup-id "nohup emacs --daemon &> .out/emacs.out"
 # Start spotify with some HiDPI settings
 # spotify always on workspace 1
 exec --no-startup-id spotify --force-device-scale-factor=2 &
-for_window [class="Spotify"] move container to workspace 1
+for_window [class="Spotify"] move container to workspace 4
 
 # Firefox in workspace 2 - always
 exec --no-startup-id brave-browser &
-for_window [class="Brave"] move container to workspace 2
+for_window [class="Brave"] move container to workspace 3
 
 # launch an emacs instance connected to earlier server
 exec --no-startup-id emacsclient -nc
@@ -267,8 +256,8 @@ for_window [class="^.*"] border pixel 0
 
 # Use i3-gaps.
 smart_gaps on
-gaps inner 10
-gaps outer 5
+gaps inner 3
+gaps outer 0 
 
 
 # changing how borders look
