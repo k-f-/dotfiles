@@ -81,10 +81,10 @@ From http://pages.sachachua.com/.emacs.d/Sacha.html#sec-1-4-8
 ** transparency??
 This makes everything /including/ fonts transparent. It's alright
 #+BEGIN_SRC emacs-lisp
-  ;;(set-frame-parameter (selected-frame) 'alpha '(<active> . <inactive>))
-  ;;(set-frame-parameter (selected-frame) 'alpha <both>)
-  (set-frame-parameter (selected-frame) 'alpha '(95 . 50))
-  (add-to-list 'default-frame-alist '(alpha . (95 . 50)))
+  (set-frame-parameter (selected-frame) 'alpha '(<active> . <inactive>))
+  (set-frame-parameter (selected-frame) 'alpha <both>))
+  ;;(set-frame-parameter (selected-frame) 'alpha '(95 . 50))
+  ;;(add-to-list 'default-frame-alist '(alpha . (95 . 50)))
 
   (defun kef/toggle-transparency ()
     (interactive)
@@ -273,7 +273,7 @@ Install and load =use-package=
 (use-package dracula-theme :ensure)
 (use-package poet-theme :ensure)
 (use-package spacemacs-theme :ensure t :no-require t) ;; https://github.com/jwiegley/use-package/issues/545#issuecomment-349459803
-(load-theme 'spacemacs-dark t)
+(load-theme 'apropospriate-light t)
 
 ;; modeline
 (let ((line (face-attribute 'mode-line :underline)))
