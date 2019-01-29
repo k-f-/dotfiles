@@ -12,6 +12,7 @@ stow i3
 stow dunst
 stow vim
 stow rofi
+stow compton
 
 # Link .bash_profile -> .bashrc
 rm -f ~/.bash_profile
