@@ -14,4 +14,4 @@ convert "$tmpbg" -filter Gaussian -thumbnail 20% -sample 500% "$tmpbg"
 # convert "$tmpbg" "$icon" -gravity center -composite "$tmpbg"
 
 # lock the screen with the blurred screenshot
-i3lock -i "$tmpbg" -d -e -c 000000
+i3lock -i "$tmpbg" -e -c 000000

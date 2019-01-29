@@ -78,30 +78,7 @@ From http://pages.sachachua.com/.emacs.d/Sacha.html#sec-1-4-8
 (setq-default fill-column 80)
 #+END_SRC
 
-** transparency??
-This makes everything /including/ fonts transparent. It's alright
-#+BEGIN_SRC emacs-lisp
-  (set-frame-parameter (selected-frame) 'alpha '(<active> . <inactive>))
-  (set-frame-parameter (selected-frame) 'alpha <both>))
-  ;;(set-frame-parameter (selected-frame) 'alpha '(95 . 50))
-  ;;(add-to-list 'default-frame-alist '(alpha . (95 . 50)))
-
-  (defun kef/toggle-transparency ()
-    (interactive)
-    (let ((alpha (frame-parameter nil 'alpha)))
-      (set-frame-parameter
-       nil 'alpha
-       (if (eql (cond ((numberp alpha) alpha)
-                      ((numberp (cdr alpha)) (cdr alpha))
-                      ;; Also handle undocumented (<active> <inactive>) form.
-                      ((numberp (cadr alpha)) (cadr alpha)))
-                100)
-           '(95 . 50) '(100 . 100)))))
-  (global-set-key (kbd "C-c t") 'kef/toggle-transparency)
-#+END_SRC
-
 * Fonts
-
 #+BEGIN_SRC emacs-lisp
 ;; Test char and monospace:
 ;; 0123456789abcdefghijklmnopqrstuvwxyz [] () :;,. !@#$^&*
@@ -272,8 +249,9 @@ Install and load =use-package=
 (use-package apropospriate-theme :ensure)
 (use-package dracula-theme :ensure)
 (use-package poet-theme :ensure)
-(use-package spacemacs-theme :ensure t :no-require t) ;; https://github.com/jwiegley/use-package/issues/545#issuecomment-349459803
-(load-theme 'apropospriate-light t)
+;;(use-package spacemacs-theme :ensure t :no-require t) ;; https://github.com/jwiegley/use-package/issues/545#issuecomment-349459803
+(use-package spacemacs-theme :ensure t)
+(load-theme 'spacemacs-dark t)
 
 ;; modeline
 (let ((line (face-attribute 'mode-line :underline)))
@@ -743,6 +721,11 @@ add an ivy-search for fontawesome icons. slick.
   (insert (call-interactively 'fontawesome)))
 #+END_SRC 
 
+** comment-dwim-2
+#+BEGIN_SRC emacs-lisp
+  (use-package comment-dwim-2 :ensure t)
+  (global-set-key (kbd "M-;") 'comment-dwim-2)
+#+END_SRC
 
 * Other peoples configs
 - https://caolan.org/dotfiles/emacs.html
