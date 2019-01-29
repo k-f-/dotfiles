@@ -2,7 +2,17 @@
 ! urxvt
 ! #####################################################
 URxvt.font: xft:Input Mono:size=9
-URxvt.scrollBar: false 
+URxvt.scrollBar: false
+URxvt.allow_bold: true
+
+! Use fake transparency (better with tiling)
+URxvt.transparent: true
+URxvt.shading: 30
+
+URxvt.urgentOnBell: true
+URxvt.loginShell: true
+URxvt.internalBorder: 3
+URxvt.lineSpace: 0
 
 ! Dracula Xresources palette
 *.foreground: #F8F8F2
@@ -22,4 +32,4 @@ URxvt.scrollBar: false
 *.color6:     #8BE9FD
 *.color14:    #9AEDFE
 *.color7:     #BFBFBF
-*.color15:	  #E6E6E6
+*.color15:    #E6E6E6

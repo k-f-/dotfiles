@@ -184,8 +184,9 @@ bindsym $mod+r mode "resize"
 # i3Bar
 #################################################################
 bar {
-	font pango:San Francisco Display 11
+	font pango:San Francisco Display 10
 	position top
+        i3bar_command "i3bar -t"
         status_command i3status -c ~/.config/i3/i3bar.conf
 	#tray_output primary
 	colors {
@@ -202,6 +203,9 @@ bar {
 #################################################################
 # Startup Applications
 #################################################################
+
+# Start the Compton compositor (for i3bar transparency)
+exec --no-startup-id compton &
 
 # Set the wallpaper
 exec --no-startup-id ~/.bin/set-wallpaper &
@@ -262,7 +266,9 @@ floating_maximum_size 1920 x 1080
 for_window [class="^.*"] border pixel 0
 
 # Use i3-gaps.
-#gaps inner 4
+smart_gaps on
+gaps inner 10
+gaps outer 5
 
 
 # changing how borders look

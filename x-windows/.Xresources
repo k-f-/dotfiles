@@ -5,12 +5,11 @@
 !---------------------------------------
 ! HiDPI for XPS15
 
-Xft.dpi: 180
-Xft.autohint: 0
+Xft.dpi: 192
 Xft.lcdfilter:  lcddefault
-Xft.hintstyle:  hintfull
-Xft.hinting: 1
-Xft.antialias: 1
+Xft.hintstyle:  hintlight
+Xft.hinting: true
+Xft.antialias: true
 Xft.rgba: rgb
 
 !---------------------------------------
@@ -35,7 +34,7 @@ Xft.rgba: rgb
 *.color6:     #8BE9FD
 *.color14:    #9AEDFE
 *.color7:     #BFBFBF
-*.color15:	  #E6E6E6
+*.color15:    #E6E6E6
 
 !---------------------------------------
 ! Rofi
