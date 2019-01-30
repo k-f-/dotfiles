@@ -31,6 +31,7 @@ sudo apt install \
      rlwrap \
      rofi \
      rxvt-unicode \
+     sdvc \
      scrot \
      stow \
      sudo \
