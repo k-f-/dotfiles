@@ -1,6 +1,12 @@
 # -*- mode: sh -*-
 
-alias spotify="spotify --force-device-scale-factor=2 &" # xps15
+
+### ssh aliases
+alias akita="ssh root@akita.kfring.com"
+
+
+### 
+alias spotify="spotify --force-device-scale-factor=2 &" # HiDPI flags. 
 alias dc="docker-compose"
 alias gg="git grep -n"
 alias gs="git status -s"
@@ -33,7 +39,7 @@ alias ali="apt-mark showmanual"
 alias oports="echo 'User:      Command:   Port:'; echo '----------------------------' ; lsof -i 4 -P -n | grep -i 'listen' | awk '{print \$3, \$1, \$9}' | sed 's/ [a-z0-9\.\*]*:/ /' | sort -k 3 -n |xargs printf '%-10s %-10s %-10s\n' | uniq"
 alias serve="python -m SimpleHTTPServer"
 
-
+### ls and grep
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
