@@ -2,11 +2,15 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("org-capture-last-stored"
- (filename . "~/org/climb.org")
- (front-context-string . "| [2019-01-28 Mo")
- (rear-context-string . "              |\n")
- (position . 8204))
+(("elfeed-starred"
+ (location . "+star")
+ (tags "star")
+ (handler . elfeed-search-bookmark-handler))
+("org-capture-last-stored"
+ (filename . "~/org/work.org")
+ (front-context-string . "** TODO Look at ")
+ (rear-context-string . " & Time\n* Tasks\n")
+ (position . 46))
 ("elfeed-unread"
  (location . "+unread")
  (tags "unread")
