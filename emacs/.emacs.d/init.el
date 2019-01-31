@@ -1,3 +1,13 @@
+;; First, create a hook that shows us how long startup takes with garbage collection takes.
+;; Use a hook so the message doesn't get clobbered by other messages.
+(add-hook 'emacs-startup-hook
+	(lambda ()
+	  (message "Emacs ready in %s with %d garbage collections."
+		   (format "%.2f seconds"
+                           (float-time
+                              (time-subtract after-init-time before-init-time)))
+                     gcs-done)))
+
 ;; Turn off mouse interface early in startup to avoid momentary display
 (when window-system
   (menu-bar-mode -1)

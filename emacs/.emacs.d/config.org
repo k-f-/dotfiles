@@ -65,6 +65,7 @@ Keep customize settings in their own file
 - I'm fairly sure this is what was causing some ugly behavior when emacs is invoked.
 - Q: Why do we think this?
 - A: Our "highlight" function globally in emacs appears to be part of
+- Q: Still having the same issue.  Keep digging.
   our =.xresources= scheme.
 ref: [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Resources.html#Resources][Resources - GNU Emacs Manual]]
 #+BEGIN_QUOTE
@@ -87,6 +88,12 @@ Drop scroll bar, Toolbar, Tooltips and Menu-Bar
 ** Modeline
 #+BEGIN_SRC emacs-lisp
   (display-time-mode 1)
+#+END_SRC
+
+** Point (ie: Cursor)
+Turn off the blinking cursor.
+#+BEGIN_SRC emacs-lisp
+  (blink-cursor-mode 0)
 #+END_SRC
 
 ** Startup screen
@@ -146,6 +153,25 @@ line numbers on, but not in org-mode please.
   (add-hook 'org-mode-hook 'nolinum)
 #+END_SRC
 
+** Highlight matching parenthesis
+#+BEGIN_SRC emacs-lisp
+  (show-paren-mode 1)
+
+  (defun kef/locally-disable-show-paren ()
+    (interactive)
+    (setq-local show-paren-mode nil))
+
+  (add-hook 'ruby-mode-hook
+            #'kef/locally-disable-show-paren)
+
+#+END_SRC
+
+** abbreviations
+#+BEGIN_SRC emacs-lisp
+  (setq quietly-read-abbrev-file t)
+  (setq abbrev-file-name "~/.emacs.d/abbrev_defs")
+#+END_SRC
+
 * Fonts
 #+BEGIN_SRC emacs-lisp
   ;; Test char and monospace:
@@ -188,6 +214,7 @@ Create a backup to a designated dir, mirroring the full path ala ergomacs
 
   (setq make-backup-file-name-function 'kef-backup-file-name)
 #+END_SRC
+
 * Functions
 ** Kill current buffer.
 
@@ -288,43 +315,32 @@ In many programs, like SlickEdit, TextMate and VisualStudio, “cut” and “co
 ** Ample
 #+BEGIN_SRC emacs-lisp
   (use-package ample-theme :ensure t)
-    ;; :init (progn (load-theme 'ample t t)
-    ;;              (load-theme 'ample-flat t t)
-    ;;              (load-theme 'ample-light t t)
-    ;;              ;;:defer t
 #+END_SRC
 
 ** Apropospriate
 #+BEGIN_SRC emacs-lisp
   (use-package apropospriate-theme :ensure t)
-  ;;     (load-theme 'apropospriate-light t t)
-  ;;     (load-theme 'apropospriate-dark t t)
 #+END_SRC
 
 ** base16-theme
 #+BEGIN_SRC emacs-lisp
   (use-package base16-theme :ensure t)
-;;  (load-theme 'base16-chalk t t)
 #+END_SRC
 
 ** doneburn
 #+BEGIN_SRC emacs-lisp
   (use-package doneburn-theme :ensure t)
-  (load-theme 'doneburn t t)
 #+END_SRC
 
 ** Github-modern
 #+BEGIN_SRC emacs-lisp
   (use-package github-modern-theme :ensure t)
-;;  (load-theme 'github-modern t t)
 #+END_SRC
 
 ** Spacemacs
 #+BEGIN_SRC emacs-lisp
   ;; spacemacs-dark is acting strangly. Moving away for awhile.
   (use-package spacemacs-theme :ensure t :no-require t) 
-;;  (load-theme 'spacemacs-light t t)
-;;  (load-theme 'spacemacs-dark t t)
   ;; https://github.com/jwiegley/use-package/issues/545#issuecomment-349459803
 #+END_SRC
 
@@ -748,35 +764,66 @@ Elfeed is a very nice RSS/Atom reader for emacs.
                 ("U" . kef/elfeed-show-unread)
                 ("C" . kef/elfeed-show-comics)
                 ("N" . kef/elfeed-show-news)
+                ("S" . kef/elfeed-show-starred)
                 ("q" . kef/elfeed-save-db-and-bury)))
   (global-set-key (kbd "C-x w") 'kef/elfeed-load-db-and-open)
 #+END_SRC
 
-functions & hooks via: http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-emacs-with-elfeed/
+Functions & Hooks via: http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-emacs-with-elfeed/
 #+BEGIN_SRC emacs-lisp
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; elfeed feed reader                                                     ;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;shortcut functions
+  ;; show all
   (defun kef/elfeed-show-all ()
     (interactive)
     (bookmark-maybe-load-default-file)
     (bookmark-jump "elfeed-all"))
+  ;; show just unread
   (defun kef/elfeed-show-unread ()
     (interactive)
     (bookmark-maybe-load-default-file)
     (bookmark-jump "elfeed-unread"))
+  ;; show me comics, mostly xkcd
   (defun kef/elfeed-show-comics ()
     (interactive)
     (bookmark-maybe-load-default-file)
     (bookmark-jump "elfeed-comics"))
+  ;; just news
   (defun kef/elfeed-show-news ()
     (interactive)
     (bookmark-maybe-load-default-file)
     (bookmark-jump "elfeed-news"))
+  ;; shortcut to jump to starred bookmark
+  (defun kef/elfeed-show-starred ()
+    (interactive)
+    (bookmark-maybe-load-default-file)
+    (bookmark-jump "elfeed-starred"))
+#+END_SRC
 
-  ;;functions to support syncing .elfeed between machines
-  ;;makes sure elfeed reads index from disk before launching
+ref: [[http://pragmaticemacs.com/emacs/star-and-unstar-articles-in-elfeed/][Star and unstar articles in elfeed | Pragmatic Emacs]]
+Adding the concept of *stars* to elfeed, along with hooks etc.
+#+BEGIN_SRC emacs-lisp
+  ;; code to add and remove a starred tag to elfeed article
+  ;; based on http://matt.hackinghistory.ca/2015/11/22/elfeed/
+  ;; more concise version from user: Galrog. Slick.
+  (defalias 'elfeed-toggle-star
+    (elfeed-expose #'elfeed-search-toggle-all 'star))
+
+  (eval-after-load 'elfeed-search
+    '(define-key elfeed-search-mode-map (kbd "m") 'elfeed-toggle-star)) ;; tried *, but m requires one less hand and is closer to the "n" key which were using constantly in this mode.
+  ;; face for starred articles
+  (defface elfeed-search-starred-title-face
+    '((t :foreground "#f77"))
+    "Marks a starred Elfeed entry.")
+
+  (push '(starred elfeed-search-starred-title-face) elfeed-search-face-alist)
+#+END_SRC
+
+Functions to support syncing .elfeed between machines
+makes sure elfeed reads index from disk before launching
+#+BEGIN_SRC emacs-lisp
   (defun kef/elfeed-load-db-and-open ()
     "Wrapper to load the elfeed db from disk before opening"
     (interactive)
@@ -841,12 +888,15 @@ We need to configure some keybindings. Check out the github page for suggestions
 #+BEGIN_SRC emacs-lisp
   (use-package multiple-cursors :ensure t)
 #+END_SRC
+
 ** toc-org
 Table of contents updated with every save.
 =C-c C-o= =(org-open-at-point)= on the TOC will jump us.
 #+BEGIN_SRC emacs-lisp
   (use-package toc-org :ensure t)
 #+END_SRC
+
 * Other peoples configs
 - https://caolan.org/dotfiles/emacs.html
 - https://github.com/hrs/dotfiles/blob/master/emacs/.emacs.d/configuration.org
+- https://github.com/zzamboni/dot-emacs/blob/master/init.org#literate-programming-using-org-babel 
