@@ -38,6 +38,8 @@ the tendency is to push it as far as you can.'
 
 * Bootstrap =use-package=
 Install and load =use-package=
+- =use-package-always-defer= was causing our packages to not be re-installed.
+  Lets read more about that option soon. ~k-f-
 #+BEGIN_SRC emacs-lisp
   (unless (package-installed-p 'use-package)
     (package-refresh-contents)
@@ -59,6 +61,20 @@ Keep customize settings in their own file
 #+END_SRC
 
 * User Interface
+** Xresources
+- I'm fairly sure this is what was causing some ugly behavior when emacs is invoked.
+- Q: Why do we think this?
+- A: Our "highlight" function globally in emacs appears to be part of
+  our =.xresources= scheme.
+ref: [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Resources.html#Resources][Resources - GNU Emacs Manual]]
+#+BEGIN_QUOTE
+Emacs does not process X resources at all if you set the variable inhibit-x-resources to a non-nil value. If you invoke Emacs with the ‘-Q’ (or ‘--quick’) command-line option, inhibit-x-resources is automatically set to t.
+#+END_QUOTE
+
+#+BEGIN_SRC emacs-lisp
+  (setq inhibit-x-resources t)
+#+END_SRC
+
 ** Minimal UI
 Drop scroll bar, Toolbar, Tooltips and Menu-Bar
 #+BEGIN_SRC emacs-lisp
@@ -119,6 +135,7 @@ From http://pages.sachachua.com/.emacs.d/Sacha.html#sec-1-4-8
 #+BEGIN_SRC emacs-lisp
   (setq hl-line-sticky-flag nil)
 #+END_SRC
+
 ** line-numbers
 line numbers on, but not in org-mode please.
 #+BEGIN_SRC emacs-lisp
@@ -128,6 +145,7 @@ line numbers on, but not in org-mode please.
     )
   (add-hook 'org-mode-hook 'nolinum)
 #+END_SRC
+
 * Fonts
 #+BEGIN_SRC emacs-lisp
   ;; Test char and monospace:
@@ -282,6 +300,7 @@ In many programs, like SlickEdit, TextMate and VisualStudio, “cut” and “co
   ;;     (load-theme 'apropospriate-light t t)
   ;;     (load-theme 'apropospriate-dark t t)
 #+END_SRC
+
 ** base16-theme
 #+BEGIN_SRC emacs-lisp
   (use-package base16-theme :ensure t)
@@ -293,11 +312,13 @@ In many programs, like SlickEdit, TextMate and VisualStudio, “cut” and “co
   (use-package doneburn-theme :ensure t)
   (load-theme 'doneburn t t)
 #+END_SRC
+
 ** Github-modern
 #+BEGIN_SRC emacs-lisp
   (use-package github-modern-theme :ensure t)
 ;;  (load-theme 'github-modern t t)
 #+END_SRC
+
 ** Spacemacs
 #+BEGIN_SRC emacs-lisp
   ;; spacemacs-dark is acting strangly. Moving away for awhile.
@@ -318,6 +339,7 @@ This is a hack for =moody.el= and =spacemacs-dark=
   ;;    (set-face-attribute 'mode-line-inactive nil :box        nil)
   ;;    (set-face-attribute 'mode-line-inactive nil :background "#292b2e"))
 #+END_SRC
+
 ** disable themes before we enable a new theme
 - My understanding is such.  =load-theme= just puts whatever you call on top of
 what is already existing.  This makes a lot of sense if your theme is modular.
@@ -327,6 +349,7 @@ what is already existing.  This makes a lot of sense if your theme is modular.
   (defadvice load-theme (before theme-dont-propagate activate)
     (mapc #'disable-theme custom-enabled-themes))
 #+END_SRC
+
 ** enable-theme:
 #+BEGIN_SRC emacs-lisp
   (load-theme 'spacemacs-light t t)
