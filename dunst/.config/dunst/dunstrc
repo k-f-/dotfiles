@@ -40,27 +40,47 @@
     history = mod4+grave
     context = ctrl+shift+period
 
-[urgency_low]
-    background = "#16161d"
-    foreground = "#FFFFFF"
-    timeout = 10
+# Base16 - Zenburn
+frame_color = "#dcdccc"
+separator_color = "#dcdccc"
 
-[urgency_normal]
-    background = "#16161d"
-    foreground = "#FFFFFF"
-    timeout = 20
+[base16_low]
+    msg_urgency = low
+    background = "#404040"
+    foreground = "#4f4f4f"
 
-[urgency_critical]
-    background = "#801515"
-    foreground = "#D46A6A"
-    timeout = 0
+[base16_normal]
+    msg_urgency = normal
+    background = "#606060"
+    foreground = "#dcdccc"
+
+[base16_critical]
+    msg_urgency = critical
+    background = "#dca3a3"
+    foreground = "#c0c0c0"
+
+# Backup pervious settings 2019-02-01 20:16 GMT ~k-f-
+# [urgency_low]
+#     background = "#16161d"
+#     foreground = "#FFFFFF"
+#     timeout = 10
+
+# [urgency_normal]
+#     background = "#16161d"
+#     foreground = "#FFFFFF"
+#     timeout = 20
+
+# [urgency_critical]
+#     background = "#801515"
+#     foreground = "#D46A6A"
+#     timeout = 0
 
 [irc]
     appname = "weechat"
     format  = "%s: %b"
     urgency = low
     background = "#83c83d"
-    foreground = "#000000"
+    foreground = "#000000" 
 
 [i3blocks]
     summary = "*"

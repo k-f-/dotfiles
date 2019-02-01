@@ -1,5 +1,7 @@
 # i3 config file (v4)
 #
+# changed movement keys to be more vim-like. ~k-f-
+#
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
 # lots of credits to: https://github.com/hrs/dotfiles/blob/master/x-windows/.Xresources
 set $mod Mod4
@@ -29,10 +31,10 @@ bindsym $mod+Shift+q kill
 bindsym $mod+d exec PATH=~/bin:~/.bin:$PATH rofi -matching fuzzy -show run
 
 # change focus
-bindsym $mod+j focus left
-bindsym $mod+k focus down
-bindsym $mod+l focus up
-bindsym $mod+semicolon focus right
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
 
 # alternatively, you can use the cursor keys:
 bindsym $mod+Left focus left
@@ -41,10 +43,10 @@ bindsym $mod+Up focus up
 bindsym $mod+Right focus right
 
 # move focused window
-bindsym $mod+Shift+j move left
-bindsym $mod+Shift+k move down
-bindsym $mod+Shift+l move up
-bindsym $mod+Shift+semicolon move right
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
 
 # alternatively, you can use the cursor keys:
 bindsym $mod+Shift+Left move left
@@ -135,8 +137,10 @@ exec xautolock -detectsleep -time 5 -locker "lock" \
 bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
+
+# Tell emacs to save everything and then kill itself.
 # Exit i3 and log out of X session
-bindsym $mod+Shift+e exec "i3-msg exit"
+bindsym $mod+Shift+e exec "notify-send -u critical 'Shutting down i3.' && emacsclient -e '(save-buffers-kill-emacs t)' && i3-msg exit"
 
 # Emacsclient
 bindsym $mod+t exec "emacsclient -nc"
@@ -175,16 +179,32 @@ bar {
         i3bar_command "i3bar -t"
         status_command i3status -c ~/.config/i3/i3bar.conf
 	#tray_output primary
-	colors {
-    	   background #16161d
-    	   statusline #BFBFBF
-    	   separator  #44475A
-           focused_workspace  #44475A #44475A #F8F8F2
-    	   active_workspace   #282A36 #44475A #F8F8F2
-    	   inactive_workspace #282A36 #282A36 #BFBFBF
-    	   urgent_workspace   #FF5555 #FF5555 #F8F8F2
-    	   binding_mode       #FF5555 #FF5555 #F8F8F2
-  		   }
+
+    # Dracula Colors ~k-f-
+    # colors {
+    # 	   background #16161d
+    # 	   statusline #BFBFBF
+    # 	   separator  #44475A
+    #      focused_workspace  #44475A #44475A #F8F8F2
+    # 	   active_workspace   #282A36 #44475A #F8F8F2
+    # 	   inactive_workspace #282A36 #282A36 #BFBFBF
+    # 	   urgent_workspace   #FF5555 #FF5555 #F8F8F2
+    # 	   binding_mode       #FF5555 #FF5555 #F8F8F2
+  	# 	   }
+
+    # Base16 - zenburn ~k-f-
+    colors {
+    background $base00
+    separator  $base01
+    statusline $base04
+
+    # State             Border  BG      Text
+    focused_workspace   $base05 $base0D $base00
+    active_workspace    $base05 $base03 $base00
+    inactive_workspace  $base03 $base01 $base05
+    urgent_workspace    $base08 $base08 $base00
+    binding_mode        $base00 $base0A $base00
+    }
 }
 #################################################################
 # Startup Applications
@@ -233,9 +253,6 @@ for_window [class="Spotify"] move container to workspace 4
 exec --no-startup-id brave-browser &
 for_window [class="Brave"] move container to workspace 3
 
-# launch an emacs instance connected to earlier server
-# exec --no-startup-id emacsclient -nc
-
 #################################################################
 # Windows and Workspaces
 #################################################################
@@ -259,13 +276,50 @@ gaps outer 0
 
 # changing how borders look
 #for_window [class="^.*"] border normal 0
-#for_window [class="^.*"] border none 0
+for_window [class="^.*"] border none 0
+###########################################
 # window colors
-# class                 border  bground text    indicator child_border
-client.focused          #6272A4 #6272A4 #F8F8F2 #6272A4   #6272A4
-client.focused_inactive #44475A #44475A  #F8F8F2 #44475A   #44475A
-client.unfocused        #282A36 #282A36 #BFBFBF #282A36   #282A36
-client.urgent           #44475A #FF5555 #F8F8F2 #FF5555   #FF5555
-client.placeholder      #282A36 #282A36 #F8F8F2 #282A36   #282A36
+###########################################
 
-client.background       #F8F8F2
+# Dracula Colors ~k-f-
+# # class                 border  bground text    indicator child_border
+# client.focused          #6272A4 #6272A4 #F8F8F2 #6272A4   #6272A4
+# client.focused_inactive #44475A #44475A  #F8F8F2 #44475A   #44475A
+# client.unfocused        #282A36 #282A36 #BFBFBF #282A36   #282A36
+# client.urgent           #44475A #FF5555 #F8F8F2 #FF5555   #FF5555
+# client.placeholder      #282A36 #282A36 #F8F8F2 #282A36   #282A36
+
+# client.background       #F8F8F2
+
+# Zenburn
+## Base16 Zenburn
+# Author: elnawe
+#
+# You can use these variables anywhere in the i3 configuration file.
+
+set $base00 #3f3f3f
+set $base01 #404040
+set $base02 #606060
+set $base03 #4f4f4f
+set $base04 #808080
+set $base05 #dcdccc
+set $base06 #c0c0c0
+set $base07 #ffffff
+set $base08 #dca3a3
+set $base09 #dfaf8f
+set $base0A #e0cf9f
+set $base0B #5f7f5f
+set $base0C #93e0e3
+set $base0D #7cb8bb
+set $base0E #dc8cc3
+set $base0F #000000
+
+# Basic color configuration using the Base16 variables for windows and borders.
+# Property Name         Border  BG      Text    Indicator Child Border
+client.focused          $base05 $base0D $base00 $base0D $base0D
+client.focused_inactive $base01 $base01 $base05 $base03 $base01
+client.unfocused        $base01 $base00 $base05 $base01 $base01
+client.urgent           $base08 $base08 $base00 $base08 $base08
+client.placeholder      $base00 $base00 $base05 $base00 $base00
+client.background       $base07
+

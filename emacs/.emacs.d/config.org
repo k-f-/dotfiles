@@ -163,7 +163,7 @@ From http://pages.sachachua.com/.emacs.d/Sacha.html#sec-1-4-8
   ;; 0123456789abcdefghijklmnopqrstuvwxyz [] () :;,. !@#$^&*
   ;; 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ {} <> "'`  ~-_/|\?
   (add-to-list 'default-frame-alist
-               '(font . "InputMono-12"))
+               '(font . "InputMono-11"))
 #+END_SRC
 
 * Backups
@@ -297,14 +297,10 @@ In many programs, like SlickEdit, TextMate and VisualStudio, “cut” and “co
 #+END_SRC
 
 * Themes
-** base16-themes
+** zenburn
+Lets stop fucking around with broken themes and just use =zenburn=.
 #+BEGIN_SRC emacs-lisp
-  (use-package base16-theme :ensure t)
-#+END_SRC
-
-** kaolin-themes
-#+BEGIN_SRC emacs-lisp
-  (use-package kaolin-themes :ensure t)
+  (use-package zenburn-theme :ensure t)
 #+END_SRC
 
 ** disable themes before we enable a new theme
@@ -319,8 +315,7 @@ what is already existing.  This makes a lot of sense if your theme is modular.
 
 ** enable-theme:
 #+BEGIN_SRC emacs-lisp
-  (load-theme 'kaolin-light t t)
-  (enable-theme 'koalin-light)
+  (load-theme 'zenburn t t)
 #+END_SRC
 
 * Packages
@@ -755,16 +750,22 @@ Functions & Hooks via: http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-em
 
 ref: [[http://pragmaticemacs.com/emacs/star-and-unstar-articles-in-elfeed/][Star and unstar articles in elfeed | Pragmatic Emacs]]
 Adding the concept of *stars* to elfeed, along with hooks etc.
+
 #+BEGIN_SRC emacs-lisp
-  ;; code to add and remove a starred tag to elfeed article
-  ;; based on http://matt.hackinghistory.ca/2015/11/22/elfeed/
-  ;; more concise version from user: Galrog. Slick.
+    ;; code to add and remove a starred tag to elfeed article
+    ;; based on http://matt.hackinghistory.ca/2015/11/22/elfeed/
+    ;; http://pragmaticemacs.com/emacs/star-and-unstar-articles-in-elfeed/#disqus_thread
+    ;; more concise version from user: Galrog. Slick.
   (defalias 'elfeed-toggle-star
     (elfeed-expose #'elfeed-search-toggle-all 'star))
 
   (eval-after-load 'elfeed-search
-    '(define-key elfeed-search-mode-map (kbd "m") 'elfeed-toggle-star)) ;; tried *, but m requires one less hand and is closer to the "n" key which were using constantly in this mode.
-  ;; face for starred articles
+    '(define-key elfeed-search-mode-map (kbd "m") 'elfeed-toggle-star))
+  ;; tried *, but m requires one less hand and is closer to the "n" key which were using constantly in this mode.
+#+END_SRC  
+
+A colored face for a =starred= entry.
+#+BEGIN_SRC emacs-lisp
   (defface elfeed-search-starred-title-face
     '((t :foreground "#f77"))
     "Marks a starred Elfeed entry.")

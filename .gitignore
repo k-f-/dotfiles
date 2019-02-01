@@ -4,8 +4,8 @@ elpa/
 emacs/.emacs.d/url/
 auto-save-list
 config.el
-ido.last
 custom.el
+ido.last
 smex-items
 projectile-bookmarks.eld
 places
