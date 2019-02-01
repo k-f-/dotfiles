@@ -15,21 +15,37 @@
   (scroll-bar-mode -1)
   (tooltip-mode -1))
 
-;; add MELPA package server
+;;; ignore .xresources
+(setq inhibit-x-resources t)
+
+;;; Set up package
 (require 'package)
-
-(add-to-list 'package-archives 
-  '("melpa" . "http://melpa.org/packages/") t)
-
-(unless package-archive-contents
-  (package-refresh-contents))
-
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.org/packages/") t)
 (package-initialize)
 
-;; if not yet installed, install package use-package
+;;; Bootstrap use-package
+;; Install use-package if it's not already installed.
+;; use-package is used to configure the rest of the packages.
 (unless (package-installed-p 'use-package)
+  (package-refresh-contents)
   (package-install 'use-package))
 
+;; From use-package README
+(eval-when-compile
+  (require 'use-package))
+
+(require 'bind-key)
+
+;; For debugging
+(setq use-package-verbose t)
+
+;; run server if using emacsclient as default EDITOR also useful for
+;; org-protocol capture https://www.emacswiki.org/emacs/EmacsClient
+
+(require 'server)
+(unless (server-running-p)
+  (server-start))
 ;; load org package
 (require 'org)
 

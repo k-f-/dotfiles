@@ -138,21 +138,6 @@ From http://pages.sachachua.com/.emacs.d/Sacha.html#sec-1-4-8
               (delete-other-windows)))
 #+END_SRC
 
-** highlight current line
-#+BEGIN_SRC emacs-lisp
-  (setq hl-line-sticky-flag nil)
-#+END_SRC
-
-** line-numbers
-line numbers on, but not in org-mode please.
-#+BEGIN_SRC emacs-lisp
-  (global-linum-mode 1)
-  (defun nolinum ()
-    (global-linum-mode 0)
-    )
-  (add-hook 'org-mode-hook 'nolinum)
-#+END_SRC
-
 ** Highlight matching parenthesis
 #+BEGIN_SRC emacs-lisp
   (show-paren-mode 1)
@@ -178,7 +163,7 @@ line numbers on, but not in org-mode please.
   ;; 0123456789abcdefghijklmnopqrstuvwxyz [] () :;,. !@#$^&*
   ;; 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ {} <> "'`  ~-_/|\?
   (add-to-list 'default-frame-alist
-               '(font . "InputMono-10"))
+               '(font . "InputMono-12"))
 #+END_SRC
 
 * Backups
@@ -278,7 +263,7 @@ much space is kept between the cursor and the bottom of the buffer.
 ** Tabs
 Tabs should be four spaces.
 #+BEGIN_SRC emacs-lisp
-  (setq-default tab-width 8)
+  (setq-default tab-width 4)
   (setq-default tab-stop-list (list 8 16 24 32 40 48 56 64 72 80 88 96 104 112 120))
 #+END_SRC
 
@@ -312,48 +297,14 @@ In many programs, like SlickEdit, TextMate and VisualStudio, “cut” and “co
 #+END_SRC
 
 * Themes
-** Ample
-#+BEGIN_SRC emacs-lisp
-  (use-package ample-theme :ensure t)
-#+END_SRC
-
-** Apropospriate
-#+BEGIN_SRC emacs-lisp
-  (use-package apropospriate-theme :ensure t)
-#+END_SRC
-
-** base16-theme
+** base16-themes
 #+BEGIN_SRC emacs-lisp
   (use-package base16-theme :ensure t)
 #+END_SRC
 
-** doneburn
+** kaolin-themes
 #+BEGIN_SRC emacs-lisp
-  (use-package doneburn-theme :ensure t)
-#+END_SRC
-
-** Github-modern
-#+BEGIN_SRC emacs-lisp
-  (use-package github-modern-theme :ensure t)
-#+END_SRC
-
-** Spacemacs
-#+BEGIN_SRC emacs-lisp
-  ;; spacemacs-dark is acting strangly. Moving away for awhile.
-  (use-package spacemacs-theme :ensure t :no-require t) 
-  ;; https://github.com/jwiegley/use-package/issues/545#issuecomment-349459803
-#+END_SRC
-
-This is a hack for =moody.el= and =spacemacs-dark=
-#+BEGIN_SRC emacs-lisp
-  ;; modeline
-  ;;(let ((line (face-attribute 'mode-line :underline)))
-  ;;    (set-face-attribute 'mode-line          nil :overline   line)
-  ;;    (set-face-attribute 'mode-line-inactive nil :overline   line)
-  ;;    (set-face-attribute 'mode-line-inactive nil :underline  line)
-  ;;    (set-face-attribute 'mode-line          nil :box        nil)
-  ;;    (set-face-attribute 'mode-line-inactive nil :box        nil)
-  ;;    (set-face-attribute 'mode-line-inactive nil :background "#292b2e"))
+  (use-package kaolin-themes :ensure t)
 #+END_SRC
 
 ** disable themes before we enable a new theme
@@ -368,8 +319,8 @@ what is already existing.  This makes a lot of sense if your theme is modular.
 
 ** enable-theme:
 #+BEGIN_SRC emacs-lisp
-  (load-theme 'spacemacs-light t t)
-  (enable-theme 'spacemacs-light)
+  (load-theme 'kaolin-light t t)
+  (enable-theme 'koalin-light)
 #+END_SRC
 
 * Packages
@@ -887,13 +838,6 @@ We can now replace our link-capture-template with this one?
 We need to configure some keybindings. Check out the github page for suggestions.
 #+BEGIN_SRC emacs-lisp
   (use-package multiple-cursors :ensure t)
-#+END_SRC
-
-** toc-org
-Table of contents updated with every save.
-=C-c C-o= =(org-open-at-point)= on the TOC will jump us.
-#+BEGIN_SRC emacs-lisp
-  (use-package toc-org :ensure t)
 #+END_SRC
 
 * Other peoples configs
