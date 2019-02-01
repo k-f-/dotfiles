@@ -54,8 +54,9 @@ bindsym $mod+Shift+Down move down
 bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
+# Changed from mod+h to mod+shift+h
 # split in horizontal orientation
-bindsym $mod+h split h
+bindsym $mod+Shift+v split h
 
 # split in vertical orientation
 bindsym $mod+v split v
@@ -181,30 +182,32 @@ bar {
 	#tray_output primary
 
     # Dracula Colors ~k-f-
-    # colors {
-    # 	   background #16161d
-    # 	   statusline #BFBFBF
-    # 	   separator  #44475A
-    #      focused_workspace  #44475A #44475A #F8F8F2
-    # 	   active_workspace   #282A36 #44475A #F8F8F2
-    # 	   inactive_workspace #282A36 #282A36 #BFBFBF
-    # 	   urgent_workspace   #FF5555 #FF5555 #F8F8F2
-    # 	   binding_mode       #FF5555 #FF5555 #F8F8F2
-  	# 	   }
-
-    # Base16 - zenburn ~k-f-
     colors {
-    background $base00
-    separator  $base01
-    statusline $base04
+    	   background #16161d
+    	   statusline #BFBFBF
+    	   separator  #44475A
 
-    # State             Border  BG      Text
-    focused_workspace   $base05 $base0D $base00
-    active_workspace    $base05 $base03 $base00
-    inactive_workspace  $base03 $base01 $base05
-    urgent_workspace    $base08 $base08 $base00
-    binding_mode        $base00 $base0A $base00
-    }
+           # State            Border  BG      Text  
+           focused_workspace  #44475A #44475A #F8F8F2
+    	   active_workspace   #282A36 #44475A #F8F8F2
+    	   inactive_workspace #282A36 #282A36 #BFBFBF
+    	   urgent_workspace   #FF5555 #FF5555 #F8F8F2
+    	   binding_mode       #FF5555 #FF5555 #F8F8F2
+  		   }
+
+    # # Base16 - zenburn ~k-f-
+    # colors {
+    # background $base00
+    # separator  $base01
+    # statusline $base04
+
+    # # State             Border  BG      Text
+    # focused_workspace   $base05 $base0D $base00
+    # active_workspace    $base05 $base03 $base00
+    # inactive_workspace  $base03 $base01 $base05
+    # urgent_workspace    $base08 $base08 $base00
+    # binding_mode        $base00 $base0A $base00
+    # }
 }
 #################################################################
 # Startup Applications
@@ -276,7 +279,7 @@ gaps outer 0
 
 # changing how borders look
 #for_window [class="^.*"] border normal 0
-for_window [class="^.*"] border none 0
+#for_window [class="^.*"] border none 0
 ###########################################
 # window colors
 ###########################################
