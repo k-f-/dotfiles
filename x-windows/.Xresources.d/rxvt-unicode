@@ -7,7 +7,6 @@ URxvt.allow_bold: true
 
 ! Use fake transparency (better with tiling)
 URxvt.transparent: true
-URxvt.shading: 110
 
 URxvt.urgentOnBell: true
 URxvt.loginShell: true
