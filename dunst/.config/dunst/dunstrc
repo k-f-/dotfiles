@@ -31,7 +31,7 @@
     sort = yes
     startup_notification = false
     sticky_history = yes
-    transparency = 20
+    transparency = 90
     word_wrap = yes
 
 [shortcuts]

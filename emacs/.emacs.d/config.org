@@ -700,8 +700,19 @@ Turn on rainbow-mode for web/css.
   (add-hook 'css-mode-hook #'rainbow-mode)
 #+END_SRC
 
-** elfeed
+** fontawesome
+add an ivy-search for fontawesome icons. slick.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package fontawesome :ensure t)
+  (defun insert-fontawesome ()
+    (interactive)
+    (insert (call-interactively 'fontawesome)))
+#+END_SRC 
+
+** TODO elfeed
 Elfeed is a very nice RSS/Atom reader for emacs.
+Something around 2019-02-01 broke the =elfeed-expose= method.
 #+BEGIN_SRC emacs-lisp
   (use-package elfeed
     :ensure t
@@ -756,11 +767,12 @@ Adding the concept of *stars* to elfeed, along with hooks etc.
     ;; based on http://matt.hackinghistory.ca/2015/11/22/elfeed/
     ;; http://pragmaticemacs.com/emacs/star-and-unstar-articles-in-elfeed/#disqus_thread
     ;; more concise version from user: Galrog. Slick.
-  (defalias 'elfeed-toggle-star
-    (elfeed-expose #'elfeed-search-toggle-all 'star))
 
-  (eval-after-load 'elfeed-search
-    '(define-key elfeed-search-mode-map (kbd "m") 'elfeed-toggle-star))
+;;  (defalias 'elfeed-toggle-star
+;;    (elfeed-expose #'elfeed-search-toggle-all 'star))
+
+;;  (eval-after-load 'elfeed-search
+;;    '(define-key elfeed-search-mode-map (kbd "m") 'elfeed-toggle-star))
   ;; tried *, but m requires one less hand and is closer to the "n" key which were using constantly in this mode.
 #+END_SRC  
 
@@ -781,7 +793,7 @@ makes sure elfeed reads index from disk before launching
     (interactive)
     (elfeed-db-load)
     (elfeed)
-    (elfeed-update)
+    ;;(elfeed-update)  ;; this sucks on a slow internet connection, just press G instead.
     (elfeed-search-update--force))
 
   ;;write to disk when quiting
@@ -803,17 +815,6 @@ Cool, we get to use org-mode to manage our feeds. <3
     ;; location of feed orgfile
     (setq rmh-elfeed-org-files (list "~/org/feeds.org")))
 #+END_SRC
-
-** fontawesome
-add an ivy-search for fontawesome icons. slick.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package fontawesome :ensure t)
-  (defun insert-fontawesome ()
-    (interactive)
-    (insert (call-interactively 'fontawesome)))
-#+END_SRC 
-
 ** WAITING comment-dwim-2
 :LOGBOOK:
 - State "WAITING"    from              [2019-01-29 Tue 14:50] \\

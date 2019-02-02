@@ -1,8 +1,8 @@
 # -*- mode: sh -*-
 
 
-### ssh aliases
-alias akita="ssh root@akita.kfring.com"
+### ssh/mosh aliases
+alias akita="mosh root@akita.kfring.com -- tmux -a"
 
 
 ### 
