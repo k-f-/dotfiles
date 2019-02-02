@@ -239,9 +239,9 @@ Move between open windows with =M-o= as well as =C-x o=.
 * Movement, Formatting & Editing
 - [[https://www.reddit.com/r/emacs/comments/co9qb/3_tips_for_reducing_strain_on_your_hands/][3 tips for reducing strain on your hands : emacs]]
 - eagerly awaiting my plank
-** Sentences end with a single space
+** Sentences end with two spaces
 #+BEGIN_SRC emacs-lisp
-  (setq sentence-end-double-space nil)
+  (setq sentence-end-double-space t)
 #+END_SRC
 
 ** Smooth Scrolling
