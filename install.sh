@@ -14,6 +14,7 @@ stow vim
 stow rofi
 stow compton
 stow mbsync
+stow systemd
 
 # Link .bash_profile -> .bashrc
 rm -f ~/.bash_profile
