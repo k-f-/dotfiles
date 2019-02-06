@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# check for networking, otherwise die.
+STATE=`nmcli networking connectivity`
+
+if [ $STATE = 'full' ]
+then
+    ~/.bin/msmtp-runqueue
+    mbsync -c ~/.emacs.d/.mbsyncrc personal
+    notmuch new
+    exit 0
+
+fi
+echo "No Internets!"
+exit 0
+
+
+
+# If we want to do this as a service.d instead:
+# via ArchWiki: https://wiki.archlinux.org/index.php/Isync#Integration_with_notmuch_or_mu4e
+# ~/.config/systemd/user/mbsync.service
+# -------------------------------------------
+# [Unit]
+# Description=Mailbox synchronization service
+
+# [Service]
+# Type=oneshot
+# ExecStart=/usr/bin/mbsync -Va
+# ExecStartPost=/usr/bin/notmuch new

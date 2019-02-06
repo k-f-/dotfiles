@@ -1,0 +1,60 @@
+IMAPAccount personal
+Host imap.gmail.com
+User me@kfring.com
+PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.emacs.d/.mbsyncpass.personal.gpg"
+Port 993
+SSLType IMAPS
+AuthMechs Login
+CertificateFile /etc/ssl/certs/ca-certificates.crt 
+
+IMAPStore personal-remote
+Account personal
+
+MaildirStore personal-local
+Path ~/.mail/kfring/
+Inbox ~/.mail/kfring/inbox
+
+Channel personal-main
+Master :personal-remote:
+Slave :personal-local:
+# NOTE: empty lines matter to mbsync when it reads in the config.
+Patterns "INBOX" "Arch*"
+Create Both
+Expunge Both
+SyncState *
+# ref: https://chrisstreeter.com/archive/2009/04/gmail-imap-backup-with-mbsync-on-ubuntu.html
+# Maybe we'll do this later.
+# ref: https://wiki.archlinux.org/index.php/Isync#Step_#2:_Setup_mbsync
+# Exclude everything under the internal [Gmail] folder, except the interesting folders
+# Patterns * !"[Gmail]/All Mail" !"[Gmail]/Important" !"[Gmail]/Starred" !"[Gmail]/Trash"
+#Patterns * !"[Gmail]/All Mail" !"[Gmail]/Important" !"[Gmail]/Starred" !"[Gmail]/Trash" !"[Gmail]/Spam" !"[Gmail]/Sent Mail"
+# Or include everything
+# Patterns *
+# Create missing mailboxes on both locally and on the server.
+
+Channel personal-trash
+Master :personal-remote:"[Gmail]/Trash"
+Slave :personal-local:trash
+Create Both
+Expunge Both
+SyncState *
+
+Channel personal-sent
+Master :personal-remote:"[Gmail]/Sent Mail"
+Slave :personal-local:sent
+Create Both
+Expunge Both
+SyncState *
+
+Channel personal-drafts
+Master :personal-remote:"[Gmail]/Drafts"
+Slave :personal-local:drafts
+Create Both
+Expunge Both
+SyncState *
+
+Group personal
+Channel personal-drafts
+Channel personal-sent
+Channel personal-trash
+Channel personal-main

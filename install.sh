@@ -13,6 +13,7 @@ stow dunst
 stow vim
 stow rofi
 stow compton
+stow mbsync
 
 # Link .bash_profile -> .bashrc
 rm -f ~/.bash_profile

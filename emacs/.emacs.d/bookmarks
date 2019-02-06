@@ -2,7 +2,12 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("elfeed-starred"
+(("org-refile-last-stored"
+ (filename . "~/org/edu.org")
+ (front-context-string . "** DONE Fasfa + ")
+ (rear-context-string . "l Code: G09085\n\n")
+ (position . 903))
+("elfeed-starred"
  (location . "+star")
  (tags "star")
  (handler . elfeed-search-bookmark-handler))

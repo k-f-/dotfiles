@@ -1,17 +1,12 @@
+# ref: https://wiki.archlinux.org/index.php/Dunst
 [global]
     alignment = left
     markup = yes
     bounce_freq = 0
-    browser = /usr/bin/firefox -new-tab
+    browser = /usr/bin/brave-browser --new-window
     dmenu = /usr/bin/dmenu -p dunst:
     follow = none
     font = San Fransico Display 15
-
-	# width & color
-	frame_width = 4
-    frame_color = "#636363" 
-
-	format = "<b>%s</b>\n%b"
 	
     # geometry [{width}]x{height}][+/-{x}+/-{y}]
     geometry = "0-40+40"
@@ -22,17 +17,22 @@
     indicate_hidden = yes
     line_height = 0.5 
     monitor = 0
-    padding = 8
+    padding = 4
     separator_color = frame
-    separator_height = 1
+    separator_height = 4
     show_age_threshold = 60
     show_indicators = no # The (A)/(U) application url thing is visually distracting
     shrink = no
     sort = yes
     startup_notification = false
     sticky_history = yes
-    transparency = 90
+    transparency = 0
     word_wrap = yes
+
+	# width & color
+	frame_width = 4
+	format = "<b>%s</b>\n%b"
+
 
 [shortcuts]
     #close = mod4+x
@@ -41,23 +41,23 @@
     context = ctrl+shift+period
 
 # Base16 - Zenburn
-frame_color = "#dcdccc"
+frame_color = "#16161d"
 separator_color = "#dcdccc"
 
-[base16_low]
+[urgency_low]
     msg_urgency = low
-    background = "#404040"
-    foreground = "#4f4f4f"
-
-[base16_normal]
-    msg_urgency = normal
-    background = "#606060"
+    background = "#2b2b2b"
     foreground = "#dcdccc"
 
-[base16_critical]
+[urgency_normal]
+    msg_urgency = normal
+    background = "#2b2b2b"
+    foreground = "#dcdccc"
+
+[urgency_critical]
     msg_urgency = critical
-    background = "#dca3a3"
-    foreground = "#c0c0c0"
+    background = "#801515"
+    foreground = "#000000"
 
 # Backup pervious settings 2019-02-01 20:16 GMT ~k-f-
 # [urgency_low]
@@ -83,7 +83,7 @@ separator_color = "#dcdccc"
     foreground = "#000000" 
 
 [i3blocks]
-    summary = "*"
-    script = ~/.bin/notify
+#    summary = "*"
+#    script = ~/.bin/notify
 
 

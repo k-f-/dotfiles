@@ -51,7 +51,8 @@ Install and load =use-package=
   (require 'use-package)
 #+END_SRC
 
-* Customize File Location
+* Customize File Locations
+** Move custom.el file
 Create custom file elsewhere.
 Keep customize settings in their own file 
 
@@ -60,6 +61,22 @@ Keep customize settings in their own file
   (when (file-exists-p custom-file) (load custom-file))
 #+END_SRC
 
+** set a default location for exports.
+I'd like to see things kept a bit more tidy littering exported files all over my
+org directory.  It's already messy enough.  =~/org/out/export_*= seems
+reasonable.
+ref: http://rwx.io/posts/org-export-configurations/
+ref: https://stackoverflow.com/questions/9559753/emacs-org-mode-export-to-another-directory
+#+BEGIN_SRC emacs-lisp
+  (defvar org-export-output-directory-prefix "out/export_" "prefix of directory used for org-mode export")
+
+  (defadvice org-export-output-file-name (before org-add-export-dir activate)
+    "Modifies org-export to place exported files in a different directory"
+    (when (not pub-dir)
+      (setq pub-dir (concat org-export-output-directory-prefix (substring extension 1)))
+      (when (not (file-directory-p pub-dir))
+        (make-directory pub-dir))))
+#+END_SRC
 * User Interface
 ** Xresources
 - I'm fairly sure this is what was causing some ugly behavior when emacs is invoked.
@@ -608,9 +625,6 @@ advise deft to save window config
 #+END_SRC
 
 ** ox-hugo
-
-Auto-install the package from Melpa.
-
 #+BEGIN_SRC emacs-lisp
   (use-package ox-hugo
     :ensure t 
@@ -642,9 +656,8 @@ enabled.
     (moody-replace-vc-mode))
 #+END_SRC
 
-** emacs-speaks-statistics
-Let's get emacs talking with R.
-
+** TODO emacs-speaks-statistics
+Let's get emacs talking with R.  We need to let emacs know how to run R Code.
 #+BEGIN_SRC emacs-lisp
   (use-package ess :ensure)
 #+END_SRC
@@ -658,10 +671,11 @@ Alerts for emacs
     (setq alert-default-style 'notifier))
 #+END_SRC
 
-** htmlize
+** TODO htmlize
+Need to find a style we like for default org-mode export.  Possibly tufte-css?
 #+BEGIN_SRC emacs-lisp
   (use-package htmlize :ensure)
-  (setq org-html-htmlize-output-type 'inline-css)
+  ;;(setq org-html-htmlize-output-type 'inline-css)
 #+END_SRC
 
 ** shell-pop
@@ -712,7 +726,8 @@ add an ivy-search for fontawesome icons. slick.
 
 ** TODO elfeed
 Elfeed is a very nice RSS/Atom reader for emacs.
-Something around 2019-02-01 broke the =elfeed-expose= method.
+Something around 2019-02-01 broke the =elfeed-expose= method.  Also broke
+=Symbol's value as variable is void: elfeed-search-face-alist=
 #+BEGIN_SRC emacs-lisp
   (use-package elfeed
     :ensure t
@@ -793,8 +808,8 @@ makes sure elfeed reads index from disk before launching
     (interactive)
     (elfeed-db-load)
     (elfeed)
-    ;;(elfeed-update)  ;; this sucks on a slow internet connection, just press G instead.
-    (elfeed-search-update--force))
+    (elfeed-update))  ;; this sucks on a slow internet connection, just press G instead.
+    ;;(elfeed-search-update--force))
 
   ;;write to disk when quiting
   (defun kef/elfeed-save-db-and-bury ()
@@ -842,6 +857,56 @@ We need to configure some keybindings. Check out the github page for suggestions
   (use-package multiple-cursors :ensure t)
 #+END_SRC
 
+** notmuch
+
+- Notmuch: https://notmuchmail.org
+#+BEGIN_SRC emacs-lisp
+  (use-package notmuch :ensure)
+  ; C-c m opens up Notmuch from any buffer
+  (global-set-key (kbd "C-c m") `notmuch)
+
+  ; stores postponed messages to the specified directory
+  (setq message-directory "[Gmail]/Drafts") ;
+
+  ;set sent mail directory
+  (setq notmuch-fcc-dirs "[Gmail]/Sent")
+
+  ;Settings for main screen
+  (setq notmuch-hello-hide-tags (quote ("killed")))
+
+  ; A few commonly used saved searches.
+  (setq notmuch-saved-searches
+  (quote
+  ((:name "inbox" :query "tag:inbox AND -tag:work" :key "i" :sort-order oldest-first)
+   (:name "flagged" :query "tag:flagged" :key "f") ;flagged messages
+   (:name "sent" :query "tag:sent -tag:work" :key "t" :sort-order newest-first)
+   (:name "drafts" :query "tag:draft" :key "d")
+   (:name "all mail" :query "*" :key "a" :sort-order newest-first))))
+
+  ; Reading mail settings:
+  (define-key notmuch-show-mode-map "S"
+      (lambda ()
+      "mark message as spam"
+      (interactive)
+  (notmuch-show-tag (list "+spam" "-inbox"))))
+
+  (define-key notmuch-search-mode-map "S"
+  (lambda ()
+      "mark message as spam"
+      (interactive)
+      (notmuch-search-tag (list "-inbox" "+spam"))
+      (next-line) ))
+#+END_SRC
+
+- notmuch-labeler: https://github.com/DamienCassou/notmuch-labeler
+#+BEGIN_SRC emacs-lisp
+  (use-package notmuch-labeler :ensure)
+#+END_SRC
+
+- counsel-notmuch: https://github.com/fuxialexander/counsel-notmuch
+#+BEGIN_SRC emacs-lisp
+  (use-package counsel-notmuch :ensure)
+#+END_SRC
 * Other peoples configs
 - https://caolan.org/dotfiles/emacs.html
 - https://github.com/hrs/dotfiles/blob/master/emacs/.emacs.d/configuration.org
