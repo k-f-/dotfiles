@@ -9,7 +9,6 @@ the tendency is to push it as far as you can.'
 
 --- Hunter S. Thompson, Fear and Loathing in Las Vegas
 * Set global user
-
 #+BEGIN_SRC emacs-lisp
   ;; --------------------------------------------------
   ;; Set global user
@@ -25,13 +24,9 @@ the tendency is to push it as far as you can.'
 #+BEGIN_SRC emacs-lisp
   (require 'package)
   (setq package-enable-at-startup nil)
-  (setq package-archives '(("melpa" . "http://melpa.org/packages/")
-                           ("melpa-stable" . "http://stable.melpa.org/packages/")
+  (setq package-archives '(
+                           ("melpa" . "http://melpa.org/packages/")
                            ("gnu"   . "http://elpa.gnu.org/packages/")))
-  (setq package-archive-priorities
-        '(("melpa" . 1)
-          ("melpa-stable" . 2)
-          ("gnu" . 3)))
   (package-refresh-contents)
   (package-initialize)
 #+END_SRC
@@ -55,7 +50,6 @@ Install and load =use-package=
 ** Move custom.el file
 Create custom file elsewhere.
 Keep customize settings in their own file 
-
 #+BEGIN_SRC emacs-lisp
   (setq custom-file "~/.emacs.d/custom.el")
   (when (file-exists-p custom-file) (load custom-file))
@@ -68,14 +62,14 @@ reasonable.
 ref: http://rwx.io/posts/org-export-configurations/
 ref: https://stackoverflow.com/questions/9559753/emacs-org-mode-export-to-another-directory
 #+BEGIN_SRC emacs-lisp
-  (defvar org-export-output-directory-prefix "out/export_" "prefix of directory used for org-mode export")
+  ;; (defvar org-export-output-directory-prefix "~/out/export_" "prefix of directory used for org-mode export")
 
-  (defadvice org-export-output-file-name (before org-add-export-dir activate)
-    "Modifies org-export to place exported files in a different directory"
-    (when (not pub-dir)
-      (setq pub-dir (concat org-export-output-directory-prefix (substring extension 1)))
-      (when (not (file-directory-p pub-dir))
-        (make-directory pub-dir))))
+  ;; (defadvice org-export-output-file-name (before org-add-export-dir activate)
+  ;;   "Modifies org-export to place exported files in a different directory"
+  ;;   (when (not pub-dir)
+  ;;     (setq pub-dir (concat org-export-output-directory-prefix (substring extension 1)))
+  ;;     (when (not (file-directory-p pub-dir))
+  ;;       (make-directory pub-dir))))
 #+END_SRC
 * User Interface
 ** Xresources
@@ -186,7 +180,6 @@ From http://pages.sachachua.com/.emacs.d/Sacha.html#sec-1-4-8
 * Backups
 ** Config Backups
 Let us centralize where emac's keeps backups
-
 #+BEGIN_SRC emacs-lisp
   (setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
         backup-by-copying t    ; Don't delink hardlinks
@@ -393,7 +386,6 @@ Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g.
 #+END_SRC
 
 ** Counsel integration for Projectile
-
 #+BEGIN_SRC emacs-lisp
   (use-package counsel-projectile :ensure
     :config
@@ -525,7 +517,7 @@ flyspell - in all text modes
 
 ** Flycheck
 #+BEGIN_SRC emacs-lisp
-  (use-package flycheck :ensure)
+;;  (use-package flycheck :ensure)
 #+END_SRC
 
 ** Magit
@@ -575,55 +567,6 @@ really helpful for some modes (like =projectile=, for example).
     (setq which-key-idle-delay 1.0))
 #+END_SRC
 
-** Deft
-
-Deft-Mode custom functions via: http://pragmaticemacs.com/emacs/tweaking-deft-quicker-notes/
-Custom function to save window-layout when launching deft-mode
-advise deft to save window config
-
-#+BEGIN_SRC emacs-lisp
-  (use-package deft :ensure
-    :bind ("<f8>" . deft)
-    :commands (deft)
-    :config (setq deft-directory "~/Dropbox/org/" deft-extensions
-                  '("md" "org" "txt")))
-  (setq deft-default-extension "org")
-  (setq deft-use-filename-as-title nil)
-  (setq deft-use-filter-string-for-filename t)
-  (setq deft-file-naming-rules '((noslash . "-")
-                                 (nospace . "-")
-                                 (case-fn . downcase)))
-  (setq deft-text-mode 'org-mode)
-
-  ;; filenames - replace space and slash with - lcase
-  (setq deft-file-naming-rules
-        '((noslash . "-")
-          (nospace . "-")
-          (case-fn . downcase)))
-
-  (defun kef-deft-save-windows (orig-fun &rest args)
-    (setq kef-pre-deft-window-config (current-window-configuration))
-    (apply orig-fun args)
-    )
-
-  (advice-add 'deft :around #'kef-deft-save-windows)
-
-  ;;function to quit a deft edit cleanly back to pre deft window
-  (defun kef-quit-deft ()
-    ;;  "Save buffer, kill buffer, kill deft buffer, and restore window config to the way it was before deft was invoked"
-    (interactive)
-    (save-buffer)
-    (kill-this-buffer)
-    (switch-to-buffer "*Deft*")
-    (kill-this-buffer)
-    (when (window-configuration-p kef-pre-deft-window-config)
-      (set-window-configuration kef-pre-deft-window-config)
-      )
-    )
-
-  (global-set-key (kbd "C-c q") 'kef-quit-deft)
-#+END_SRC
-
 ** ox-hugo
 #+BEGIN_SRC emacs-lisp
   (use-package ox-hugo
@@ -662,15 +605,6 @@ Let's get emacs talking with R.  We need to let emacs know how to run R Code.
   (use-package ess :ensure)
 #+END_SRC
 
-** Alert
-Alerts for emacs
-#+BEGIN_SRC emacs-lisp
-  (use-package alert
-    :commands (alert)
-    :init
-    (setq alert-default-style 'notifier))
-#+END_SRC
-
 ** TODO htmlize
 Need to find a style we like for default org-mode export.  Possibly tufte-css?
 #+BEGIN_SRC emacs-lisp
@@ -704,6 +638,7 @@ Use web-mode for muxed html/css/js
       (setq web-mode-enable-auto-expanding t)
       ))
 #+END_SRC
+
 Rainbow-mode sets hexcodes as background color in html/css files. Handy.
 #+BEGIN_SRC emacs-lisp
   (use-package rainbow-mode :ensure)
@@ -783,11 +718,11 @@ Adding the concept of *stars* to elfeed, along with hooks etc.
     ;; http://pragmaticemacs.com/emacs/star-and-unstar-articles-in-elfeed/#disqus_thread
     ;; more concise version from user: Galrog. Slick.
 
-;;  (defalias 'elfeed-toggle-star
-;;    (elfeed-expose #'elfeed-search-toggle-all 'star))
+  (defalias 'elfeed-toggle-star
+    '(elfeed-expose #'elfeed-search-toggle-all 'star))
 
-;;  (eval-after-load 'elfeed-search
-;;    '(define-key elfeed-search-mode-map (kbd "m") 'elfeed-toggle-star))
+  (eval-after-load 'elfeed-search
+    '(define-key elfeed-search-mode-map (kbd "m") 'elfeed-toggle-star))
   ;; tried *, but m requires one less hand and is closer to the "n" key which were using constantly in this mode.
 #+END_SRC  
 
@@ -808,7 +743,7 @@ makes sure elfeed reads index from disk before launching
     (interactive)
     (elfeed-db-load)
     (elfeed)
-    (elfeed-update))  ;; this sucks on a slow internet connection, just press G instead.
+    (elfeed-update)) 
     ;;(elfeed-search-update--force))
 
   ;;write to disk when quiting
@@ -858,7 +793,6 @@ We need to configure some keybindings. Check out the github page for suggestions
 #+END_SRC
 
 ** notmuch
-
 - Notmuch: https://notmuchmail.org
 #+BEGIN_SRC emacs-lisp
   (use-package notmuch :ensure)

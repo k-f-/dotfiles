@@ -226,6 +226,12 @@ exec --no-startup-id nm-applet &
 # dropbox
 exec --no-startup-id dropbox start &
 
+# Start the PulseAudio system tray
+exec --no-startup-id pasystray &
+
+# Start up a GPG agent
+exec --no-startup-id eval $(gpg-agent --daemon)
+
 # Load up config in .Xresources (for DPI, urxvt, and rofi)
 exec --no-startup-id xrdb -merge ~/.Xresources
 

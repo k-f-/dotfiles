@@ -1,7 +1,11 @@
 [Unit]
 Description=Mailbox synchronization service
+RefuseManualStart=no
+RefuseManualStop=yes
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/mbsync -Va
+ExecStart=~/.bin/checkmail
 ExecStartPost=/usr/bin/notmuch new
+StandardOutput=syslog
+StandardError=syslog

@@ -1,10 +1,13 @@
 [Unit]
-Description=Mailbox synchronization timer
+Description=Check Mail Every 10 minutes
+RefuseManualStart=no
+RefuseManualStop=no
 
 [Timer]
-OnBootSec=2m
-OnUnitActiveSec=5m
+Persistent=false
+OnBootSec=5min
+OnUnitActiveSec=10min
 Unit=mbsync.service
 
 [Install]
-WantedBy=timers.target
+WantedBy=default.target
