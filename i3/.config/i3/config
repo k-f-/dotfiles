@@ -205,7 +205,7 @@ bar {
 #################################################################
 
 # Start the Compton compositor (for i3bar transparency)
-exec --no-startup-id compton -b &
+exec --no-startup-id compton -b --config ~/.config/compton/compton.conf &
 
 # Set the wallpaper
 exec --no-startup-id ~/.bin/set-wallpaper &
@@ -238,10 +238,10 @@ exec --no-startup-id nm-applet &
 exec --no-startup-id redshift &
 
 # launch gotop
-exec --no-startup-id i3-msg 'workspace 1; urxvt -e ~/.bin/gotop &'
+exec --no-startup-id urxvt -e ~/.bin/gotop &
 
 # launch an empty shell
-exec --no-startup-id i3-msg 'workspace 1; urxvt'
+exec --no-startup-id urxvt
 
 # Invoke the Emacs daemon
 exec --no-startup-id "nohup emacs --daemon &> .out/emacs.out"
@@ -249,10 +249,12 @@ exec --no-startup-id "nohup emacs --daemon &> .out/emacs.out"
 # Start the appropriate programs on the right workspaces
 # Start spotify with some HiDPI settings
 # spotify always on workspace 10
-exec --no-startup-id i3-msg 'workspace 10; exec spotify --force-device-scale-factor=2 &'
+exec --no-startup-id exec spotify --force-device-scale-factor=2 &
+for_window [class="Spotify"] move container to workspace 10
 
 # Start the appropriate programs on the right workspaces
-exec --no-startup-id i3-msg 'workspace 2; exec brave-browser'
+exec --no-startup-id exec brave-browser
+for_window [class="Brave"] move container to workspace 2
 
 #################################################################
 # Windows and Workspaces
