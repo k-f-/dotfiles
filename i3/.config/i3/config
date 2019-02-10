@@ -114,14 +114,11 @@ exec --no-startup-id setxkbmap -option ctrl:nocaps
 # Treat hitting and releasing Control without chording as Escape
 exec --no-startup-id xcape &
 
-# Pulse Audio controls
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5% #increase sound volume
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5% #decrease sound volume
-bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle # mute sound
+# Open a file browser window
+bindsym $mod+n exec pcmanfm
 
-# Screen brightness controls
-bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 5 # increase screen brightness
-bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 5 # decrease screen brightness
+# Bind media/volume keys
+exec --no-startup-id xbindkeys &
 
 # Media player controls
 bindsym XF86AudioPlay exec playerctl play-pause
@@ -147,11 +144,6 @@ bindsym $mod+t exec "emacsclient -nc"
 # resize window (you can also use the mouse for that)
 mode "resize" {
         # These bindings trigger as soon as you enter the resize mode
-
-        # Pressing left will shrink the window’s width.
-        # Pressing right will grow the window’s width.
-        # Pressing up will shrink the window’s height.
-        # Pressing down will grow the window’s height.
         bindsym j resize shrink width 10 px or 10 ppt
         bindsym k resize grow height 10 px or 10 ppt
         bindsym l resize shrink height 10 px or 10 ppt
@@ -253,17 +245,15 @@ exec --no-startup-id "nohup emacs --daemon &> .out/emacs.out"
 # Start the appropriate programs on the right workspaces
 # Start spotify with some HiDPI settings
 # spotify always on workspace 1
-exec --no-startup-id spotify --force-device-scale-factor=2 &
-for_window [class="Spotify"] move container to workspace 4
+exec --no-startup-id i3-msh 'workspace 1; exec spotify --force-device-scale-factor=2 &'
 
-# Firefox in workspace 2 - always
-exec --no-startup-id brave-browser &
-for_window [class="Brave"] move container to workspace 3
+# Start the appropriate programs on the right workspaces
+exec --no-startup-id i3-msg 'workspace 2; exec brave-browser'
 
 #################################################################
 # Windows and Workspaces
 #################################################################
-# Firefox keeps making dialog windows huge
+# Keep from making dialog windows huge
 # and while resizing them with mod+r, jl and return
 # will save the previous size, let us make some sane constraits from i3 itself
 floating_minimum_size 150 x 100
@@ -277,7 +267,7 @@ for_window [class="^.*"] border pixel 0
 
 # Use i3-gaps.
 smart_gaps on
-gaps inner 3
+gaps inner 4
 gaps outer 0 
 
 
@@ -299,7 +289,7 @@ gaps outer 0
 # client.background       #F8F8F2
 
 # Zenburn
-## Base16 Zenburn
+# Base16 Zenburn
 # Author: elnawe
 #
 # You can use these variables anywhere in the i3 configuration file.

@@ -1,0 +1,16 @@
+# -*- shell-script -*-
+
+"xbacklight -dec 10"
+  XF86MonBrightnessDown
+
+"xbacklight -inc 10"
+  XF86MonBrightnessUp
+
+"amixer -D pulse sset Master toggle"
+  XF86AudioMute
+
+"amixer -D pulse sset Master 5%- unmute"
+  XF86AudioLowerVolume
+
+"amixer -D pulse sset Master 5%+ unmute"
+  XF86AudioRaiseVolume

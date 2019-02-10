@@ -1,0 +1,17 @@
+.DS_Store
+.sass-cache
+*~
+\#*
+.#*
+TAGS
+custom_plan.rb
+emacs.d/projects.el
+.classpath
+.project
+.projectile
+.settings
+*.iml
+.idea
+.clover
+.ensime
+.ensime_cache

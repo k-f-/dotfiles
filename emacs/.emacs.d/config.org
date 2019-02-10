@@ -732,7 +732,7 @@ A colored face for a =starred= entry.
     '((t :foreground "#f77"))
     "Marks a starred Elfeed entry.")
 
-  (push '(starred elfeed-search-starred-title-face) elfeed-search-face-alist)
+  (push '(starred elfeed-search-starred-title-face) 'elfeed-search-face-alist)
 #+END_SRC
 
 Functions to support syncing .elfeed between machines

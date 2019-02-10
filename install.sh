@@ -13,7 +13,7 @@ stow dunst
 stow vim
 stow rofi
 stow compton
-stow mbsync
+stow email 
 stow systemd
 
 # Link .bash_profile -> .bashrc
