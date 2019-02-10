@@ -713,18 +713,20 @@ ref: [[http://pragmaticemacs.com/emacs/star-and-unstar-articles-in-elfeed/][Star
 Adding the concept of *stars* to elfeed, along with hooks etc.
 
 #+BEGIN_SRC emacs-lisp
-    ;; code to add and remove a starred tag to elfeed article
-    ;; based on http://matt.hackinghistory.ca/2015/11/22/elfeed/
-    ;; http://pragmaticemacs.com/emacs/star-and-unstar-articles-in-elfeed/#disqus_thread
-    ;; more concise version from user: Galrog. Slick.
+  ;; code to add and remove a starred tag to elfeed article
+  ;; based on http://matt.hackinghistory.ca/2015/11/22/elfeed/
+  ;; http://pragmaticemacs.com/emacs/star-and-unstar-articles-in-elfeed/#disqus_thread
+  ;; more concise version from user: Galrog. Slick.
 
   (defalias 'elfeed-toggle-star
-    '(elfeed-expose #'elfeed-search-toggle-all 'star))
+    (elfeed-expose #'elfeed-search-toggle-all 'star))
 
   (eval-after-load 'elfeed-search
     '(define-key elfeed-search-mode-map (kbd "m") 'elfeed-toggle-star))
   ;; tried *, but m requires one less hand and is closer to the "n" key which were using constantly in this mode.
 #+END_SRC  
+
+#+RESULTS:
 
 A colored face for a =starred= entry.
 #+BEGIN_SRC emacs-lisp
