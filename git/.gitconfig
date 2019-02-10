@@ -24,7 +24,7 @@
   match = bold red
   linenumber = bold blue
 [commit]
-  gpgsign = true
+  #gpgsign = true
   template = ~/.gitmessage
 [core]
   excludesfile = ~/.gitignore
@@ -34,11 +34,11 @@
 [grep]
   linenumber = true
 [merge]
-  ff = only
+	ff = only
 [push]
-  default = current
+  	default = current
 [rebase]
-  autosquash = true
+  	autosquash = true
 [user]
 	signingkey = 3AA5C34371567BD2
 	email = me@kfring.com
