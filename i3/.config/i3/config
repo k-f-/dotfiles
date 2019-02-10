@@ -68,7 +68,7 @@ bindsym $mod+f fullscreen toggle
 # change container layout (stacked, tabbed, toggle split)
 bindsym $mod+s layout stacking
 bindsym $mod+w layout tabbed
-bindsym $mod+e layout toggle split
+bindsym $mod+t layout toggle split
 
 # toggle tiling / floating
 bindsym $mod+Shift+space floating toggle
@@ -140,7 +140,7 @@ bindsym $mod+Shift+r restart
 bindsym $mod+Shift+e exec "notify-send -u critical 'Shutting down i3.' && emacsclient -e '(save-buffers-kill-emacs t)' && i3-msg exit"
 
 # Emacsclient
-bindsym $mod+t exec "emacsclient -nc"
+bindsym $mod+e exec "emacsclient -nc"
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -238,15 +238,18 @@ exec --no-startup-id nm-applet &
 exec --no-startup-id redshift &
 
 # launch gotop
-exec --no-startup-id "urxvt -e ~/.bin/gotop &" 
+exec --no-startup-id i3-msg 'workspace 1; urxvt -e ~/.bin/gotop &'
+
+# launch an empty shell
+exec --no-startup-id i3-msg 'workspace 1; urxvt'
 
 # Invoke the Emacs daemon
-exec --no-startup-id "exec --no-startup-id emacs --daemon"
+exec --no-startup-id "nohup emacs --daemon &> .out/emacs.out"
 
 # Start the appropriate programs on the right workspaces
 # Start spotify with some HiDPI settings
-# spotify always on workspace 1
-exec --no-startup-id i3-msg 'workspace 1; exec spotify --force-device-scale-factor=2 &'
+# spotify always on workspace 10
+exec --no-startup-id i3-msg 'workspace 10; exec spotify --force-device-scale-factor=2 &'
 
 # Start the appropriate programs on the right workspaces
 exec --no-startup-id i3-msg 'workspace 2; exec brave-browser'

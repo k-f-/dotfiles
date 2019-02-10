@@ -6,7 +6,7 @@ STATE=`nmcli networking connectivity`
 if [ $STATE = 'full' ]
 then
     ~/.bin/msmtp-runqueue
-    mbsync -c ~/.mbsyncrc personal
+    mbsync -c ~/.mbsyncrc -a 
     notmuch new
     exit 0
 
