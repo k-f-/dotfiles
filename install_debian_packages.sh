@@ -45,11 +45,13 @@ sudo apt install \
      urlscan \
      urlview \
      vim \
+     vlc \
      w3m \
      xbindkeys \
      xcape \
      xdotool \
      xsel \
+     youtube-dl \
      zathura \
 
 # For tlp power management.

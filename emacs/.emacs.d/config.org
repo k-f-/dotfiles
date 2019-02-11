@@ -679,7 +679,7 @@ Something around 2019-02-01 broke the =elfeed-expose= method.  Also broke
                 ("N" . kef/elfeed-show-news)
                 ("S" . kef/elfeed-show-starred)
                 ("q" . kef/elfeed-save-db-and-bury)))
-  (global-set-key (kbd "C-x w") 'kef/elfeed-load-db-and-open)
+   (global-set-key (kbd "C-x r") 'kef/elfeed-load-db-and-open) ; r for reader
 #+END_SRC
 
 Functions & Hooks via: http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-emacs-with-elfeed/
@@ -793,7 +793,7 @@ We can now replace our link-capture-template with this one?
   (use-package org-cliplink :ensure t)
   (global-set-key (kbd "C-x p i") 'org-cliplink)
 #+END_SRC
-
+** TODO org-download
 ** TODO multiple-cursors
 - https://github.com/magnars/multiple-cursors.el
 We need to configure some keybindings. Check out the github page for suggestions.
