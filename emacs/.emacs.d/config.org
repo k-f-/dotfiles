@@ -55,6 +55,12 @@ Keep customize settings in their own file
   (when (file-exists-p custom-file) (load custom-file))
 #+END_SRC
 
+Please stop tracking my packages, I already have =use-package=
+#+BEGIN_SRC emacs-lisp
+  (defun package--save-selected-packages (&optional VALUE opt)
+    nil)
+#+END_SRC
+
 ** set a default location for exports.
 I'd like to see things kept a bit more tidy littering exported files all over my
 org directory.  It's already messy enough.  =~/org/out/export_*= seems
