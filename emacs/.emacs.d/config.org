@@ -1,4 +1,4 @@
-#+TITLE:Emacs Configuration
+s #+TITLE:Emacs Configuration
 #+AUTHOR: Kyle Fring
 #+EMAIL: me@kfring.com
 #+OPTIONS: toc:t num:nil
@@ -239,6 +239,29 @@ Create a backup to a designated dir, mirroring the full path ala ergomacs
   (global-set-key (kbd "C-c e") 'kef-visit-emacs-config)
 #+END_SRC
 
+** youtube-dl
+Fire off a youtube-dl process
+#+BEGIN_SRC emacs-lisp
+  (defun youtube-dl ()
+    (interactive)
+    (let* ((str (current-kill 0))
+           (default-directory "~/Downloads")
+           (proc (get-buffer-process (ansi-term "/bin/bash"))))
+      (term-send-string
+       proc
+       (concat "cd ~/Downloads && youtube-dl " str "\n"))))
+#+END_SRC
+
+** Ignore running processes when killing emacs
+#+BEGIN_SRC emacs-lisp
+  ;; add `flet'
+  (require 'cl)
+
+  (defadvice save-buffers-kill-emacs
+    (around no-query-kill-emacs activate)
+    "Prevent \"Active processes exist\" query on exit."
+    (cl-flet ((process-list ())) ad-do-it))
+#+END_SRC
 * Keybinding
 Set some keybindings
 #+BEGIN_SRC emacs-lisp
@@ -280,17 +303,17 @@ much space is kept between the cursor and the bottom of the buffer.
 Tabs should be four spaces.
 #+BEGIN_SRC emacs-lisp
   (setq-default tab-width 4)
-  (setq-default tab-stop-list (list 8 16 24 32 40 48 56 64 72 80 88 96 104 112 120))
+  (setq-default tab-stop-list (list 4 8 16 24 32 40 48 56 64 72 80 88 96 104 112 120))
 #+END_SRC
 
 ** Always indent with spaces
-Never use tabs. Tabs are the devil’s whitespace.
+Never use tabs. 
+/Alarmingly I am in the minority with this?/ 
 #+BEGIN_SRC emacs-lisp
   (setq-default indent-tabs-mode nil)
 #+END_SRC
 
 ** Save my location within a file
-
 Using =save-place-mode= saves the location of point for every file I visit. If I
 close the file or close the editor, then later re-open it, point will be at the
 last place I visited.
@@ -347,9 +370,7 @@ search in $HOME/code for projects.
     (projectile-mode +1)
     (setq projectile-project-search-path '("~/code/")))
 #+END_SRC
-
 ** Ivy, Swiper and Counsel
-
 #+BEGIN_SRC emacs-lisp
   (use-package ivy :ensure
     :config
@@ -457,28 +478,49 @@ Refile targets should include all files? and down to 9 levels into them.
 #+END_SRC
 
 *** org-capture-templates
-
+ref: https://orgmode.org/manual/Template-elements.html#Template-elements 
 #+BEGIN_SRC emacs-lisp
-  (setq org-capture-templates '(("t" "Todo [life]" entry
+  (setq org-capture-templates '(("t" "Todo [life]" entry                               
                                  ;; A list of things to do that I do NOT get direct compensation for.
-                                 (file+headline "~/org/life.org" "Personal")
-                                 "* TODO %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n")
+                                 ;; These things will get refiled into life.org or edu.org eventually.
+                                 ;; Think about if it is more efficacious to just put them in directly or do the whole weekly refile thing.
+                                 (file+headline "~/org/inbox.org" "TODOS")
+                                 "* %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
 
                                 ;; A todo list for work related items, things I get paid money for.
                                 ("w" "Todo [work]" entry (file+headline "~/org/work.org" "Tasks")
-                                 "* TODO %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n")
+                                 "* %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
 
-                                ;; A place to keep ideas for some other time.
-                                ("m" "Moonshots" entry (file+headline "~/org/notes.org" "Someday")
-                                 "* WAITING %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n")
+                                ;; A place to keep ideas for some other time.  Ideas for Projects that we could maybe one-day accomplish
+                                ("m" "New Idea" entry (file+headline "~/org/ideas.org" "Ideas")
+                                 "* WAITING %^{Short Description}\n:PROPERTIES:\n:CREATED: %U\n:END:\n%?%^{More details?}\n" :prepend w)
+
                                 ;; Hyperlink Capture
-                                ("l" "Hyperlink" entry (file+headline "~/org/notes.org" "Notes")
-                                 "* [[%?%^{url}][%^{Description?}]]")
+                                ("l" "Hyperlink" item (file+headline "~/org/inbox.org" "Links")
+                                 "- [[%?%^{url}][%^{Description?}]]")
 
                                 ;; general Note Capture
-                                ("n" "Note" entry (file+headline "~/org/notes.org" "Notes")
-                                 "* %?\n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :empty-lines 1)
+                                ("n" "Note" entry (file+headline "~/org/inbox.org" "Notes")
+                                 "* %^{Title}\n:PROPERTIES:\n:CREATED: %U\n:END:\n%^{Content}" :empty-lines 1)
 
+                                ;; Album capture for weekly item.
+                                ;; Artist Name: #main > div > div.Root__top-container > div.Root__main-view.Root__main-view--has-upsell-bar > div > div > div > section > div > div > div.col-xs-12.col-lg-3.col-xl-4 > div > header > div:nth-child(1) > div > div > div.mo-meta.ellipsis-one-line > div > a
+                                ;; Album Name: #main > div > div.Root__top-container > div.Root__main-view.Root__main-view--has-upsell-bar > div > div > div > section > div > div > div.col-xs-12.col-lg-3.col-xl-4 > div > header > div:nth-child(1) > div > div > div:nth-child(1) > div.mo-info > div > div
+                                ;; Album Artwork: #main > div > div.Root__top-container > div.Root__main-view.Root__main-view--has-upsell-bar > div > div > div > section > div > div > div.col-xs-12.col-lg-3.col-xl-4 > div > header > div:nth-child(1) > div > div > div:nth-child(1) > div.react-contextmenu-wrapper > div > div > div.cover-art-image.cover-art-image-loaded
+                                ;; Album Year and Track #: #main > div > div.Root__top-container > div.Root__main-view.Root__main-view--has-upsell-bar > div > div > div > section > div > div > div.col-xs-12.col-lg-3.col-xl-4 > div > header > div.TrackListHeader__body > p
+
+                                ;; Things to remove?
+                                ;; Locallity
+                                ;; Running Time
+                                ;; Add Album cover?
+
+                                ("a" "Album Notes" entry
+                                 (file+headline "~/org/life.org" "Listen to an Entire Album")
+                                 "**** %u %^{Artist} - %^{Album Name}\n:PROPERTIES:\n:CREATED: %U\n:END:\n- Release: %^{Release}\n- Link: [[%^{URL}][Spotify]]\n- Tracks: %^{Tracks}\n- Playtime: %^{Playtime}\n- Local: %^{Local}\n- %^{Content}\n" :empty-lines 1)
+
+                                ;; Date-tree
+                                ("j" "Journal" entry (file+datetree "~/org/journal.org")
+                                 "* %?\nEntered on %U\n  %i\n  %a")
 
                                 ;; Climbing capture templates
                                 ;; use %u for non-interactive time-stamps
@@ -486,7 +528,7 @@ Refile targets should include all files? and down to 9 levels into them.
                                 ("r" "Route" table-line
                                  (file+headline "~/org/climb.org" "Routes")
                                  "|%u|%?%^{Route Name?|NA}|%^{Yosemite Grade?|5.}|%^{Attempts?|0}|%^{Style?|Sport|Trad}|%^{Notes?}|")
-                              
+
                                 ("b" "Boulder Problem" table-line
                                  (file+headline "~/org/climb.org" "Boulder Problems")
                                  "|%u|%?%^{Problem Name?|NA}|%^{V-Grade?|NA}|%^{Attempts?|0}|%^{Notes?}|")
@@ -506,14 +548,13 @@ Refile targets should include all files? and down to 9 levels into them.
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+END_SRC
 
-** org-pomodoro
-
+** TODO org-pomodoro
+Maybe actually use this.
 #+BEGIN_SRC emacs-lisp
   (use-package org-pomodoro :ensure)
 #+END_SRC
 
-** Flyspell
-
+** TODO Flyspell
 flyspell - in all text modes
 
 #+BEGIN_SRC emacs-lisp
@@ -521,7 +562,10 @@ flyspell - in all text modes
   (add-hook 'text-mode-hook 'flyspell-mode)
 #+END_SRC 
 
-** Flycheck
+Can we arm flyspell to harass us about lazy words?
+
+** TODO Flycheck
+Enable this and add backends are required.
 #+BEGIN_SRC emacs-lisp
 ;;  (use-package flycheck :ensure)
 #+END_SRC
@@ -849,6 +893,56 @@ We need to configure some keybindings. Check out the github page for suggestions
 - counsel-notmuch: https://github.com/fuxialexander/counsel-notmuch
 #+BEGIN_SRC emacs-lisp
   (use-package counsel-notmuch :ensure)
+#+END_SRC
+** dried
+Dried shortcut to *R*un an appication
+#+BEGIN_SRC emacs-lisp
+  (define-key dired-mode-map "r" 'dired-start-process)
+#+END_SRC
+Tell dried what types of files to open with what.
+#+BEGIN_SRC emacs-lisp
+  (require 'dired-x)
+
+  (setq dired-guess-shell-alist-user
+        '(("\\.pdf\\'" "zathura" "evince" "okular")
+          ("\\.\\(?:djvu\\|eps\\)\\'" "evince")
+          ("\\.\\(?:jpg\\|jpeg\\|png\\|gif\\|xpm\\)\\'" "eog")
+          ("\\.\\(?:xcf\\)\\'" "gimp")
+          ("\\.csv\\'" "libreoffice")
+          ("\\.tex\\'" "pdflatex" "latex")
+          ("\\.\\(?:mp4\\|mkv\\|avi\\|flv\\|ogv\\)\\(?:\\.part\\)?\\'"
+           "vlc")
+          ("\\.\\(?:mp3\\|flac\\)\\'" "rhythmbox")
+          ("\\.html?\\'" "brave-browser")
+          ("\\.cue?\\'" "audacious")))
+#+END_SRC
+Add nohup to vlc launch.
+#+BEGIN_SRC emacs-lisp
+  (require 'dired-aux)
+
+  (defvar dired-filelist-cmd
+    '(("vlc" "-L")))
+
+  (defun dired-start-process (cmd &optional file-list)
+    (interactive
+     (let ((files (dired-get-marked-files
+                   t current-prefix-arg)))
+       (list
+        (dired-read-shell-command "& on %s: "
+                                  current-prefix-arg files)
+        files)))
+    (let (list-switch)
+      (start-process
+       cmd nil shell-file-name
+       shell-command-switch
+       (format
+        "nohup 1>/dev/null 2>/dev/null %s \"%s\""
+        (if (and (> (length file-list) 1)
+                 (setq list-switch
+                       (cadr (assoc cmd dired-filelist-cmd))))
+            (format "%s %s" cmd list-switch)
+          cmd)
+        (mapconcat #'expand-file-name file-list "\" \"")))))
 #+END_SRC
 * Other peoples configs
 - https://caolan.org/dotfiles/emacs.html
