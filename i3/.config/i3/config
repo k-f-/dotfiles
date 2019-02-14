@@ -205,7 +205,7 @@ bar {
 #################################################################
 
 # Start the Compton compositor (for i3bar transparency)
-exec --no-startup-id compton -b --config ~/.config/compton/compton.conf &
+#exec --no-startup-id compton -b --config ~/.config/compton/compton.conf &
 
 # Set the wallpaper
 exec --no-startup-id ~/.bin/set-wallpaper &
