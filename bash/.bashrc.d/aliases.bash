@@ -4,8 +4,12 @@
 alias akita="mosh root@akita.kfring.com"
 
 
+
+
 ### 
 alias spotify="spotify --force-device-scale-factor=2 &" # HiDPI flags. 
+alias 1pass="~/code/op/op" # 1password binary.
+###
 alias dc="docker-compose"
 alias gg="git grep -n"
 alias gs="git status -s"
