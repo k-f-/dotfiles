@@ -8,7 +8,7 @@ then
     ~/.bin/msmtp-runqueue
     mbsync -c ~/.mbsyncrc -a 
 #    notmuch new
-    mu index -m ~/.mail
+    emacsclient -e '(mu4e-update-index)'
     exit 0
 
 fi
@@ -28,3 +28,4 @@ exit 0
 # Type=oneshot
 # ExecStart=/usr/bin/mbsync -Va
 # ExecStartPost=/usr/bin/notmuch new
+# emacsclient -e '(mu4e-update-index)'

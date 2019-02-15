@@ -12,7 +12,7 @@ Account personal
 
 MaildirStore personal-local
 Path ~/.mail/kfring/
-Inbox ~/.mail/kfring/inbox
+Inbox ~/.mail/kfring/INBOX
 
 Channel personal-main
 Master :personal-remote:
@@ -64,15 +64,7 @@ Create Both
 Expunge Both
 SyncState *
 
-Channel personal-archive
-Master :personal-remote:"[Gmail]/Archive"
-Slave :personal-local:"[Gmail].Archive"
-Create Both
-Expunge Both
-SyncState *
-
 Group personal
-Channel personal-archive
 Channel personal-starred
 Channel personal-all
 Channel personal-drafts

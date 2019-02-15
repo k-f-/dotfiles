@@ -13,7 +13,7 @@
  (handler . elfeed-search-bookmark-handler))
 ("org-capture-last-stored"
  (filename . "~/org/ideas.org")
- (front-context-string . "** WAITING Fitdi")
+ (front-context-string . "** WAITING \n:PRO")
  (rear-context-string . "\n \n* Ideas [0%]\n")
  (position . 162))
 ("elfeed-unread"

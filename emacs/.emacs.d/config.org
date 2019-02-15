@@ -889,7 +889,7 @@ mu, 4 emacs
                      (mu4e-sent-folder      . "/kfring/[Gmail].Sent Mail")
                      (mu4e-drafts-folder    . "/kfring/[Gmail].Drafts")
                      (mu4e-trash-folder     . "/kfring/[Gmail].Trash")
-                     (mu4e-refile-folder    . "/kfring/[Gmail].Archive")
+                     (mu4e-refile-folder    . "/kfring/[Gmail].All Mail")
                      )
              ))
   )
