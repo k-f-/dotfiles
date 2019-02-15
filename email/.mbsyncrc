@@ -18,37 +18,34 @@ Channel personal-main
 Master :personal-remote:
 Slave :personal-local:
 # NOTE: empty lines matter to mbsync when it reads in the config.
-Patterns "INBOX" "Arch*"
+Patterns "INBOX"
 # Create missing mailboxes on both locally and on the server.
 Create Both
 Expunge Both
 SyncState *
-# ref: https://chrisstreeter.com/archive/2009/04/gmail-imap-backup-with-mbsync-on-ubuntu.html
-# Maybe we'll do this later.
 # ref: https://wiki.archlinux.org/index.php/Isync#Step_#2:_Setup_mbsync
-# Exclude everything under the internal [Gmail] folder, except the interesting folders
-# Patterns * !"[Gmail]/All Mail" !"[Gmail]/Important" !"[Gmail]/Starred" !"[Gmail]/Trash"
+# Exclude everything under the internal [Gmail] folder, except the inbox
 # Patterns * !"[Gmail]/All Mail" !"[Gmail]/Important" !"[Gmail]/Starred" !"[Gmail]/Trash" !"[Gmail]/Spam" !"[Gmail]/Sent Mail"
 # Or include everything
 # Patterns *
 
 Channel personal-trash
 Master :personal-remote:"[Gmail]/Trash"
-Slave :personal-local:trash
+Slave :personal-local:"[Gmail].Trash"
 Create Both
 Expunge Both
 SyncState *
 
 Channel personal-sent
 Master :personal-remote:"[Gmail]/Sent Mail"
-Slave :personal-local:sent
+Slave :personal-local:"[Gmail].Sent Mail"
 Create Both
 Expunge Both
 SyncState *
 
 Channel personal-drafts
 Master :personal-remote:"[Gmail]/Drafts"
-Slave :personal-local:drafts
+Slave :personal-local:"[Gmail].Drafts"
 Create Both
 Expunge Both
 SyncState *
@@ -67,7 +64,15 @@ Create Both
 Expunge Both
 SyncState *
 
+Channel personal-archive
+Master :personal-remote:"[Gmail]/Archive"
+Slave :personal-local:"[Gmail].Archive"
+Create Both
+Expunge Both
+SyncState *
+
 Group personal
+Channel personal-archive
 Channel personal-starred
 Channel personal-all
 Channel personal-drafts

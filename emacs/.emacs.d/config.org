@@ -845,60 +845,71 @@ We need to configure some keybindings. Check out the github page for suggestions
   (use-package multiple-cursors :ensure t)
 #+END_SRC
 
-** notmuch
-- Notmuch: https://notmuchmail.org
-#+BEGIN_SRC emacs-lisp
-  (use-package notmuch :ensure)
-  ; C-c m opens up Notmuch from any buffer
-  (global-set-key (kbd "C-c m") `notmuch)
-
-  ; stores postponed messages to the specified directory
-  (setq message-directory "[Gmail]/Drafts") ;
-
-  ;set sent mail directory
-  (setq notmuch-fcc-dirs "[Gmail]/Sent")
-
-  ;Settings for main screen
-  (setq notmuch-hello-hide-tags (quote ("killed")))
-
-  ; A few commonly used saved searches.
-  (setq notmuch-saved-searches
-  (quote
-  ((:name "inbox" :query "tag:inbox AND -tag:work" :key "i" :sort-order oldest-first)
-   (:name "flagged" :query "tag:flagged" :key "f") ;flagged messages
-   (:name "sent" :query "tag:sent -tag:work" :key "t" :sort-order newest-first)
-   (:name "drafts" :query "tag:draft" :key "d")
-   (:name "all mail" :query "*" :key "a" :sort-order newest-first))))
-
-  ; Reading mail settings:
-  (define-key notmuch-show-mode-map "S"
-      (lambda ()
-      "mark message as spam"
-      (interactive)
-  (notmuch-show-tag (list "+spam" "-inbox"))))
-
-  (define-key notmuch-search-mode-map "S"
-  (lambda ()
-      "mark message as spam"
-      (interactive)
-      (notmuch-search-tag (list "-inbox" "+spam"))
-      (next-line) ))
-#+END_SRC
-
-- notmuch-labeler: https://github.com/DamienCassou/notmuch-labeler
-#+BEGIN_SRC emacs-lisp
-  (use-package notmuch-labeler :ensure)
-#+END_SRC
-
-- counsel-notmuch: https://github.com/fuxialexander/counsel-notmuch
-#+BEGIN_SRC emacs-lisp
-  (use-package counsel-notmuch :ensure)
-#+END_SRC
-
 ** mu4e
 mu, 4 emacs
 #+BEGIN_SRC emacs-lisp
+  (setq mu4e-maildir       "~/.mail")   ;; top-level Maildir
 
+  ;; Ignore duplicates
+  (setq mu4e-headers-skip-duplicates t)
+
+  ;; GMail already adds sent mail to the Sent Mail folder.
+  (setq mu4e-sent-messages-behavior 'delete)
+
+  ;; Some hooks that I find useful:
+  (add-hook 'mu4e-view-mode-hook #'visual-line-mode) 
+  (add-hook 'mu4e-compose-mode-hook 'flyspell-mode)
+
+  ;; mu4e uses its own version of message-mode. The only benefit I know of is that it enables completion for To, CC and BCC fields. That is really useful though!
+  (setq mail-user-agent 'mu4e-user-agent)
+
+  ;; For some reason it uses its own signature variable. Not anymore!
+  (defvaralias 'mu4e-compose-signature 'message-signature)
+
+  (setq mu4e-completing-read-function 'ivy-completing-read
+        mu4e-confirm-quit nil) ; Ivy for completion
+
+  (setq mu4e-headers-show-threads nil) ; Use "P" to toggle threading
+
+  ;; Set contexts based on if it's a gmail account or not.
+  ;; ref: http://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and-/
+  ;; This sets up my two different context for my personal and work emails.
+  (require 'mu4e-context)
+  (setq mu4e-contexts    
+        `( ,(make-mu4e-context    ;; me@kfring.com
+             :name "kfring"
+             :enter-func (lambda () (mu4e-message "Switch to the me@kfring context"))
+             :match-func (lambda (msg)
+                           (when msg
+                             (mu4e-message-maildir-matches msg "^/kfring")))
+             :leave-func (lambda () (mu4e-clear-caches))
+             :vars '(
+                     (user-mail-address     . "me@kfring.com")
+                     (user-full-name        . "Kyle Fring")
+                     (mu4e-sent-folder      . "/kfring/[Gmail].Sent Mail")
+                     (mu4e-drafts-folder    . "/kfring/[Gmail].Drafts")
+                     (mu4e-trash-folder     . "/kfring/[Gmail].Trash")
+                     (mu4e-refile-folder    . "/kfring/[Gmail].Archive")
+                     )
+             ))
+  )
+  ;; don't keep message buffers around
+  (setq message-kill-buffer-on-exit t)
+#+END_SRC
+*** mu4e-conversations
+#+BEGIN_SRC emacs-lisp
+  (use-package mu4e-conversation :ensure :after mu4e)
+  ;; Use it everywhere
+  (global-mu4e-conversation-mode)
+#+END_SRC
+
+*** mu4e-alert
+#+BEGIN_SRC emacs-lisp
+  (use-package mu4e-alert :ensure
+      :after mu4e
+      :hook ((after-init . mu4e-alert-enable-mode-line-display)
+             (after-init . mu4e-alert-enable-notifications))
+      :config (mu4e-alert-set-default-style 'libnotify))
 #+END_SRC
 ** dried
 Dried shortcut to *R*un an appication

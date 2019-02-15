@@ -7,7 +7,8 @@ if [ $STATE = 'full' ]
 then
     ~/.bin/msmtp-runqueue
     mbsync -c ~/.mbsyncrc -a 
-    notmuch new
+#    notmuch new
+    mu index -m ~/.mail
     exit 0
 
 fi
