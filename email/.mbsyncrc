@@ -1,3 +1,4 @@
+# NOTE: empty lines matter to mbsync when it reads in the config.
 IMAPAccount personal
 Host imap.gmail.com
 User me@kfring.com
@@ -11,58 +12,40 @@ IMAPStore personal-remote
 Account personal
 
 MaildirStore personal-local
-Path ~/.mail/kfring/
+Path  ~/.mail/kfring/
 Inbox ~/.mail/kfring/INBOX
+
+Create Slave
+SyncState *
 
 Channel personal-main
 Master :personal-remote:
 Slave :personal-local:
-# NOTE: empty lines matter to mbsync when it reads in the config.
-Patterns "INBOX"
-# Create missing mailboxes on both locally and on the server.
-Create Both
-Expunge Both
-SyncState *
+Patterns "INBOX" !"[Gmail]Spam"
 # ref: https://wiki.archlinux.org/index.php/Isync#Step_#2:_Setup_mbsync
 # Exclude everything under the internal [Gmail] folder, except the inbox
 # Patterns * !"[Gmail]/All Mail" !"[Gmail]/Important" !"[Gmail]/Starred" !"[Gmail]/Trash" !"[Gmail]/Spam" !"[Gmail]/Sent Mail"
-# Or include everything
-# Patterns *
+
 
 Channel personal-trash
 Master :personal-remote:"[Gmail]/Trash"
-Slave :personal-local:"[Gmail].Trash"
-Create Both
-Expunge Both
-SyncState *
+Slave  :personal-local:"Trash"
 
 Channel personal-sent
 Master :personal-remote:"[Gmail]/Sent Mail"
-Slave :personal-local:"[Gmail].Sent Mail"
-Create Both
-Expunge Both
-SyncState *
+Slave  :personal-local:"Sent"
 
 Channel personal-drafts
 Master :personal-remote:"[Gmail]/Drafts"
-Slave :personal-local:"[Gmail].Drafts"
-Create Both
-Expunge Both
-SyncState *
+Slave  :personal-local:"Drafts"
 
 Channel personal-all
 Master :personal-remote:"[Gmail]/All Mail"
-Slave :personal-local:"[Gmail].All Mail"
-Create Both
-Expunge Both
-SyncState *
+Slave  :personal-local:"All-Mail"
 
 Channel personal-starred
 Master :personal-remote:"[Gmail]/Starred"
-Slave :personal-local:"[Gmail].Starred"
-Create Both
-Expunge Both
-SyncState *
+Slave  :personal-local:"Starred"
 
 Group personal
 Channel personal-starred
