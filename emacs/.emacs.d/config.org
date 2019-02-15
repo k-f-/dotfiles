@@ -894,6 +894,12 @@ We need to configure some keybindings. Check out the github page for suggestions
 #+BEGIN_SRC emacs-lisp
   (use-package counsel-notmuch :ensure)
 #+END_SRC
+
+** mu4e
+mu, 4 emacs
+#+BEGIN_SRC emacs-lisp
+
+#+END_SRC
 ** dried
 Dried shortcut to *R*un an appication
 #+BEGIN_SRC emacs-lisp
