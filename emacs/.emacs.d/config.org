@@ -179,8 +179,7 @@ From http://pages.sachachua.com/.emacs.d/Sacha.html#sec-1-4-8
   ;; Test char and monospace:
   ;; 0123456789abcdefghijklmnopqrstuvwxyz [] () :;,. !@#$^&*
   ;; 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ {} <> "'`  ~-_/|\?
-  (add-to-list 'default-frame-alist
-               '(font . "InputMono-11"))
+  (set-default-font "Source Code Variable 11")
 #+END_SRC
 
 * Backups
@@ -847,12 +846,20 @@ We need to configure some keybindings. Check out the github page for suggestions
 
 ** mu4e
 mu, 4 emacs
+Use org structures and tables in message mode
 #+BEGIN_SRC emacs-lisp
+  (add-hook 'message-mode-hook 'turn-on-orgtbl)
+  (add-hook 'message-mode-hook 'turn-on-orgstruct++)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  ;; installed from release.
+  (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
   (setq mu4e-maildir       "~/.mail")   ;; top-level Maildir
 
   ;; Note: This shows no email, wonder if it's been fixed in 1.0
   ;; Ignore duplicates
-  ;; (setq mu4e-headers-skip-duplicates t)
+  (setq mu4e-headers-skip-duplicates t)
 
   ;; GMail already adds sent mail to the Sent Mail folder.
   (setq mu4e-sent-messages-behavior 'delete)
@@ -875,11 +882,11 @@ mu, 4 emacs
 
   ;; Set contexts based on if it's a gmail account or not.
   ;; ref: http://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and-/
-  ;; This sets up my two different context for my personal and work emails.
+  ;; This sets up my two different context for my personal and school emails
   (require 'mu4e-context)
   (setq mu4e-contexts    
         `( ,(make-mu4e-context    ;; me@kfring.com
-             :name "kfring"
+             :name "me@kfring"
              :enter-func (lambda () (mu4e-message "Switch to the me@kfring context"))
              :match-func (lambda (msg)
                            (when msg
@@ -893,7 +900,8 @@ mu, 4 emacs
                      (mu4e-trash-folder     . "/kfring/Trash")
                      (mu4e-refile-folder    . "/kfring/All-Mail")
                      )
-             ))
+             )
+           )
   )
 #+END_SRC
 *** mu4e-conversations

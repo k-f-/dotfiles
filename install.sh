@@ -23,3 +23,4 @@ ln -s ~/.bashrc ~/.bash_profile
 # Link Some Dropbox folders
 ln -s ~/Dropbox/org ~/org
 ln -s ~/Dropbox/elfeed ~/.elfeed
+ln -s ~/Dropbox/fonts ~/.fonts
