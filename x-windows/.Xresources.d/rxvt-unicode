@@ -1,7 +1,7 @@
 ! #####################################################
 ! urxvt
 ! #####################################################
-URxvt.font: xft:Input Mono:size=10
+URxvt.font: xft:Input Mono Narrow:size=9
 URxvt.scrollBar: false
 URxvt.allow_bold: true
 
