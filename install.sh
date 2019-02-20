@@ -4,12 +4,14 @@
 #./install_debian_packages.sh
 
 stow bash
+stow systemd
+stow ranger
 stow emacs
 stow git
 stow x-windows
 stow vim
-stow email 
-stow .config
+stow email
+stow zathura
 
 # Link .bash_profile -> .bashrc
 rm -f ~/.bash_profile
