@@ -12,10 +12,10 @@
  (tags "star")
  (handler . elfeed-search-bookmark-handler))
 ("org-capture-last-stored"
- (filename . "~/org/ideas.org")
- (front-context-string . "** WAITING \n:PRO")
- (rear-context-string . "\n \n* Ideas [0%]\n")
- (position . 162))
+ (filename . "~/org/life.org")
+ (front-context-string . "**** [2019-02-17")
+ (rear-context-string . "ny Winter day.\n\n")
+ (position . 13470))
 ("elfeed-unread"
  (location . "+unread")
  (tags "unread")

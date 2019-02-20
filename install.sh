@@ -7,14 +7,9 @@ stow bash
 stow emacs
 stow git
 stow x-windows
-stow fonts
-stow i3
-stow dunst
 stow vim
-stow rofi
-stow compton
 stow email 
-stow systemd
+stow .config
 
 # Link .bash_profile -> .bashrc
 rm -f ~/.bash_profile

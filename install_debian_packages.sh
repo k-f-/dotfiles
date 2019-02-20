@@ -11,7 +11,6 @@ sudo apt install \
      gnupg2 \
      graphviz \
      htop \
-     i3 \
      imagemagick \
      isync \
      libnotify-bin \
@@ -23,10 +22,10 @@ sudo apt install \
      pandoc \
      pass \
      pasystray \
-     pcmanfm \
      procmail \
      pwgen \
      python3-proselint \
+     ranger \
      redshift \
      rlwrap \
      rofi \
