@@ -12,4 +12,5 @@ __quiet_git_ps1() {
   fi
 }
 
-PS1='\u@\h \[\033[36m\][\w$(__quiet_git_ps1)] \$ \[\033[00m\]'
+PS1='\[$(tput bold)\]\[\033[38;5;50m\]\u\[$(tput sgr0)\]\[$(tput sgr0)\]\[\033[38;5;15m\]@\[$(tput bold)\]\[$(tput sgr0)\]\[\033[38;5;111m\]\h\[$(tput sgr0)\]\[$(tput sgr0)\]\[\033[38;5;15m\] in \033[36m\]\w$(__quiet_git_ps1) \[\033[00m\]\n> \[$(tput sgr0)\]'
+#PS1='\u@\h \[\033[36m\][\w$(__quiet_git_ps1)] \$ \[\033[00m\]'
