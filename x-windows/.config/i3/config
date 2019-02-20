@@ -35,16 +35,12 @@ bindsym $mod+Shift+r restart
 # Tell emacs to save everything and then kill itself.
 # Exit i3 and log out of X session
 bindsym $mod+Shift+e exec "notify-send -u critical 'Shutting down i3.' && emacsclient -e '(save-buffers-kill-emacs t)' && i3-msg exit"
-
 # Emacsclient
 bindsym $mod+e exec "emacsclient -nc"
-
 # Launch $BROWSER
-bindsym $mod+Shift+w exec --no-startup-id $BROWSER
-
+bindsym $mod+Shift+w exec --no-startup-id brave-browser
 # Launch a floating calculator
-bindsym $mod+c exec --no-startup-id ddspawn dropdowncalc
-#-f mono:pixelsize=24
+bindsym $mod+c exec urxvt -name dropdown_dropdowncalc -fn 'xft:Input Mono Narrow:pixelsize=64' -e bc -lq
 
 #################################################################
 # Startup Applications and Scripts
@@ -138,9 +134,9 @@ smart_gaps on
 gaps inner 4
 gaps outer 4 
 # changing how borders look
-#for_window [class="^.*"] border normal 0
+for_window [class="^.*"] border normal 0
 #for_window [class="^.*"] border none 0
-for_window [class="^.*"] border pixel 2
+#for_window [class="^.*"] border pixel 2
 
 # Borders only if there is more than one pane
 smart_borders on
@@ -151,8 +147,8 @@ for_window [instance="dropdown_*"] floating enable
 for_window [instance="dropdown_*"] move scratchpad
 for_window [instance="dropdown_*"] sticky enable
 for_window [instance="dropdown_*"] scratchpad show
-for_window [instance="dropdown_dropdowncalc"] resize set 800 300
-for_window [instance="dropdown_dropdowncalc"] border pixel 2
+for_window [instance="dropdown_dropdowncalc"] resize set 800 400
+for_window [instance="dropdown_dropdowncalc"] border pixel 5
 for_window [instance="dropdown_*"] move position center
 
 ###########################################
@@ -253,8 +249,9 @@ floating_modifier $mod
 bindsym $mod+Return exec $term 
 
 # kill focused window
-bindsym $mod+q       [con_id="__focused__" instance="^(?!dropdown_).*$"] kill
-bindsym $mod+Shift+q [con_id="__focused__" instance="^(?!dropdown_).*$"] kill
+bindsym $mod+q kill
+#bindsym $mod+q       [con_id="__focused__" instance="^(?!dropdown_).*$"] kill
+#bindsym $mod+Shift+q [con_id="__focused__" instance="^(?!dropdown_).*$"] kill
 
 # start dmenu (a program launcher)
 # bindsym $mod+d exec dmenu_run
@@ -271,7 +268,7 @@ bindsym $mod+d exec PATH=~/bin:~/.bin:$PATH rofi -matching fuzzy -show run
 bindsym $mod+h focus left
 bindsym $mod+j focus down
 bindsym $mod+k focus up
-bindsym $mod+l focus rightwda
+bindsym $mod+l focus right
 
 # alternatively, you can use the cursor keys:
 bindsym $mod+Left focus left
