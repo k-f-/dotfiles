@@ -134,9 +134,9 @@ smart_gaps on
 gaps inner 4
 gaps outer 4 
 # changing how borders look
-for_window [class="^.*"] border normal 0
+#for_window [class="^.*"] border normal 0
 #for_window [class="^.*"] border none 0
-#for_window [class="^.*"] border pixel 2
+for_window [class="^.*"] border pixel 2
 
 # Borders only if there is more than one pane
 smart_borders on
