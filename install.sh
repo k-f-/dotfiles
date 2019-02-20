@@ -16,6 +16,9 @@ rm -f ~/.bash_profile
 ln -s ~/.bashrc ~/.bash_profile
 
 # Link Some Dropbox folders
-ln -s ~/Dropbox/org ~/org
-ln -s ~/Dropbox/elfeed ~/.elfeed
-ln -s ~/Dropbox/fonts ~/.fonts
+# s: soft
+# v: verbose
+# n: only if $file2 doesn't not exist
+ln -svn ~/Dropbox/org ~/org
+ln -svn ~/Dropbox/elfeed ~/.elfeed
+ln -svn ~/Dropbox/fonts ~/.fonts
