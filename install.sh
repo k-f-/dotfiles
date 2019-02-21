@@ -13,7 +13,7 @@ stow i3
 stow mail
 stow mpd
 stow mpv
-stow pacmanfm
+stow pcmanfm
 stow ranger
 stow rofi
 stow systemd
