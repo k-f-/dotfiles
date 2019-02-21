@@ -12,3 +12,15 @@ places
 recentf
 history
 *.swp
+*.log
+*.wants
+bookmarks
+__pycache__
+ranger/.config/ranger/plugins/
+mpd/.config/mpd/database
+mpd/.config/mpd/mpd.log
+mpd/.config/mpd/pid
+mpd/.config/mpd/playlists
+mpd/.config/mpd/state
+mpd/.config/mpd/sticker.sql
+.zcompdump-*

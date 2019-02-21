@@ -4,18 +4,26 @@
 #./install_debian_packages.sh
 
 stow bash
-stow systemd
-stow ranger
+stow compton
+stow dunst
 stow emacs
 stow git
-stow x-windows
+stow gnupg
+stow i3
+stow mail
+stow mpd
+stow mpv
+stow pacmanfm
+stow ranger
+stow rofi
+stow systemd
 stow vim
-stow email
+stow x-windows
 stow zathura
 
 # Link .bash_profile -> .bashrc
 rm -f ~/.bash_profile
-ln -s ~/.bashrc ~/.bash_profile
+ln -sv ~/.bashrc ~/.bash_profile
 
 # Link Some Dropbox folders
 # s: soft
