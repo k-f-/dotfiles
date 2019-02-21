@@ -2,7 +2,6 @@
 #+AUTHOR: Kyle Fring
 #+EMAIL: me@kfring.com
 #+OPTIONS: toc:t num:nil
-
 * A quote from Hunter S. Thompson
 'but once you get locked into a serious drug collection,
 the tendency is to push it as far as you can.'
@@ -179,11 +178,10 @@ From http://pages.sachachua.com/.emacs.d/Sacha.html#sec-1-4-8
   ;; Test char and monospace:
   ;; 0123456789abcdefghijklmnopqrstuvwxyz [] () :;,. !@#$^&*
   ;; 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ {} <> "'`  ~-_/|\?
-  (set-default-font "Input Mono Narrow 11")
+  (set-default-font "InputMono-KF 9")
   (add-to-list 'default-frame-alist
-               '(font . "Input Mono Narrow 11"))
+               '(font . "InputMono-KF 9"))
 #+END_SRC
-
 * Backups
 ** Config Backups
 Let us centralize where emac's keeps backups
