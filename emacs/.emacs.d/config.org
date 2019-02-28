@@ -178,9 +178,9 @@ From http://pages.sachachua.com/.emacs.d/Sacha.html#sec-1-4-8
   ;; Test char and monospace:
   ;; 0123456789abcdefghijklmnopqrstuvwxyz [] () :;,. !@#$^&*
   ;; 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ {} <> "'`  ~-_/|\?
-  (set-default-font "InputMono-KF 9")
+  (set-default-font "InputMono-KF 10")
   (add-to-list 'default-frame-alist
-               '(font . "InputMono-KF 9"))
+               '(font . "InputMono-KF 10"))
 #+END_SRC
 * Backups
 ** Config Backups
@@ -215,7 +215,7 @@ Create a backup to a designated dir, mirroring the full path ala ergomacs
   (setq make-backup-file-name-function 'kef-backup-file-name)
 #+END_SRC
 
-* Functions
+* Functions`
 ** Kill current buffer.
 
 #+BEGIN_SRC emacs-lisp
@@ -260,6 +260,61 @@ Fire off a youtube-dl process
     (around no-query-kill-emacs activate)
     "Prevent \"Active processes exist\" query on exit."
     (cl-flet ((process-list ())) ad-do-it))
+#+END_SRC
+** import-chrome-bookmarks-as-org
+#+BEGIN_SRC emacs-lisp
+  ;; ref: https://www.reddit.com/r/emacs/comments/a3rajh/chrome_bookmarks_sync_to_org/
+  (defvar kef/chrome-bookmarks-file
+    (cl-find-if
+     #'file-exists-p
+     ;; Base on `helm-chrome-file'
+     (list
+      "~/.config/BraveSoftware/Brave-Browser/Default/Bookmarks"
+      "~/Library/Application Support/Google/Chrome/Profile 1/Bookmarks"
+      "~/Library/Application Support/Google/Chrome/Default/Bookmarks"
+      "~/AppData/Local/Google/Chrome/User Data/Default/Bookmarks"
+      "~/.config/google-chrome/Default/Bookmarks"
+      "~/.config/chromium/Default/Bookmarks"
+      (substitute-in-file-name
+       "$LOCALAPPDATA/Google/Chrome/User Data/Default/Bookmarks")
+      (substitute-in-file-name
+       "$USERPROFILE/Local Settings/Application Data/Google/Chrome/User Data/Default/Bookmarks")))
+    "Path to Google Chrome Bookmarks file (it's JSON).")
+
+  (defun kef/chrome-bookmarks-insert-as-org ()
+    "Insert Chrome/Brave Bookmarks as org-mode headings."
+    (interactive)
+    (require 'json)
+    (require 'org)
+    (let ((data (let ((json-object-type 'alist)
+                      (json-array-type  'list)
+                      (json-key-type    'symbol)
+                      (json-false       nil)
+                      (json-null        nil))
+                  (json-read-file kef/chrome-bookmarks-file)))
+          level)
+      (cl-labels ((fn
+                   (al)
+                   (pcase (alist-get 'type al)
+                     ("folder"
+                      (insert
+                       (format "%s %s\n"
+                               (make-string level ?*)
+                               (alist-get 'name al)))
+                      (cl-incf level)
+                      (mapc #'fn (alist-get 'children al))
+                      (cl-decf level))
+                     ("url"
+                      (insert
+                       (format "%s %s\n"
+                               (make-string level ?*)
+                               (org-make-link-string
+                                (alist-get 'url al)
+                                (alist-get 'name al))))))))
+        (setq level 1)
+        (fn (alist-get 'bookmark_bar (alist-get 'roots data)))
+        (setq level 1)
+        (fn (alist-get 'other (alist-get 'roots data))))))
 #+END_SRC
 * Keybinding
 Set some keybindings
@@ -335,12 +390,6 @@ In many programs, like SlickEdit, TextMate and VisualStudio, “cut” and “co
 #+END_SRC
 
 * Themes
-** zenburn
-Lets stop fucking around with broken themes and just use =zenburn=.
-#+BEGIN_SRC emacs-lisp
-  (use-package zenburn-theme :ensure t)
-#+END_SRC
-
 ** disable themes before we enable a new theme
 - My understanding is such.  =load-theme= just puts whatever you call on top of
 what is already existing.  This makes a lot of sense if your theme is modular.
@@ -349,6 +398,11 @@ what is already existing.  This makes a lot of sense if your theme is modular.
 #+BEGIN_SRC emacs-lisp
   (defadvice load-theme (before theme-dont-propagate activate)
     (mapc #'disable-theme custom-enabled-themes))
+#+END_SRC
+** zenburn
+Lets stop fucking around with broken themes and just use =zenburn=.
+#+BEGIN_SRC emacs-lisp
+  (use-package zenburn-theme :ensure t)
 #+END_SRC
 
 ** enable-theme:
@@ -423,7 +477,6 @@ Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g.
 #+END_SRC  
 
 ** org-mode
-
 #+BEGIN_SRC emacs-lisp
   (use-package org
     :config
@@ -431,7 +484,6 @@ Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g.
     (setq org-src-tab-acts-natively t)
     )
 #+END_SRC
-
 *** Org file locations
 Store all my org files in =~/org=, which is symlinked to ~/Dropbox/org/.
 
@@ -484,11 +536,11 @@ ref: https://orgmode.org/manual/Template-elements.html#Template-elements
                                  ;; These things will get refiled into life.org or edu.org eventually.
                                  ;; Think about if it is more efficacious to just put them in directly or do the whole weekly refile thing.
                                  (file+headline "~/org/inbox.org" "TODOS")
-                                 "* %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
+                                 "* TODO %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
 
                                 ;; A todo list for work related items, things I get paid money for.
                                 ("w" "Todo [work]" entry (file+headline "~/org/work.org" "Tasks")
-                                 "* %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
+                                 "* TODO %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
 
                                 ;; A place to keep ideas for some other time.  Ideas for Projects that we could maybe one-day accomplish
                                 ("m" "New Idea" entry (file+headline "~/org/ideas.org" "Ideas")
@@ -515,7 +567,7 @@ ref: https://orgmode.org/manual/Template-elements.html#Template-elements
 
                                 ("a" "Album Notes" entry
                                  (file+headline "~/org/life.org" "Listen to an Entire Album")
-                                 "**** %u %^{Artist} - %^{Album Name}\n:PROPERTIES:\n:CREATED: %U\n:END:\n- Release: %^{Release}\n- Link: [[%^{URL}][Spotify]]\n- Tracks: %^{Tracks}\n- Playtime: %^{Playtime}\n- Local: %^{Local}\n- %^{Content}\n" :empty-lines 1)
+                                 "**** %u %^{Artist} - %^{Album Name}\n:PROPERTIES:\n:CREATED: %U\n:END:\n- Release: %^{Release}\n- Link: [[%^{URL}][Spotify]]\n- Tracks: %^{Tracks}\n- Playtime: %^{Playtime}\n- %^{Content}\n" :empty-lines 1)
 
                                 ;; Date-tree
                                 ("j" "Journal" entry (file+datetree "~/org/journal.org")

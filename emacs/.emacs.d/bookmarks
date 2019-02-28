@@ -3,19 +3,19 @@
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
 (("org-refile-last-stored"
- (filename . "~/org/notes.org")
- (front-context-string . "** Color\n*** Col")
- (rear-context-string . "yacrlyic stain\n\n")
- (position . 5294))
+ (filename . "~/org/life.org")
+ (front-context-string . "*** Clean Honda ")
+ (rear-context-string . "ed 16:25]\n:END:\n")
+ (position . 916))
 ("elfeed-starred"
  (location . "+star")
  (tags "star")
  (handler . elfeed-search-bookmark-handler))
 ("org-capture-last-stored"
- (filename . "~/org/life.org")
- (front-context-string . "**** [2019-02-17")
- (rear-context-string . "ny Winter day.\n\n")
- (position . 13470))
+ (filename . "~/org/ideas.org")
+ (front-context-string . "** WAITING CMUS ")
+ (rear-context-string . "\n \n* Ideas [0%]\n")
+ (position . 162))
 ("elfeed-unread"
  (location . "+unread")
  (tags "unread")
