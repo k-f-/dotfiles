@@ -535,7 +535,7 @@ ref: https://orgmode.org/manual/Template-elements.html#Template-elements
                                  ;; A list of things to do that I do NOT get direct compensation for.
                                  ;; These things will get refiled into life.org or edu.org eventually.
                                  ;; Think about if it is more efficacious to just put them in directly or do the whole weekly refile thing.
-                                 (file+headline "~/org/inbox.org" "TODOS")
+                                 (file+headline "~/org/life.org" "Personal")
                                  "* TODO %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
 
                                 ;; A todo list for work related items, things I get paid money for.
@@ -567,7 +567,7 @@ ref: https://orgmode.org/manual/Template-elements.html#Template-elements
 
                                 ("a" "Album Notes" entry
                                  (file+headline "~/org/life.org" "Listen to an Entire Album")
-                                 "**** %u %^{Artist} - %^{Album Name}\n:PROPERTIES:\n:CREATED: %U\n:END:\n- Release: %^{Release}\n- Link: [[%^{URL}][Spotify]]\n- Tracks: %^{Tracks}\n- Playtime: %^{Playtime}\n- %^{Content}\n" :empty-lines 1)
+                                 "**** %u %^{Artist} - %^{Album Name}\n:PROPERTIES:\n:CREATED: %U\n:END:\n- Release: %^{Release}\n- Link: [[%^{URL}][Spotify]]\n- Tracks: %^{Tracks}\n- Playtime: %^{Playtime}\n- %^{Content}\n%?" :empty-lines 1)
 
                                 ;; Date-tree
                                 ("j" "Journal" entry (file+datetree "~/org/journal.org")
