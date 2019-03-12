@@ -21,7 +21,7 @@ the tendency is to push it as far as you can.'
 * Package repos
 - https://stackoverflow.com/questions/14836958/updating-packages-in-emacs
 #+BEGIN_SRC emacs-lisp
-  (require 'package)
+  (require 'package
   (setq package-enable-at-startup nil)
   (setq package-archives '(
                            ("melpa" . "http://melpa.org/packages/")
@@ -182,6 +182,7 @@ From http://pages.sachachua.com/.emacs.d/Sacha.html#sec-1-4-8
   (add-to-list 'default-frame-alist
                '(font . "InputMono-KF 10"))
 #+END_SRC
+
 * Backups
 ** Config Backups
 Let us centralize where emac's keeps backups
@@ -332,11 +333,6 @@ Move between open windows with =M-o= as well as =C-x o=.
 * Movement, Formatting & Editing
 - [[https://www.reddit.com/r/emacs/comments/co9qb/3_tips_for_reducing_strain_on_your_hands/][3 tips for reducing strain on your hands : emacs]]
 - eagerly awaiting my plank
-** Sentences end with two spaces
-#+BEGIN_SRC emacs-lisp
-  (setq sentence-end-double-space t)
-#+END_SRC
-
 ** Smooth Scrolling
 Smooth scrolling means when you hit C-n to go to the next line
 at the bottom of the page, instead of doing a page-down,
