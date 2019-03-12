@@ -21,7 +21,7 @@ the tendency is to push it as far as you can.'
 * Package repos
 - https://stackoverflow.com/questions/14836958/updating-packages-in-emacs
 #+BEGIN_SRC emacs-lisp
-  (require 'package
+  (require 'package)
   (setq package-enable-at-startup nil)
   (setq package-archives '(
                            ("melpa" . "http://melpa.org/packages/")
