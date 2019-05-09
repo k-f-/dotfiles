@@ -178,9 +178,9 @@ From http://pages.sachachua.com/.emacs.d/Sacha.html#sec-1-4-8
   ;; Test char and monospace:
   ;; 0123456789abcdefghijklmnopqrstuvwxyz [] () :;,. !@#$^&*
   ;; 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ {} <> "'`  ~-_/|\?
-  (set-default-font "InputMono-KF 10")
+  (set-default-font "Iosevka Term 11")
   (add-to-list 'default-frame-alist
-               '(font . "InputMono-KF 10"))
+               '(font . "Iosevka Term 11"))
 #+END_SRC
 
 * Backups
@@ -216,7 +216,7 @@ Create a backup to a designated dir, mirroring the full path ala ergomacs
   (setq make-backup-file-name-function 'kef-backup-file-name)
 #+END_SRC
 
-* Functions`
+* Functions
 ** Kill current buffer.
 
 #+BEGIN_SRC emacs-lisp
@@ -332,7 +332,6 @@ Move between open windows with =M-o= as well as =C-x o=.
 
 * Movement, Formatting & Editing
 - [[https://www.reddit.com/r/emacs/comments/co9qb/3_tips_for_reducing_strain_on_your_hands/][3 tips for reducing strain on your hands : emacs]]
-- eagerly awaiting my plank
 ** Smooth Scrolling
 Smooth scrolling means when you hit C-n to go to the next line
 at the bottom of the page, instead of doing a page-down,
@@ -384,7 +383,11 @@ In many programs, like SlickEdit, TextMate and VisualStudio, “cut” and “co
                '(comment-dwim whole-line-or-region-comment-dwim nil))
   (whole-line-or-region-mode 1)
 #+END_SRC
-
+** whitespace removal
+#+BEGIN_SRC emacs-lisp
+(use-package whitespace-cleanup-mode :ensure)
+(whitespace-cleanup-mode t)
+#+END_SRC
 * Themes
 ** disable themes before we enable a new theme
 - My understanding is such.  =load-theme= just puts whatever you call on top of
@@ -395,15 +398,33 @@ what is already existing.  This makes a lot of sense if your theme is modular.
   (defadvice load-theme (before theme-dont-propagate activate)
     (mapc #'disable-theme custom-enabled-themes))
 #+END_SRC
-** zenburn
+** zenburn & base16
 Lets stop fucking around with broken themes and just use =zenburn=.
+base16 seems to work well. perhaps we can find a light theme we like here.
 #+BEGIN_SRC emacs-lisp
-  (use-package zenburn-theme :ensure t)
+  ;;(use-package zenburn-theme :ensure t)
+  ;;(use-package base16-theme :ensure t)
 #+END_SRC
+** doom-themes
+#+BEGIN_SRC emacs-lisp
+  (use-package doom-themes)
 
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+
+    ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config)
+
+#+END_SRC
 ** enable-theme:
 #+BEGIN_SRC emacs-lisp
-  (load-theme 'zenburn t t)
+  ;;(load-theme 'zenburn t t)
+  ;;(load-theme 'base16-one-light t t)
+  
+  ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
+  ;; may have their own settings.
+  (load-theme 'doom-spacegrey t)
 #+END_SRC
 
 * Packages
@@ -419,6 +440,48 @@ search in $HOME/code for projects.
     (projectile-mode +1)
     (setq projectile-project-search-path '("~/code/")))
 #+END_SRC
+** Deft
+Deft-Mode custom functions via: http://pragmaticemacs.com/emacs/tweaking-deft-quicker-notes/
+Custom function to save window-layout when launching deft-mode
+advise deft to save window config
+#+BEGIN_SRC emacs-lisp
+(use-package deft :ensure
+  :bind ("<f7>" . deft)
+  :commands (deft)
+  :config (setq deft-directory "~/Dropbox/org/" deft-extensions
+                '("md" "org" "txt")))
+(setq deft-default-extension "org")
+(setq deft-use-filename-as-title nil)
+(setq deft-use-filter-string-for-filename t)
+(setq deft-file-naming-rules '((noslash . "-")
+                               (nospace . "-")
+                               (case-fn . downcase)))
+(setq deft-text-mode 'org-mode)
+;; filenames - replace space and slash with - lcase
+(setq deft-file-naming-rules
+      '((noslash . "-")
+        (nospace . "-")
+        (case-fn . downcase)))
+(defun kef-deft-save-windows (orig-fun &rest args)
+  (setq kef-pre-deft-window-config (current-window-configuration))
+  (apply orig-fun args)
+  )
+(advice-add 'deft :around #'kef-deft-save-windows)
+;;function to quit a deft edit cleanly back to pre deft window
+(defun kef-quit-deft ()
+;;  "Save buffer, kill buffer, kill deft buffer, and restore window config to the way it was before deft was invoked"
+  (interactive)
+  (save-buffer)
+  (kill-this-buffer)
+  (switch-to-buffer "*Deft*")
+  (kill-this-buffer)
+  (when (window-configuration-p kef-pre-deft-window-config)
+    (set-window-configuration kef-pre-deft-window-config)
+    )
+  )
+(global-set-key (kbd "C-c q") 'kef-quit-deft)
+#+END_SRC
+
 ** Ivy, Swiper and Counsel
 #+BEGIN_SRC emacs-lisp
   (use-package ivy :ensure

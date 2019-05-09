@@ -12,10 +12,10 @@
  (tags "star")
  (handler . elfeed-search-bookmark-handler))
 ("org-capture-last-stored"
- (filename . "~/org/ideas.org")
- (front-context-string . "** WAITING CMUS ")
- (rear-context-string . "\n \n* Ideas [0%]\n")
- (position . 162))
+ (filename . "~/org/life.org")
+ (front-context-string . "**** [2019-05-02")
+ (rear-context-string . "  guitar work.\n\n")
+ (position . 22600))
 ("elfeed-unread"
  (location . "+unread")
  (tags "unread")
