@@ -16,7 +16,7 @@ set $netrefresh --no-startup-id sudo -A systemctl restart NetworkManager
 set $hibernate sudo -A systemctl suspend
 
 # Open a file browser window
-bindsym $mod+n exec $term -e ranger
+bindsym $mod+n exec $term -e pcmanfm 
 
 # Media player controls
 bindsym XF86AudioPlay exec playerctl play-pause

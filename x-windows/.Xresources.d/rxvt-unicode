@@ -1,7 +1,7 @@
 ! #####################################################
 ! urxvt
 ! #####################################################
-URxvt.font: xft:Iosevka Term:size=9
+URxvt.font: xft:Iosevka Term Semibold:size=10
 URxvt.scrollBar: false
 URxvt.allow_bold: true
 

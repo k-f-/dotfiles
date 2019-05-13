@@ -178,9 +178,9 @@ From http://pages.sachachua.com/.emacs.d/Sacha.html#sec-1-4-8
   ;; Test char and monospace:
   ;; 0123456789abcdefghijklmnopqrstuvwxyz [] () :;,. !@#$^&*
   ;; 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ {} <> "'`  ~-_/|\?
-  (set-default-font "Iosevka Term 11")
+  (set-default-font "Iosevka Term Semibold 11")
   (add-to-list 'default-frame-alist
-               '(font . "Iosevka Term 11"))
+               '(font . "Iosevka Term Semibold 11"))
 #+END_SRC
 
 * Backups
@@ -200,7 +200,7 @@ Let us centralize where emac's keeps backups
 Create a backup to a designated dir, mirroring the full path ala ergomacs
 
 #+BEGIN_SRC emacs-lisp
-  (defun kef-backup-file-name (fpath)
+  (defun kef/backup-file-name (fpath)
     "Return a new file path of a given file path.
   If the new path's directories does not exist, create them."
     (let* (
@@ -213,30 +213,30 @@ Create a backup to a designated dir, mirroring the full path ala ergomacs
       )
     )
 
-  (setq make-backup-file-name-function 'kef-backup-file-name)
+  (setq make-backup-file-name-function 'kef/backup-file-name)
 #+END_SRC
 
 * Functions
 ** Kill current buffer.
 
 #+BEGIN_SRC emacs-lisp
-  (defun kef-kill-current-buffer ()
+  (defun kef/kill-current-buffer ()
     "Kill the current buffer without prompting."
     (interactive)
     (kill-buffer (current-buffer)))
 
   ;; Don't comfirm on kill buffer, just close it.
-  (global-set-key (kbd "C-x k") 'kef-kill-current-buffer)
+  (global-set-key (kbd "C-x k") 'kef/kill-current-buffer)
 #+END_SRC
 
 ** Visit emacs config
 #+BEGIN_SRC emacs-lisp
-  (defun kef-visit-emacs-config ()
+  (defun kef/visit-emacs-config ()
     (interactive)
     (find-file "~/.emacs.d/config.org"))
 
   ;; Jump to emacs config file.
-  (global-set-key (kbd "C-c e") 'kef-visit-emacs-config)
+  (global-set-key (kbd "C-c e") 'kef/visit-emacs-config)
 #+END_SRC
 
 ** youtube-dl
@@ -462,24 +462,24 @@ advise deft to save window config
       '((noslash . "-")
         (nospace . "-")
         (case-fn . downcase)))
-(defun kef-deft-save-windows (orig-fun &rest args)
-  (setq kef-pre-deft-window-config (current-window-configuration))
+(defun kef/deft-save-windows (orig-fun &rest args)
+  (setq kef/pre-deft-window-config (current-window-configuration))
   (apply orig-fun args)
   )
-(advice-add 'deft :around #'kef-deft-save-windows)
+(advice-add 'deft :around #'kef/deft-save-windows)
 ;;function to quit a deft edit cleanly back to pre deft window
-(defun kef-quit-deft ()
+(defun kef/quit-deft ()
 ;;  "Save buffer, kill buffer, kill deft buffer, and restore window config to the way it was before deft was invoked"
   (interactive)
   (save-buffer)
   (kill-this-buffer)
   (switch-to-buffer "*Deft*")
   (kill-this-buffer)
-  (when (window-configuration-p kef-pre-deft-window-config)
-    (set-window-configuration kef-pre-deft-window-config)
+  (when (window-configuration-p kef/pre-deft-window-config)
+    (set-window-configuration kef/pre-deft-window-config)
     )
   )
-(global-set-key (kbd "C-c q") 'kef-quit-deft)
+(global-set-key (kbd "C-c q") 'kef/quit-deft)
 #+END_SRC
 
 ** Ivy, Swiper and Counsel
@@ -826,6 +826,8 @@ Something around 2019-02-01 broke the =elfeed-expose= method.  Also broke
 #+BEGIN_SRC emacs-lisp
   (use-package elfeed
     :ensure t
+    :demand
+    :config
     :bind (:map elfeed-search-mode-map
                 ("A" . kef/elfeed-show-all)
                 ("U" . kef/elfeed-show-unread)
@@ -878,24 +880,22 @@ Adding the concept of *stars* to elfeed, along with hooks etc.
   ;; http://pragmaticemacs.com/emacs/star-and-unstar-articles-in-elfeed/#disqus_thread
   ;; more concise version from user: Galrog. Slick.
 
-  ;; (defalias 'elfeed-toggle-star
-  ;;  (elfeed-expose #'elfeed-search-toggle-all 'star))
+  (defalias 'elfeed-toggle-star
+   (elfeed-expose #'elfeed-search-toggle-all 'star))
 
-  ;; (eval-after-load 'elfeed-search
-  ;;  '(define-key elfeed-search-mode-map (kbd "m") 'elfeed-toggle-star))
+  (eval-after-load 'elfeed-search
+   '(define-key elfeed-search-mode-map (kbd "m") 'elfeed-toggle-star))
 
   ;; tried *, but m requires one less hand and is closer to the "n" key which were using constantly in this mode.
 #+END_SRC  
 
-#+RESULTS:
-
 A colored face for a =starred= entry.
 #+BEGIN_SRC emacs-lisp
-;;  (defface elfeed-search-starred-title-face
-;;    '((t :foreground "#f77"))
-;;    "Marks a starred Elfeed entry.")
+   (defface elfeed-search-starred-title-face
+     '((t :foreground "#f77"))
+     "Marks a starred Elfeed entry.")
 
-;;  (push '(starred elfeed-search-starred-title-face) 'elfeed-search-face-alist)
+   (push '(starred elfeed-search-starred-title-face) 'elfeed-search-face-alist)
 #+END_SRC
 
 Functions to support syncing .elfeed between machines
@@ -917,11 +917,36 @@ makes sure elfeed reads index from disk before launching
     (quit-window))
 #+END_SRC
 
+Adjusting variable-face
+#+BEGIN_SRC emacs-lisp
+  (setq elfeed-show-mode-hook
+        (lambda ()
+      (set-face-attribute 'variable-pitch (selected-frame) :font (font-spec :family "IBM Plex Serif" :foundry "IBM " :width normal :height 100 :weight normal :slant normal))
+      (setq fill-column 120)
+      (setq elfeed-show-entry-switch #'kef/show-elfeed)))
+
+  (defun kef/show-elfeed (buffer)
+    (with-current-buffer buffer
+      (setq buffer-read-only nil)
+      (goto-char (point-min))
+      (re-search-forward "\n\n")
+      (fill-individual-paragraphs (point) (point-max))
+      (setq buffer-read-only t))
+    (switch-to-buffer buffer))
+#+END_SRC
+*** elfeed-goodies
+#+BEGIN_SRC emacs-lisp
+  (use-package elfeed-goodies
+    :ensure t
+    :config
+    (elfeed-goodies/setup))
+#+END_SRC
 *** elfeed-org
 Cool, we get to use org-mode to manage our feeds. <3
 #+BEGIN_SRC emacs-lisp
   (use-package elfeed-org
     :ensure t
+    :requires (elfeed)
     :config
     ;; start
     (elfeed-org)
