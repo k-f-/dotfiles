@@ -889,13 +889,16 @@ Adding the concept of *stars* to elfeed, along with hooks etc.
   ;; tried *, but m requires one less hand and is closer to the "n" key which were using constantly in this mode.
 #+END_SRC  
 
+#+RESULTS:
+: elfeed-toggle-star
+
 A colored face for a =starred= entry.
 #+BEGIN_SRC emacs-lisp
-   (defface elfeed-search-starred-title-face
-     '((t :foreground "#f77"))
-     "Marks a starred Elfeed entry.")
+  (defface elfeed-search-starred-title-face
+    '((t :foreground "#f77"))
+    "Marks a starred Elfeed entry.")
 
-   (push '(starred elfeed-search-starred-title-face) 'elfeed-search-face-alist)
+  (push '(starred elfeed-search-starred-title-face) elfeed-search-face-alist)
 #+END_SRC
 
 Functions to support syncing .elfeed between machines
@@ -907,7 +910,6 @@ makes sure elfeed reads index from disk before launching
     (elfeed-db-load)
     (elfeed)
     (elfeed-update)) 
-    ;;(elfeed-search-update--force))
 
   ;;write to disk when quiting
   (defun kef/elfeed-save-db-and-bury ()
@@ -919,27 +921,28 @@ makes sure elfeed reads index from disk before launching
 
 Adjusting variable-face
 #+BEGIN_SRC emacs-lisp
+    (defun kef/show-elfeed (buffer)
+      (with-current-buffer buffer
+        (setq buffer-read-only nil)
+        (goto-char (point-min))
+        (re-search-forward "\n\n")
+        (fill-individual-paragraphs (point) (point-max))
+        (setq buffer-read-only t))
+      (switch-to-buffer buffer))
+
   (setq elfeed-show-mode-hook
         (lambda ()
-      (set-face-attribute 'variable-pitch (selected-frame) :font (font-spec :family "IBM Plex Serif" :foundry "IBM " :width normal :height 100 :weight normal :slant normal))
+      (set-face-attribute 'variable-pitch (selected-frame) :font (font-spec :family "IBM Plex Serif" :foundry "IBM " :height 100))
       (setq fill-column 120)
       (setq elfeed-show-entry-switch #'kef/show-elfeed)))
-
-  (defun kef/show-elfeed (buffer)
-    (with-current-buffer buffer
-      (setq buffer-read-only nil)
-      (goto-char (point-min))
-      (re-search-forward "\n\n")
-      (fill-individual-paragraphs (point) (point-max))
-      (setq buffer-read-only t))
-    (switch-to-buffer buffer))
 #+END_SRC
 *** elfeed-goodies
+Thought it was cute, idk. Might delete later.
 #+BEGIN_SRC emacs-lisp
-  (use-package elfeed-goodies
-    :ensure t
-    :config
-    (elfeed-goodies/setup))
+  ;; (use-package elfeed-goodies
+  ;;   :ensure t
+  ;;   :config
+  ;;   (elfeed-goodies/setup))
 #+END_SRC
 *** elfeed-org
 Cool, we get to use org-mode to manage our feeds. <3
