@@ -1159,17 +1159,18 @@ Add nohup to vlc launch.
           cmd)
         (mapconcat #'expand-file-name file-list "\" \"")))))
 #+END_SRC
-** visual feedback on replacement
+** TODO visual-regexp: visual feedback on replacement
+in i3wm <s-r> (mod-r) is bound to resize, try <C-r> which is isearch-reverse
 #+BEGIN_SRC emacs-lisp
   (use-package visual-regexp
     :config
-    (define-key global-map (kbd "s-r") 'vr/replace))
+    (define-key global-map (kbd "C-r") 'vr/replace))
 #+END_SRC
 ** expand-region
 #+BEGIN_SRC emacs-lisp
   (use-package expand-region
     :config
-    (global-set-key (kbd "s-'") 'er/expand-region)
+    (global-set-key (kbd "s-'") 'er/expand-region))
   #+END_SRC
 * Other peoples configs
 - https://caolan.org/dotfiles/emacs.html

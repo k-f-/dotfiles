@@ -1,3 +1,13 @@
 #!/bin/sh
+# If emacs does not have an instance, start one and open.
+EMACS="/usr/bin/emacs"
+EMACSCLIENT="/usr/bin/emacsclient"
 
-emacsclient -c $@
+if test -n "$1"; then
+    $EMACSCLIENT --no-wait "$@" 2> /dev/null || $EMACS "$@" &
+else
+    $EMACSCLIENT --eval "(raise-frame (selected-frame))" 2> /dev/null || $EMACS &
+fi
+
+# Old simple method.
+#emacsclient -c $@

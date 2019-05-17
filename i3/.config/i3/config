@@ -36,7 +36,7 @@ bindsym $mod+Shift+r restart
 # Exit i3 and log out of X session
 bindsym $mod+Shift+e exec "notify-send -u critical 'Shutting down i3.' && emacsclient -e '(save-buffers-kill-emacs t)' && i3-msg exit"
 # Emacsclient
-bindsym $mod+e exec "emacsclient -nc"
+bindsym $mod+e exec "em"
 
 # Launch $BROWSER
 #bindsym $mod+Shift+w exec --no-startup-id brave-browser
