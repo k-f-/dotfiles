@@ -48,7 +48,7 @@ Install and load =use-package=
 * Customize File Locations
 ** Move custom.el file
 Create custom file elsewhere.
-Keep customize settings in their own file 
+Keep customize settings in their own file
 #+BEGIN_SRC emacs-lisp
   (setq custom-file "~/.emacs.d/custom.el")
   (when (file-exists-p custom-file) (load custom-file))
@@ -110,6 +110,7 @@ Drop scroll bar, Toolbar, Tooltips and Menu-Bar
 Turn off the blinking cursor.
 #+BEGIN_SRC emacs-lisp
   (blink-cursor-mode 0)
+  (setq cursor-in-non-selected-windows t)  ; Hide the cursor in inactive windows
 #+END_SRC
 
 ** Startup screen
@@ -173,6 +174,11 @@ From http://pages.sachachua.com/.emacs.d/Sacha.html#sec-1-4-8
   (setq abbrev-file-name "~/.emacs.d/abbrev_defs")
 #+END_SRC
 
+** highlight current line
+#+BEGIN_SRC emacs-lisp
+  (global-hl-line-mode +1)
+#+END_SRC
+
 * Fonts
 #+BEGIN_SRC emacs-lisp
   ;; Test char and monospace:
@@ -195,10 +201,8 @@ Let us centralize where emac's keeps backups
         kept-old-versions 5    ; and how many of the old
         )
 #+END_SRC
-
 ** Backup Function
 Create a backup to a designated dir, mirroring the full path ala ergomacs
-
 #+BEGIN_SRC emacs-lisp
   (defun kef/backup-file-name (fpath)
     "Return a new file path of a given file path.
@@ -218,7 +222,6 @@ Create a backup to a designated dir, mirroring the full path ala ergomacs
 
 * Functions
 ** Kill current buffer.
-
 #+BEGIN_SRC emacs-lisp
   (defun kef/kill-current-buffer ()
     "Kill the current buffer without prompting."
@@ -317,6 +320,25 @@ Fire off a youtube-dl process
         (setq level 1)
         (fn (alist-get 'other (alist-get 'roots data))))))
 #+END_SRC
+** insert line below or above with s-<return>
+#+BEGIN_SRC emacs-lisp
+  (defun smart-open-line ()
+    "Insert an empty line after the current line. Position the cursor at its beginning, according to the current mode."
+    (interactive)
+    (move-end-of-line nil)
+    (newline-and-indent))
+
+  (defun smart-open-line-above ()
+    "Insert an empty line above the current line. Position the cursor at it's beginning, according to the current mode."
+    (interactive)
+    (move-beginning-of-line nil)
+    (newline-and-indent)
+    (forward-line -1)
+    (indent-according-to-mode))
+
+  (global-set-key (kbd "s-<return>") 'smart-open-line)
+  (global-set-key (kbd "s-S-<return>") 'smart-open-line-above)
+#+END_SRC
 * Keybinding
 Set some keybindings
 #+BEGIN_SRC emacs-lisp
@@ -329,9 +351,39 @@ Move between open windows with =M-o= as well as =C-x o=.
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "M-o") 'other-window)
 #+END_SRC
+* Window (Buffer) splits and closures
+Go to other windows easily with one keystroke s-something instead of C-x something.
 
+#+BEGIN_SRC emacs-lisp
+  (defun vsplit-last-buffer ()
+    (interactive)
+    (split-window-vertically)
+    (other-window 1 nil)
+    (switch-to-next-buffer))
+
+  (defun hsplit-last-buffer ()
+    (interactive)
+    (split-window-horizontally)
+    (other-window 1 nil)
+    (switch-to-next-buffer))
+
+  (global-set-key (kbd "s-w") (kbd "C-x 0")) ;; just like close tab in a web browser
+  (global-set-key (kbd "s-W") (kbd "C-x 1")) ;; close others with shift
+
+  (global-set-key (kbd "s-T") 'vsplit-last-buffer)
+  (global-set-key (kbd "s-t") 'hsplit-last-buffer)
+#+END_SRC
 * Movement, Formatting & Editing
 - [[https://www.reddit.com/r/emacs/comments/co9qb/3_tips_for_reducing_strain_on_your_hands/][3 tips for reducing strain on your hands : emacs]]
+** Some defaults from rahkim @ emacs-cast
+#+BEGIN_SRC emacs-lisp
+  (setq
+   echo-keystrokes 0.1               ; Show keystrokes right away, don't show the message in the scratch buffe
+   initial-scratch-message nil       ; Empty scratch buffer
+   initial-major-mode 'org-mode      ; org mode by default
+   sentence-end-double-space nil     ; Sentences should end in one space, come on!
+  )
+#+END_SRC
 ** Smooth Scrolling
 Smooth scrolling means when you hit C-n to go to the next line
 at the bottom of the page, instead of doing a page-down,
@@ -348,20 +400,18 @@ much space is kept between the cursor and the bottom of the buffer.
         hscroll-step 5)
 #+END_SRC
 
-** Tabs
-Tabs should be four spaces.
-#+BEGIN_SRC emacs-lisp
-  (setq-default tab-width 4)
-  (setq-default tab-stop-list (list 4 8 16 24 32 40 48 56 64 72 80 88 96 104 112 120))
-#+END_SRC
-
-** Always indent with spaces
-Never use tabs. 
-/Alarmingly I am in the minority with this?/ 
+** Never use Tabs, Spaces instead
 #+BEGIN_SRC emacs-lisp
   (setq-default indent-tabs-mode nil)
-#+END_SRC
+  (setq tab-width 2)
 
+  (setq js-indent-level 2)
+  (setq css-indent-offset 2)
+  (setq-default c-basic-offset 2)
+  (setq c-basic-offset 2)
+  (setq-default tab-width 2)
+  (setq-default c-basic-indent 2)
+#+END_SRC
 ** Save my location within a file
 Using =save-place-mode= saves the location of point for every file I visit. If I
 close the file or close the editor, then later re-open it, point will be at the
@@ -385,15 +435,19 @@ In many programs, like SlickEdit, TextMate and VisualStudio, “cut” and “co
 #+END_SRC
 ** whitespace removal
 #+BEGIN_SRC emacs-lisp
-(use-package whitespace-cleanup-mode :ensure)
-(whitespace-cleanup-mode t)
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+  (setq require-final-newline t)
+#+END_SRC
+** Automatically change or reload the buffer when the file is modified externally
+#+BEGIN_SRC emacs-lisp
+  (global-auto-revert-mode t)
 #+END_SRC
 * Themes
 ** disable themes before we enable a new theme
 - My understanding is such.  =load-theme= just puts whatever you call on top of
 what is already existing.  This makes a lot of sense if your theme is modular.
 - There may be a difference in how =emacs --daemon= and =emacsclient -nc= load
-  themes as well.  
+  themes as well.
 #+BEGIN_SRC emacs-lisp
   (defadvice load-theme (before theme-dont-propagate activate)
     (mapc #'disable-theme custom-enabled-themes))
@@ -421,7 +475,7 @@ base16 seems to work well. perhaps we can find a light theme we like here.
 #+BEGIN_SRC emacs-lisp
   ;;(load-theme 'zenburn t t)
   ;;(load-theme 'base16-one-light t t)
-  
+
   ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
   ;; may have their own settings.
   (load-theme 'doom-spacegrey t)
@@ -533,7 +587,7 @@ Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g.
     (global-set-key (kbd "s-p") 'counsel-projectile))
 
   (setq projectile-completion-system 'ivy)
-#+END_SRC  
+#+END_SRC
 
 ** org-mode
 #+BEGIN_SRC emacs-lisp
@@ -550,7 +604,7 @@ Store all my org files in =~/org=, which is symlinked to ~/Dropbox/org/.
   (setq org-directory "~/org")
 #+END_SRC
 
-*** Org agenda 
+*** Org agenda
 I cannot seem to make up my mind here.  I suppose with Swiper and Ivy it doesn't
 matter to much. Refile targets seem to be more important to have limits on.
 
@@ -588,9 +642,9 @@ Refile targets should include all files? and down to 9 levels into them.
 #+END_SRC
 
 *** org-capture-templates
-ref: https://orgmode.org/manual/Template-elements.html#Template-elements 
+ref: https://orgmode.org/manual/Template-elements.html#Template-elements
 #+BEGIN_SRC emacs-lisp
-  (setq org-capture-templates '(("t" "Todo [life]" entry                               
+  (setq org-capture-templates '(("t" "Todo [life]" entry
                                  ;; A list of things to do that I do NOT get direct compensation for.
                                  ;; These things will get refiled into life.org or edu.org eventually.
                                  ;; Think about if it is more efficacious to just put them in directly or do the whole weekly refile thing.
@@ -670,7 +724,7 @@ flyspell - in all text modes
 #+BEGIN_SRC emacs-lisp
   (use-package flyspell :ensure)
   (add-hook 'text-mode-hook 'flyspell-mode)
-#+END_SRC 
+#+END_SRC
 
 Can we arm flyspell to harass us about lazy words?
 
@@ -702,7 +756,6 @@ And show changes in the gutter (fringe).
 #+END_SRC
 
 ** Company Mode
-
 Use =company-mode= everywhere
 
 #+BEGIN_SRC emacs-lisp
@@ -730,7 +783,7 @@ really helpful for some modes (like =projectile=, for example).
 ** ox-hugo
 #+BEGIN_SRC emacs-lisp
   (use-package ox-hugo
-    :ensure t 
+    :ensure t
     :after ox)
 #+END_SRC
 
@@ -738,19 +791,21 @@ really helpful for some modes (like =projectile=, for example).
 I keep my snippets in =~/.emacs/yasnippets/personal=, and I always want =yasnippet=
 enabled.
 #+BEGIN_SRC emacs-lisp
-  (use-package yasnippet)  
+  (use-package yasnippet)
   (setq yas-snippet-dirs '("~/.emacs.d/yasnippets/personal/"))
   (yas-global-mode 1)
 #+END_SRC
 
 ** mode-line
 *** minions
+Minions controls how minor-modes appear in our mode-line.
 #+BEGIN_SRC emacs-lisp
   (use-package minions :ensure t)
   (minions-mode +1)
 #+END_SRC
 
 *** moody
+Our current mode-line layout
 #+BEGIN_SRC emacs-lisp
   (use-package moody :ensure
     :config
@@ -811,13 +866,12 @@ Turn on rainbow-mode for web/css.
 
 ** fontawesome
 add an ivy-search for fontawesome icons. slick.
-
 #+BEGIN_SRC emacs-lisp
   (use-package fontawesome :ensure t)
   (defun insert-fontawesome ()
     (interactive)
     (insert (call-interactively 'fontawesome)))
-#+END_SRC 
+#+END_SRC
 
 ** TODO elfeed
 Elfeed is a very nice RSS/Atom reader for emacs.
@@ -887,18 +941,15 @@ Adding the concept of *stars* to elfeed, along with hooks etc.
    '(define-key elfeed-search-mode-map (kbd "m") 'elfeed-toggle-star))
 
   ;; tried *, but m requires one less hand and is closer to the "n" key which were using constantly in this mode.
-#+END_SRC  
-
-#+RESULTS:
-: elfeed-toggle-star
+#+END_SRC
 
 A colored face for a =starred= entry.
 #+BEGIN_SRC emacs-lisp
-  (defface elfeed-search-starred-title-face
-    '((t :foreground "#f77"))
-    "Marks a starred Elfeed entry.")
+  ;; (defface elfeed-search-starred-title-face
+  ;;   '((t :foreground "#f77"))
+  ;;   "Marks a starred Elfeed entry.")
 
-  (push '(starred elfeed-search-starred-title-face) elfeed-search-face-alist)
+  ;; (push '(starred elfeed-search-starred-title-face) elfeed-search-face-alist)
 #+END_SRC
 
 Functions to support syncing .elfeed between machines
@@ -909,7 +960,7 @@ makes sure elfeed reads index from disk before launching
     (interactive)
     (elfeed-db-load)
     (elfeed)
-    (elfeed-update)) 
+    (elfeed-update))
 
   ;;write to disk when quiting
   (defun kef/elfeed-save-db-and-bury ()
@@ -1007,7 +1058,7 @@ Use org structures and tables in message mode
   (setq message-kill-buffer-on-exit t)
 
   ;; Some hooks that I find useful:
-  (add-hook 'mu4e-view-mode-hook #'visual-line-mode) 
+  (add-hook 'mu4e-view-mode-hook #'visual-line-mode)
   (add-hook 'mu4e-compose-mode-hook 'flyspell-mode)
 
   ;; mu4e uses its own version of message-mode. The only benefit I know of is that it enables completion for To, CC and BCC fields. That is really useful though!
@@ -1023,7 +1074,7 @@ Use org structures and tables in message mode
   ;; ref: http://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and-/
   ;; This sets up my two different context for my personal and school emails
   (require 'mu4e-context)
-  (setq mu4e-contexts    
+  (setq mu4e-contexts
         `( ,(make-mu4e-context    ;; me@kfring.com
              :name "me@kfring"
              :enter-func (lambda () (mu4e-message "Switch to the me@kfring context"))
@@ -1108,7 +1159,20 @@ Add nohup to vlc launch.
           cmd)
         (mapconcat #'expand-file-name file-list "\" \"")))))
 #+END_SRC
+** visual feedback on replacement
+#+BEGIN_SRC emacs-lisp
+  (use-package visual-regexp
+    :config
+    (define-key global-map (kbd "s-r") 'vr/replace))
+#+END_SRC
+** expand-region
+#+BEGIN_SRC emacs-lisp
+  (use-package expand-region
+    :config
+    (global-set-key (kbd "s-'") 'er/expand-region)
+  #+END_SRC
 * Other peoples configs
 - https://caolan.org/dotfiles/emacs.html
+- https://github.com/freetonik/emacs-dotfiles
 - https://github.com/hrs/dotfiles/blob/master/emacs/.emacs.d/configuration.org
-- https://github.com/zzamboni/dot-emacs/blob/master/init.org#literate-programming-using-org-babel 
+- https://github.com/zzamboni/dot-emacs/blob/master/init.org#literate-programming-using-org-babel

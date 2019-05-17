@@ -16,7 +16,7 @@ set $netrefresh --no-startup-id sudo -A systemctl restart NetworkManager
 set $hibernate sudo -A systemctl suspend
 
 # Open a file browser window
-bindsym $mod+n exec $term -e pcmanfm 
+bindsym $mod+n exec $term -e pcmanfm
 
 # Media player controls
 bindsym XF86AudioPlay exec playerctl play-pause
@@ -37,8 +37,10 @@ bindsym $mod+Shift+r restart
 bindsym $mod+Shift+e exec "notify-send -u critical 'Shutting down i3.' && emacsclient -e '(save-buffers-kill-emacs t)' && i3-msg exit"
 # Emacsclient
 bindsym $mod+e exec "emacsclient -nc"
+
 # Launch $BROWSER
-bindsym $mod+Shift+w exec --no-startup-id brave-browser
+#bindsym $mod+Shift+w exec --no-startup-id brave-browser
+
 # Launch a floating calculator
 bindsym $mod+c exec urxvt -name dropdown_dropdowncalc -fn 'xft:Input Mono Narrow:pixelsize=64' -e bc -lq
 
@@ -97,7 +99,7 @@ exec --no-startup-id urxvt
 exec --no-startup-id "nohup emacs --daemon &> .out/emacs.out"
 
 # Start xautolock for screen locking.
-exec xautolock -detectsleep -time 10 -locker "~/.bin/lock" 
+exec xautolock -detectsleep -time 10 -locker "~/.bin/lock"
 
 # Spotify
 exec --no-startup-id exec spotify --force-device-scale-factor=2 &
@@ -132,7 +134,7 @@ floating_maximum_size 1920 x 1080
 # Use i3-gaps.
 smart_gaps on
 gaps inner 4
-gaps outer 4 
+gaps outer 4
 # changing how borders look
 #for_window [class="^.*"] border normal 0
 #for_window [class="^.*"] border none 0
@@ -214,7 +216,7 @@ bar {
     	   statusline #BFBFBF
     	   separator  #44475A
 
-           # State            Border  BG      Text  
+           # State            Border  BG      Text
            focused_workspace  #44475A #44475A #F8F8F2
     	   active_workspace   #282A36 #44475A #F8F8F2
     	   inactive_workspace #282A36 #282A36 #BFBFBF
@@ -246,7 +248,7 @@ set $mod Mod4
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec $term 
+bindsym $mod+Return exec $term
 
 # kill focused window
 bindsym $mod+q kill
@@ -299,9 +301,9 @@ bindsym $mod+Shift+Right move right
 bindsym $mod+f fullscreen toggle
 
 # change container layout (stacked, tabbed, toggle split)
-bindsym $mod+s layout stacking
-bindsym $mod+w layout tabbed
-bindsym $mod+t split toggle
+#bindsym $mod+s layout stacking
+#bindsym $mod+w layout tabbed
+#bindsym $mod+t split toggle
 
 # toggle tiling / floating
 bindsym $mod+Shift+space floating toggle
