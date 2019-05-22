@@ -12,10 +12,10 @@
  (tags "star")
  (handler . elfeed-search-bookmark-handler))
 ("org-capture-last-stored"
- (filename . "~/org/life.org")
- (front-context-string . "**** [2019-05-02")
- (rear-context-string . "  guitar work.\n\n")
- (position . 22600))
+ (filename . "~/Dropbox/org/albums.org")
+ (front-context-string . "*** [2019-05-20 ")
+ (rear-context-string . "his best work.\n\n")
+ (position . 4262))
 ("elfeed-unread"
  (location . "+unread")
  (tags "unread")

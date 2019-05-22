@@ -482,6 +482,10 @@ base16 seems to work well. perhaps we can find a light theme we like here.
 #+END_SRC
 
 * Packages
+** AUCTex
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package auctex :ensure t)
+#+END_SRC
 ** Projectile
 Install and configure projectile.
 Super+P pulls up projectiles command map.
@@ -628,20 +632,19 @@ Refile targets should include all files? and down to 9 levels into them.
 
   (add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\)$" . org-mode))
 #+END_SRC
-
-*** Colorize src blocks in org-mode
-
+**** TODO refile targets for blog once we get ox-hugo working.
+*** org-mode: colorize src blocks
 #+BEGIN_SRC emacs-lisp
   (setq org-src-fontify-natively t)
 #+END_SRC
 
-*** org-todo-keywords
+*** org-mode: todo keywords
 
 #+BEGIN_SRC emacs-lisp
   (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w@/!)" "|" "DONE(d!)" "CANCELLED(c@)")))
 #+END_SRC
 
-*** org-capture-templates
+*** org-mode: capture templates
 ref: https://orgmode.org/manual/Template-elements.html#Template-elements
 #+BEGIN_SRC emacs-lisp
   (setq org-capture-templates '(("t" "Todo [life]" entry
@@ -655,16 +658,16 @@ ref: https://orgmode.org/manual/Template-elements.html#Template-elements
                                 ("w" "Todo [work]" entry (file+headline "~/org/work.org" "Tasks")
                                  "* TODO %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
 
-                                ;; A place to keep ideas for some other time.  Ideas for Projects that we could maybe one-day accomplish
+                                ;; a place to keep ideas for some other time.  Ideas for Projects that we could maybe one-day accomplish
                                 ("m" "New Idea" entry (file+headline "~/org/ideas.org" "Ideas")
                                  "* WAITING %^{Short Description}\n:PROPERTIES:\n:CREATED: %U\n:END:\n%?%^{More details?}\n" :prepend w)
 
                                 ;; Hyperlink Capture
-                                ("l" "Hyperlink" item (file+headline "~/org/inbox.org" "Links")
+                                ("l" "Hyperlink" item (file+headline "~/org/life.org" "Links")
                                  "- [[%?%^{url}][%^{Description?}]]")
 
                                 ;; general Note Capture
-                                ("n" "Note" entry (file+headline "~/org/inbox.org" "Notes")
+                                ("n" "Note" entry (file+headline "~/org/life.org" "Notes")
                                  "* %^{Title}\n:PROPERTIES:\n:CREATED: %U\n:END:\n%^{Content}" :empty-lines 1)
 
                                 ;; Album capture for weekly item.
@@ -678,9 +681,10 @@ ref: https://orgmode.org/manual/Template-elements.html#Template-elements
                                 ;; Running Time
                                 ;; Add Album cover?
 
+                                ;; Not cute that we're using the year here, but file+headline does not support variables and it's one second every twelve months. Whatever.
                                 ("a" "Album Notes" entry
-                                 (file+headline "~/org/life.org" "Listen to an Entire Album")
-                                 "**** %u %^{Artist} - %^{Album Name}\n:PROPERTIES:\n:CREATED: %U\n:END:\n- Release: %^{Release}\n- Link: [[%^{URL}][Spotify]]\n- Tracks: %^{Tracks}\n- Playtime: %^{Playtime}\n- %^{Content}\n%?" :empty-lines 1)
+                                 (file+headline "~/org/albums.org" "2019")
+                                 "*** %u %^{Artist} - %^{Album Name}\n:PROPERTIES:\n:CREATED: %U\n:END:\n- Release: %^{Release}\n- Link: [[%^{URL}][Spotify]]\n- Tracks: %^{Tracks}\n- Playtime: %^{Playtime}\n- %^{Content}\n%?" :empty-lines 1)
 
                                 ;; Date-tree
                                 ("j" "Journal" entry (file+datetree "~/org/journal.org")
@@ -699,7 +703,7 @@ ref: https://orgmode.org/manual/Template-elements.html#Template-elements
                                 ))
 #+END_SRC
 
-*** org-log-into-drawer
+*** org-mode: log into drawer
 #+BEGIN_SRC emacs-lisp
   (setq org-log-into-drawer t)
 #+END_SRC
@@ -718,7 +722,7 @@ Maybe actually use this.
   (use-package org-pomodoro :ensure)
 #+END_SRC
 
-** TODO Flyspell
+** Flyspell
 flyspell - in all text modes
 
 #+BEGIN_SRC emacs-lisp
@@ -726,10 +730,10 @@ flyspell - in all text modes
   (add-hook 'text-mode-hook 'flyspell-mode)
 #+END_SRC
 
-Can we arm flyspell to harass us about lazy words?
+*** TODO Can we arm flyspell to harass us about lazy words?
 
 ** TODO Flycheck
-Enable this and add backends are required.
+Enable this and add backends as required.
 #+BEGIN_SRC emacs-lisp
 ;;  (use-package flycheck :ensure)
 #+END_SRC
@@ -763,11 +767,14 @@ Use =company-mode= everywhere
   (add-hook 'after-init-hook 'global-company-mode)
 #+END_SRC
 
-** Use =M-/= for completion.
+*** Use =M-/= for completion.
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "M-/") 'company-complete-common)
 #+END_SRC
+*** TODO company back-ends
+#+BEGIN_SRC emacs-lisp
 
+#+END_SRC
 ** Install and configure =which-key=
 
 =which-key= displays the possible completions for a long keybinding. That's
