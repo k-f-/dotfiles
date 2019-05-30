@@ -12,8 +12,8 @@
  (tags "star")
  (handler . elfeed-search-bookmark-handler))
 ("org-capture-last-stored"
- (filename . "~/Dropbox/org/albums.org")
- (front-context-string . "*** [2019-05-20 ")
+ (filename . "~/org/albums.org")
+ (front-context-string . "*** [2019-05-27 ")
  (rear-context-string . "his best work.\n\n")
  (position . 4262))
 ("elfeed-unread"
