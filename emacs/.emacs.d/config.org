@@ -76,6 +76,7 @@ ref: https://stackoverflow.com/questions/9559753/emacs-org-mode-export-to-anothe
   ;;     (when (not (file-directory-p pub-dir))
   ;;       (make-directory pub-dir))))
 #+END_SRC
+
 * User Interface
 ** Xresources
 - I'm fairly sure this is what was causing some ugly behavior when emacs is invoked.
@@ -201,6 +202,7 @@ Let us centralize where emac's keeps backups
         kept-old-versions 5    ; and how many of the old
         )
 #+END_SRC
+
 ** Backup Function
 Create a backup to a designated dir, mirroring the full path ala ergomacs
 #+BEGIN_SRC emacs-lisp
@@ -351,6 +353,7 @@ Move between open windows with =M-o= as well as =C-x o=.
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "M-o") 'other-window)
 #+END_SRC
+
 * Window (Buffer) splits and closures
 Go to other windows easily with one keystroke s-something instead of C-x something.
 
@@ -373,6 +376,7 @@ Go to other windows easily with one keystroke s-something instead of C-x somethi
   (global-set-key (kbd "s-T") 'vsplit-last-buffer)
   (global-set-key (kbd "s-t") 'hsplit-last-buffer)
 #+END_SRC
+
 * Movement, Formatting & Editing
 - [[https://www.reddit.com/r/emacs/comments/co9qb/3_tips_for_reducing_strain_on_your_hands/][3 tips for reducing strain on your hands : emacs]]
 ** Some defaults from rahkim @ emacs-cast
@@ -452,16 +456,18 @@ what is already existing.  This makes a lot of sense if your theme is modular.
   (defadvice load-theme (before theme-dont-propagate activate)
     (mapc #'disable-theme custom-enabled-themes))
 #+END_SRC
+
 ** zenburn & base16
 Lets stop fucking around with broken themes and just use =zenburn=.
 base16 seems to work well. perhaps we can find a light theme we like here.
 #+BEGIN_SRC emacs-lisp
-  ;;(use-package zenburn-theme :ensure t)
-  ;;(use-package base16-theme :ensure t)
+  ;; (use-package zenburn-theme :ensure t)
+  ;; (use-package base16-theme :ensure t)
 #+END_SRC
+
 ** doom-themes
 #+BEGIN_SRC emacs-lisp
-  (use-package doom-themes)
+  (use-package doom-themes :ensure)
 
   ;; Global settings (defaults)
   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
@@ -471,6 +477,7 @@ base16 seems to work well. perhaps we can find a light theme we like here.
   (doom-themes-org-config)
 
 #+END_SRC
+
 ** enable-theme:
 #+BEGIN_SRC emacs-lisp
   ;;(load-theme 'zenburn t t)
@@ -479,12 +486,22 @@ base16 seems to work well. perhaps we can find a light theme we like here.
   ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
   ;; may have their own settings.
   (load-theme 'doom-spacegrey t)
+  ;;(load-theme 'dichromacy t)
+
 #+END_SRC
 
 * Packages
 ** AUCTex
 #+BEGIN_SRC emacs-lisp
   ;; (use-package auctex :ensure t)
+#+END_SRC
+** JavaScript
+#+BEGIN_SRC emacs-lisp
+  (use-package js2-mode :ensure)
+  (setq js2-highlight-level 3)
+  '(js2-auto-indent-p t)         ; it's nice for commas to right themselves.
+  '(js2-enter-indents-newline t) ; don't need to push tab before typing
+  '(js2-indent-on-enter-key t)
 #+END_SRC
 ** Projectile
 Install and configure projectile.
@@ -1117,55 +1134,56 @@ Use org structures and tables in message mode
       :config (mu4e-alert-set-default-style 'libnotify))
 #+END_SRC
 ** dried
-Dried shortcut to *R*un an appication
+Dried shortcut to *R*un an application
 #+BEGIN_SRC emacs-lisp
   (define-key dired-mode-map "r" 'dired-start-process)
 #+END_SRC
 Tell dried what types of files to open with what.
 #+BEGIN_SRC emacs-lisp
-  (require 'dired-x)
+  ;; (require 'dired-x)
 
-  (setq dired-guess-shell-alist-user
-        '(("\\.pdf\\'" "zathura" "evince" "okular")
-          ("\\.\\(?:djvu\\|eps\\)\\'" "evince")
-          ("\\.\\(?:jpg\\|jpeg\\|png\\|gif\\|xpm\\)\\'" "eog")
-          ("\\.\\(?:xcf\\)\\'" "gimp")
-          ("\\.csv\\'" "libreoffice")
-          ("\\.tex\\'" "pdflatex" "latex")
-          ("\\.\\(?:mp4\\|mkv\\|avi\\|flv\\|ogv\\)\\(?:\\.part\\)?\\'"
-           "vlc")
-          ("\\.\\(?:mp3\\|flac\\)\\'" "rhythmbox")
-          ("\\.html?\\'" "brave-browser")
-          ("\\.cue?\\'" "audacious")))
+  ;; (setq dired-guess-shell-alist-user
+  ;;       '(("\\.pdf\\'" "zathura" "evince" "okular")
+  ;;         ("\\.\\(?:djvu\\|eps\\)\\'" "evince")
+  ;;         ("\\.\\(?:jpg\\|jpeg\\|png\\|gif\\|xpm\\)\\'" "eog")
+  ;;         ("\\.\\(?:xcf\\)\\'" "gimp")
+  ;;         ("\\.csv\\'" "libreoffice")
+  ;;         ("\\.tex\\'" "pdflatex" "latex")
+  ;;         ("\\.\\(?:mp4\\|mkv\\|avi\\|flv\\|ogv\\)\\(?:\\.part\\)?\\'"
+  ;;          "vlc")
+  ;;         ("\\.\\(?:mp3\\|flac\\)\\'" "rhythmbox")
+  ;;         ("\\.html?\\'" "brave-browser")
+  ;;         ("\\.cue?\\'" "audacious")))
 #+END_SRC
 Add nohup to vlc launch.
 #+BEGIN_SRC emacs-lisp
-  (require 'dired-aux)
+  ;; (require 'dired-aux)
 
-  (defvar dired-filelist-cmd
-    '(("vlc" "-L")))
+  ;; (defvar dired-filelist-cmd
+  ;;   '(("vlc" "-L")))
 
-  (defun dired-start-process (cmd &optional file-list)
-    (interactive
-     (let ((files (dired-get-marked-files
-                   t current-prefix-arg)))
-       (list
-        (dired-read-shell-command "& on %s: "
-                                  current-prefix-arg files)
-        files)))
-    (let (list-switch)
-      (start-process
-       cmd nil shell-file-name
-       shell-command-switch
-       (format
-        "nohup 1>/dev/null 2>/dev/null %s \"%s\""
-        (if (and (> (length file-list) 1)
-                 (setq list-switch
-                       (cadr (assoc cmd dired-filelist-cmd))))
-            (format "%s %s" cmd list-switch)
-          cmd)
-        (mapconcat #'expand-file-name file-list "\" \"")))))
+  ;; (defun dired-start-process (cmd &optional file-list)
+  ;;   (interactive
+  ;;    (let ((files (dired-get-marked-files
+  ;;                  t current-prefix-arg)))
+  ;;      (list
+  ;;       (dired-read-shell-command "& on %s: "
+  ;;                                 current-prefix-arg files)
+  ;;       files)))
+  ;;   (let (list-switch)
+  ;;     (start-process
+  ;;      cmd nil shell-file-name
+  ;;      shell-command-switch
+  ;;      (format
+  ;;       "nohup 1>/dev/null 2>/dev/null %s \"%s\""
+  ;;       (if (and (> (length file-list) 1)
+  ;;                (setq list-switch
+  ;;                      (cadr (assoc cmd dired-filelist-cmd))))
+  ;;           (format "%s %s" cmd list-switch)
+  ;;         cmd)
+  ;;       (mapconcat #'expand-file-name file-list "\" \"")))))
 #+END_SRC
+
 ** TODO visual-regexp: visual feedback on replacement
 in i3wm <s-r> (mod-r) is bound to resize, try <C-r> which is isearch-reverse
 #+BEGIN_SRC emacs-lisp
@@ -1175,7 +1193,7 @@ in i3wm <s-r> (mod-r) is bound to resize, try <C-r> which is isearch-reverse
 #+END_SRC
 ** expand-region
 #+BEGIN_SRC emacs-lisp
-  (use-package expand-region
+  (use-package expand-region :ensure
     :config
     (global-set-key (kbd "s-'") 'er/expand-region))
   #+END_SRC

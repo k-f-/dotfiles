@@ -13,9 +13,9 @@
  (handler . elfeed-search-bookmark-handler))
 ("org-capture-last-stored"
  (filename . "~/org/albums.org")
- (front-context-string . "*** [2019-05-27 ")
- (rear-context-string . "his best work.\n\n")
- (position . 4262))
+ (front-context-string . "*** [2019-06-10 ")
+ (rear-context-string . "-time favorite\n\n")
+ (position . 5236))
 ("elfeed-unread"
  (location . "+unread")
  (tags "unread")
