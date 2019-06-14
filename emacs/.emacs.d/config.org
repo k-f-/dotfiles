@@ -499,6 +499,7 @@ base16 seems to work well. perhaps we can find a light theme we like here.
   '(js2-enter-indents-newline t) ; don't need to push tab before typing
   '(js2-indent-on-enter-key t)
 #+END_SRC
+
 ** Deft
 Deft-Mode custom functions via: http://pragmaticemacs.com/emacs/tweaking-deft-quicker-notes/
 Custom function to save window-layout when launching deft-mode
@@ -552,15 +553,15 @@ Use Ivy/Counsel for more features such a spellcheck etc.
     (setq enable-recursive-minibuffers t)
     (setq ivy-initial-inputs-alist nil)
     (setq ivy-re-builders-alist
-          '((t      . ivy--regex-fuzzy)))   ;; enable fuzzy searching everywhere
-
+          '((swiper . ivy--regex-plus)
+            (t      . ivy--regex-fuzzy)))   ;; enable fuzzy searching everywhere except for Swiper
     (global-set-key (kbd "s-b") 'ivy-switch-buffer)
     ;; (global-set-key (kbd "M-s-b") 'ivy-resume)
     )
 
   (use-package swiper :ensure
     :config
-    (global-set-key (kbd "C-s") 'swiper-isearch))
+    (global-set-key (kbd "C-s") 'swiper-search)) ;; use swiper-search
 
     (use-package counsel :ensure
     :config
@@ -572,7 +573,6 @@ Use Ivy/Counsel for more features such a spellcheck etc.
   (use-package flx :ensure)
   (use-package avy :ensure)
 #+END_SRC
-
 Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g. description of commands in =M-x=, meta info about buffers in =ivy-switch-buffer=, etc.
 
 #+BEGIN_SRC emacs-lisp
@@ -720,6 +720,7 @@ flyspell - in all text modes
 #+BEGIN_SRC emacs-lisp
   (use-package flyspell :ensure)
   (add-hook 'text-mode-hook 'flyspell-mode)
+  (use-package flyspell-correct-ivy :ensure)
 #+END_SRC
 
 *** TODO Can we arm flyspell to harass us about lazy words?
@@ -763,12 +764,12 @@ Use =company-mode= everywhere
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "M-/") 'company-complete-common)
 #+END_SRC
-*** TODO company back-ends
+*** Add company back-ends
 #+BEGIN_SRC emacs-lisp
-
+  ;;  add company back-ends
 #+END_SRC
-** Which-Key
 
+** Which-Key
 =which-key= displays the possible completions for a long keybinding. That's
 really helpful for some modes (like =projectile=, for example).
 
@@ -792,15 +793,13 @@ enabled.
 #+BEGIN_SRC emacs-lisp
   ;; add more snippets
   (use-package yasnippet :ensure)
-  (setq yas-snippet-dirs '())
   (setq yas-snippet-dirs
-        '("~/.emacs.d/yasnippets/yasnippet-snippets" ;; yasnippet-snippets
-          "~/.emacs.d/yasnippets/personal/"          ;; personal
+        '("~/.emacs.d/snippets/personal/"          ;; personal
           ))
 
   (yas-reload-all)
-  (add-hook 'prog-mode-hook #'yas-minor-mode)
-
+  ;;(add-hook 'prog-mode-hook #'yas-minor-mode)
+  (yas-global-mode 1)
 #+END_SRC
 *** yasnippet-snippets
 #+BEGIN_SRC emacs-lisp
@@ -1179,6 +1178,7 @@ in i3wm <s-r> (mod-r) is bound to resize, try <C-r> which is isearch-reverse
     :config
     (define-key global-map (kbd "C-r") 'vr/replace))
 #+END_SRC
+
 ** TODO expand-region
 #+BEGIN_SRC emacs-lisp
   (use-package expand-region :ensure
@@ -1186,6 +1186,7 @@ in i3wm <s-r> (mod-r) is bound to resize, try <C-r> which is isearch-reverse
     ;;(global-set-key (kbd "s-'") 'er/expand-region)
     )
   #+END_SRC
+
 * Other peoples configs
 - https://caolan.org/dotfiles/emacs.html
 - https://github.com/freetonik/emacs-dotfiles
