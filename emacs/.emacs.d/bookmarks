@@ -13,9 +13,9 @@
  (handler . elfeed-search-bookmark-handler))
 ("org-capture-last-stored"
  (filename . "~/org/albums.org")
- (front-context-string . "*** [2019-06-10 ")
- (rear-context-string . "-time favorite\n\n")
- (position . 5236))
+ (front-context-string . "*** [2019-06-13 ")
+ (rear-context-string . "socially woke.\n\n")
+ (position . 5961))
 ("elfeed-unread"
  (location . "+unread")
  (tags "unread")

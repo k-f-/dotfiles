@@ -491,10 +491,6 @@ base16 seems to work well. perhaps we can find a light theme we like here.
 #+END_SRC
 
 * Packages
-** AUCTex
-#+BEGIN_SRC emacs-lisp
-  ;; (use-package auctex :ensure t)
-#+END_SRC
 ** JavaScript
 #+BEGIN_SRC emacs-lisp
   (use-package js2-mode :ensure)
@@ -502,18 +498,6 @@ base16 seems to work well. perhaps we can find a light theme we like here.
   '(js2-auto-indent-p t)         ; it's nice for commas to right themselves.
   '(js2-enter-indents-newline t) ; don't need to push tab before typing
   '(js2-indent-on-enter-key t)
-#+END_SRC
-** Projectile
-Install and configure projectile.
-Super+P pulls up projectiles command map.
-search in $HOME/code for projects.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package projectile :ensure
-    :config
-    (define-key projectile-mode-map (kbd "s-P") 'projectile-command-map)
-    (projectile-mode +1)
-    (setq projectile-project-search-path '("~/code/")))
 #+END_SRC
 ** Deft
 Deft-Mode custom functions via: http://pragmaticemacs.com/emacs/tweaking-deft-quicker-notes/
@@ -557,7 +541,8 @@ advise deft to save window config
 (global-set-key (kbd "C-c q") 'kef/quit-deft)
 #+END_SRC
 
-** Ivy, Swiper and Counsel
+** TODO Ivy, Swiper and Counsel
+Use Ivy/Counsel for more features such a spellcheck etc.
 #+BEGIN_SRC emacs-lisp
   (use-package ivy :ensure
     :config
@@ -567,8 +552,7 @@ advise deft to save window config
     (setq enable-recursive-minibuffers t)
     (setq ivy-initial-inputs-alist nil)
     (setq ivy-re-builders-alist
-          '((swiper . ivy--regex-plus)
-            (t      . ivy--regex-fuzzy)))   ;; enable fuzzy searching everywhere except for Swiper
+          '((t      . ivy--regex-fuzzy)))   ;; enable fuzzy searching everywhere
 
     (global-set-key (kbd "s-b") 'ivy-switch-buffer)
     ;; (global-set-key (kbd "M-s-b") 'ivy-resume)
@@ -576,10 +560,9 @@ advise deft to save window config
 
   (use-package swiper :ensure
     :config
-    ;; (global-set-key "\C-r" 'swiper)
-    (global-set-key (kbd "C-s") 'swiper))
+    (global-set-key (kbd "C-s") 'swiper-isearch))
 
-  (use-package counsel :ensure
+    (use-package counsel :ensure
     :config
     (global-set-key (kbd "M-x") 'counsel-M-x)
     (global-set-key (kbd "s-y") 'counsel-yank-pop)
@@ -597,17 +580,6 @@ Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g.
     :config
     (ivy-rich-mode 1)
     (setq ivy-rich-path-style 'abbrev)) ;; To abbreviate paths using abbreviate-file-name (e.g. replace “/home/username” with “~”
-#+END_SRC
-
-** Counsel integration for Projectile
-#+BEGIN_SRC emacs-lisp
-  (use-package counsel-projectile :ensure
-    :config
-    (counsel-projectile-mode 1)
-    (global-set-key (kbd "s-F") 'counsel-projectile-ag)
-    (global-set-key (kbd "s-p") 'counsel-projectile))
-
-  (setq projectile-completion-system 'ivy)
 #+END_SRC
 
 ** org-mode
@@ -733,7 +705,10 @@ ref: https://orgmode.org/manual/Template-elements.html#Template-elements
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+END_SRC
 
-** TODO org-pomodoro
+** org-pomodoro
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2019-06-14 Fri 07:33]
+:END:
 Maybe actually use this.
 #+BEGIN_SRC emacs-lisp
   (use-package org-pomodoro :ensure)
@@ -750,7 +725,7 @@ flyspell - in all text modes
 *** TODO Can we arm flyspell to harass us about lazy words?
 
 ** TODO Flycheck
-Enable this and add backends as required.
+Linting. Enable this and add backends as required.
 #+BEGIN_SRC emacs-lisp
 ;;  (use-package flycheck :ensure)
 #+END_SRC
@@ -792,7 +767,7 @@ Use =company-mode= everywhere
 #+BEGIN_SRC emacs-lisp
 
 #+END_SRC
-** Install and configure =which-key=
+** Which-Key
 
 =which-key= displays the possible completions for a long keybinding. That's
 really helpful for some modes (like =projectile=, for example).
@@ -815,11 +790,22 @@ really helpful for some modes (like =projectile=, for example).
 I keep my snippets in =~/.emacs/yasnippets/personal=, and I always want =yasnippet=
 enabled.
 #+BEGIN_SRC emacs-lisp
-  (use-package yasnippet)
-  (setq yas-snippet-dirs '("~/.emacs.d/yasnippets/personal/"))
-  (yas-global-mode 1)
-#+END_SRC
+  ;; add more snippets
+  (use-package yasnippet :ensure)
+  (setq yas-snippet-dirs '())
+  (setq yas-snippet-dirs
+        '("~/.emacs.d/yasnippets/yasnippet-snippets" ;; yasnippet-snippets
+          "~/.emacs.d/yasnippets/personal/"          ;; personal
+          ))
 
+  (yas-reload-all)
+  (add-hook 'prog-mode-hook #'yas-minor-mode)
+
+#+END_SRC
+*** yasnippet-snippets
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet-snippets :ensure)
+#+END_SRC
 ** mode-line
 *** minions
 Minions controls how minor-modes appear in our mode-line.
@@ -845,6 +831,7 @@ Let's get emacs talking with R.  We need to let emacs know how to run R Code.
 #+END_SRC
 
 ** TODO htmlize
+Not sure we're using this correctly
 Need to find a style we like for default org-mode export.  Possibly tufte-css?
 #+BEGIN_SRC emacs-lisp
   (use-package htmlize :ensure)
@@ -897,7 +884,7 @@ add an ivy-search for fontawesome icons. slick.
     (insert (call-interactively 'fontawesome)))
 #+END_SRC
 
-** TODO elfeed
+** elfeed
 Elfeed is a very nice RSS/Atom reader for emacs.
 Something around 2019-02-01 broke the =elfeed-expose= method.  Also broke
 =Symbol's value as variable is void: elfeed-search-face-alist=
@@ -1031,8 +1018,9 @@ Cool, we get to use org-mode to manage our feeds. <3
     ;; location of feed orgfile
     (setq rmh-elfeed-org-files (list "~/org/feeds.org")))
 #+END_SRC
-** WAITING comment-dwim-2
+** comment-dwim-2
 :LOGBOOK:
+- State "DONE"       from "WAITING"    [2019-06-14 Fri 07:52]
 - State "WAITING"    from              [2019-01-29 Tue 14:50] \\
   Look into having this work for literate programming. It currently does not work
   in =SRC= blocks nor the buffer opened with =C-'=.  Perhaps we can at least get
@@ -1191,11 +1179,12 @@ in i3wm <s-r> (mod-r) is bound to resize, try <C-r> which is isearch-reverse
     :config
     (define-key global-map (kbd "C-r") 'vr/replace))
 #+END_SRC
-** expand-region
+** TODO expand-region
 #+BEGIN_SRC emacs-lisp
   (use-package expand-region :ensure
     :config
-    (global-set-key (kbd "s-'") 'er/expand-region))
+    ;;(global-set-key (kbd "s-'") 'er/expand-region)
+    )
   #+END_SRC
 * Other peoples configs
 - https://caolan.org/dotfiles/emacs.html
