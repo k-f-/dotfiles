@@ -807,22 +807,24 @@ really helpful for some modes (like =projectile=, for example).
 
 ** yasnippet
 I keep my snippets in =~/.emacs/yasnippets/personal=, and I always want =yasnippet=
-enabled.
+enabled. This is not true.
 #+BEGIN_SRC emacs-lisp
   ;; add more snippets
   (use-package yasnippet :ensure)
-  (setq yas-snippet-dirs
-        '("~/.emacs.d/snippets/personal/"))          ;; personal
+  ;;(setq yas-snippet-dirs
+  ;;      '("~/.emacs.d/snippets/personal/"))          ;; personal
           ;;"~/.emacs.d/elpa/yasnippet-snippets-20190513.1049/snippets/"))
 
   (yas-reload-all)
   ;;(add-hook 'prog-mode-hook #'yas-minor-mode)
   (yas-global-mode 1)
 #+END_SRC
+
 *** yasnippet-snippets
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet-snippets :ensure)
 #+END_SRC
+
 ** mode-line
 *** minions
 Minions controls how minor-modes appear in our mode-line.

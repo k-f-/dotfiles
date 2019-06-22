@@ -1,9 +1,9 @@
 export EDITOR="$HOME/.bin/em"
 export TERMINAL="urxvt"
 export READER="zathura"
-export FILE="ranger"
+export FILE="pcmanfm"
 export ALTERNATE_EDITOR=""
-export BROWSER="brave-browser"
+#export BROWSER="brave-browser"
 export EMAIL="me@kfring.com"
 export GOPATH="/usr/bin"
 export GPG_TTY=$(tty)
