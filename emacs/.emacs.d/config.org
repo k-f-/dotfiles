@@ -485,7 +485,7 @@ base16 seems to work well. perhaps we can find a light theme we like here.
 
   ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
   ;; may have their own settings.
-  (load-theme 'doom-spacegrey t)
+  (load-theme 'doom-tomorrow-night t)
   ;;(load-theme 'dichromacy t)
 
 #+END_SRC
@@ -556,23 +556,38 @@ Use Ivy/Counsel for more features such a spellcheck etc.
           '((swiper . ivy--regex-plus)
             (t      . ivy--regex-fuzzy)))   ;; enable fuzzy searching everywhere except for Swiper
     (global-set-key (kbd "s-b") 'ivy-switch-buffer)
-    ;; (global-set-key (kbd "M-s-b") 'ivy-resume)
+    (global-set-key (kbd "C-c C-r") 'ivy-resume)
+    (global-set-key (kbd "M-s-b") 'ivy-resume)
     )
 
   (use-package swiper :ensure
     :config
-    (global-set-key (kbd "C-s") 'swiper-search)) ;; use swiper-search
+    (global-set-key (kbd "C-s") 'swiper)) ;; use swiper-search
 
     (use-package counsel :ensure
     :config
     (global-set-key (kbd "M-x") 'counsel-M-x)
     (global-set-key (kbd "s-y") 'counsel-yank-pop)
-    (global-set-key (kbd "C-x C-f") 'counsel-find-file))
+    (setq enable-recursive-minibuffers t)
+    ;; enable this if you want `swiper' to use it
+    ;; (setq search-default-mode #'char-fold-to-regexp)
+
+    (global-set-key (kbd "M-x") 'counsel-M-x)
+    (global-set-key (kbd "C-x C-f") 'counsel-find-file)
+    (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
+    (global-set-key (kbd "<f1> l") 'counsel-find-library)
+    (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
+    (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+    (global-set-key (kbd "C-c g") 'counsel-git)
+    (global-set-key (kbd "C-c j") 'counsel-git-grep)
+    (global-set-key (kbd "C-c k") 'counsel-ag)
+    (global-set-key (kbd "C-x l") 'counsel-locate))
 
   (use-package smex :ensure)
   (use-package flx :ensure)
   (use-package avy :ensure)
 #+END_SRC
+
 Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g. description of commands in =M-x=, meta info about buffers in =ivy-switch-buffer=, etc.
 
 #+BEGIN_SRC emacs-lisp
@@ -597,20 +612,9 @@ Store all my org files in =~/org=, which is symlinked to ~/Dropbox/org/.
   (setq org-directory "~/org")
 #+END_SRC
 
-*** Org agenda
-I cannot seem to make up my mind here.  I suppose with Swiper and Ivy it doesn't
-matter to much. Refile targets seem to be more important to have limits on.
-
-#+BEGIN_SRC emacs-lisp
-  ;;(setq org-agenda-files '("~/org/life.org"
-  ;;                         "~/org/work.org"
-  ;;                         "~/org/edu.org"))
-  (setq org-agenda-files '("~/org/"))
-#+END_SRC
-
-*** Refile Targets
+*** TODO Refile Targets
 Refile targets should include all files? and down to 9 levels into them.
-
+Work on this later to make the refile targets make sense for our workflow.
 #+BEGIN_SRC emacs-lisp
   (setq org-refile-targets (quote (("notes.org" :maxlevel . 3) ;; Top level headings in notes
                                    ("kfring.org" :maxlevel . 2) ;; Top level in personal blog
@@ -622,13 +626,23 @@ Refile targets should include all files? and down to 9 levels into them.
   (add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\)$" . org-mode))
 #+END_SRC
 **** TODO refile targets for blog once we get ox-hugo working.
+
+*** org-agenda
+I cannot seem to make up my mind here.  I suppose with Swiper and Ivy it doesn't
+matter to much. Refile targets seem to be more important to have limits on.
+
+#+BEGIN_SRC emacs-lisp
+  ;;(setq org-agenda-files '("~/org/life.org"
+  ;;                         "~/org/work.org"
+  ;;                         "~/org/edu.org"))
+  (setq org-agenda-files '("~/org/"))
+#+END_SRC
 *** org-mode: colorize src blocks
 #+BEGIN_SRC emacs-lisp
   (setq org-src-fontify-natively t)
 #+END_SRC
 
 *** org-mode: todo keywords
-
 #+BEGIN_SRC emacs-lisp
   (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w@/!)" "|" "DONE(d!)" "CANCELLED(c@)")))
 #+END_SRC
@@ -697,7 +711,7 @@ ref: https://orgmode.org/manual/Template-elements.html#Template-elements
   (setq org-log-into-drawer t)
 #+END_SRC
 
-** org-bullets
+*** org-bullets
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets)
@@ -705,22 +719,26 @@ ref: https://orgmode.org/manual/Template-elements.html#Template-elements
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+END_SRC
 
-** org-pomodoro
+*** org-pomodoro
 :LOGBOOK:
 - State "DONE"       from "TODO"       [2019-06-14 Fri 07:33]
 :END:
 Maybe actually use this.
+Look to see if we can do a standard pomodoro cycle.
 #+BEGIN_SRC emacs-lisp
   (use-package org-pomodoro :ensure)
 #+END_SRC
 
 ** Flyspell
 flyspell - in all text modes
-
+[flypsell for comments, but not strings][https://emacs.stackexchange.com/questions/31300/can-you-turn-on-flyspell-for-comments-but-not-strings]
 #+BEGIN_SRC emacs-lisp
   (use-package flyspell :ensure)
-  (add-hook 'text-mode-hook 'flyspell-mode)
-  (use-package flyspell-correct-ivy :ensure)
+  (add-hook 'prog-mode-hook 'flyspell-prog-mode) ;; Flyspell in program mode.
+  (dolist (hook '(text-mode-hook))
+    (add-hook hook (lambda () (flyspell-mode 1)))) ;; On for text-mode
+  (dolist (hook '(change-log-mode-hook log-edit-mode-hook))
+    (add-hook hook (lambda () (flyspell-mode -1)))) ;; Off for log and change-log mode.
 #+END_SRC
 
 *** TODO Can we arm flyspell to harass us about lazy words?
@@ -764,7 +782,7 @@ Use =company-mode= everywhere
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "M-/") 'company-complete-common)
 #+END_SRC
-*** Add company back-ends
+*** TODO Add company back-ends
 #+BEGIN_SRC emacs-lisp
   ;;  add company back-ends
 #+END_SRC
@@ -794,8 +812,8 @@ enabled.
   ;; add more snippets
   (use-package yasnippet :ensure)
   (setq yas-snippet-dirs
-        '("~/.emacs.d/snippets/personal/"          ;; personal
-          ))
+        '("~/.emacs.d/snippets/personal/"))          ;; personal
+          ;;"~/.emacs.d/elpa/yasnippet-snippets-20190513.1049/snippets/"))
 
   (yas-reload-all)
   ;;(add-hook 'prog-mode-hook #'yas-minor-mode)
@@ -1171,7 +1189,10 @@ Add nohup to vlc launch.
   ;;       (mapconcat #'expand-file-name file-list "\" \"")))))
 #+END_SRC
 
-** TODO visual-regexp: visual feedback on replacement
+** visual-regexp: visual feedback on replacement
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2019-06-16 Sun 17:55]
+:END:
 in i3wm <s-r> (mod-r) is bound to resize, try <C-r> which is isearch-reverse
 #+BEGIN_SRC emacs-lisp
   (use-package visual-regexp

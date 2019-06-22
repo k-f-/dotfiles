@@ -16,7 +16,7 @@ set $netrefresh --no-startup-id sudo -A systemctl restart NetworkManager
 set $hibernate sudo -A systemctl suspend
 
 # Open a file browser window
-bindsym $mod+n exec $term -e pcmanfm
+bindsym $mod+n exec pcmanfm &
 
 # Media player controls
 bindsym XF86AudioPlay exec playerctl play-pause
@@ -35,6 +35,10 @@ bindsym $mod+Shift+r restart
 # Tell emacs to save everything and then kill itself.
 # Exit i3 and log out of X session
 bindsym $mod+Shift+e exec "notify-send -u critical 'Shutting down i3.' && emacsclient -e '(save-buffers-kill-emacs t)' && i3-msg exit"
+
+# Network-Refresh
+bindsym $mod+shift+n $netrefresh
+
 # Emacsclient
 bindsym $mod+e exec "em"
 
@@ -44,11 +48,21 @@ bindsym $mod+e exec "em"
 # Launch a floating calculator
 bindsym $mod+c exec urxvt -name dropdown_dropdowncalc -fn 'xft:Input Mono Narrow:pixelsize=64' -e bc -lq
 
+# Move the current workspace to the next output
+# (effectively toggles when you only have two outputs)
+bindsym $mod+m move workspace to output right
+
+# Put this window on the presentation
+#bindsym $mod+x move container to output VGA1
+
+# Put this window on the primary output.
+#bindsym $mod+x move container to output primary
+
 #################################################################
 # Startup Applications and Scripts
 #################################################################
 # Use Caps Lock as an additional Control key
-exec --no-startup-id setxkbmap -option ctrl:nocaps
+exec --no-startup-id setxkbmap -option ctrl:nocaps &
 
 # Treat hitting and releasing Control without chording as Escape
 exec --no-startup-id xcape &
@@ -75,10 +89,10 @@ exec --no-startup-id dropbox start &
 #exec --no-startup-id pasystray &
 
 # Start up a GPG agent
-exec --no-startup-id eval $(gpg-agent --daemon)
+exec --no-startup-id eval $(gpg-agent --daemon) &
 
 # Load up config in .Xresources (for DPI, urxvt, and rofi)
-exec --no-startup-id xrdb -merge ~/.Xresources
+exec --no-startup-id xrdb -merge ~/.Xresources &
 
 # Hide the mouse cursor after a second
 exec --no-startup-id unclutter -idle 1 -noevents &
@@ -208,16 +222,20 @@ bar {
 	position top
         i3bar_command "i3bar -t"
         status_command i3status -c ~/.config/i3/i3bar.conf
-	#tray_output primary
+
+# show tray icons on the primary monitor
+  tray_output primary
+# show tray icons on the big monitor
+  tray_output HDMI2
 
     # Dracula Colors ~k-f-
     colors {
     	   background #16161d
     	   statusline #BFBFBF
-    	   separator  #44475A
+         separator  #44475A
 
-           # State            Border  BG      Text
-           focused_workspace  #44475A #44475A #F8F8F2
+         # State            Border  BG      Text
+         focused_workspace  #44475A #44475A #F8F8F2
     	   active_workspace   #282A36 #44475A #F8F8F2
     	   inactive_workspace #282A36 #282A36 #BFBFBF
     	   urgent_workspace   #FF5555 #FF5555 #F8F8F2
@@ -292,18 +310,18 @@ bindsym $mod+Shift+Right move right
 
 # Changed from mod+h to mod+shift+h
 # split in horizontal orientation
-#bindsym $mod+shift+h split h
+#bindsym $mod+h split h
 
 # split in vertical orientation
-bindsym $mod+v split v
+bindsym $mod+Shift+v split toggle
 
 # enter fullscreen mode for the focused container
-bindsym $mod+f fullscreen toggle
+#bindsym $mod+f fullscreen toggle
 
 # change container layout (stacked, tabbed, toggle split)
 #bindsym $mod+s layout stacking
 #bindsym $mod+w layout tabbed
-bindsym $mod+t split toggle
+#bindsym $mod+t split toggle
 
 # toggle tiling / floating
 bindsym $mod+Shift+space floating toggle

@@ -7,6 +7,9 @@ alias akita="mosh root@akita.kfring.com"
 alias spotify="spotify --force-device-scale-factor=2 &" # HiDPI flags. 
 
 ###
+alias chromedev="google-chrome-stable --disable-web-security --user-data-dir &"
+
+###
 alias dc="docker-compose"
 alias gg="git grep -n"
 alias gs="git status -s"
