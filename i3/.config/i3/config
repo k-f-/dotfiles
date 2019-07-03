@@ -119,7 +119,7 @@ exec xautolock -detectsleep -time 10 -locker "~/.bin/lock"
 exec --no-startup-id exec spotify --force-device-scale-factor=2 &
 
 # Brave-Browser
-exec --no-startup-id exec brave-browser
+exec --no-startup-id exec google-chrome-stable
 
 #################################################################
 # Applications bound to Workspaces
@@ -129,7 +129,7 @@ exec --no-startup-id exec brave-browser
 for_window [class="Spotify"] move container to workspace 10
 
 # Start the appropriate programs on the right workspaces
-for_window [class="Brave"] move container to workspace 3
+for_window [class="Chrome"] move container to workspace 3
 
 #################################################################
 # Sticky Windows

@@ -77,6 +77,19 @@ ref: https://stackoverflow.com/questions/9559753/emacs-org-mode-export-to-anothe
   ;;       (make-directory pub-dir))))
 #+END_SRC
 
+* Character encoding
+#+BEGIN_SRC emacs-lisp
+  ;; Core settings
+  ;; UTF-8 please
+  (set-charset-priority 'unicode)
+  (setq locale-coding-system   'utf-8)   ; pretty
+  (set-terminal-coding-system  'utf-8)   ; pretty
+  (set-keyboard-coding-system  'utf-8)   ; pretty
+  (set-selection-coding-system 'utf-8)   ; please
+  (prefer-coding-system        'utf-8)   ; with sugar on top
+  (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
+
+#+END_SRC
 * User Interface
 ** Xresources
 - I'm fairly sure this is what was causing some ugly behavior when emacs is invoked.
@@ -152,7 +165,7 @@ From http://pages.sachachua.com/.emacs.d/Sacha.html#sec-1-4-8
 #+BEGIN_SRC emacs-lisp
   (add-hook 'after-init-hook
             (lambda ()
-              (org-agenda nil "a")
+              (org-agenda nil "d")
               (delete-other-windows)))
 #+END_SRC
 
@@ -382,12 +395,13 @@ Go to other windows easily with one keystroke s-something instead of C-x somethi
 ** Some defaults from rahkim @ emacs-cast
 #+BEGIN_SRC emacs-lisp
   (setq
-   echo-keystrokes 0.1               ; Show keystrokes right away, don't show the message in the scratch buffe
+   echo-keystrokes 0.1               ; Show keystrokes right away, don't show the message in the scratch buffer
    initial-scratch-message nil       ; Empty scratch buffer
    initial-major-mode 'org-mode      ; org mode by default
    sentence-end-double-space nil     ; Sentences should end in one space, come on!
   )
 #+END_SRC
+
 ** Smooth Scrolling
 Smooth scrolling means when you hit C-n to go to the next line
 at the bottom of the page, instead of doing a page-down,
@@ -416,6 +430,7 @@ much space is kept between the cursor and the bottom of the buffer.
   (setq-default tab-width 2)
   (setq-default c-basic-indent 2)
 #+END_SRC
+
 ** Save my location within a file
 Using =save-place-mode= saves the location of point for every file I visit. If I
 close the file or close the editor, then later re-open it, point will be at the
@@ -442,11 +457,38 @@ In many programs, like SlickEdit, TextMate and VisualStudio, “cut” and “co
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
   (setq require-final-newline t)
 #+END_SRC
+
 ** Automatically change or reload the buffer when the file is modified externally
 #+BEGIN_SRC emacs-lisp
   (global-auto-revert-mode t)
 #+END_SRC
+
 * Themes
+** Theme toggles
+#+BEGIN_SRC emacs-lisp
+  (defvar *kef/theme-dark* 'doom-tomorrow-night)
+  (defvar *kef/theme-light* 'doom-tomorrow-day)
+  (defvar *kef/current-theme* *kef/theme-dark*)
+
+  ;; disable other themes before loading new one
+  (defadvice load-theme (before theme-dont-propagate activate)
+    "Disable theme before loading new one."
+    (mapcar #'disable-theme custom-enabled-themes))
+
+
+  (defun kef/next-theme (theme)
+    (if (eq theme 'default)
+        (disable-theme *kef/current-theme*)
+      (progn
+        (load-theme theme t)))
+    (setq *kef/current-theme* theme))
+
+  (defun kef/toggle-theme ()
+    (interactive)
+    (cond ((eq *kef/current-theme* *kef/theme-dark*) (kef/next-theme *kef/theme-light*))
+          ((eq *kef/current-theme* *kef/theme-light*) (kef/next-theme 'default))
+          ((eq *kef/current-theme* 'default) (haba/next-theme *kef/theme-dark*))))
+#+END_SRC
 ** disable themes before we enable a new theme
 - My understanding is such.  =load-theme= just puts whatever you call on top of
 what is already existing.  This makes a lot of sense if your theme is modular.
@@ -485,19 +527,68 @@ base16 seems to work well. perhaps we can find a light theme we like here.
 
   ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
   ;; may have their own settings.
-  (load-theme 'doom-tomorrow-night t)
+  ;;(load-theme 'doom-tomorrow-night t)
   ;;(load-theme 'dichromacy t)
 
 #+END_SRC
 
 * Packages
-** JavaScript
+** Programming Languages
+*** JavaScript
 #+BEGIN_SRC emacs-lisp
-  (use-package js2-mode :ensure)
-  (setq js2-highlight-level 3)
-  '(js2-auto-indent-p t)         ; it's nice for commas to right themselves.
-  '(js2-enter-indents-newline t) ; don't need to push tab before typing
-  '(js2-indent-on-enter-key t)
+  ;; js2-mode
+  ;; https://github.com/mooz/js2-mode
+  (use-package js2-mode :ensure
+    :bind (:map js2-mode-map
+                (("C-x C-e" . js-send-last-sexp)
+                 ("C-M-x" . js-send-last-sexp-and-go)
+                 ("C-c C-b" . js-send-buffer-and-go)
+                 ("C-c C-l" . js-load-file-and-go)))
+    :mode
+    ("\\.js$" . js2-mode)
+    ("\\.json$" . js2-jsx-mode)
+    :config
+    (custom-set-variables '(js2-strict-inconsistent-return-warning nil))
+    (custom-set-variables '(js2-strict-missing-semi-warning nil))
+
+    (setq js-indent-level 2)
+    (setq js2-indent-level 2)
+    (setq js2-basic-offset 2)
+    (setq js2-highlight-level 1)         ; some highlighting.
+    '(js2-auto-indent-p t)               ; it's nice for commas to right themselves.
+    '(js2-enter-indents-newline t)       ; don't need to push tab before typing
+    '(j2-indent-on-enter-key t)
+
+    ;; tern :- IDE like features for javascript and completion
+    ;; http://ternjs.net/doc/manual.html#emacs
+    (use-package tern :ensure
+      :config
+      (defun my-js-mode-hook ()
+        "Hook for `js-mode'."
+        (set (make-local-variable 'company-backends)
+             '((company-tern company-files))))
+      (add-hook 'js2-mode-hook 'my-js-mode-hook)
+      (add-hook 'js2-mode-hook 'company-mode))
+
+    (add-hook 'js2-mode-hook 'tern-mode)
+
+    ;; company backend for tern
+    ;; http://ternjs.net/doc/manual.html#emacs
+    (use-package company-tern :ensure)
+
+    ;; Run a JavaScript interpreter in an inferior process window
+    ;; https://github.com/redguardtoo/js-comint
+    (use-package js-comint :ensure
+      :config
+      (setq inferior-js-program-command "node"))
+
+    ;; js2-refactor :- refactoring options for emacs
+    ;; https://github.com/magnars/js2-refactor.el
+    (use-package js2-refactor :defer t
+      :diminish js2-refactor-mode
+      :config
+      (js2r-add-keybindings-with-prefix "C-c j r"))
+    (add-hook 'js2-mode-hook 'js2-refactor-mode))
 #+END_SRC
 
 ** Deft
@@ -542,6 +633,10 @@ advise deft to save window config
 (global-set-key (kbd "C-c q") 'kef/quit-deft)
 #+END_SRC
 
+** Pandoc
+#+BEGIN_SRC emacs-lisp
+  (use-package pandoc-mode :ensure)
+#+END_SRC
 ** TODO Ivy, Swiper and Counsel
 Use Ivy/Counsel for more features such a spellcheck etc.
 #+BEGIN_SRC emacs-lisp
@@ -549,6 +644,7 @@ Use Ivy/Counsel for more features such a spellcheck etc.
     :config
     (ivy-mode 1)
     (setq ivy-use-virtual-buffers t)
+
     (setq ivy-count-format "(%d/%d) ")
     (setq enable-recursive-minibuffers t)
     (setq ivy-initial-inputs-alist nil)
@@ -585,7 +681,9 @@ Use Ivy/Counsel for more features such a spellcheck etc.
 
   (use-package smex :ensure)
   (use-package flx :ensure)
-  (use-package avy :ensure)
+  (use-package avy :ensure
+      :bind
+  ("C-c SPC" . avy-goto-char))
 #+END_SRC
 
 Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g. description of commands in =M-x=, meta info about buffers in =ivy-switch-buffer=, etc.
@@ -605,6 +703,7 @@ Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g.
     (setq org-src-tab-acts-natively t)
     )
 #+END_SRC
+
 *** Org file locations
 Store all my org files in =~/org=, which is symlinked to ~/Dropbox/org/.
 
@@ -626,16 +725,62 @@ Work on this later to make the refile targets make sense for our workflow.
   (add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\)$" . org-mode))
 #+END_SRC
 **** TODO refile targets for blog once we get ox-hugo working.
-
-*** org-agenda
+*** TODO org-agenda
+TODO: Maybe remove this custom view and replace it with super-agenda package
 I cannot seem to make up my mind here.  I suppose with Swiper and Ivy it doesn't
 matter to much. Refile targets seem to be more important to have limits on.
 
 #+BEGIN_SRC emacs-lisp
-  ;;(setq org-agenda-files '("~/org/life.org"
-  ;;                         "~/org/work.org"
-  ;;                         "~/org/edu.org"))
-  (setq org-agenda-files '("~/org/"))
+  (setq org-agenda-files '("~/org/life.org"
+                          "~/org/work.org"
+                          "~/org/edu.org"))
+  ;; (setq org-agenda-files '("~/org/"))
+#+END_SRC
+
+Some very crafty org-agenda view stuff including habits from
+[https://blog.aaronbieber.com/2016/09/24/an-agenda-for-life-with-org-mode.html]
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-custom-commands
+        '(("d" "Daily agenda and all TODOs"
+           ((tags "PRIORITY=\"A\""
+                  ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                   (org-agenda-overriding-header "High-priority unfinished tasks:")))
+            (agenda "" ((org-agenda-ndays 1)))
+            (alltodo ""
+                     ((org-agenda-skip-function '(or (kef/org-skip-subtree-if-habit)
+                                                     (kef/org-skip-subtree-if-priority ?A)
+                                                     (org-agenda-skip-if nil '(scheduled deadline))))
+                      (org-agenda-overriding-header "ALL normal priority tasks:"))))
+           ((org-agenda-compact-blocks t)))))
+
+  (defun kef/org-skip-subtree-if-habit ()
+    "Skip an agenda entry if it has a STYLE property equal to \"habit\"."
+    (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+      (if (string= (org-entry-get nil "STYLE") "habit")
+          subtree-end
+        nil)))
+  (defun kef/org-skip-subtree-if-priority (priority)
+    "Skip an agenda subtree if it has a priority of PRIORITY.
+
+  PRIORITY may be one of the characters ?A, ?B, or ?C."
+    (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+          (pri-value (* 1000 (- org-lowest-priority priority)))
+          (pri-current (org-get-priority (thing-at-point 'line t))))
+      (if (= pri-value pri-current)
+          subtree-end
+        nil)))
+#+END_SRC
+
+Set a keybinding of =Super-s= to bring up this view.
+#+BEGIN_SRC emacs-lisp
+  (defun kef/pop-to-org-agenda (&optional split)
+    "Visit the org agenda, in the current window or a SPLIT."
+    (interactive "P")
+    (org-agenda nil "d")
+    (when (not split)
+      (delete-other-windows)))
+
+  (global-set-key (kbd "s-s") 'kef/pop-to-org-agenda)
 #+END_SRC
 *** org-mode: colorize src blocks
 #+BEGIN_SRC emacs-lisp
@@ -644,7 +789,7 @@ matter to much. Refile targets seem to be more important to have limits on.
 
 *** org-mode: todo keywords
 #+BEGIN_SRC emacs-lisp
-  (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w@/!)" "|" "DONE(d!)" "CANCELLED(c@)")))
+  (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w@/!)" "|" "IN-PROGRESS (i)"  "|" "DONE(d!)" "CANCELLED(c@)")))
 #+END_SRC
 
 *** org-mode: capture templates
@@ -712,7 +857,6 @@ ref: https://orgmode.org/manual/Template-elements.html#Template-elements
 #+END_SRC
 
 *** org-bullets
-
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets)
   (setq org-bullets-bullet-list '("◉" "◎" "⚫" "○" "►" "◇"))
@@ -755,8 +899,19 @@ Bind to =s-g= and =C-c m=.  Later we'll see which one we use more often.
 #+BEGIN_SRC emacs-lisp
   (use-package magit :ensure
     :config
-    :bind (("C-c m" . magit-status)))
-  (global-set-key (kbd "s-g") 'magit-status)
+    (setq magit-completing-read-function 'ivy-completing-read)
+
+    :bind
+    ;; Magic
+    ("C-x g s" . magit-status)
+    ("C-x g x" . magit-checkout)
+    ("C-x g c" . magit-commit)
+    ("C-x g p" . magit-push)
+    ("C-x g u" . magit-pull)
+    ("C-x g e" . magit-ediff-resolve)
+    ("C-x g r" . magit-rebase-interactive))
+
+  (use-package magit-popup)
 #+END_SRC
 
 And show changes in the gutter (fringe).
@@ -1206,7 +1361,7 @@ in i3wm <s-r> (mod-r) is bound to resize, try <C-r> which is isearch-reverse
 #+BEGIN_SRC emacs-lisp
   (use-package expand-region :ensure
     :config
-    ;;(global-set-key (kbd "s-'") 'er/expand-region)
+    (global-set-key (kbd "s-=") 'er/expand-region)
     )
   #+END_SRC
 
