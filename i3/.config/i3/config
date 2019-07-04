@@ -28,7 +28,7 @@ bindsym $mod+u exec --no-startup-id ~/.bin/lock
 
 # xautolock-toggle mod+shift+u
 # This is a little gross from [https://unix.stackexchange.com/questions/144843/get-xautolock-status] but it works for the moment. Lets change it to the actual option of -toggle later.
-bindsym $mod+Shift+u exec --no-startup-id "if xautolock -exit; then (notify-send -u normal -t 1000 -- 'LOCK OFF') 2> /dev/null; else notify-send -u normal -t 1000 -- 'LOCK on'; xautolock -time 2 -locker 'slock' -notify 10 -notifier \\"notify-send -u normal -t 100 -- 'LOCKING screen ...'\\"; fi"
+bindsym $mod+Shift+u exec --no-startup-id "if xautolock -exit; then (notify-send -u normal -t 1000 -- 'LOCK OFF') 2> /dev/null; else notify-send -u normal -t 1000 -- 'LOCK on'; xautolock -time 2 -locker ' ~/.bin/lock' -notify 10 -notifier \\"notify-send -u normal -t 100 -- 'LOCKING screen ...'\\"; fi"
 #bindsym $mod+Shift+l exec "notify-send 'autolocking: off'"
 
 # reload the configuration file
@@ -115,12 +115,12 @@ exec --no-startup-id urxvt -e ~/.bin/gotop &
 exec --no-startup-id urxvt
 
 # Invoke the Emacs daemon
-exec --no-startup-id "nohup emacs --daemon &> .out/emacs.out"
+exec --no-startup-id emacsclient -a '' &
 
 # Start xautolock for screen locking. We can toggle this with $mod+Shift+u
 # Bottom-right corner of screen for mouse should prevent locking.
 # Lock after 10 minutes
-exec xautolock -corners 000- -detectsleep -time 10 -locker "~/.bin/lock" -notify 10 -notifier "notify-send -u normal -t 10000 -- 'LOCKING screen'"
+exec xautolock -corners 00-0 -detectsleep -time 10 -locker "~/.bin/lock" -notify 10 -notifier "notify-send -u normal -t 10000 -- 'LOCKING screen'"
 
 # Spotify
 exec --no-startup-id exec spotify --force-device-scale-factor=2 &
@@ -136,7 +136,7 @@ exec --no-startup-id exec google-chrome-stable
 for_window [class="Spotify"] move container to workspace 10
 
 # Start the appropriate programs on the right workspaces
-for_window [class="Chrome"] move container to workspace 3
+for_window [class="google-Chrome"] move container to workspace 3
 
 #################################################################
 # Sticky Windows
@@ -289,7 +289,8 @@ bindsym $mod+q kill
 # bindsym $mod+d exec --no-startup-id dmenu_run
 
 # fire rofi up with fuzzy matching
-bindsym $mod+d exec PATH=~/bin:~/.bin:$PATH rofi -matching fuzzy -show run
+bindsym $mod+d exec --no-startup-id PATH=~/bin:~/.bin/:$PATH rofi -matching fuzzy -show run
+Bindsym $mod+Tab exec --no-startup-id rofi -show window
 
 # a mashable key to change focus within a workspace for when I'm lazy.
 # This doesn't actually work will with multiple displays because one monitor is actually to one side or the other. Interesting.

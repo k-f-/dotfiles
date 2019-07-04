@@ -3,8 +3,8 @@
 ### ssh/mosh aliases
 alias akita="mosh root@akita.kfring.com"
 
-### 
-alias spotify="spotify --force-device-scale-factor=2 &" # HiDPI flags. 
+###
+alias spotify-hdpi="spotify --force-device-scale-factor=2 &" # HiDPI flags.
 
 ###
 alias chromedev="google-chrome-stable --disable-web-security --user-data-dir &"
