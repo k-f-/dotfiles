@@ -23,8 +23,13 @@ bindsym XF86AudioPlay exec playerctl play-pause
 bindsym XF86AudioNext exec playerctl next
 bindsym XF86AudioPrev exec playerctl previous
 
-# i3lock, keybind and autolock after 10 minutes
-bindsym $mod+XF86MonBrightnessUp exec --no-startup-id ~/.bin/lock
+# lockscreen - mod+u
+bindsym $mod+u exec --no-startup-id ~/.bin/lock
+
+# xautolock-toggle mod+shift+u
+# This is a little gross from [https://unix.stackexchange.com/questions/144843/get-xautolock-status] but it works for the moment. Lets change it to the actual option of -toggle later.
+bindsym $mod+Shift+u exec --no-startup-id "if xautolock -exit; then (notify-send -u normal -t 1000 -- 'LOCK OFF') 2> /dev/null; else notify-send -u normal -t 1000 -- 'LOCK on'; xautolock -time 2 -locker 'slock' -notify 10 -notifier \\"notify-send -u normal -t 100 -- 'LOCKING screen ...'\\"; fi"
+#bindsym $mod+Shift+l exec "notify-send 'autolocking: off'"
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -64,7 +69,7 @@ bindsym $mod+m move workspace to output right
 # Use Caps Lock as an additional Control key
 exec --no-startup-id setxkbmap -option ctrl:nocaps &
 
-# Treat hitting and releasing Control without chording as Escape
+# Treat hitting and releasing Control (or anything mapped as Control)  without chording as Escape
 exec --no-startup-id xcape &
 
 # Bind media/volume keys
@@ -112,8 +117,10 @@ exec --no-startup-id urxvt
 # Invoke the Emacs daemon
 exec --no-startup-id "nohup emacs --daemon &> .out/emacs.out"
 
-# Start xautolock for screen locking.
-exec xautolock -detectsleep -time 10 -locker "~/.bin/lock"
+# Start xautolock for screen locking. We can toggle this with $mod+Shift+u
+# Bottom-right corner of screen for mouse should prevent locking.
+# Lock after 10 minutes
+exec xautolock -corners 000- -detectsleep -time 10 -locker "~/.bin/lock" -notify 10 -notifier "notify-send -u normal -t 10000 -- 'LOCKING screen'"
 
 # Spotify
 exec --no-startup-id exec spotify --force-device-scale-factor=2 &
@@ -266,7 +273,7 @@ set $mod Mod4
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec $term
+bindsym $mod+t exec $term
 
 # kill focused window
 bindsym $mod+q kill
@@ -283,6 +290,10 @@ bindsym $mod+q kill
 
 # fire rofi up with fuzzy matching
 bindsym $mod+d exec PATH=~/bin:~/.bin:$PATH rofi -matching fuzzy -show run
+
+# a mashable key to change focus within a workspace for when I'm lazy.
+# This doesn't actually work will with multiple displays because one monitor is actually to one side or the other. Interesting.
+bindsym $mod+o focus left
 
 # change focus
 bindsym $mod+h focus left
@@ -308,12 +319,14 @@ bindsym $mod+Shift+Down move down
 bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
-# Changed from mod+h to mod+shift+h
 # split in horizontal orientation
-#bindsym $mod+h split h
+bindsym $mod+s split h exec "notify-send -t 500 'horizontal-split.'"
 
 # split in vertical orientation
-bindsym $mod+Shift+v split toggle
+bindsym $mod+Shift+s split v exec "notify-send -t 500 'vertical-split.'"
+
+# toggle split orientation - meh, until we can do this intellegently lets not bother.
+#bindsym $mod+Shift+s split toggle exec "notify-send 'v-split.'"
 
 # enter fullscreen mode for the focused container
 #bindsym $mod+f fullscreen toggle

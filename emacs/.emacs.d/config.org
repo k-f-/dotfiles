@@ -335,7 +335,8 @@ Fire off a youtube-dl process
         (setq level 1)
         (fn (alist-get 'other (alist-get 'roots data))))))
 #+END_SRC
-** insert line below or above with s-<return>
+** TODO insert line below or above with s-<return>
+These bindings conflict with i3
 #+BEGIN_SRC emacs-lisp
   (defun smart-open-line ()
     "Insert an empty line after the current line. Position the cursor at its beginning, according to the current mode."
@@ -351,8 +352,8 @@ Fire off a youtube-dl process
     (forward-line -1)
     (indent-according-to-mode))
 
-  (global-set-key (kbd "s-<return>") 'smart-open-line)
-  (global-set-key (kbd "s-S-<return>") 'smart-open-line-above)
+  ;; (global-set-key (kbd "s-<return>") 'smart-open-line) ;; This is bound to "new-terminal" in i3.
+  ;; (global-set-key (kbd "s-S-<return>") 'smart-open-line-above) ;; This currently is not bound to anything in i3.
 #+END_SRC
 * Keybinding
 Set some keybindings
@@ -367,9 +368,11 @@ Move between open windows with =M-o= as well as =C-x o=.
   (global-set-key (kbd "M-o") 'other-window)
 #+END_SRC
 
-* Window (Buffer) splits and closures
+* TODO Window (Buffer) splits and closures
 Go to other windows easily with one keystroke s-something instead of C-x something.
-
+I think we need to remove use of the super key.  It's handy, but we like i3
+enough and it takes some energy to remember which Super key functions only work
+in emacs.
 #+BEGIN_SRC emacs-lisp
   (defun vsplit-last-buffer ()
     (interactive)
@@ -383,11 +386,11 @@ Go to other windows easily with one keystroke s-something instead of C-x somethi
     (other-window 1 nil)
     (switch-to-next-buffer))
 
-  (global-set-key (kbd "s-w") (kbd "C-x 0")) ;; just like close tab in a web browser
-  (global-set-key (kbd "s-W") (kbd "C-x 1")) ;; close others with shift
+  (global-set-key (kbd "C-q") (kbd "C-x 0")) ;; Like our i3 config of s-q
+  (global-set-key (kbd "C-S-q") (kbd "C-x 1")) ;; close others with shift. In i3 the translation would be mod$-shift
 
-  (global-set-key (kbd "s-T") 'vsplit-last-buffer)
-  (global-set-key (kbd "s-t") 'hsplit-last-buffer)
+  (global-set-key (kbd "C-s") 'hsplit-last-buffer)   ;; i3: mod-s
+  (global-set-key (kbd "C-S-s") 'vsplit-last-buffer) ;; i3: mod-shift-s
 #+END_SRC
 
 * Movement, Formatting & Editing
@@ -418,7 +421,9 @@ much space is kept between the cursor and the bottom of the buffer.
         hscroll-step 5)
 #+END_SRC
 
-** Never use Tabs, Spaces instead
+** TODO Never use Tabs, Spaces instead
+Change this to tabs. From an inclusive usability standpoint you're being a dick
+by expecting those with visual impairments to bend to your will.
 #+BEGIN_SRC emacs-lisp
   (setq-default indent-tabs-mode nil)
   (setq tab-width 2)
@@ -487,8 +492,9 @@ In many programs, like SlickEdit, TextMate and VisualStudio, “cut” and “co
     (interactive)
     (cond ((eq *kef/current-theme* *kef/theme-dark*) (kef/next-theme *kef/theme-light*))
           ((eq *kef/current-theme* *kef/theme-light*) (kef/next-theme 'default))
-          ((eq *kef/current-theme* 'default) (haba/next-theme *kef/theme-dark*))))
+          ((eq *kef/current-theme* 'default) (kef/next-theme *kef/theme-dark*))))
 #+END_SRC
+
 ** disable themes before we enable a new theme
 - My understanding is such.  =load-theme= just puts whatever you call on top of
 what is already existing.  This makes a lot of sense if your theme is modular.
@@ -527,7 +533,7 @@ base16 seems to work well. perhaps we can find a light theme we like here.
 
   ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
   ;; may have their own settings.
-  ;;(load-theme 'doom-tomorrow-night t)
+  (load-theme 'doom-tomorrow-day t)
   ;;(load-theme 'dichromacy t)
 
 #+END_SRC
@@ -638,7 +644,7 @@ advise deft to save window config
   (use-package pandoc-mode :ensure)
 #+END_SRC
 ** TODO Ivy, Swiper and Counsel
-Use Ivy/Counsel for more features such a spellcheck etc.
+Figure out a binding for line:671 of yank-pop
 #+BEGIN_SRC emacs-lisp
   (use-package ivy :ensure
     :config
@@ -651,14 +657,14 @@ Use Ivy/Counsel for more features such a spellcheck etc.
     (setq ivy-re-builders-alist
           '((swiper . ivy--regex-plus)
             (t      . ivy--regex-fuzzy)))   ;; enable fuzzy searching everywhere except for Swiper
-    (global-set-key (kbd "s-b") 'ivy-switch-buffer)
+    ;; (global-set-key (kbd "s-b") 'ivy-switch-buffer)  ;; "C-x-b" isn't that hard.
     (global-set-key (kbd "C-c C-r") 'ivy-resume)
     (global-set-key (kbd "M-s-b") 'ivy-resume)
     )
 
   (use-package swiper :ensure
     :config
-    (global-set-key (kbd "C-s") 'swiper)) ;; use swiper-search
+    (global-set-key (kbd "C-f") 'swiper)) ;; use swiper-search bound to C-f like browsers. This will take awhile to get used to.
 
     (use-package counsel :ensure
     :config
@@ -727,6 +733,7 @@ Work on this later to make the refile targets make sense for our workflow.
 **** TODO refile targets for blog once we get ox-hugo working.
 *** TODO org-agenda
 TODO: Maybe remove this custom view and replace it with super-agenda package
+
 I cannot seem to make up my mind here.  I suppose with Swiper and Ivy it doesn't
 matter to much. Refile targets seem to be more important to have limits on.
 
@@ -780,7 +787,7 @@ Set a keybinding of =Super-s= to bring up this view.
     (when (not split)
       (delete-other-windows)))
 
-  (global-set-key (kbd "s-s") 'kef/pop-to-org-agenda)
+  ;;(global-set-key (kbd "s-s") 'kef/pop-to-org-agenda)  ;; We're not really using this? Maybe we are. Revist later
 #+END_SRC
 *** org-mode: colorize src blocks
 #+BEGIN_SRC emacs-lisp
@@ -1361,7 +1368,8 @@ in i3wm <s-r> (mod-r) is bound to resize, try <C-r> which is isearch-reverse
 #+BEGIN_SRC emacs-lisp
   (use-package expand-region :ensure
     :config
-    (global-set-key (kbd "s-=") 'er/expand-region)
+    (global-set-key (kbd "M-]") 'er/expand-region)
+    (global-set-key (kbd "M-[") 'er/contract-region)
     )
   #+END_SRC
 
