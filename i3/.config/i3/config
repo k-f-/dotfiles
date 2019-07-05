@@ -115,7 +115,7 @@ exec --no-startup-id urxvt -e ~/.bin/gotop &
 exec --no-startup-id urxvt
 
 # Invoke the Emacs daemon
-exec --no-startup-id emacsclient -a '' &
+exec --no-startup-id emacs --daemon &
 
 # Start xautolock for screen locking. We can toggle this with $mod+Shift+u
 # Bottom-right corner of screen for mouse should prevent locking.
@@ -125,7 +125,7 @@ exec xautolock -corners 00-0 -detectsleep -time 10 -locker "~/.bin/lock" -notify
 # Spotify
 exec --no-startup-id exec spotify --force-device-scale-factor=2 &
 
-# Brave-Browser
+# Web Browser
 exec --no-startup-id exec google-chrome-stable
 
 #################################################################
@@ -133,10 +133,11 @@ exec --no-startup-id exec google-chrome-stable
 #################################################################
 # Start spotify with some HiDPI settings
 # spotify always on workspace 10
-for_window [class="Spotify"] move container to workspace 10
+for_window [class="Spotify"] move container to workspace $wk10
 
 # Start the appropriate programs on the right workspaces
-for_window [class="google-Chrome"] move container to workspace 3
+# To get the class, run xprop
+for_window [class="Google-chrome"] move container to workspace $wk3
 
 #################################################################
 # Sticky Windows
@@ -239,15 +240,15 @@ bar {
     colors {
     	   background #16161d
     	   statusline #BFBFBF
-         separator  #44475A
+           separator  #44475A
 
-         # State            Border  BG      Text
-         focused_workspace  #44475A #44475A #F8F8F2
-    	   active_workspace   #282A36 #44475A #F8F8F2
+           # State            Border  BG      Text
+	   focused_workspace  #44475A #44475A #F8F8F2
+	   active_workspace   #282A36 #44475A #F8F8F2
     	   inactive_workspace #282A36 #282A36 #BFBFBF
     	   urgent_workspace   #FF5555 #FF5555 #F8F8F2
     	   binding_mode       #FF5555 #FF5555 #F8F8F2
-  		   }
+	   }
 
     # # Base16 - zenburn ~k-f-
     # colors {
@@ -349,29 +350,41 @@ bindsym $mod+a focus parent
 # focus the child container
 #bindsym $mod+d focus child
 
+# Workspace names
+set $wk1 1: terminals
+set $wk2 2: emacs
+set $wk3 3: www
+set $wk4 4
+set $wk5 5
+set $wk6 6
+set $wk7 7
+set $wk8 8
+set $wk9 9
+set $wk10 10: audio
+
 # switch to workspace
-bindsym $mod+1 workspace 1
-bindsym $mod+2 workspace 2
-bindsym $mod+3 workspace 3
-bindsym $mod+4 workspace 4
-bindsym $mod+5 workspace 5
-bindsym $mod+6 workspace 6
-bindsym $mod+7 workspace 7
-bindsym $mod+8 workspace 8
-bindsym $mod+9 workspace 9
-bindsym $mod+0 workspace 10
+bindsym $mod+1 workspace $wk1
+bindsym $mod+2 workspace $wk2
+bindsym $mod+3 workspace $wk3
+bindsym $mod+4 workspace $wk4
+bindsym $mod+5 workspace $wk5
+bindsym $mod+6 workspace $wk6
+bindsym $mod+7 workspace $wk7
+bindsym $mod+8 workspace $wk8
+bindsym $mod+9 workspace $wk9
+bindsym $mod+0 workspace $wk10
 
 # move focused container to workspace
-bindsym $mod+Shift+1 move container to workspace 1
-bindsym $mod+Shift+2 move container to workspace 2
-bindsym $mod+Shift+3 move container to workspace 3
-bindsym $mod+Shift+4 move container to workspace 4
-bindsym $mod+Shift+5 move container to workspace 5
-bindsym $mod+Shift+6 move container to workspace 6
-bindsym $mod+Shift+7 move container to workspace 7
-bindsym $mod+Shift+8 move container to workspace 8
-bindsym $mod+Shift+9 move container to workspace 9
-bindsym $mod+Shift+0 move container to workspace 10
+bindsym $mod+Shift+1 move container to workspace $wk1
+bindsym $mod+Shift+2 move container to workspace $wk2
+bindsym $mod+Shift+3 move container to workspace $wk3
+bindsym $mod+Shift+4 move container to workspace $wk4
+bindsym $mod+Shift+5 move container to workspace $wk5
+bindsym $mod+Shift+6 move container to workspace $wk6
+bindsym $mod+Shift+7 move container to workspace $wk7
+bindsym $mod+Shift+8 move container to workspace $wk8
+bindsym $mod+Shift+9 move container to workspace $wk9
+bindsym $mod+Shift+0 move container to workspace $wk10
 
 # resize window (you can also use the mouse for that)
 mode "resize" {

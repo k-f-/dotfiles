@@ -12,10 +12,10 @@
  (tags "star")
  (handler . elfeed-search-bookmark-handler))
 ("org-capture-last-stored"
- (filename . "~/org/albums.org")
- (front-context-string . "*** [2019-06-13 ")
- (rear-context-string . "socially woke.\n\n")
- (position . 5961))
+ (filename . "~/org/life.org")
+ (front-context-string . "** TODO add conf")
+ (rear-context-string . "ing\n\n* Personal\n")
+ (position . 114))
 ("elfeed-unread"
  (location . "+unread")
  (tags "unread")

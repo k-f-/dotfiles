@@ -2,15 +2,25 @@
 #+AUTHOR: Kyle Fring
 #+EMAIL: me@kfring.com
 #+OPTIONS: toc:t num:nil
-* A quote from Hunter S. Thompson
+* About
+#+BEGIN_QUOTE
 'but once you get locked into a serious drug collection,
 the tendency is to push it as far as you can.'
 
 --- Hunter S. Thompson, Fear and Loathing in Las Vegas
-* Set global user
+#+END_QUOTE
+
+* Emacs Initialization
+
+** emacs-server
+Start the server unless it is already running.
 #+BEGIN_SRC emacs-lisp
-  ;; --------------------------------------------------
-  ;; Set global user
+  (load "server")
+  (unless (server-running-p) (server-start))
+#+END_SRC
+
+** Set global user
+#+BEGIN_SRC emacs-lisp
   (setq user-full-name "Kyle Fring"
         user-mail-address "me@kfring.com")
   (setq calendar-location-name "Chattanooga, TN")
@@ -18,7 +28,7 @@ the tendency is to push it as far as you can.'
   (setq calendar-longitude -75.16)
 #+END_SRC
 
-* Package repos
+** Package Sources
 - https://stackoverflow.com/questions/14836958/updating-packages-in-emacs
 #+BEGIN_SRC emacs-lisp
   (require 'package)
@@ -30,10 +40,8 @@ the tendency is to push it as far as you can.'
   (package-initialize)
 #+END_SRC
 
-* Bootstrap =use-package=
+** Bootstrap =use-package=
 Install and load =use-package=
-- =use-package-always-defer= was causing our packages to not be re-installed.
-  Lets read more about that option soon. ~k-f-
 #+BEGIN_SRC emacs-lisp
   (unless (package-installed-p 'use-package)
     (package-refresh-contents)
@@ -41,12 +49,19 @@ Install and load =use-package=
 
   (setq use-package-verbose t)
   (setq use-package-always-ensure t)
-  ;; (setq use-package-always-defer t)
   (require 'use-package)
 #+END_SRC
 
-* Customize File Locations
-** Move custom.el file
+* Start Up
+** Authentication
+#+BEGIN_SRC emacs-lisp
+  (setq auth-sources '("~/.gnupg/shared/authinfo.gpg"
+                       "~/.authinfo.gpg"
+                       "~/.authinfo"
+                       "~/.netrc"))
+#+END_SRC
+** File Handling, Locations and Loading
+*** Move custom.el file
 Create custom file elsewhere.
 Keep customize settings in their own file
 #+BEGIN_SRC emacs-lisp
@@ -60,7 +75,7 @@ Please stop tracking my packages, I already have =use-package=
     nil)
 #+END_SRC
 
-** set a default location for exports.
+*** set a default location for exports.
 I'd like to see things kept a bit more tidy littering exported files all over my
 org directory.  It's already messy enough.  =~/org/out/export_*= seems
 reasonable.
@@ -77,135 +92,8 @@ ref: https://stackoverflow.com/questions/9559753/emacs-org-mode-export-to-anothe
   ;;       (make-directory pub-dir))))
 #+END_SRC
 
-* Character encoding
-#+BEGIN_SRC emacs-lisp
-  ;; Core settings
-  ;; UTF-8 please
-  (set-charset-priority 'unicode)
-  (setq locale-coding-system   'utf-8)   ; pretty
-  (set-terminal-coding-system  'utf-8)   ; pretty
-  (set-keyboard-coding-system  'utf-8)   ; pretty
-  (set-selection-coding-system 'utf-8)   ; please
-  (prefer-coding-system        'utf-8)   ; with sugar on top
-  (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
-
-#+END_SRC
-
-* User Interface
-** Xresources
-- I'm fairly sure this is what was causing some ugly behavior when emacs is invoked.
-- Q: Why do we think this?
-- A: Our "highlight" function globally in emacs appears to be part of
-- Q: Still having the same issue.  Keep digging.
-  our =.xresources= scheme.
-ref: [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Resources.html#Resources][Resources - GNU Emacs Manual]]
-#+BEGIN_QUOTE
-Emacs does not process X resources at all if you set the variable inhibit-x-resources to a non-nil value. If you invoke Emacs with the ‘-Q’ (or ‘--quick’) command-line option, inhibit-x-resources is automatically set to t.
-#+END_QUOTE
-
-#+BEGIN_SRC emacs-lisp
-  (setq inhibit-x-resources t)
-#+END_SRC
-
-** Minimal UI
-Drop scroll bar, Toolbar, Tooltips and Menu-Bar
-#+BEGIN_SRC emacs-lisp
-  (scroll-bar-mode -1)
-  (tool-bar-mode   -1)
-  (tooltip-mode    -1)
-  (menu-bar-mode   -1)
-#+END_SRC
-
-** Modeline
-#+BEGIN_SRC emacs-lisp
-  (display-time-mode 1)
-#+END_SRC
-
-** Point (ie: Cursor)
-Turn off the blinking cursor.
-#+BEGIN_SRC emacs-lisp
-  (blink-cursor-mode 0)
-  (setq cursor-in-non-selected-windows t)  ; Hide the cursor in inactive windows
-#+END_SRC
-
-** Startup screen
-Don't display the help screen at start-up
-#+BEGIN_SRC emacs-lisp
-  (setq initial-scratch-message nil)
-  (setq inhibit-startup-screen t)
-#+END_SRC
-
-** No Bell
-#+BEGIN_SRC emacs-lisp
-  (setq ring-bell-function 'ignore)
-#+END_SRC
-
-** y-n not Yes-No
-From http://pages.sachachua.com/.emacs.d/Sacha.html#sec-1-4-8
-
-#+BEGIN_SRC emacs-lisp
-  (fset 'yes-or-no-p 'y-or-n-p)
-#+END_SRC
-
-** Avoid native dialogues
-#+BEGIN_SRC emacs-lisp
-  (setq use-dialog-box nil)
-#+END_SRC
-
-** Col-wrap
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'text-mode-hook 'turn-on-auto-fill)
-  (add-hook 'text-mode-hook
-            '(lambda() (set-fill-column 80)))
-  ;; lets just do it globally
-  (setq-default fill-column 80)
-#+END_SRC
-
-** Display org-mode agenda on startup
-- https://stackoverflow.com/questions/23528287/how-to-display-custom-agenda-view-on-emacs-startup
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'after-init-hook
-            (lambda ()
-              (org-agenda nil "d")
-              (delete-other-windows)))
-#+END_SRC
-
-** Highlight matching parenthesis
-#+BEGIN_SRC emacs-lisp
-  (show-paren-mode 1)
-
-  (defun kef/locally-disable-show-paren ()
-    (interactive)
-    (setq-local show-paren-mode nil))
-
-  (add-hook 'ruby-mode-hook
-            #'kef/locally-disable-show-paren)
-
-#+END_SRC
-
-** abbreviations
-#+BEGIN_SRC emacs-lisp
-  (setq quietly-read-abbrev-file t)
-  (setq abbrev-file-name "~/.emacs.d/abbrev_defs")
-#+END_SRC
-
-** highlight current line
-#+BEGIN_SRC emacs-lisp
-  (global-hl-line-mode +1)
-#+END_SRC
-
-* Fonts
-#+BEGIN_SRC emacs-lisp
-  ;; Test char and monospace:
-  ;; 0123456789abcdefghijklmnopqrstuvwxyz [] () :;,. !@#$^&*
-  ;; 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ {} <> "'`  ~-_/|\?
-  (set-default-font "Iosevka Term Semibold 11")
-  (add-to-list 'default-frame-alist
-               '(font . "Iosevka Term Semibold 11"))
-#+END_SRC
-
-* Backups
-** Config Backups
+*** Backups
+**** Configure Backups
 Let us centralize where emac's keeps backups
 #+BEGIN_SRC emacs-lisp
   (setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
@@ -217,7 +105,7 @@ Let us centralize where emac's keeps backups
         )
 #+END_SRC
 
-** Backup Function
+**** Backup Function
 Create a backup to a designated dir, mirroring the full path ala ergomacs
 #+BEGIN_SRC emacs-lisp
   (defun kef/backup-file-name (fpath)
@@ -236,8 +124,310 @@ Create a backup to a designated dir, mirroring the full path ala ergomacs
   (setq make-backup-file-name-function 'kef/backup-file-name)
 #+END_SRC
 
-* Functions
-** Kill current buffer.
+*** Automatically change or reload the buffer when the file is modified externally
+#+BEGIN_SRC emacs-lisp
+  (global-auto-revert-mode t)
+#+END_SRC
+
+** Character Encoding and Indentation
+*** UTF-8
+#+BEGIN_SRC emacs-lisp
+  ;; Core settings
+  ;; UTF-8 please
+  (set-charset-priority 'unicode)
+  (setq locale-coding-system   'utf-8)   ; pretty
+  (set-terminal-coding-system  'utf-8)   ; pretty
+  (set-keyboard-coding-system  'utf-8)   ; pretty
+  (set-selection-coding-system 'utf-8)   ; please
+  (prefer-coding-system        'utf-8)   ; with sugar on top
+  (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
+
+#+END_SRC
+
+*** Spaces or Tabs
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2019-07-04 Thu 19:00]
+:END:
+1. USE tabs when we can. From an inclusive usability standpoint you're being a dick
+by expecting those with visual impairments to bend to your will.
+2. When we can't, or chose not to we should have an easy way to let emacs handle
+   this for us.
+[http://blog.binchen.org/posts/easy-indentation-setup-in-emacs-for-web-development.html][Source]
+#+BEGIN_SRC emacs-lisp
+  (defun my-setup-indent (n)
+    ;; java/c/c++
+    (setq-local c-basic-offset n)
+    ;; web development
+    (setq-local coffee-tab-width n) ; coffeescript
+    (setq-local javascript-indent-level n) ; javascript-mode
+    (setq-local js-indent-level n) ; js-mode
+    (setq-local js2-basic-offset n) ; js2-mode, in latest js2-mode, it's alias of js-indent-level
+    (setq-local web-mode-markup-indent-offset n) ; web-mode, html tag in html file
+    (setq-local web-mode-css-indent-offset n) ; web-mode, css in html file
+    (setq-local web-mode-code-indent-offset n) ; web-mode, js code in html file
+    (setq-local css-indent-offset n) ; css-mode
+    )
+
+  (defun kef/tabs-code-style ()
+    (interactive)
+    (message "tab code style!")
+    ;; use tab instead of space
+    (setq-local indent-tabs-mode t)
+    ;; indent 4 spaces width
+    (my-setup-indent 4))
+
+  (defun kef/spaces-code-style ()
+    (interactive)
+    (message "spaces code style!")
+    ;; use space instead of tab
+    (setq indent-tabs-mode nil)
+    ;; indent 2 spaces width
+    (my-setup-indent 2))
+
+  (defun kef/setup-develop-environment ()
+    (interactive)
+    (let ((proj-dir (file-name-directory (buffer-file-name))))
+      ;; if hobby project path contains string "hobby-proj1"
+      (if (string-match-p "hobby-proj1" proj-dir)
+          (kef/spaces-code-style))
+
+      ;; if commericial project path contains string "commerical-proj"
+      (if (string-match-p "commerical-proj" proj-dir)
+          (kef/tabs-code-style))))
+
+  ;; prog-mode-hook requires emacs24+
+  (add-hook 'prog-mode-hook 'my-setup-develop-environment)
+  ;; a few major-modes does NOT inherited from prog-mode
+  (add-hook 'lua-mode-hook 'my-setup-develop-environment)
+  (add-hook 'web-mode-hook 'my-setup-develop-environment)
+
+  ;; Just switch to tabs now.
+  (kef/tabs-code-style)
+#+END_SRC
+
+*** Sentence Endings
+#+BEGIN_SRC emacs-lisp
+  (setq sentence-end-double-space nil)     ; Sentences should end in one space, come on!
+#+END_SRC
+
+*** FontAwesome
+add an ivy-search for fontawesome icons. slick.
+#+BEGIN_SRC emacs-lisp
+  (use-package fontawesome :ensure t)
+  (defun insert-fontawesome ()
+    (interactive)
+    (insert (call-interactively 'fontawesome)))
+#+END_SRC
+
+** User Interface
+*** Xresources
+ref: [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Resources.html#Resources][Resources - GNU Emacs Manual]]
+#+BEGIN_QUOTE
+Emacs does not process X resources at all if you set the variable inhibit-x-resources to a non-nil value. If you invoke Emacs with the ‘-Q’ (or ‘--quick’) command-line option, inhibit-x-resources is automatically set to t.
+#+END_QUOTE
+
+#+BEGIN_SRC emacs-lisp
+  (setq inhibit-x-resources t)
+#+END_SRC
+
+*** Minimal UI
+Drop scroll bar, Toolbar, Tooltips and Menu-Bar
+#+BEGIN_SRC emacs-lisp
+  (scroll-bar-mode -1)
+  (tool-bar-mode   -1)
+  (tooltip-mode    -1)
+  (menu-bar-mode   -1)
+#+END_SRC
+
+No Bell
+#+BEGIN_SRC emacs-lisp
+  (setq ring-bell-function 'ignore)
+#+END_SRC
+
+*** Modeline
+#+BEGIN_SRC emacs-lisp
+  (display-time-mode 1)
+#+END_SRC
+**** minions
+Minions controls how minor-modes appear in our mode-line.
+#+BEGIN_SRC emacs-lisp
+  (use-package minions :ensure t)
+  (minions-mode +1)
+#+END_SRC
+
+**** moody
+Our current mode-line layout
+#+BEGIN_SRC emacs-lisp
+  (use-package moody :ensure
+    :config
+    (setq x-underline-at-descent-line t)
+    (moody-replace-mode-line-buffer-identification)
+    (moody-replace-vc-mode))
+#+END_SRC
+
+*** Point (Cursor)
+Turn off the blinking cursor.
+#+BEGIN_SRC emacs-lisp
+  (blink-cursor-mode 0)
+  (setq cursor-in-non-selected-windows t)  ; Hide the cursor in inactive windows
+#+END_SRC
+
+*** Startup screen
+1. Scratch should be empty.
+2. Don't display the help screen at start-up.
+#+BEGIN_SRC emacs-lisp
+  (setq initial-scratch-message nil)
+  (setq inhibit-startup-screen t)
+#+END_SRC
+
+*** Default Mode
+Org-mode is just better, lets use it as our default.
+#+BEGIN_SRC emacs-lisp
+  (setq initial-major-mode 'org-mode)      ; org mode by default
+#+END_SRC
+
+*** Display org-mode agenda on startup
+- https://stackoverflow.com/questions/23528287/how-to-display-custom-agenda-view-on-emacs-startup
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'after-init-hook
+            (lambda ()
+              (org-agenda nil "d")
+              (delete-other-windows)))
+#+END_SRC
+
+*** y-n not Yes-No
+From http://pages.sachachua.com/.emacs.d/Sacha.html#sec-1-4-8
+
+#+BEGIN_SRC emacs-lisp
+  (fset 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+
+*** Avoid native dialogues
+#+BEGIN_SRC emacs-lisp
+  (setq use-dialog-box nil)
+#+END_SRC
+
+*** Highlight matching parenthesis
+#+BEGIN_SRC emacs-lisp
+  (show-paren-mode 1)
+
+  (defun kef/locally-disable-show-paren ()
+    (interactive)
+    (setq-local show-paren-mode nil))
+
+  (add-hook 'ruby-mode-hook
+            #'kef/locally-disable-show-paren)
+
+#+END_SRC
+
+*** Highlight current line
+#+BEGIN_SRC emacs-lisp
+  (global-hl-line-mode +1)
+#+END_SRC
+
+*** Fonts
+#+BEGIN_SRC emacs-lisp
+  ;; Test char and monospace:
+  ;; 0123456789abcdefghijklmnopqrstuvwxyz [] () :;,. !@#$^&*
+  ;; 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ {} <> "'`  ~-_/|\?
+  (set-default-font "Iosevka Term Semibold 11")
+  (add-to-list 'default-frame-alist
+               '(font . "Iosevka Term Semibold 11"))
+#+END_SRC
+
+*** Themes
+**** Theme toggles
+#+BEGIN_SRC emacs-lisp
+  (defvar *kef/theme-dark* 'doom-tomorrow-night)
+  (defvar *kef/theme-light* 'doom-tomorrow-day)
+  (defvar *kef/current-theme* *kef/theme-dark*)
+
+  ;; disable other themes before loading new one
+  (defadvice load-theme (before theme-dont-propagate activate)
+    "Disable theme before loading new one."
+    (mapcar #'disable-theme custom-enabled-themes))
+
+
+  (defun kef/next-theme (theme)
+    (if (eq theme 'default)
+        (disable-theme *kef/current-theme*)
+      (progn
+        (load-theme theme t)))
+    (setq *kef/current-theme* theme))
+
+  (defun kef/toggle-theme ()
+    (interactive)
+    (cond ((eq *kef/current-theme* *kef/theme-dark*) (kef/next-theme *kef/theme-light*))
+          ((eq *kef/current-theme* *kef/theme-light*) (kef/next-theme 'default))
+          ((eq *kef/current-theme* 'default) (kef/next-theme *kef/theme-dark*))))
+#+END_SRC
+
+**** disable themes before we enable a new theme
+- My understanding is such.  =load-theme= just puts whatever you call on top of
+what is already existing.  This makes a lot of sense if your theme is modular.
+- There may be a difference in how =emacs --daemon= and =emacsclient -nc= load
+  themes as well.
+#+BEGIN_SRC emacs-lisp
+  (defadvice load-theme (before theme-dont-propagate activate)
+    (mapc #'disable-theme custom-enabled-themes))
+#+END_SRC
+
+**** zenburn & base16
+Lets stop fucking around with broken themes and just use =zenburn=.
+base16 seems to work well. perhaps we can find a light theme we like here.
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package zenburn-theme :ensure t)
+  ;; (use-package base16-theme :ensure t)
+#+END_SRC
+
+**** doom-themes
+#+BEGIN_SRC emacs-lisp
+  (use-package doom-themes :ensure)
+
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+
+    ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config)
+
+#+END_SRC
+
+**** enable-theme:
+#+BEGIN_SRC emacs-lisp
+  ;;(load-theme 'zenburn t t)
+  ;;(load-theme 'base16-one-light t t)
+
+  ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
+  ;; may have their own settings.
+  (load-theme 'doom-tomorrow-day t)
+  ;;(load-theme 'dichromacy t)
+
+#+END_SRC
+
+*** Keystrokes repeat quickly
+#+BEGIN_SRC emacs-lisp
+  (setq echo-keystrokes 0.1)               ; Show keystrokes right away, don't show the message in the scratch buffer
+#+END_SRC
+
+*** Smooth Scrolling
+Smooth scrolling means when you hit C-n to go to the next line
+at the bottom of the page, instead of doing a page-down,
+it shifts down by a single line. The margin means that
+much space is kept between the cursor and the bottom of the buffer.
+#+BEGIN_SRC emacs-lisp
+  (setq scroll-margin 3
+        scroll-conservatively 101
+        scroll-up-aggressively 0.01
+        scroll-down-aggressively 0.01
+        scroll-preserve-screen-position t
+        auto-window-vscroll nil
+        hscroll-margin 5
+        hscroll-step 5)
+#+END_SRC
+
+** Functions
+*** Kill current buffer.
 #+BEGIN_SRC emacs-lisp
   (defun kef/kill-current-buffer ()
     "Kill the current buffer without prompting."
@@ -248,7 +438,7 @@ Create a backup to a designated dir, mirroring the full path ala ergomacs
   (global-set-key (kbd "C-x k") 'kef/kill-current-buffer)
 #+END_SRC
 
-** Visit emacs config
+*** Visit emacs config
 #+BEGIN_SRC emacs-lisp
   (defun kef/visit-emacs-config ()
     (interactive)
@@ -258,7 +448,7 @@ Create a backup to a designated dir, mirroring the full path ala ergomacs
   (global-set-key (kbd "C-c e") 'kef/visit-emacs-config)
 #+END_SRC
 
-** youtube-dl
+*** youtube-dl
 Fire off a youtube-dl process
 #+BEGIN_SRC emacs-lisp
   (defun youtube-dl ()
@@ -271,7 +461,7 @@ Fire off a youtube-dl process
        (concat "cd ~/Downloads && youtube-dl " str "\n"))))
 #+END_SRC
 
-** Ignore running processes when killing emacs
+*** Ignore running processes when killing emacs
 #+BEGIN_SRC emacs-lisp
   ;; add `flet'
   (require 'cl)
@@ -281,7 +471,8 @@ Fire off a youtube-dl process
     "Prevent \"Active processes exist\" query on exit."
     (cl-flet ((process-list ())) ad-do-it))
 #+END_SRC
-** import-chrome-bookmarks-as-org
+
+*** import-chrome-bookmarks-as-org
 #+BEGIN_SRC emacs-lisp
   ;; ref: https://www.reddit.com/r/emacs/comments/a3rajh/chrome_bookmarks_sync_to_org/
   (defvar kef/chrome-bookmarks-file
@@ -336,7 +527,11 @@ Fire off a youtube-dl process
         (setq level 1)
         (fn (alist-get 'other (alist-get 'roots data))))))
 #+END_SRC
-** TODO insert line below or above with s-<return>
+
+*** Insert line below or above with s-<return>
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2019-07-05 Fri 14:52]
+:END:
 These bindings conflict with i3
 #+BEGIN_SRC emacs-lisp
   (defun smart-open-line ()
@@ -353,30 +548,21 @@ These bindings conflict with i3
     (forward-line -1)
     (indent-according-to-mode))
 
-  ;; (global-set-key (kbd "s-<return>") 'smart-open-line) ;; This is bound to "new-terminal" in i3.
-  ;; (global-set-key (kbd "s-S-<return>") 'smart-open-line-above) ;; This currently is not bound to anything in i3.
-#+END_SRC
-* Keybinding
-Set some keybindings
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-c l") 'org-store-link)
-  (global-set-key (kbd "C-c a") 'org-agenda)
-  (global-set-key (kbd "C-c c") 'org-capture)
+  (global-set-key (kbd "s-<return>") 'smart-open-line) ;; This is bound to "new-terminal" in i3.
+  (global-set-key (kbd "s-S-<return>") 'smart-open-line-above) ;; This currently is not bound to anything in i3.
 #+END_SRC
 
+** Buffer movement and Splits
 Move between open windows with =M-o= as well as =C-x o=.
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "M-o") 'other-window)
 #+END_SRC
 
-* Window (Buffer) splits and closures
+*** Window (Buffer) splits and closures
 :LOGBOOK:
 - State "DONE"       from "TODO"       [2019-07-04 Thu 21:49]
 :END:
-Go to other windows easily with one keystroke s-something instead of C-x something.
-I think we need to remove use of the super key.  It's handy, but we like i3
-enough and it takes some energy to remember which Super key functions only work
-in emacs.
+Removed super-key usage here and replicated i3-like bindings with C- instead of S-.
 #+BEGIN_SRC emacs-lisp
   (defun vsplit-last-buffer ()
     (interactive)
@@ -397,94 +583,66 @@ in emacs.
   (global-set-key (kbd "C-S-s") 'vsplit-last-buffer) ;; i3: mod-shift-s
 #+END_SRC
 
-* Movement, Formatting & Editing
-- [[https://www.reddit.com/r/emacs/comments/co9qb/3_tips_for_reducing_strain_on_your_hands/][3 tips for reducing strain on your hands : emacs]]
-** Some defaults from rahkim @ emacs-cast
-#+BEGIN_SRC emacs-lisp
-  (setq
-   echo-keystrokes 0.1               ; Show keystrokes right away, don't show the message in the scratch buffer
-   initial-scratch-message nil       ; Empty scratch buffer
-   initial-major-mode 'org-mode      ; org mode by default
-   sentence-end-double-space nil     ; Sentences should end in one space, come on!
-  )
-#+END_SRC
-
-** Smooth Scrolling
-Smooth scrolling means when you hit C-n to go to the next line
-at the bottom of the page, instead of doing a page-down,
-it shifts down by a single line. The margin means that
-much space is kept between the cursor and the bottom of the buffer.
-#+BEGIN_SRC emacs-lisp
-  (setq scroll-margin 3
-        scroll-conservatively 101
-        scroll-up-aggressively 0.01
-        scroll-down-aggressively 0.01
-        scroll-preserve-screen-position t
-        auto-window-vscroll nil
-        hscroll-margin 5
-        hscroll-step 5)
-#+END_SRC
-
-** Spaces and Tabs
+** Ivy, Swiper and Counsel.
+The Holy Trinity
 :LOGBOOK:
-- State "DONE"       from "TODO"       [2019-07-04 Thu 19:00]
+- State "DONE"       from "TODO"       [2019-07-04 Thu 21:48]
 :END:
-USE tabs. From an inclusive usability standpoint you're being a dick
-by expecting those with visual impairments to bend to your will.
-[http://blog.binchen.org/posts/easy-indentation-setup-in-emacs-for-web-development.html][Source]
 #+BEGIN_SRC emacs-lisp
-  (defun my-setup-indent (n)
-    ;; java/c/c++
-    (setq-local c-basic-offset n)
-    ;; web development
-    (setq-local coffee-tab-width n) ; coffeescript
-    (setq-local javascript-indent-level n) ; javascript-mode
-    (setq-local js-indent-level n) ; js-mode
-    (setq-local js2-basic-offset n) ; js2-mode, in latest js2-mode, it's alias of js-indent-level
-    (setq-local web-mode-markup-indent-offset n) ; web-mode, html tag in html file
-    (setq-local web-mode-css-indent-offset n) ; web-mode, css in html file
-    (setq-local web-mode-code-indent-offset n) ; web-mode, js code in html file
-    (setq-local css-indent-offset n) ; css-mode
-    )
+  (use-package ivy :ensure
+    :config
+    (ivy-mode 1)
+    (setq ivy-use-virtual-buffers t)
 
-  (defun kef/tabs-code-style ()
-    (interactive)
-    (message "tab code style!")
-    ;; use tab instead of space
-    (setq-local indent-tabs-mode t)
-    ;; indent 4 spaces width
-    (my-setup-indent 4))
+    (setq ivy-count-format "(%d/%d) ")
+    (setq enable-recursive-minibuffers t)
+    (setq ivy-initial-inputs-alist nil)
+    (setq ivy-re-builders-alist
+          '((swiper . ivy--regex-plus)
+            (t      . ivy--regex-fuzzy)))   ;; enable fuzzy searching everywhere except for Swiper
+    (global-set-key (kbd "C-S-F") 'ivy-resume))
 
-  (defun kef/spaces-code-style ()
-    (interactive)
-    (message "spaces code style!")
-    ;; use space instead of tab
-    (setq indent-tabs-mode nil)
-    ;; indent 2 spaces width
-    (my-setup-indent 2))
+  (use-package swiper :ensure
+    :config
+    (global-set-key (kbd "C-f") 'swiper)) ;; use swiper-search bound to C-f like browsers. This will take awhile to get used to.
 
-  (defun kef/setup-develop-environment ()
-    (interactive)
-    (let ((proj-dir (file-name-directory (buffer-file-name))))
-      ;; if hobby project path contains string "hobby-proj1"
-      (if (string-match-p "hobby-proj1" proj-dir)
-          (kef/spaces-code-style))
+  (use-package counsel :ensure
+    :config
+    (global-set-key (kbd "M-x") 'counsel-M-x)
+    (global-set-key (kbd "M-y") 'counsel-yank-pop)
+    (setq enable-recursive-minibuffers t)
+    ;; enable this if you want `swiper' to use it
+    ;; (setq search-default-mode #'char-fold-to-regexp)
 
-      ;; if commericial project path contains string "commerical-proj"
-      (if (string-match-p "commerical-proj" proj-dir)
-          (kef/tabs-code-style))))
+    (global-set-key (kbd "M-x") 'counsel-M-x)
+    (global-set-key (kbd "C-x C-f") 'counsel-find-file)
+    (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
+    (global-set-key (kbd "<f1> l") 'counsel-find-library)
+    (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
+    (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+    (global-set-key (kbd "C-c g") 'counsel-git)
+    (global-set-key (kbd "C-c j") 'counsel-git-grep)
+    (global-set-key (kbd "C-c k") 'counsel-ag)
+    (global-set-key (kbd "C-x l") 'counsel-locate))
 
-  ;; prog-mode-hook requires emacs24+
-  (add-hook 'prog-mode-hook 'my-setup-develop-environment)
-  ;; a few major-modes does NOT inherited from prog-mode
-  (add-hook 'lua-mode-hook 'my-setup-develop-environment)
-  (add-hook 'web-mode-hook 'my-setup-develop-environment)
-
-  ;; Just switch to tabs now.
-  (kef/tabs-code-style)
+  (use-package smex :ensure)
+  (use-package flx :ensure)
+  (use-package avy :ensure
+      :bind
+  ("C-c SPC" . avy-goto-char))
 #+END_SRC
 
-** Save my location within a file
+Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g. description of commands in =M-x=, meta info about buffers in =ivy-switch-buffer=, etc.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ivy-rich :ensure
+    :config
+    (ivy-rich-mode 1)
+    (setq ivy-rich-path-style 'abbrev)) ;; To abbreviate paths using abbreviate-file-name (e.g. replace “/home/username” with “~”
+#+END_SRC
+
+** Text Formatting, Selection and Editing
+*** Save my location within a file
 Using =save-place-mode= saves the location of point for every file I visit. If I
 close the file or close the editor, then later re-open it, point will be at the
 last place I visited.
@@ -493,7 +651,7 @@ last place I visited.
   (save-place-mode t)
 #+END_SRC
 
-** Cut/copy/comment current line if no region selected
+*** Cut/copy/comment current line if no region selected
 via: https://caolan.org/dotfiles/emacs.html#org172314d
 #+BEGIN_QUOTE
 In many programs, like SlickEdit, TextMate and VisualStudio, “cut” and “copy” act on the current line if no text is visually selected. For this, I originally used code from Tim Krones Emacs config, but now I'm using the whole-line-or-region package, which can be customised to use the same line-or-region style for comments too. See comments in whole-line-or-region.el for details.
@@ -505,90 +663,151 @@ In many programs, like SlickEdit, TextMate and VisualStudio, “cut” and “co
                '(comment-dwim whole-line-or-region-comment-dwim nil))
   (whole-line-or-region-mode 1)
 #+END_SRC
-** whitespace removal
+*** Trailing white space removal
 #+BEGIN_SRC emacs-lisp
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
   (setq require-final-newline t)
 #+END_SRC
 
-** Automatically change or reload the buffer when the file is modified externally
+*** TODO Col-wrap
+Not sure I actually like this, I'd rather have a soft-wrap so it can flow into
+the window size?
 #+BEGIN_SRC emacs-lisp
-  (global-auto-revert-mode t)
+  (add-hook 'text-mode-hook 'turn-on-auto-fill)
+  (add-hook 'text-mode-hook
+            '(lambda() (set-fill-column 80)))
+  ;; lets just do it globally
+  (setq-default fill-column 80)
 #+END_SRC
 
-* Themes
-** Theme toggles
+*** TODO Visual feedback on replacement with regex
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2019-06-16 Sun 17:55]
+:END:
+Control-R is still launching backwards-isearch sometimes.
 #+BEGIN_SRC emacs-lisp
-  (defvar *kef/theme-dark* 'doom-tomorrow-night)
-  (defvar *kef/theme-light* 'doom-tomorrow-day)
-  (defvar *kef/current-theme* *kef/theme-dark*)
-
-  ;; disable other themes before loading new one
-  (defadvice load-theme (before theme-dont-propagate activate)
-    "Disable theme before loading new one."
-    (mapcar #'disable-theme custom-enabled-themes))
-
-
-  (defun kef/next-theme (theme)
-    (if (eq theme 'default)
-        (disable-theme *kef/current-theme*)
-      (progn
-        (load-theme theme t)))
-    (setq *kef/current-theme* theme))
-
-  (defun kef/toggle-theme ()
-    (interactive)
-    (cond ((eq *kef/current-theme* *kef/theme-dark*) (kef/next-theme *kef/theme-light*))
-          ((eq *kef/current-theme* *kef/theme-light*) (kef/next-theme 'default))
-          ((eq *kef/current-theme* 'default) (kef/next-theme *kef/theme-dark*))))
+  (use-package visual-regexp
+    :config
+    (define-key global-map (kbd "C-r") 'vr/replace))
 #+END_SRC
 
-** disable themes before we enable a new theme
-- My understanding is such.  =load-theme= just puts whatever you call on top of
-what is already existing.  This makes a lot of sense if your theme is modular.
-- There may be a difference in how =emacs --daemon= and =emacsclient -nc= load
-  themes as well.
+*** Expanding a Selection of Text
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2019-07-04 Thu 21:56]
+:END:
 #+BEGIN_SRC emacs-lisp
-  (defadvice load-theme (before theme-dont-propagate activate)
-    (mapc #'disable-theme custom-enabled-themes))
+  (use-package expand-region :ensure
+    :config
+    (global-set-key (kbd "M-]") 'er/expand-region)
+    (global-set-key (kbd "M-[") 'er/contract-region))
+  #+END_SRC
+
+*** TODO multiple-cursors
+- https://github.com/magnars/multiple-cursors.el
+We need to configure some keybindings. Check out the github page for suggestions.
+#+BEGIN_SRC emacs-lisp
+  (use-package multiple-cursors :ensure t)
 #+END_SRC
 
-** zenburn & base16
-Lets stop fucking around with broken themes and just use =zenburn=.
-base16 seems to work well. perhaps we can find a light theme we like here.
+** File Browsing
+I'm not in love with any of this. Maybe we'll scrap it and start over soon.
+
+Dried shortcut to *R*un an application
 #+BEGIN_SRC emacs-lisp
-  ;; (use-package zenburn-theme :ensure t)
-  ;; (use-package base16-theme :ensure t)
+  (define-key dired-mode-map "r" 'dired-start-process)
+#+END_SRC
+Tell dried what types of files to open with what.
+#+BEGIN_SRC emacs-lisp
+  ;; (require 'dired-x)
+
+  ;; (setq dired-guess-shell-alist-user
+  ;;       '(("\\.pdf\\'" "zathura" "evince" "okular")
+  ;;         ("\\.\\(?:djvu\\|eps\\)\\'" "evince")
+  ;;         ("\\.\\(?:jpg\\|jpeg\\|png\\|gif\\|xpm\\)\\'" "eog")
+  ;;         ("\\.\\(?:xcf\\)\\'" "gimp")
+  ;;         ("\\.csv\\'" "libreoffice")
+  ;;         ("\\.tex\\'" "pdflatex" "latex")
+  ;;         ("\\.\\(?:mp4\\|mkv\\|avi\\|flv\\|ogv\\)\\(?:\\.part\\)?\\'"
+  ;;          "vlc")
+  ;;         ("\\.\\(?:mp3\\|flac\\)\\'" "rhythmbox")
+  ;;         ("\\.html?\\'" "brave-browser")
+  ;;         ("\\.cue?\\'" "audacious")))
+#+END_SRC
+Add nohup to vlc launch.
+#+BEGIN_SRC emacs-lisp
+  ;; (require 'dired-aux)
+
+  ;; (defvar dired-filelist-cmd
+  ;;   '(("vlc" "-L")))
+
+  ;; (defun dired-start-process (cmd &optional file-list)
+  ;;   (interactive
+  ;;    (let ((files (dired-get-marked-files
+  ;;                  t current-prefix-arg)))
+  ;;      (list
+  ;;       (dired-read-shell-command "& on %s: "
+  ;;                                 current-prefix-arg files)
+  ;;       files)))
+  ;;   (let (list-switch)
+  ;;     (start-process
+  ;;      cmd nil shell-file-name
+  ;;      shell-command-switch
+  ;;      (format
+  ;;       "nohup 1>/dev/null 2>/dev/null %s \"%s\""
+  ;;       (if (and (> (length file-list) 1)
+  ;;                (setq list-switch
+  ;;                      (cadr (assoc cmd dired-filelist-cmd))))
+  ;;           (format "%s %s" cmd list-switch)
+  ;;         cmd)
+  ;;       (mapconcat #'expand-file-name file-list "\" \"")))))
 #+END_SRC
 
-** doom-themes
+* Languages
+** TODO Linting
+Linting. Enable this and add backends as required.
 #+BEGIN_SRC emacs-lisp
-  (use-package doom-themes :ensure)
-
-  ;; Global settings (defaults)
-  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-        doom-themes-enable-italic t) ; if nil, italics is universally disabled
-
-    ;; Corrects (and improves) org-mode's native fontification.
-  (doom-themes-org-config)
-
+;;  (use-package flycheck :ensure)
 #+END_SRC
 
-** enable-theme:
+** Commenting Code
+:LOGBOOK:
+- State "DONE"       from "WAITING"    [2019-06-14 Fri 07:52]
+- State "WAITING"    from              [2019-01-29 Tue 14:50] \\
+  Look into having this work for literate programming. It currently does not work
+  in =SRC= blocks nor the buffer opened with =C-'=.  Perhaps we can at least get
+  the latter working and push upstream.
+:END:
 #+BEGIN_SRC emacs-lisp
-  ;;(load-theme 'zenburn t t)
-  ;;(load-theme 'base16-one-light t t)
-
-  ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
-  ;; may have their own settings.
-  (load-theme 'doom-tomorrow-day t)
-  ;;(load-theme 'dichromacy t)
-
+  (use-package comment-dwim-2 :ensure t)
+  (global-set-key (kbd "M-;") 'comment-dwim-2)
 #+END_SRC
 
-* Packages
-** Programming Languages
-*** JavaScript
+** HTML & CSS
+Use web-mode for muxed html/css/js
+#+BEGIN_SRC emacs-lisp
+  (use-package web-mode
+    :ensure t
+    :mode "\\.html?\\'"
+    :config
+    (progn
+      (setq web-mode-markup-indent-offset 4)
+      (setq web-mode-code-indent-offset 4)
+      (setq web-mode-enable-current-element-highlight t)
+      (setq web-mode-enable-auto-expanding t)
+      ))
+#+END_SRC
+
+Rainbow-mode sets hexcodes as background color in html/css files. Handy.
+#+BEGIN_SRC emacs-lisp
+  (use-package rainbow-mode :ensure)
+#+END_SRC
+Turn on rainbow-mode for web/css.
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'web-mode-hook #'rainbow-mode)
+  (add-hook 'css-mode-hook #'rainbow-mode)
+#+END_SRC
+
+** JavaScript
 #+BEGIN_SRC emacs-lisp
   ;; js2-mode
   ;; https://github.com/mooz/js2-mode
@@ -645,295 +864,62 @@ base16 seems to work well. perhaps we can find a light theme we like here.
     (add-hook 'js2-mode-hook 'js2-refactor-mode))
 #+END_SRC
 
-** TODO Deft
-- We never use Deft.  Just remove it? AGAIN?
-Deft-Mode custom functions via: http://pragmaticemacs.com/emacs/tweaking-deft-quicker-notes/
-Custom function to save window-layout when launching deft-mode
-advise deft to save window config
+** R
+Let's get emacs talking with R.  We need to let emacs know how to run R Code.
 #+BEGIN_SRC emacs-lisp
-(use-package deft :ensure
-  :bind ("<f7>" . deft)
-  :commands (deft)
-  :config (setq deft-directory "~/Dropbox/org/" deft-extensions
-                '("md" "org" "txt")))
-(setq deft-default-extension "org")
-(setq deft-use-filename-as-title nil)
-(setq deft-use-filter-string-for-filename t)
-(setq deft-file-naming-rules '((noslash . "-")
-                               (nospace . "-")
-                               (case-fn . downcase)))
-(setq deft-text-mode 'org-mode)
-;; filenames - replace space and slash with - lcase
-(setq deft-file-naming-rules
-      '((noslash . "-")
-        (nospace . "-")
-        (case-fn . downcase)))
-(defun kef/deft-save-windows (orig-fun &rest args)
-  (setq kef/pre-deft-window-config (current-window-configuration))
-  (apply orig-fun args)
-  )
-(advice-add 'deft :around #'kef/deft-save-windows)
-;;function to quit a deft edit cleanly back to pre deft window
-(defun kef/quit-deft ()
-;;  "Save buffer, kill buffer, kill deft buffer, and restore window config to the way it was before deft was invoked"
-  (interactive)
-  (save-buffer)
-  (kill-this-buffer)
-  (switch-to-buffer "*Deft*")
-  (kill-this-buffer)
-  (when (window-configuration-p kef/pre-deft-window-config)
-    (set-window-configuration kef/pre-deft-window-config)
-    )
-  )
-(global-set-key (kbd "C-c q") 'kef/quit-deft)
+  (use-package ess :ensure)
 #+END_SRC
 
-** Pandoc
+* Extended Configuration
+** Abbrevs, Auto-completion & Snippets
+*** Company Mode
+Use =company-mode= everywhere
 #+BEGIN_SRC emacs-lisp
-  (use-package pandoc-mode :ensure)
+  (use-package company :ensure)
+  (add-hook 'after-init-hook 'global-company-mode)
 #+END_SRC
 
-** Ivy, Swiper and Counsel
-:LOGBOOK:
-- State "DONE"       from "TODO"       [2019-07-04 Thu 21:48]
-:END:
-Figure out a binding for line:671 of yank-pop
+**** Use =M-/= for completion.
 #+BEGIN_SRC emacs-lisp
-  (use-package ivy :ensure
-    :config
-    (ivy-mode 1)
-    (setq ivy-use-virtual-buffers t)
-
-    (setq ivy-count-format "(%d/%d) ")
-    (setq enable-recursive-minibuffers t)
-    (setq ivy-initial-inputs-alist nil)
-    (setq ivy-re-builders-alist
-          '((swiper . ivy--regex-plus)
-            (t      . ivy--regex-fuzzy)))   ;; enable fuzzy searching everywhere except for Swiper
-    ;; (global-set-key (kbd "s-b") 'ivy-switch-buffer)  ;; "C-x-b" isn't that hard.
-    (global-set-key (kbd "C-c C-r") 'ivy-resume)
-    (global-set-key (kbd "M-s-b") 'ivy-resume)
-    )
-
-  (use-package swiper :ensure
-    :config
-    (global-set-key (kbd "C-f") 'swiper)) ;; use swiper-search bound to C-f like browsers. This will take awhile to get used to.
-
-    (use-package counsel :ensure
-    :config
-    (global-set-key (kbd "M-x") 'counsel-M-x)
-    (global-set-key (kbd "M-y") 'counsel-yank-pop)
-    (setq enable-recursive-minibuffers t)
-    ;; enable this if you want `swiper' to use it
-    ;; (setq search-default-mode #'char-fold-to-regexp)
-
-    (global-set-key (kbd "M-x") 'counsel-M-x)
-    (global-set-key (kbd "C-x C-f") 'counsel-find-file)
-    (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
-    (global-set-key (kbd "<f1> l") 'counsel-find-library)
-    (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
-    (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
-    (global-set-key (kbd "C-c g") 'counsel-git)
-    (global-set-key (kbd "C-c j") 'counsel-git-grep)
-    (global-set-key (kbd "C-c k") 'counsel-ag)
-    (global-set-key (kbd "C-x l") 'counsel-locate))
-
-  (use-package smex :ensure)
-  (use-package flx :ensure)
-  (use-package avy :ensure
-      :bind
-  ("C-c SPC" . avy-goto-char))
+  (global-set-key (kbd "M-/") 'company-complete-common)
 #+END_SRC
 
-Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g. description of commands in =M-x=, meta info about buffers in =ivy-switch-buffer=, etc.
-
+**** TODO Add company back-ends
 #+BEGIN_SRC emacs-lisp
-  (use-package ivy-rich :ensure
-    :config
-    (ivy-rich-mode 1)
-    (setq ivy-rich-path-style 'abbrev)) ;; To abbreviate paths using abbreviate-file-name (e.g. replace “/home/username” with “~”
+  ;;  add company back-ends
 #+END_SRC
 
-** org-mode
+*** YASnippet
 #+BEGIN_SRC emacs-lisp
-  (use-package org
-    :config
-    (setq org-startup-indented t) ;; Indent org-file display
-    (setq org-src-tab-acts-natively t)
-    )
+  (use-package yasnippet :ensure)
+  (use-package yasnippet-snippets
+    :after yasnippet
+    :config (yasnippet-snippets-initialize))
+
+  (use-package yasnippet
+    :delight yas-minor-mode " υ"
+    :hook (yas-minor-mode . kef/disable-yas-if-no-snippets)
+    :config (yas-global-mode)
+    :preface
+    (defun kef/disable-yas-if-no-snippets ()
+      (when (and yas-minor-mode (null (yas--get-snippet-tables)))
+        (yas-minor-mode -1))))
+
+  (use-package ivy-yasnippet :after yasnippet)
+  (use-package react-snippets :after yasnippet)
+
+  ;; (yas-reload-all)
+  ;; (add-hook 'prog-mode-hook #'yas-minor-mode)
+  ;; (yas-global-mode 1)
 #+END_SRC
 
-*** Org file locations
-Store all my org files in =~/org=, which is symlinked to ~/Dropbox/org/.
-
+*** Abbreviations
 #+BEGIN_SRC emacs-lisp
-  (setq org-directory "~/org")
+  (setq quietly-read-abbrev-file t)
+  (setq abbrev-file-name "~/.emacs.d/abbrev_defs")
 #+END_SRC
 
-*** TODO Refile Targets
-Refile targets should include all files? and down to 9 levels into them.
-Work on this later to make the refile targets make sense for our workflow.
-#+BEGIN_SRC emacs-lisp
-  (setq org-refile-targets (quote (("notes.org" :maxlevel . 3) ;; Top level headings in notes
-                                   ("kfring.org" :maxlevel . 2) ;; Top level in personal blog
-                                   (org-agenda-files :maxlevel . 9))))
-
-  (setq org-outline-path-complete-in-steps nil)         ;; Refile in a single go
-  (setq org-refile-use-outline-path t)                  ;; Show full paths for refiling
-
-  (add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\)$" . org-mode))
-#+END_SRC
-**** TODO refile targets for blog once we get ox-hugo working.
-*** TODO org-agenda
-TODO: Maybe remove this custom view and replace it with super-agenda package
-
-I cannot seem to make up my mind here.  I suppose with Swiper and Ivy it doesn't
-matter to much. Refile targets seem to be more important to have limits on.
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-agenda-files '("~/org/life.org"
-                          "~/org/work.org"
-                          "~/org/edu.org"))
-  ;; (setq org-agenda-files '("~/org/"))
-#+END_SRC
-
-Some very crafty org-agenda view stuff including habits from
-[https://blog.aaronbieber.com/2016/09/24/an-agenda-for-life-with-org-mode.html]
-#+BEGIN_SRC emacs-lisp
-  (setq org-agenda-custom-commands
-        '(("d" "Daily agenda and all TODOs"
-           ((tags "PRIORITY=\"A\""
-                  ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                   (org-agenda-overriding-header "High-priority unfinished tasks:")))
-            (agenda "" ((org-agenda-ndays 1)))
-            (alltodo ""
-                     ((org-agenda-skip-function '(or (kef/org-skip-subtree-if-habit)
-                                                     (kef/org-skip-subtree-if-priority ?A)
-                                                     (org-agenda-skip-if nil '(scheduled deadline))))
-                      (org-agenda-overriding-header "ALL normal priority tasks:"))))
-           ((org-agenda-compact-blocks t)))))
-
-  (defun kef/org-skip-subtree-if-habit ()
-    "Skip an agenda entry if it has a STYLE property equal to \"habit\"."
-    (let ((subtree-end (save-excursion (org-end-of-subtree t))))
-      (if (string= (org-entry-get nil "STYLE") "habit")
-          subtree-end
-        nil)))
-  (defun kef/org-skip-subtree-if-priority (priority)
-    "Skip an agenda subtree if it has a priority of PRIORITY.
-
-  PRIORITY may be one of the characters ?A, ?B, or ?C."
-    (let ((subtree-end (save-excursion (org-end-of-subtree t)))
-          (pri-value (* 1000 (- org-lowest-priority priority)))
-          (pri-current (org-get-priority (thing-at-point 'line t))))
-      (if (= pri-value pri-current)
-          subtree-end
-        nil)))
-#+END_SRC
-
-Set a keybinding of =Super-s= to bring up this view.
-#+BEGIN_SRC emacs-lisp
-  (defun kef/pop-to-org-agenda (&optional split)
-    "Visit the org agenda, in the current window or a SPLIT."
-    (interactive "P")
-    (org-agenda nil "d")
-    (when (not split)
-      (delete-other-windows)))
-
-  ;;(global-set-key (kbd "s-s") 'kef/pop-to-org-agenda)  ;; We're not really using this? Maybe we are. Revist later
-#+END_SRC
-*** org-mode: colorize src blocks
-#+BEGIN_SRC emacs-lisp
-  (setq org-src-fontify-natively t)
-#+END_SRC
-
-*** org-mode: todo keywords
-#+BEGIN_SRC emacs-lisp
-  (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w@/!)" "|" "IN-PROGRESS (i)"  "|" "DONE(d!)" "CANCELLED(c@)")))
-#+END_SRC
-
-*** org-mode: capture templates
-ref: https://orgmode.org/manual/Template-elements.html#Template-elements
-#+BEGIN_SRC emacs-lisp
-  (setq org-capture-templates '(("t" "Todo [life]" entry
-                                 ;; A list of things to do that I do NOT get direct compensation for.
-                                 ;; These things will get refiled into life.org or edu.org eventually.
-                                 ;; Think about if it is more efficacious to just put them in directly or do the whole weekly refile thing.
-                                 (file+headline "~/org/life.org" "Personal")
-                                 "* TODO %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
-
-                                ;; A todo list for work related items, things I get paid money for.
-                                ("w" "Todo [work]" entry (file+headline "~/org/work.org" "Tasks")
-                                 "* TODO %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
-
-                                ;; a place to keep ideas for some other time.  Ideas for Projects that we could maybe one-day accomplish
-                                ("m" "New Idea" entry (file+headline "~/org/ideas.org" "Ideas")
-                                 "* WAITING %^{Short Description}\n:PROPERTIES:\n:CREATED: %U\n:END:\n%?%^{More details?}\n" :prepend w)
-
-                                ;; Hyperlink Capture
-                                ("l" "Hyperlink" item (file+headline "~/org/life.org" "Links")
-                                 "- [[%?%^{url}][%^{Description?}]]")
-
-                                ;; general Note Capture
-                                ("n" "Note" entry (file+headline "~/org/life.org" "Notes")
-                                 "* %^{Title}\n:PROPERTIES:\n:CREATED: %U\n:END:\n%^{Content}" :empty-lines 1)
-
-                                ;; Album capture for weekly item.
-                                ;; Artist Name: #main > div > div.Root__top-container > div.Root__main-view.Root__main-view--has-upsell-bar > div > div > div > section > div > div > div.col-xs-12.col-lg-3.col-xl-4 > div > header > div:nth-child(1) > div > div > div.mo-meta.ellipsis-one-line > div > a
-                                ;; Album Name: #main > div > div.Root__top-container > div.Root__main-view.Root__main-view--has-upsell-bar > div > div > div > section > div > div > div.col-xs-12.col-lg-3.col-xl-4 > div > header > div:nth-child(1) > div > div > div:nth-child(1) > div.mo-info > div > div
-                                ;; Album Artwork: #main > div > div.Root__top-container > div.Root__main-view.Root__main-view--has-upsell-bar > div > div > div > section > div > div > div.col-xs-12.col-lg-3.col-xl-4 > div > header > div:nth-child(1) > div > div > div:nth-child(1) > div.react-contextmenu-wrapper > div > div > div.cover-art-image.cover-art-image-loaded
-                                ;; Album Year and Track #: #main > div > div.Root__top-container > div.Root__main-view.Root__main-view--has-upsell-bar > div > div > div > section > div > div > div.col-xs-12.col-lg-3.col-xl-4 > div > header > div.TrackListHeader__body > p
-
-                                ;; Things to remove?
-                                ;; Locallity
-                                ;; Running Time
-                                ;; Add Album cover?
-
-                                ;; Not cute that we're using the year here, but file+headline does not support variables and it's one second every twelve months. Whatever.
-                                ("a" "Album Notes" entry
-                                 (file+headline "~/org/albums.org" "2019")
-                                 "*** %u %^{Artist} - %^{Album Name}\n:PROPERTIES:\n:CREATED: %U\n:END:\n- Release: %^{Release}\n- Link: [[%^{URL}][Spotify]]\n- Tracks: %^{Tracks}\n- Playtime: %^{Playtime}\n- %^{Content}\n%?" :empty-lines 1)
-
-                                ;; Date-tree
-                                ("j" "Journal" entry (file+datetree "~/org/journal.org")
-                                 "* %?\nEntered on %U\n  %i\n  %a")
-
-                                ;; Climbing capture templates
-                                ;; use %u for non-interactive time-stamps
-                                ;; climb.org capture templates for routes/boulder problems
-                                ("r" "Route" table-line
-                                 (file+headline "~/org/climb.org" "Routes")
-                                 "|%u|%?%^{Route Name?|NA}|%^{Yosemite Grade?|5.}|%^{Attempts?|0}|%^{Style?|Sport|Trad}|%^{Notes?}|")
-
-                                ("b" "Boulder Problem" table-line
-                                 (file+headline "~/org/climb.org" "Boulder Problems")
-                                 "|%u|%?%^{Problem Name?|NA}|%^{V-Grade?|NA}|%^{Attempts?|0}|%^{Notes?}|")
-                                ))
-#+END_SRC
-
-*** org-mode: log into drawer
-#+BEGIN_SRC emacs-lisp
-  (setq org-log-into-drawer t)
-#+END_SRC
-
-*** org-bullets
-#+BEGIN_SRC emacs-lisp
-  (use-package org-bullets)
-  (setq org-bullets-bullet-list '("◉" "◎" "⚫" "○" "►" "◇"))
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-#+END_SRC
-
-*** org-pomodoro
-:LOGBOOK:
-- State "DONE"       from "TODO"       [2019-06-14 Fri 07:33]
-:END:
-Maybe actually use this.
-Look to see if we can do a standard pomodoro cycle.
-#+BEGIN_SRC emacs-lisp
-  (use-package org-pomodoro :ensure)
-#+END_SRC
-
-** Flyspell
+** Spellchecking
 flyspell - in all text modes
 [flypsell for comments, but not strings][https://emacs.stackexchange.com/questions/31300/can-you-turn-on-flyspell-for-comments-but-not-strings]
 #+BEGIN_SRC emacs-lisp
@@ -945,17 +931,10 @@ flyspell - in all text modes
     (add-hook hook (lambda () (flyspell-mode -1)))) ;; Off for log and change-log mode.
 #+END_SRC
 
-*** TODO Can we arm flyspell to harass us about lazy words?
+**** TODO Can we arm flyspell to harass us about lazy words?
 
-** TODO Flycheck
-Linting. Enable this and add backends as required.
-#+BEGIN_SRC emacs-lisp
-;;  (use-package flycheck :ensure)
-#+END_SRC
-
-** Magit
+** Version Control
 - [[http://www.modernemacs.com/post/pretty-magit/][Pretty Magit - Integrating commit leaders | Modern Emacs]]
-Bind to =s-g= and =C-c m=.  Later we'll see which one we use more often.
 #+BEGIN_SRC emacs-lisp
   (use-package magit :ensure
     :config
@@ -985,143 +964,286 @@ And show changes in the gutter (fringe).
     (set-face-foreground 'git-gutter:deleted "red"))
 #+END_SRC
 
-** Company Mode
-Use =company-mode= everywhere
-
+** TODO Email
+mu, 4 emacs
+[https://www.djcbsoftware.nl/code/mu/mu4e/][mu4e docs]
+Use org structures and tables in message mode
+*** TODO mu4e
 #+BEGIN_SRC emacs-lisp
-  (use-package company :ensure)
-  (add-hook 'after-init-hook 'global-company-mode)
+  (add-hook 'message-mode-hook 'turn-on-orgtbl)
+  (add-hook 'message-mode-hook 'turn-on-orgstruct++)
 #+END_SRC
 
-*** Use =M-/= for completion.
+TODO: mu4e-view-actions view in browser
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "M-/") 'company-complete-common)
-#+END_SRC
-*** TODO Add company back-ends
-#+BEGIN_SRC emacs-lisp
-  ;;  add company back-ends
-#+END_SRC
+  ;; installed from release.
+  (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+  (setq mu4e-maildir       "~/.mail")   ;; top-level Maildir
 
-** Which-Key
-=which-key= displays the possible completions for a long keybinding. That's
-really helpful for some modes (like =projectile=, for example).
+  ;; Note: This shows no email, wonder if it's been fixed in 1.0
+  ;; Ignore duplicates
+  (setq mu4e-headers-skip-duplicates t)
 
-#+BEGIN_SRC emacs-lisp
-  (use-package which-key :ensure
-    :config
-    (which-key-mode)
-    (setq which-key-idle-delay 1.0))
-#+END_SRC
+  ;; GMail already adds sent mail to the Sent Mail folder.
+  (setq mu4e-sent-messages-behavior 'delete)
 
-** ox-hugo
-#+BEGIN_SRC emacs-lisp
-  (use-package ox-hugo
-    :ensure t
-    :after ox)
-#+END_SRC
+  ;; don't keep message buffers around
+  (setq message-kill-buffer-on-exit t)
 
-** yasnippet
-I keep my snippets in =~/.emacs/yasnippets/personal=, and I always want =yasnippet=
-enabled. This is not true.
-#+BEGIN_SRC emacs-lisp
-  ;; add more snippets
-  (use-package yasnippet :ensure)
-  ;;(setq yas-snippet-dirs
-  ;;      '("~/.emacs.d/snippets/personal/"))          ;; personal
-          ;;"~/.emacs.d/elpa/yasnippet-snippets-20190513.1049/snippets/"))
+  ;; Some hooks that I find useful:
+  (add-hook 'mu4e-view-mode-hook #'visual-line-mode)
+  ;; Spell checking ftw.
+  (add-hook 'mu4e-compose-mode-hook 'flyspell-mode)
 
-  (yas-reload-all)
-  ;;(add-hook 'prog-mode-hook #'yas-minor-mode)
-  (yas-global-mode 1)
-#+END_SRC
+  ;; Sometimes html email is just not readable in a text based client, this lets me open the
+  ;; email in my browser.
+  ;; (add-to-list 'mu4e-view-actions '("View in browser" . mu4e-action-view-in-browser) t)
 
-*** yasnippet-snippets
-#+BEGIN_SRC emacs-lisp
-  (use-package yasnippet-snippets :ensure)
+  ;; This hook correctly modifies the \Inbox and \Starred flags on email when they are marked.
+  ;; Without it refiling (archiving) and flagging (starring) email won't properly result in
+  ;; the corresponding gmail action.
+  (add-hook 'mu4e-mark-execute-pre-hook
+            (lambda (mark msg)
+              (cond ((member mark '(refile trash)) (mu4e-action-retag-message msg "-\\Inbox"))
+                    ((equal mark 'flag) (mu4e-action-retag-message msg "\\Starred"))
+                    ((equal mark 'unflag) (mu4e-action-retag-message msg "-\\Starred")))))
+
+  ;; mu4e uses its own version of message-mode. The only benefit I know of is that it enables completion for To, CC and BCC fields. That is really useful though!
+  (setq mail-user-agent 'mu4e-user-agent)
+
+  ;; For some reason it uses its own signature variable. Not anymore!
+  (defvaralias 'mu4e-compose-signature 'message-signature)
+
+  (setq mu4e-completing-read-function 'ivy-completing-read
+        mu4e-confirm-quit nil) ; Ivy for completion
 #+END_SRC
 
-** mode-line
-*** minions
-Minions controls how minor-modes appear in our mode-line.
+*** mu4e-context
 #+BEGIN_SRC emacs-lisp
-  (use-package minions :ensure t)
-  (minions-mode +1)
+  ;; Set contexts based on if it's a gmail account or not.
+  ;; ref: http://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and-/
+  ;; This sets up my two different context for my personal and school emails
+  (require 'mu4e-context)
+  (setq mu4e-contexts
+        `( ,(make-mu4e-context    ;; me@kfring.com
+             :name "me@kfring"
+             :enter-func (lambda () (mu4e-message "Switch to the me@kfring context"))
+             :match-func (lambda (msg)
+                           (when msg
+                             (mu4e-message-maildir-matches msg "^/kfring")))
+             :leave-func (lambda () (mu4e-clear-caches))
+             :vars '(
+                     (user-mail-address     . "me@kfring.com")
+                     (user-full-name        . "Kyle Fring")
+                     (mu4e-sent-folder      . "/kfring/Sent")
+                     (mu4e-drafts-folder    . "/kfring/Drafts")
+                     (mu4e-trash-folder     . "/kfring/Trash")
+                     (mu4e-refile-folder    . "/kfring/All-Mail")
+                     )
+             )
+           )
+  )
 #+END_SRC
 
-*** moody
-Our current mode-line layout
+*** TODO Sending email
 #+BEGIN_SRC emacs-lisp
-  (use-package moody :ensure
-    :config
-    (setq x-underline-at-descent-line t)
-    (moody-replace-mode-line-buffer-identification)
-    (moody-replace-vc-mode))
+  ;; sending mail -- replace USERNAME with your gmail username
+  ;; also, make sure the gnutls command line utils are installed
+  ;; package 'gnutls-bin' in Debian/Ubuntu, 'gnutls' in Archlinux.
+
+  ;; (require 'smtpmail)
+
+  ;; (setq message-send-mail-function 'smtpmail-send-it
+  ;;       starttls-use-gnutls t
+  ;;       smtpmail-starttls-credentials
+  ;;       '(("smtp.gmail.com" 587 nil nil))
+  ;;       smtpmail-auth-credentials
+  ;;       (expand-file-name "~/.authinfo.gpg")
+  ;;       smtpmail-default-smtp-server "smtp.gmail.com"
+  ;;       smtpmail-smtp-server "smtp.gmail.com"
+  ;;       smtpmail-smtp-service 587
+  ;;       smtpmail-debug-info t)
+
+  ;; I have my "default" parameters from Gmail
+  ;; (setq mu4e-sent-folder "/Users/kef/.mail/kfring/Sent"
+  ;;       ;; mu4e-sent-messages-behavior 'delete ;; Unsure how this should be configured
+  ;;       mu4e-drafts-folder "/Users/kef/.mail/kfring/Drafts"
+  ;;       user-mail-address "me@kfring.com"
+  ;;       smtpmail-default-smtp-server "smtp.gmail.com"
+  ;;       smtpmail-smtp-server "smtp.gmail.com"
+  ;;       smtpmail-smtp-service 587)
+
+  ;; ;; Now I set a list of
+  ;; (defvar my-mu4e-account-alist
+  ;;   '(("Gmail"
+  ;;      (mu4e-sent-folder "/kfring/Sent")
+  ;;      (user-mail-address "me@kfring.com")
+  ;;      (smtpmail-smtp-user "me")
+  ;;      (smtpmail-local-domain "kfring.com")
+  ;;      (smtpmail-default-smtp-server "smtp.gmail.com")
+  ;;      (smtpmail-smtp-server "smtp.gmail.com")
+  ;;      (smtpmail-smtp-service 587)
+  ;;      )
+  ;;      ;; Include any other accounts here ...
+  ;;     ))
+
+  ;; (defun my-mu4e-set-account ()
+  ;;   "Set the account for composing a message.
+  ;;    This function is taken from:
+  ;;      https://www.djcbsoftware.nl/code/mu/mu4e/Multiple-accounts.html"
+  ;;   (let* ((account
+  ;;     (if mu4e-compose-parent-message
+  ;;         (let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
+  ;;     (string-match "/\\(.*?\\)/" maildir)
+  ;;     (match-string 1 maildir))
+  ;;       (completing-read (format "Compose with account: (%s) "
+  ;;              (mapconcat #'(lambda (var) (car var))
+  ;;             my-mu4e-account-alist "/"))
+  ;;            (mapcar #'(lambda (var) (car var)) my-mu4e-account-alist)
+  ;;            nil t nil nil (caar my-mu4e-account-alist))))
+  ;;    (account-vars (cdr (assoc account my-mu4e-account-alist))))
+  ;;     (if account-vars
+  ;;   (mapc #'(lambda (var)
+  ;;       (set (car var) (cadr var)))
+  ;;         account-vars)
+  ;;       (error "No email account found"))))
+  ;; (add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
 #+END_SRC
 
-** TODO emacs-speaks-statistics
-Let's get emacs talking with R.  We need to let emacs know how to run R Code.
+*** mu4e-conversations
 #+BEGIN_SRC emacs-lisp
-  (use-package ess :ensure)
+  (use-package mu4e-conversation :ensure :after mu4e)
+  ;; Use it everywhere
+  (global-mu4e-conversation-mode)
 #+END_SRC
 
-** TODO htmlize
-Not sure we're using this correctly
-Need to find a style we like for default org-mode export.  Possibly tufte-css?
+*** mu4e-alert
 #+BEGIN_SRC emacs-lisp
-  (use-package htmlize :ensure)
-  ;;(setq org-html-htmlize-output-type 'inline-css)
+  (use-package mu4e-alert :ensure
+      :after mu4e
+      :hook ((after-init . mu4e-alert-enable-mode-line-display)
+             (after-init . mu4e-alert-enable-notifications))
+      :config (mu4e-alert-set-default-style 'libnotify))
+
+  ;; (use-package mu4e-alert
+  ;;   :ensure t
+  ;;   :after mu4e
+  ;;   :init
+  ;;   (setq mu4e-alert-interesting-mail-query
+  ;;     (concat
+  ;;      "flag:unread maildir:/Exchange/INBOX "
+  ;;      "OR "
+  ;;      "flag:unread maildir:/Gmail/INBOX"
+  ;;      ))
+  ;;   (mu4e-alert-enable-mode-line-display)
+  ;;   (defun gjstein-refresh-mu4e-alert-mode-line ()
+  ;;     (interactive)
+  ;;     (mu4e~proc-kill)
+  ;;     (mu4e-alert-enable-mode-line-display)
+  ;;     )
+  ;;   (run-with-timer 0 60 'gjstein-refresh-mu4e-alert-mode-line)
+  ;;   )
 #+END_SRC
 
-** shell-pop
-Launch a shell with C-t.
+*** Hydra - mu4e
 #+BEGIN_SRC emacs-lisp
-  (use-package shell-pop
-    :bind (("C-t" . shell-pop))
-    :config
-    (setq shell-pop-shell-type (quote ("ansi-term" "*ansi-term*" (lambda nil (ansi-term shell-pop-term-shell)))))
-    (setq shell-pop-term-shell "/bin/bash")
-    ;; need to do this manually or not picked up by `shell-pop'
-    (shell-pop--set-shell-type 'shell-pop-shell-type shell-pop-shell-type))
+  (defhydra hydra-mu4e-headers (:color blue :hint nil)
+    "
+     ^General^   | ^Search^           | _!_: read    | _#_: deferred  | ^Switches^
+    -^^----------+-^^-----------------| _?_: unread  | _%_: pattern   |-^^------------------
+    _n_: next    | _s_: search        | _r_: refile  | _&_: custom    | _O_: sorting
+    _p_: prev    | _S_: edit prev qry | _u_: unmk    | _+_: flag      | _P_: threading
+    _]_: n unred | _/_: narrow search | _U_: unmk *  | _-_: unflag    | _Q_: full-search
+    _[_: p unred | _b_: search bkmk   | _d_: trash   | _T_: thr       | _V_: skip dups
+    _y_: sw view | _B_: edit bkmk     | _D_: delete  | _t_: subthr    | _W_: include-related
+    _R_: reply   | _{_: previous qry  | _m_: move    |-^^-------------+-^^------------------
+    _C_: compose | _}_: next query    | _a_: action  | _|_: thru shl  | _`_: update, reindex
+    _F_: forward | _C-+_: show more   | _A_: mk4actn | _H_: help      | _;_: context-switch
+    _o_: org-cap | _C--_: show less   | _*_: *thing  | _q_: quit hdrs | _j_: jump2maildir
+    "
+
+    ;; general
+    ("n" mu4e-headers-next)
+    ("p" mu4e-headers-previous)
+    ("[" mu4e-select-next-unread)
+    ("]" mu4e-select-previous-unread)
+    ("y" mu4e-select-other-view)
+    ("R" mu4e-compose-reply)
+    ("C" mu4e-compose-new)
+    ("F" mu4e-compose-forward)
+    ("o" my/org-capture-mu4e)                  ; differs from built-in
+
+    ;; search
+    ("s" mu4e-headers-search)
+    ("S" mu4e-headers-search-edit)
+    ("/" mu4e-headers-search-narrow)
+    ("b" mu4e-headers-search-bookmark)
+    ("B" mu4e-headers-search-bookmark-edit)
+    ("{" mu4e-headers-query-prev)              ; differs from built-in
+    ("}" mu4e-headers-query-next)              ; differs from built-in
+    ("C-+" mu4e-headers-split-view-grow)
+    ("C--" mu4e-headers-split-view-shrink)
+
+    ;; mark stuff
+    ("!" mu4e-headers-mark-for-read)
+    ("?" mu4e-headers-mark-for-unread)
+    ("r" mu4e-headers-mark-for-refile)
+    ("u" mu4e-headers-mark-for-unmark)
+    ("U" mu4e-mark-unmark-all)
+    ("d" mu4e-headers-mark-for-trash)
+    ("D" mu4e-headers-mark-for-delete)
+    ("m" mu4e-headers-mark-for-move)
+    ("a" mu4e-headers-action)                  ; not really a mark per-se
+    ("A" mu4e-headers-mark-for-action)         ; differs from built-in
+    ("*" mu4e-headers-mark-for-something)
+
+    ("#" mu4e-mark-resolve-deferred-marks)
+    ("%" mu4e-headers-mark-pattern)
+    ("&" mu4e-headers-mark-custom)
+    ("+" mu4e-headers-mark-for-flag)
+    ("-" mu4e-headers-mark-for-unflag)
+    ("t" mu4e-headers-mark-subthread)
+    ("T" mu4e-headers-mark-thread)
+
+    ;; miscellany
+    ("q" mu4e~headers-quit-buffer)
+    ("H" mu4e-display-manual)
+    ("|" mu4e-view-pipe)                       ; does not seem built-in any longer
+
+    ;; switches
+    ("O" mu4e-headers-change-sorting)
+    ("P" mu4e-headers-toggle-threading)
+    ("Q" mu4e-headers-toggle-full-search)
+    ("V" mu4e-headers-toggle-skip-duplicates)
+    ("W" mu4e-headers-toggle-include-related)
+
+    ;; more miscellany
+    ("`" mu4e-update-mail-and-index)           ; differs from built-in
+    (";" mu4e-context-switch)
+    ("j" mu4e~headers-jump-to-maildir)
+
+    ("." nil))
 #+END_SRC
 
-** web-mode & rainbow-mode
-Use web-mode for muxed html/css/js
+**** mu4e keybindings
 #+BEGIN_SRC emacs-lisp
-  (use-package web-mode
-    :ensure t
-    :mode "\\.html?\\'"
-    :config
-    (progn
-      (setq web-mode-markup-indent-offset 4)
-      (setq web-mode-code-indent-offset 4)
-      (setq web-mode-enable-current-element-highlight t)
-      (setq web-mode-enable-auto-expanding t)
-      ))
+  (bind-keys
+   :map mu4e-headers-mode-map
+
+   ("{" . mu4e-headers-query-prev)             ; differs from built-in
+   ("}" . mu4e-headers-query-next)             ; differs from built-in
+   ("o" . my/org-capture-mu4e)                 ; differs from built-in
+
+   ("A" . mu4e-headers-mark-for-action)        ; differs from built-in
+
+   ("`" . mu4e-update-mail-and-index)          ; differs from built-in
+   ("|" . mu4e-view-pipe)               	     ; does not seem to be built in any longer
+   ("." . hydra-mu4e-headers/body))
 #+END_SRC
 
-Rainbow-mode sets hexcodes as background color in html/css files. Handy.
-#+BEGIN_SRC emacs-lisp
-  (use-package rainbow-mode :ensure)
-#+END_SRC
-Turn on rainbow-mode for web/css.
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'web-mode-hook #'rainbow-mode)
-  (add-hook 'css-mode-hook #'rainbow-mode)
-#+END_SRC
-
-** fontawesome
-add an ivy-search for fontawesome icons. slick.
-#+BEGIN_SRC emacs-lisp
-  (use-package fontawesome :ensure t)
-  (defun insert-fontawesome ()
-    (interactive)
-    (insert (call-interactively 'fontawesome)))
-#+END_SRC
-
-** elfeed
+** News Reader
 Elfeed is a very nice RSS/Atom reader for emacs.
-Something around 2019-02-01 broke the =elfeed-expose= method.  Also broke
-=Symbol's value as variable is void: elfeed-search-face-alist=
+*** Key Bindings
 #+BEGIN_SRC emacs-lisp
   (use-package elfeed
     :ensure t
@@ -1136,13 +1258,9 @@ Something around 2019-02-01 broke the =elfeed-expose= method.  Also broke
                 ("q" . kef/elfeed-save-db-and-bury)))
    (global-set-key (kbd "C-x r") 'kef/elfeed-load-db-and-open) ; r for reader
 #+END_SRC
-
-Functions & Hooks via: http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-emacs-with-elfeed/
+*** Shortcut functions and Hooks
+src: http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-emacs-with-elfeed/
 #+BEGIN_SRC emacs-lisp
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;; elfeed feed reader                                                     ;;
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;;shortcut functions
   ;; show all
   (defun kef/elfeed-show-all ()
     (interactive)
@@ -1252,306 +1370,296 @@ Cool, we get to use org-mode to manage our feeds. <3
     ;; location of feed orgfile
     (setq rmh-elfeed-org-files (list "~/org/feeds.org")))
 #+END_SRC
-** comment-dwim-2
-:LOGBOOK:
-- State "DONE"       from "WAITING"    [2019-06-14 Fri 07:52]
-- State "WAITING"    from              [2019-01-29 Tue 14:50] \\
-  Look into having this work for literate programming. It currently does not work
-  in =SRC= blocks nor the buffer opened with =C-'=.  Perhaps we can at least get
-  the latter working and push upstream.
-:END:
+
+** Terminals
+Launch a shell with C-t.
 #+BEGIN_SRC emacs-lisp
-  (use-package comment-dwim-2 :ensure t)
-  (global-set-key (kbd "M-;") 'comment-dwim-2)
+  (use-package shell-pop
+    :bind (("C-t" . shell-pop))
+    :config
+    (setq shell-pop-shell-type (quote ("ansi-term" "*ansi-term*" (lambda nil (ansi-term shell-pop-term-shell)))))
+    (setq shell-pop-term-shell "/bin/bash")
+    ;; need to do this manually or not picked up by `shell-pop'
+    (shell-pop--set-shell-type 'shell-pop-shell-type shell-pop-shell-type))
 #+END_SRC
 
-** TODO org-cliplink
+** Packages
+*** Which-Key
+=which-key= displays the possible completions for a long keybinding. That's
+really helpful for some modes (like =projectile=, for example).
+
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key :ensure
+    :config
+    (which-key-mode)
+    (setq which-key-idle-delay 1.0))
+#+END_SRC
+
+*** TODO Deft
+- We never use Deft.  Just remove it? AGAIN?
+Deft-Mode custom functions via: http://pragmaticemacs.com/emacs/tweaking-deft-quicker-notes/
+Custom function to save window-layout when launching deft-mode
+advise deft to save window config
+#+BEGIN_SRC emacs-lisp
+(use-package deft :ensure
+  :bind ("<f7>" . deft)
+  :commands (deft)
+  :config (setq deft-directory "~/Dropbox/org/" deft-extensions
+                '("md" "org" "txt")))
+(setq deft-default-extension "org")
+(setq deft-use-filename-as-title nil)
+(setq deft-use-filter-string-for-filename t)
+(setq deft-file-naming-rules '((noslash . "-")
+                               (nospace . "-")
+                               (case-fn . downcase)))
+(setq deft-text-mode 'org-mode)
+;; filenames - replace space and slash with - lcase
+(setq deft-file-naming-rules
+      '((noslash . "-")
+        (nospace . "-")
+        (case-fn . downcase)))
+(defun kef/deft-save-windows (orig-fun &rest args)
+  (setq kef/pre-deft-window-config (current-window-configuration))
+  (apply orig-fun args)
+  )
+(advice-add 'deft :around #'kef/deft-save-windows)
+;;function to quit a deft edit cleanly back to pre deft window
+(defun kef/quit-deft ()
+;;  "Save buffer, kill buffer, kill deft buffer, and restore window config to the way it was before deft was invoked"
+  (interactive)
+  (save-buffer)
+  (kill-this-buffer)
+  (switch-to-buffer "*Deft*")
+  (kill-this-buffer)
+  (when (window-configuration-p kef/pre-deft-window-config)
+    (set-window-configuration kef/pre-deft-window-config)
+    )
+  )
+(global-set-key (kbd "C-c q") 'kef/quit-deft)
+#+END_SRC
+
+** Org-Mode
+A good enough reason to use Emacs on it's own.
+#+BEGIN_SRC emacs-lisp
+  (use-package org
+    :config
+    (setq org-startup-indented t)           ;; Indent org-file display
+    (setq org-src-tab-acts-natively t)
+    )
+#+END_SRC
+
+Set some org-mode keybindings
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-c l") 'org-store-link)
+  (global-set-key (kbd "C-c a") 'org-agenda)
+  (global-set-key (kbd "C-c c") 'org-capture)
+#+END_SRC
+
+**** Org file locations
+Store all my org files in =~/org=, which is symlinked to ~/Dropbox/org/.
+#+BEGIN_SRC emacs-lisp
+  (setq org-directory "~/org")
+#+END_SRC
+
+**** TODO Refile Targets
+Refile targets should include all files? and down to 9 levels into them.
+Work on this later to make the refile targets make sense for our workflow.
+#+BEGIN_SRC emacs-lisp
+  (setq org-refile-targets (quote (("notes.org" :maxlevel . 3) ;; Top level headings in notes
+                                   ("kfring.org" :maxlevel . 2) ;; Top level in personal blog
+                                   (org-agenda-files :maxlevel . 9))))
+
+  (setq org-outline-path-complete-in-steps nil)         ;; Refile in a single go
+  (setq org-refile-use-outline-path t)                  ;; Show full paths for refiling
+
+  (add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\)$" . org-mode))
+#+END_SRC
+***** TODO refile targets for blog once we get ox-hugo working.
+**** TODO org-agenda
+TODO: Maybe remove this custom view and replace it with super-agenda package
+
+I cannot seem to make up my mind here.  I suppose with Swiper and Ivy it doesn't
+matter to much. Refile targets seem to be more important to have limits on.
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-files '("~/org/life.org"
+                          "~/org/work.org"
+                          "~/org/edu.org"))
+  ;; (setq org-agenda-files '("~/org/"))
+#+END_SRC
+
+Some very crafty org-agenda view stuff including habits from
+[https://blog.aaronbieber.com/2016/09/24/an-agenda-for-life-with-org-mode.html]
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-custom-commands
+        '(("d" "Daily agenda and all TODOs"
+           ((tags "PRIORITY=\"A\""
+                  ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                   (org-agenda-overriding-header "High-priority unfinished tasks:")))
+            (agenda "" ((org-agenda-ndays 1)))
+            (alltodo ""
+                     ((org-agenda-skip-function '(or (kef/org-skip-subtree-if-habit)
+                                                     (kef/org-skip-subtree-if-priority ?A)
+                                                     (org-agenda-skip-if nil '(scheduled deadline))))
+                      (org-agenda-overriding-header "ALL normal priority tasks:"))))
+           ((org-agenda-compact-blocks t)))))
+
+  (defun kef/org-skip-subtree-if-habit ()
+    "Skip an agenda entry if it has a STYLE property equal to \"habit\"."
+    (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+      (if (string= (org-entry-get nil "STYLE") "habit")
+          subtree-end
+        nil)))
+  (defun kef/org-skip-subtree-if-priority (priority)
+    "Skip an agenda subtree if it has a priority of PRIORITY.
+
+  PRIORITY may be one of the characters ?A, ?B, or ?C."
+    (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+          (pri-value (* 1000 (- org-lowest-priority priority)))
+          (pri-current (org-get-priority (thing-at-point 'line t))))
+      (if (= pri-value pri-current)
+          subtree-end
+        nil)))
+#+END_SRC
+
+Set a keybinding of =Super-s= to bring up this view.
+#+BEGIN_SRC emacs-lisp
+  (defun kef/pop-to-org-agenda (&optional split)
+    "Visit the org agenda, in the current window or a SPLIT."
+    (interactive "P")
+    (org-agenda nil "d")
+    (when (not split)
+      (delete-other-windows)))
+
+  ;;(global-set-key (kbd "s-s") 'kef/pop-to-org-agenda)  ;; We're not really using this? Maybe we are. Revist later
+#+END_SRC
+**** Colorize SRC blocks
+#+BEGIN_SRC emacs-lisp
+  (setq org-src-fontify-natively t)
+#+END_SRC
+
+**** Org-TODO Keywords
+#+BEGIN_SRC emacs-lisp
+  (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w@/!)" "|" "IN-PROGRESS (i)"  "|" "DONE(d!)" "CANCELLED(c@)")))
+#+END_SRC
+
+**** Capture templates
+ref: https://orgmode.org/manual/Template-elements.html#Template-elements
+#+BEGIN_SRC emacs-lisp
+  (setq org-capture-templates '(("t" "Todo [life]" entry
+                                 ;; A list of things to do that I do NOT get direct compensation for.
+                                 ;; These things will get refiled into life.org or edu.org eventually.
+                                 ;; Think about if it is more efficacious to just put them in directly or do the whole weekly refile thing.
+                                 (file+headline "~/org/life.org" "Personal")
+                                 "* TODO %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
+
+                                ;; A todo list for work related items, things I get paid money for.
+                                ("w" "Todo [work]" entry (file+headline "~/org/work.org" "Tasks")
+                                 "* TODO %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
+
+                                ;; a place to keep ideas for some other time.  Ideas for Projects that we could maybe one-day accomplish
+                                ("m" "New Idea" entry (file+headline "~/org/ideas.org" "Ideas")
+                                 "* WAITING %^{Short Description}\n:PROPERTIES:\n:CREATED: %U\n:END:\n%?%^{More details?}\n" :prepend w)
+
+                                ;; Hyperlink Capture
+                                ("l" "Hyperlink" item (file+headline "~/org/life.org" "Links")
+                                 "- [[%?%^{url}][%^{Description?}]]")
+
+                                ;; general Note Capture
+                                ("n" "Note" entry (file+headline "~/org/life.org" "Notes")
+                                 "* %^{Title}\n:PROPERTIES:\n:CREATED: %U\n:END:\n%^{Content}" :empty-lines 1)
+
+                                ;; Album capture for weekly item.
+                                ;; Artist Name: #main > div > div.Root__top-container > div.Root__main-view.Root__main-view--has-upsell-bar > div > div > div > section > div > div > div.col-xs-12.col-lg-3.col-xl-4 > div > header > div:nth-child(1) > div > div > div.mo-meta.ellipsis-one-line > div > a
+                                ;; Album Name: #main > div > div.Root__top-container > div.Root__main-view.Root__main-view--has-upsell-bar > div > div > div > section > div > div > div.col-xs-12.col-lg-3.col-xl-4 > div > header > div:nth-child(1) > div > div > div:nth-child(1) > div.mo-info > div > div
+                                ;; Album Artwork: #main > div > div.Root__top-container > div.Root__main-view.Root__main-view--has-upsell-bar > div > div > div > section > div > div > div.col-xs-12.col-lg-3.col-xl-4 > div > header > div:nth-child(1) > div > div > div:nth-child(1) > div.react-contextmenu-wrapper > div > div > div.cover-art-image.cover-art-image-loaded
+                                ;; Album Year and Track #: #main > div > div.Root__top-container > div.Root__main-view.Root__main-view--has-upsell-bar > div > div > div > section > div > div > div.col-xs-12.col-lg-3.col-xl-4 > div > header > div.TrackListHeader__body > p
+
+                                ;; Things to remove?
+                                ;; Locallity
+                                ;; Running Time
+                                ;; Add Album cover?
+
+                                ;; Not cute that we're using the year here, but file+headline does not support variables and it's one second every twelve months. Whatever.
+                                ("a" "Album Notes" entry
+                                 (file+headline "~/org/albums.org" "2019")
+                                 "*** %u %^{Artist} - %^{Album Name}\n:PROPERTIES:\n:CREATED: %U\n:END:\n- Release: %^{Release}\n- Link: [[%^{URL}][Spotify]]\n- Tracks: %^{Tracks}\n- Playtime: %^{Playtime}\n- %^{Content}\n%?" :empty-lines 1)
+
+                                ;; Date-tree
+                                ("j" "Journal" entry (file+datetree "~/org/journal.org")
+                                 "* %?\nEntered on %U\n  %i\n  %a")
+
+                                ;; Climbing capture templates
+                                ;; use %u for non-interactive time-stamps
+                                ;; climb.org capture templates for routes/boulder problems
+                                ("r" "Route" table-line
+                                 (file+headline "~/org/climb.org" "Routes")
+                                 "|%u|%?%^{Route Name?|NA}|%^{Yosemite Grade?|5.}|%^{Attempts?|0}|%^{Style?|Sport|Trad}|%^{Notes?}|")
+
+                                ("b" "Boulder Problem" table-line
+                                 (file+headline "~/org/climb.org" "Boulder Problems")
+                                 "|%u|%?%^{Problem Name?|NA}|%^{V-Grade?|NA}|%^{Attempts?|0}|%^{Notes?}|")
+                                ))
+#+END_SRC
+
+**** Log into drawer
+#+BEGIN_SRC emacs-lisp
+  (setq org-log-into-drawer t)
+#+END_SRC
+
+**** org-bullets
+#+BEGIN_SRC emacs-lisp
+  (use-package org-bullets)
+  (setq org-bullets-bullet-list '("◉" "◎" "⚫" "○" "►" "◇"))
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+#+END_SRC
+
+**** TODO org-pomodoro
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2019-06-14 Fri 07:33]
+:END:
+Look to see if we can do a standard pomodoro cycle.
+#+BEGIN_SRC emacs-lisp
+  (use-package org-pomodoro :ensure)
+#+END_SRC
+
+**** TODO org-cliplink
 - https://github.com/rexim/org-cliplink
 We can now replace our link-capture-template with this one?
 #+BEGIN_SRC emacs-lisp
   (use-package org-cliplink :ensure t)
   (global-set-key (kbd "C-x p i") 'org-cliplink)
 #+END_SRC
-** TODO org-download
-** TODO multiple-cursors
-- https://github.com/magnars/multiple-cursors.el
-We need to configure some keybindings. Check out the github page for suggestions.
+
+**** TODO org-download
+Can we use org-download to set files to be saved in specific locations?????
+** LaTeX
+Nothing, yet.
+
+** Pandoc
+Document processing.
 #+BEGIN_SRC emacs-lisp
-  (use-package multiple-cursors :ensure t)
+  (use-package pandoc-mode :ensure)
 #+END_SRC
 
-** mu4e
-mu, 4 emacs
-[https://www.djcbsoftware.nl/code/mu/mu4e/][mu4e docs]
-Use org structures and tables in message mode
-*** mu4e
+** Blogging
+Blogging with Hugo using org-mode.
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'message-mode-hook 'turn-on-orgtbl)
-  (add-hook 'message-mode-hook 'turn-on-orgstruct++)
+  (use-package ox-hugo
+    :ensure t
+    :after ox)
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-  ;; installed from release.
-  (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
-  (setq mu4e-maildir       "~/.mail")   ;; top-level Maildir
-
-  ;; Note: This shows no email, wonder if it's been fixed in 1.0
-  ;; Ignore duplicates
-  (setq mu4e-headers-skip-duplicates t)
-
-  ;; GMail already adds sent mail to the Sent Mail folder.
-  (setq mu4e-sent-messages-behavior 'delete)
-
-  ;; don't keep message buffers around
-  (setq message-kill-buffer-on-exit t)
-
-  ;; Some hooks that I find useful:
-  (add-hook 'mu4e-view-mode-hook #'visual-line-mode)
-  ;; Spell checking ftw.
-  (add-hook 'mu4e-compose-mode-hook 'flyspell-mode)
-
-  ;; Sometimes html email is just not readable in a text based client, this lets me open the
-  ;; email in my browser.
-  (add-to-list 'mu4e-view-actions '("View in browser" . mu4e-action-view-in-browser) t)
-
-  ;; This hook correctly modifies the \Inbox and \Starred flags on email when they are marked.
-  ;; Without it refiling (archiving) and flagging (starring) email won't properly result in
-  ;; the corresponding gmail action.
-  (add-hook 'mu4e-mark-execute-pre-hook
-            (lambda (mark msg)
-              (cond ((member mark '(refile trash)) (mu4e-action-retag-message msg "-\\Inbox"))
-                    ((equal mark 'flag) (mu4e-action-retag-message msg "\\Starred"))
-                    ((equal mark 'unflag) (mu4e-action-retag-message msg "-\\Starred")))))
-
-  ;; mu4e uses its own version of message-mode. The only benefit I know of is that it enables completion for To, CC and BCC fields. That is really useful though!
-  (setq mail-user-agent 'mu4e-user-agent)
-
-  ;; For some reason it uses its own signature variable. Not anymore!
-  (defvaralias 'mu4e-compose-signature 'message-signature)
-
-  (setq mu4e-completing-read-function 'ivy-completing-read
-        mu4e-confirm-quit nil) ; Ivy for completion
-
-  ;; Set contexts based on if it's a gmail account or not.
-  ;; ref: http://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and-/
-  ;; This sets up my two different context for my personal and school emails
-  (require 'mu4e-context)
-  (setq mu4e-contexts
-        `( ,(make-mu4e-context    ;; me@kfring.com
-             :name "me@kfring"
-             :enter-func (lambda () (mu4e-message "Switch to the me@kfring context"))
-             :match-func (lambda (msg)
-                           (when msg
-                             (mu4e-message-maildir-matches msg "^/kfring")))
-             :leave-func (lambda () (mu4e-clear-caches))
-             :vars '(
-                     (user-mail-address     . "me@kfring.com")
-                     (user-full-name        . "Kyle Fring")
-                     (mu4e-sent-folder      . "/kfring/Sent")
-                     (mu4e-drafts-folder    . "/kfring/Drafts")
-                     (mu4e-trash-folder     . "/kfring/Trash")
-                     (mu4e-refile-folder    . "/kfring/All-Mail")
-                     )
-             )
-           )
-  )
-#+END_SRC
-
-*** mu4e-conversations
-#+BEGIN_SRC emacs-lisp
-  (use-package mu4e-conversation :ensure :after mu4e)
-  ;; Use it everywhere
-  (global-mu4e-conversation-mode)
-#+END_SRC
-
-*** mu4e-alert
-#+BEGIN_SRC emacs-lisp
-  (use-package mu4e-alert :ensure
-      :after mu4e
-      :hook ((after-init . mu4e-alert-enable-mode-line-display)
-             (after-init . mu4e-alert-enable-notifications))
-      :config (mu4e-alert-set-default-style 'libnotify))
-#+END_SRC
-
-** dried
-Dried shortcut to *R*un an application
-#+BEGIN_SRC emacs-lisp
-  (define-key dired-mode-map "r" 'dired-start-process)
-#+END_SRC
-Tell dried what types of files to open with what.
-#+BEGIN_SRC emacs-lisp
-  ;; (require 'dired-x)
-
-  ;; (setq dired-guess-shell-alist-user
-  ;;       '(("\\.pdf\\'" "zathura" "evince" "okular")
-  ;;         ("\\.\\(?:djvu\\|eps\\)\\'" "evince")
-  ;;         ("\\.\\(?:jpg\\|jpeg\\|png\\|gif\\|xpm\\)\\'" "eog")
-  ;;         ("\\.\\(?:xcf\\)\\'" "gimp")
-  ;;         ("\\.csv\\'" "libreoffice")
-  ;;         ("\\.tex\\'" "pdflatex" "latex")
-  ;;         ("\\.\\(?:mp4\\|mkv\\|avi\\|flv\\|ogv\\)\\(?:\\.part\\)?\\'"
-  ;;          "vlc")
-  ;;         ("\\.\\(?:mp3\\|flac\\)\\'" "rhythmbox")
-  ;;         ("\\.html?\\'" "brave-browser")
-  ;;         ("\\.cue?\\'" "audacious")))
-#+END_SRC
-Add nohup to vlc launch.
-#+BEGIN_SRC emacs-lisp
-  ;; (require 'dired-aux)
-
-  ;; (defvar dired-filelist-cmd
-  ;;   '(("vlc" "-L")))
-
-  ;; (defun dired-start-process (cmd &optional file-list)
-  ;;   (interactive
-  ;;    (let ((files (dired-get-marked-files
-  ;;                  t current-prefix-arg)))
-  ;;      (list
-  ;;       (dired-read-shell-command "& on %s: "
-  ;;                                 current-prefix-arg files)
-  ;;       files)))
-  ;;   (let (list-switch)
-  ;;     (start-process
-  ;;      cmd nil shell-file-name
-  ;;      shell-command-switch
-  ;;      (format
-  ;;       "nohup 1>/dev/null 2>/dev/null %s \"%s\""
-  ;;       (if (and (> (length file-list) 1)
-  ;;                (setq list-switch
-  ;;                      (cadr (assoc cmd dired-filelist-cmd))))
-  ;;           (format "%s %s" cmd list-switch)
-  ;;         cmd)
-  ;;       (mapconcat #'expand-file-name file-list "\" \"")))))
-#+END_SRC
-
-** TODO visual-regexp: visual feedback on replacement
-:LOGBOOK:
-- State "DONE"       from "TODO"       [2019-06-16 Sun 17:55]
-:END:
-Control-R is still launching backwards-isearch? Only seems to work once the
-server is connected to?
-#+BEGIN_SRC emacs-lisp
-  (use-package visual-regexp
-    :config
-    (define-key global-map (kbd "C-r") 'vr/replace))
-#+END_SRC
-
-** expand-region
-:LOGBOOK:
-- State "DONE"       from "TODO"       [2019-07-04 Thu 21:56]
-:END:
-#+BEGIN_SRC emacs-lisp
-  (use-package expand-region :ensure
-    :config
-    (global-set-key (kbd "M-]") 'er/expand-region)
-    (global-set-key (kbd "M-[") 'er/contract-region)
-    )
-  #+END_SRC
-
-* Hydras
+** Hydras
+Interesting keymaps to keep you sane.
 #+BEGIN_SRC emacs-lisp
   (use-package hydra)
   (use-package ivy-hydra)
-#+END_SRC
-
-** mu4e
-#+BEGIN_SRC emacs-lisp
-  (defhydra hydra-mu4e-headers (:color blue :hint nil)
-    "
-     ^General^   | ^Search^           | _!_: read    | _#_: deferred  | ^Switches^
-    -^^----------+-^^-----------------| _?_: unread  | _%_: pattern   |-^^------------------
-    _n_: next    | _s_: search        | _r_: refile  | _&_: custom    | _O_: sorting
-    _p_: prev    | _S_: edit prev qry | _u_: unmk    | _+_: flag      | _P_: threading
-    _]_: n unred | _/_: narrow search | _U_: unmk *  | _-_: unflag    | _Q_: full-search
-    _[_: p unred | _b_: search bkmk   | _d_: trash   | _T_: thr       | _V_: skip dups
-    _y_: sw view | _B_: edit bkmk     | _D_: delete  | _t_: subthr    | _W_: include-related
-    _R_: reply   | _{_: previous qry  | _m_: move    |-^^-------------+-^^------------------
-    _C_: compose | _}_: next query    | _a_: action  | _|_: thru shl  | _`_: update, reindex
-    _F_: forward | _C-+_: show more   | _A_: mk4actn | _H_: help      | _;_: context-switch
-    _o_: org-cap | _C--_: show less   | _*_: *thing  | _q_: quit hdrs | _j_: jump2maildir
-    "
-
-    ;; general
-    ("n" mu4e-headers-next)
-    ("p" mu4e-headers-previous)
-    ("[" mu4e-select-next-unread)
-    ("]" mu4e-select-previous-unread)
-    ("y" mu4e-select-other-view)
-    ("R" mu4e-compose-reply)
-    ("C" mu4e-compose-new)
-    ("F" mu4e-compose-forward)
-    ("o" my/org-capture-mu4e)                  ; differs from built-in
-
-    ;; search
-    ("s" mu4e-headers-search)
-    ("S" mu4e-headers-search-edit)
-    ("/" mu4e-headers-search-narrow)
-    ("b" mu4e-headers-search-bookmark)
-    ("B" mu4e-headers-search-bookmark-edit)
-    ("{" mu4e-headers-query-prev)              ; differs from built-in
-    ("}" mu4e-headers-query-next)              ; differs from built-in
-    ("C-+" mu4e-headers-split-view-grow)
-    ("C--" mu4e-headers-split-view-shrink)
-
-    ;; mark stuff
-    ("!" mu4e-headers-mark-for-read)
-    ("?" mu4e-headers-mark-for-unread)
-    ("r" mu4e-headers-mark-for-refile)
-    ("u" mu4e-headers-mark-for-unmark)
-    ("U" mu4e-mark-unmark-all)
-    ("d" mu4e-headers-mark-for-trash)
-    ("D" mu4e-headers-mark-for-delete)
-    ("m" mu4e-headers-mark-for-move)
-    ("a" mu4e-headers-action)                  ; not really a mark per-se
-    ("A" mu4e-headers-mark-for-action)         ; differs from built-in
-    ("*" mu4e-headers-mark-for-something)
-
-    ("#" mu4e-mark-resolve-deferred-marks)
-    ("%" mu4e-headers-mark-pattern)
-    ("&" mu4e-headers-mark-custom)
-    ("+" mu4e-headers-mark-for-flag)
-    ("-" mu4e-headers-mark-for-unflag)
-    ("t" mu4e-headers-mark-subthread)
-    ("T" mu4e-headers-mark-thread)
-
-    ;; miscellany
-    ("q" mu4e~headers-quit-buffer)
-    ("H" mu4e-display-manual)
-    ("|" mu4e-view-pipe)                       ; does not seem built-in any longer
-
-    ;; switches
-    ("O" mu4e-headers-change-sorting)
-    ("P" mu4e-headers-toggle-threading)
-    ("Q" mu4e-headers-toggle-full-search)
-    ("V" mu4e-headers-toggle-skip-duplicates)
-    ("W" mu4e-headers-toggle-include-related)
-
-    ;; more miscellany
-    ("`" mu4e-update-mail-and-index)           ; differs from built-in
-    (";" mu4e-context-switch)
-    ("j" mu4e~headers-jump-to-maildir)
-
-    ("." nil))
-#+END_SRC
-
-*** mu4e keybindings
-#+BEGIN_SRC emacs-lisp
-  (bind-keys
-   :map mu4e-headers-mode-map
-
-   ("{" . mu4e-headers-query-prev)             ; differs from built-in
-   ("}" . mu4e-headers-query-next)             ; differs from built-in
-   ("o" . my/org-capture-mu4e)                 ; differs from built-in
-
-   ("A" . mu4e-headers-mark-for-action)        ; differs from built-in
-
-   ("`" . mu4e-update-mail-and-index)          ; differs from built-in
-   ("|" . mu4e-view-pipe)               	     ; does not seem to be built in any longer
-   ("." . hydra-mu4e-headers/body))
 #+END_SRC
 
 * Other peoples configs
 - https://caolan.org/dotfiles/emacs.html
 - https://github.com/freetonik/emacs-dotfiles
 - https://github.com/hrs/dotfiles/blob/master/emacs/.emacs.d/configuration.org
+- https://github.com/rememberYou/.emacs.d/blob/master/config.org
 - https://github.com/zzamboni/dot-emacs/blob/master/init.org#literate-programming-using-org-babel
