@@ -1,8 +1,9 @@
 #+TITLE:GNU Emacs Configuration
 #+AUTHOR: Kyle Fring
 #+EMAIL: me@kfring.com
-#+OPTIONS: toc:t num:3
-* Table of Contents :TOC:
+#+OPTIONS: toc:t num:nil
+* Table of Contents                                               :TOC:QUOTE:
+#+BEGIN_QUOTE
 - [[#about][About]]
 - [[#emacs-initialization][Emacs Initialization]]
   - [[#emacs-server][emacs-server]]
@@ -38,6 +39,7 @@
   - [[#pandoc][Pandoc]]
   - [[#blogging][Blogging]]
   - [[#hydras][Hydras]]
+#+END_QUOTE
 
 * About
 #+BEGIN_QUOTE
@@ -104,6 +106,7 @@ Install and load =use-package=
                        "~/.authinfo"
                        "~/.netrc"))
 #+END_SRC
+
 ** File Handling, Locations and Loading
 *** Move custom.el file
 Create custom file elsewhere.
@@ -196,7 +199,7 @@ Create a backup to a designated dir, mirroring the full path ala ergomacs
 by expecting those with visual impairments to bend to your will.
 2. When we can't, or chose not to we should have an easy way to let emacs handle
    this for us.
-[http://blog.binchen.org/posts/easy-indentation-setup-in-emacs-for-web-development.html][Source]
+[[http://blog.binchen.org/posts/easy-indentation-setup-in-emacs-for-web-development.html][SRC]]
 #+BEGIN_SRC emacs-lisp
   (defun my-setup-indent (n)
     ;; java/c/c++
@@ -1188,7 +1191,6 @@ TODO: mu4e-view-actions view in browser
   ;;   (run-with-timer 0 60 'gjstein-refresh-mu4e-alert-mode-line)
   ;;   )
 #+END_SRC
-
 
 ** News Reader
 Elfeed is a very nice RSS/Atom reader for emacs.
