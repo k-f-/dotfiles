@@ -28,7 +28,10 @@
   - [[#r][R]]
 - [[#extended-configuration][Extended Configuration]]
   - [[#abbrevs-auto-completion--snippets][Abbrevs, Auto-completion & Snippets]]
+  - [[#dictionary][Dictionary]]
+  - [[#thesaurus][Thesaurus]]
   - [[#spellchecking][Spellchecking]]
+  - [[#weasel-words][Weasel Words]]
   - [[#version-control][Version Control]]
   - [[#email][Email]]
   - [[#news-reader][News Reader]]
@@ -50,14 +53,13 @@ the tendency is to push it as far as you can.'
 #+END_QUOTE
 
 A massive thanks to folks whom solved their own problems in their own way and
-are kind enough to make it available to the world.
+are kind enough to make their solutions available to the world.
 - https://caolan.org/dotfiles/emacs.html
 - https://github.com/freetonik/emacs-dotfiles
 - https://github.com/hrs/dotfiles/blob/master/emacs/.emacs.d/configuration.org
 - https://github.com/rememberYou/.emacs.d/blob/master/config.org
 - https://github.com/zzamboni/dot-emacs/blob/master/init.org#literate-programming-using-org-babel
 * Emacs Initialization
-
 ** emacs-server
 Start the server unless it is already running.
 #+BEGIN_SRC emacs-lisp
@@ -966,9 +968,20 @@ Use =company-mode= everywhere
   (setq abbrev-file-name "~/.emacs.d/abbrev_defs")
 #+END_SRC
 
+** Dictionary
+- http://mbork.pl/2017-01-14_I'm_now_using_the_right_dictionary
+- Perhaps add our sweet Dictionary instead of this, but for now this works.
+#+BEGIN_SRC emacs-lisp
+  (use-package define-word :ensure)
+  (global-set-key (kbd "C-c d") 'define-word-at-point)
+  (global-set-key (kbd "C-c D") 'define-word)
+#+END_SRC
+
+** Thesaurus
+- thesaurus.el
 ** Spellchecking
 flyspell - in all text modes
-[flypsell for comments, but not strings][https://emacs.stackexchange.com/questions/31300/can-you-turn-on-flyspell-for-comments-but-not-strings]
+[[https://emacs.stackexchange.com/questions/31300/can-you-turn-on-flyspell-for-comments-but-not-strings][flypsell for comments, but not strings]]
 #+BEGIN_SRC emacs-lisp
   (use-package flyspell :ensure)
   (add-hook 'prog-mode-hook 'flyspell-prog-mode) ;; Flyspell in program mode.
@@ -978,7 +991,12 @@ flyspell - in all text modes
     (add-hook hook (lambda () (flyspell-mode -1)))) ;; Off for log and change-log mode.
 #+END_SRC
 
-**** TODO Can we arm flyspell to harass us about lazy words?
+** Weasel Words
+#+BEGIN_SRC emacs-lisp
+  (use-package writegood-mode :ensure)
+  (add-hook 'text-mode-hook 'writegood-mode)
+
+#+END_SRC
 
 ** Version Control
 - [[http://www.modernemacs.com/post/pretty-magit/][Pretty Magit - Integrating commit leaders | Modern Emacs]]
@@ -1192,6 +1210,7 @@ TODO: mu4e-view-actions view in browser
   ;;   )
 #+END_SRC
 
+*** [[#mu4e-1][mu4e-hydra]
 ** News Reader
 Elfeed is a very nice RSS/Atom reader for emacs.
 *** Key Bindings
@@ -1620,6 +1639,56 @@ Interesting keymaps to keep you sane.
   (use-package hydra)
   (use-package ivy-hydra)
 #+END_SRC
+*** Modes that toggle on and off
+#+BEGIN_SRC emacs-lisp
+  (global-set-key
+   (kbd "C-x t")
+   (defhydra toggle (:color blue)
+     "toggle"
+     ("a" abbrev-mode "abbrev")
+     ("s" flyspell-mode "flyspell")
+     ("d" toggle-debug-on-error "debug")
+     ("c" fci-mode "fCi")
+     ("f" auto-fill-mode "fill")
+     ("t" toggle-truncate-lines "truncate")
+     ("w" whitespace-mode "whitespace")
+     ("q" nil "cancel")))
+#+END_SRC
+
+*** Navigation
+#+BEGIN_SRC emacs-lisp
+  (global-set-key
+   (kbd "C-x j")
+   (defhydra gotoline
+     ( :pre (linum-mode 1)
+            :post (linum-mode -1))
+     "goto"
+     ("t" (lambda () (interactive)(move-to-window-line-top-bottom 0)) "top")
+     ("b" (lambda () (interactive)(move-to-window-line-top-bottom -1)) "bottom")
+     ("m" (lambda () (interactive)(move-to-window-line-top-bottom)) "middle")
+     ("e" (lambda () (interactive)(end-of-buffer)) "end")
+     ("c" recenter-top-bottom "recenter")
+     ("n" next-line "down")
+     ("p" (lambda () (interactive) (forward-line -1))  "up")
+     ("g" goto-line "goto-line")))
+#+END_SRC
+
+*** org-mode
+#+BEGIN_SRC emacs-lisp
+  (global-set-key
+   (kbd "C-c o")
+   (defhydra hydra-global-org (:color blue)
+     "Org"
+     ("t" org-timer-start "Start Timer")
+     ("s" org-timer-stop "Stop Timer")
+     ("r" org-timer-set-timer "Set Timer") ; This one requires you be in an orgmode doc, as it sets the timer for the header
+     ("p" org-timer "Print Timer") ; output timer value to buffer
+     ("w" (org-clock-in '(4)) "Clock-In") ; used with (org-clock-persistence-insinuate) (setq org-clock-persist t)
+     ("o" org-clock-out "Clock-Out") ; you might also want (setq org-log-note-clock-out t)
+     ("j" org-clock-goto "Clock Goto") ; global visit the clocked task
+     ("c" org-capture "Capture") ; Don't forget to define the captures you want http://orgmode.org/manual/Capture.html
+     ("l" (or )rg-capture-goto-last-stored "Last Capture")))
+#+END_SRC
 
 *** mu4e
 #+BEGIN_SRC emacs-lisp
@@ -1715,4 +1784,21 @@ Interesting keymaps to keep you sane.
    ("`" . mu4e-update-mail-and-index)          ; differs from built-in
    ("|" . mu4e-view-pipe)               	     ; does not seem to be built in any longer
    ("." . hydra-mu4e-headers/body))
+#+END_SRC
+
+*** elfeed
+- Make this match our keybinding map setup under Elfeed proper.
+- Also need to add a binding to trigger it, but only when in elfeed.
+#+BEGIN_SRC emacs-lisp
+  `(defhydra hydra-elfeed ()
+  "filter"
+  ("c" (elfeed-search-set-filter "@6-months-ago +cs") "cs")
+  ("e" (elfeed-search-set-filter "@6-months-ago +emacs") "emacs")
+  ("d" (elfeed-search-set-filter "@6-months-ago +education") "education")
+  ("*" (elfeed-search-set-filter "@6-months-ago +star") "Starred")
+  ("M" elfeed-toggle-star "Mark")
+  ("A" (elfeed-search-set-filter "@6-months-ago") "All")
+  ("T" (elfeed-search-set-filter "@1-day-ago") "Today")
+  ("Q" bjm/elfeed-save-db-and-bury "Quit Elfeed" :color blue)
+  ("q" nil "quit" :color blue))
 #+END_SRC
