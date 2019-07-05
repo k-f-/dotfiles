@@ -1,7 +1,44 @@
-#+TITLE:Emacs Configuration
+#+TITLE:GNU Emacs Configuration
 #+AUTHOR: Kyle Fring
 #+EMAIL: me@kfring.com
 #+OPTIONS: toc:t num:nil
+* Table of Contents :TOC:
+- [[#about][About]]
+- [[#emacs-initialization][Emacs Initialization]]
+  - [[#emacs-server][emacs-server]]
+  - [[#set-global-user][Set global user]]
+  - [[#package-sources][Package Sources]]
+  - [[#bootstrap-use-package][Bootstrap =use-package=]]
+- [[#start-up][Start Up]]
+  - [[#authentication][Authentication]]
+  - [[#file-handling-locations-and-loading][File Handling, Locations and Loading]]
+  - [[#character-encoding-and-indentation][Character Encoding and Indentation]]
+  - [[#user-interface][User Interface]]
+  - [[#functions][Functions]]
+  - [[#buffer-movement-and-splits][Buffer movement and Splits]]
+  - [[#ivy-swiper-and-counsel][Ivy, Swiper and Counsel.]]
+  - [[#text-formatting-selection-and-editing][Text Formatting, Selection and Editing]]
+  - [[#file-browsing][File Browsing]]
+- [[#languages][Languages]]
+  - [[#linting][Linting]]
+  - [[#commenting-code][Commenting Code]]
+  - [[#html--css][HTML & CSS]]
+  - [[#javascript][JavaScript]]
+  - [[#r][R]]
+- [[#extended-configuration][Extended Configuration]]
+  - [[#abbrevs-auto-completion--snippets][Abbrevs, Auto-completion & Snippets]]
+  - [[#spellchecking][Spellchecking]]
+  - [[#version-control][Version Control]]
+  - [[#email][Email]]
+  - [[#news-reader][News Reader]]
+  - [[#terminals][Terminals]]
+  - [[#packages][Packages]]
+  - [[#org-mode][Org-Mode]]
+  - [[#latex][LaTeX]]
+  - [[#pandoc][Pandoc]]
+  - [[#blogging][Blogging]]
+  - [[#hydras][Hydras]]
+
 * About
 #+BEGIN_QUOTE
 'but once you get locked into a serious drug collection,
@@ -10,6 +47,13 @@ the tendency is to push it as far as you can.'
 --- Hunter S. Thompson, Fear and Loathing in Las Vegas
 #+END_QUOTE
 
+A massive thanks to folks whom solved their own problems in their own way and
+are kind enough to make it available to the world.
+- https://caolan.org/dotfiles/emacs.html
+- https://github.com/freetonik/emacs-dotfiles
+- https://github.com/hrs/dotfiles/blob/master/emacs/.emacs.d/configuration.org
+- https://github.com/rememberYou/.emacs.d/blob/master/config.org
+- https://github.com/zzamboni/dot-emacs/blob/master/init.org#literate-programming-using-org-babel
 * Emacs Initialization
 
 ** emacs-server
@@ -1455,13 +1499,13 @@ Set some org-mode keybindings
   (global-set-key (kbd "C-c c") 'org-capture)
 #+END_SRC
 
-**** Org file locations
+*** Org file locations
 Store all my org files in =~/org=, which is symlinked to ~/Dropbox/org/.
 #+BEGIN_SRC emacs-lisp
   (setq org-directory "~/org")
 #+END_SRC
 
-**** TODO Refile Targets
+*** TODO Refile Targets
 Refile targets should include all files? and down to 9 levels into them.
 Work on this later to make the refile targets make sense for our workflow.
 #+BEGIN_SRC emacs-lisp
@@ -1474,8 +1518,8 @@ Work on this later to make the refile targets make sense for our workflow.
 
   (add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\)$" . org-mode))
 #+END_SRC
-***** TODO refile targets for blog once we get ox-hugo working.
-**** TODO org-agenda
+**** TODO refile targets for blog once we get ox-hugo working.
+*** TODO org-agenda
 TODO: Maybe remove this custom view and replace it with super-agenda package
 
 I cannot seem to make up my mind here.  I suppose with Swiper and Ivy it doesn't
@@ -1533,17 +1577,17 @@ Set a keybinding of =Super-s= to bring up this view.
 
   ;;(global-set-key (kbd "s-s") 'kef/pop-to-org-agenda)  ;; We're not really using this? Maybe we are. Revist later
 #+END_SRC
-**** Colorize SRC blocks
+*** Colorize SRC blocks
 #+BEGIN_SRC emacs-lisp
   (setq org-src-fontify-natively t)
 #+END_SRC
 
-**** Org-TODO Keywords
+*** Org-TODO Keywords
 #+BEGIN_SRC emacs-lisp
   (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w@/!)" "|" "IN-PROGRESS (i)"  "|" "DONE(d!)" "CANCELLED(c@)")))
 #+END_SRC
 
-**** Capture templates
+*** Capture templates
 ref: https://orgmode.org/manual/Template-elements.html#Template-elements
 #+BEGIN_SRC emacs-lisp
   (setq org-capture-templates '(("t" "Todo [life]" entry
@@ -1602,19 +1646,19 @@ ref: https://orgmode.org/manual/Template-elements.html#Template-elements
                                 ))
 #+END_SRC
 
-**** Log into drawer
+*** Log into drawer
 #+BEGIN_SRC emacs-lisp
   (setq org-log-into-drawer t)
 #+END_SRC
 
-**** org-bullets
+*** org-bullets
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets)
   (setq org-bullets-bullet-list '("◉" "◎" "⚫" "○" "►" "◇"))
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+END_SRC
 
-**** TODO org-pomodoro
+*** TODO org-pomodoro
 :LOGBOOK:
 - State "DONE"       from "TODO"       [2019-06-14 Fri 07:33]
 :END:
@@ -1623,7 +1667,7 @@ Look to see if we can do a standard pomodoro cycle.
   (use-package org-pomodoro :ensure)
 #+END_SRC
 
-**** TODO org-cliplink
+*** TODO org-cliplink
 - https://github.com/rexim/org-cliplink
 We can now replace our link-capture-template with this one?
 #+BEGIN_SRC emacs-lisp
@@ -1631,8 +1675,22 @@ We can now replace our link-capture-template with this one?
   (global-set-key (kbd "C-x p i") 'org-cliplink)
 #+END_SRC
 
-**** TODO org-download
+*** TODO org-download
 Can we use org-download to set files to be saved in specific locations?????
+*** Table of Contents
+[https://github.com/rememberYou/.emacs.d/blob/master/config.org#org-mode][src]
+If like me, you’re tired of manually updating your tables of contents, toc-org will maintain a table of contents at the first heading that has a :TOC: tag.
+#+BEGIN_SRC emacs-lisp
+  (use-package toc-org
+    :after org
+    :hook (org-mode . toc-org-enable))
+#+END_SRC
+
+For a cleaner online mode.
+#+BEGIN_SRC emacs-lisp
+  (use-package org-indent :ensure nil :after org :delight)
+#+END_SRC
+
 ** LaTeX
 Nothing, yet.
 
@@ -1656,10 +1714,3 @@ Interesting keymaps to keep you sane.
   (use-package hydra)
   (use-package ivy-hydra)
 #+END_SRC
-
-* Other peoples configs
-- https://caolan.org/dotfiles/emacs.html
-- https://github.com/freetonik/emacs-dotfiles
-- https://github.com/hrs/dotfiles/blob/master/emacs/.emacs.d/configuration.org
-- https://github.com/rememberYou/.emacs.d/blob/master/config.org
-- https://github.com/zzamboni/dot-emacs/blob/master/init.org#literate-programming-using-org-babel
