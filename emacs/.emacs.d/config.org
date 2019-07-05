@@ -90,6 +90,7 @@ ref: https://stackoverflow.com/questions/9559753/emacs-org-mode-export-to-anothe
   (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
 
 #+END_SRC
+
 * User Interface
 ** Xresources
 - I'm fairly sure this is what was causing some ugly behavior when emacs is invoked.
@@ -368,7 +369,10 @@ Move between open windows with =M-o= as well as =C-x o=.
   (global-set-key (kbd "M-o") 'other-window)
 #+END_SRC
 
-* TODO Window (Buffer) splits and closures
+* Window (Buffer) splits and closures
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2019-07-04 Thu 21:49]
+:END:
 Go to other windows easily with one keystroke s-something instead of C-x something.
 I think we need to remove use of the super key.  It's handy, but we like i3
 enough and it takes some energy to remember which Super key functions only work
@@ -421,19 +425,63 @@ much space is kept between the cursor and the bottom of the buffer.
         hscroll-step 5)
 #+END_SRC
 
-** TODO Never use Tabs, Spaces instead
-Change this to tabs. From an inclusive usability standpoint you're being a dick
+** Spaces and Tabs
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2019-07-04 Thu 19:00]
+:END:
+USE tabs. From an inclusive usability standpoint you're being a dick
 by expecting those with visual impairments to bend to your will.
+[http://blog.binchen.org/posts/easy-indentation-setup-in-emacs-for-web-development.html][Source]
 #+BEGIN_SRC emacs-lisp
-  (setq-default indent-tabs-mode nil)
-  (setq tab-width 2)
+  (defun my-setup-indent (n)
+    ;; java/c/c++
+    (setq-local c-basic-offset n)
+    ;; web development
+    (setq-local coffee-tab-width n) ; coffeescript
+    (setq-local javascript-indent-level n) ; javascript-mode
+    (setq-local js-indent-level n) ; js-mode
+    (setq-local js2-basic-offset n) ; js2-mode, in latest js2-mode, it's alias of js-indent-level
+    (setq-local web-mode-markup-indent-offset n) ; web-mode, html tag in html file
+    (setq-local web-mode-css-indent-offset n) ; web-mode, css in html file
+    (setq-local web-mode-code-indent-offset n) ; web-mode, js code in html file
+    (setq-local css-indent-offset n) ; css-mode
+    )
 
-  (setq js-indent-level 2)
-  (setq css-indent-offset 2)
-  (setq-default c-basic-offset 2)
-  (setq c-basic-offset 2)
-  (setq-default tab-width 2)
-  (setq-default c-basic-indent 2)
+  (defun kef/tabs-code-style ()
+    (interactive)
+    (message "tab code style!")
+    ;; use tab instead of space
+    (setq-local indent-tabs-mode t)
+    ;; indent 4 spaces width
+    (my-setup-indent 4))
+
+  (defun kef/spaces-code-style ()
+    (interactive)
+    (message "spaces code style!")
+    ;; use space instead of tab
+    (setq indent-tabs-mode nil)
+    ;; indent 2 spaces width
+    (my-setup-indent 2))
+
+  (defun kef/setup-develop-environment ()
+    (interactive)
+    (let ((proj-dir (file-name-directory (buffer-file-name))))
+      ;; if hobby project path contains string "hobby-proj1"
+      (if (string-match-p "hobby-proj1" proj-dir)
+          (kef/spaces-code-style))
+
+      ;; if commericial project path contains string "commerical-proj"
+      (if (string-match-p "commerical-proj" proj-dir)
+          (kef/tabs-code-style))))
+
+  ;; prog-mode-hook requires emacs24+
+  (add-hook 'prog-mode-hook 'my-setup-develop-environment)
+  ;; a few major-modes does NOT inherited from prog-mode
+  (add-hook 'lua-mode-hook 'my-setup-develop-environment)
+  (add-hook 'web-mode-hook 'my-setup-develop-environment)
+
+  ;; Just switch to tabs now.
+  (kef/tabs-code-style)
 #+END_SRC
 
 ** Save my location within a file
@@ -597,7 +645,8 @@ base16 seems to work well. perhaps we can find a light theme we like here.
     (add-hook 'js2-mode-hook 'js2-refactor-mode))
 #+END_SRC
 
-** Deft
+** TODO Deft
+- We never use Deft.  Just remove it? AGAIN?
 Deft-Mode custom functions via: http://pragmaticemacs.com/emacs/tweaking-deft-quicker-notes/
 Custom function to save window-layout when launching deft-mode
 advise deft to save window config
@@ -643,7 +692,11 @@ advise deft to save window config
 #+BEGIN_SRC emacs-lisp
   (use-package pandoc-mode :ensure)
 #+END_SRC
-** TODO Ivy, Swiper and Counsel
+
+** Ivy, Swiper and Counsel
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2019-07-04 Thu 21:48]
+:END:
 Figure out a binding for line:671 of yank-pop
 #+BEGIN_SRC emacs-lisp
   (use-package ivy :ensure
@@ -669,7 +722,7 @@ Figure out a binding for line:671 of yank-pop
     (use-package counsel :ensure
     :config
     (global-set-key (kbd "M-x") 'counsel-M-x)
-    (global-set-key (kbd "s-y") 'counsel-yank-pop)
+    (global-set-key (kbd "M-y") 'counsel-yank-pop)
     (setq enable-recursive-minibuffers t)
     ;; enable this if you want `swiper' to use it
     ;; (setq search-default-mode #'char-fold-to-regexp)
@@ -1229,7 +1282,9 @@ We need to configure some keybindings. Check out the github page for suggestions
 
 ** mu4e
 mu, 4 emacs
+[https://www.djcbsoftware.nl/code/mu/mu4e/][mu4e docs]
 Use org structures and tables in message mode
+*** mu4e
 #+BEGIN_SRC emacs-lisp
   (add-hook 'message-mode-hook 'turn-on-orgtbl)
   (add-hook 'message-mode-hook 'turn-on-orgstruct++)
@@ -1252,7 +1307,21 @@ Use org structures and tables in message mode
 
   ;; Some hooks that I find useful:
   (add-hook 'mu4e-view-mode-hook #'visual-line-mode)
+  ;; Spell checking ftw.
   (add-hook 'mu4e-compose-mode-hook 'flyspell-mode)
+
+  ;; Sometimes html email is just not readable in a text based client, this lets me open the
+  ;; email in my browser.
+  (add-to-list 'mu4e-view-actions '("View in browser" . mu4e-action-view-in-browser) t)
+
+  ;; This hook correctly modifies the \Inbox and \Starred flags on email when they are marked.
+  ;; Without it refiling (archiving) and flagging (starring) email won't properly result in
+  ;; the corresponding gmail action.
+  (add-hook 'mu4e-mark-execute-pre-hook
+            (lambda (mark msg)
+              (cond ((member mark '(refile trash)) (mu4e-action-retag-message msg "-\\Inbox"))
+                    ((equal mark 'flag) (mu4e-action-retag-message msg "\\Starred"))
+                    ((equal mark 'unflag) (mu4e-action-retag-message msg "-\\Starred")))))
 
   ;; mu4e uses its own version of message-mode. The only benefit I know of is that it enables completion for To, CC and BCC fields. That is really useful though!
   (setq mail-user-agent 'mu4e-user-agent)
@@ -1287,6 +1356,7 @@ Use org structures and tables in message mode
            )
   )
 #+END_SRC
+
 *** mu4e-conversations
 #+BEGIN_SRC emacs-lisp
   (use-package mu4e-conversation :ensure :after mu4e)
@@ -1302,6 +1372,7 @@ Use org structures and tables in message mode
              (after-init . mu4e-alert-enable-notifications))
       :config (mu4e-alert-set-default-style 'libnotify))
 #+END_SRC
+
 ** dried
 Dried shortcut to *R*un an application
 #+BEGIN_SRC emacs-lisp
@@ -1353,18 +1424,22 @@ Add nohup to vlc launch.
   ;;       (mapconcat #'expand-file-name file-list "\" \"")))))
 #+END_SRC
 
-** visual-regexp: visual feedback on replacement
+** TODO visual-regexp: visual feedback on replacement
 :LOGBOOK:
 - State "DONE"       from "TODO"       [2019-06-16 Sun 17:55]
 :END:
-in i3wm <s-r> (mod-r) is bound to resize, try <C-r> which is isearch-reverse
+Control-R is still launching backwards-isearch? Only seems to work once the
+server is connected to?
 #+BEGIN_SRC emacs-lisp
   (use-package visual-regexp
     :config
     (define-key global-map (kbd "C-r") 'vr/replace))
 #+END_SRC
 
-** TODO expand-region
+** expand-region
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2019-07-04 Thu 21:56]
+:END:
 #+BEGIN_SRC emacs-lisp
   (use-package expand-region :ensure
     :config
@@ -1372,6 +1447,108 @@ in i3wm <s-r> (mod-r) is bound to resize, try <C-r> which is isearch-reverse
     (global-set-key (kbd "M-[") 'er/contract-region)
     )
   #+END_SRC
+
+* Hydras
+#+BEGIN_SRC emacs-lisp
+  (use-package hydra)
+  (use-package ivy-hydra)
+#+END_SRC
+
+** mu4e
+#+BEGIN_SRC emacs-lisp
+  (defhydra hydra-mu4e-headers (:color blue :hint nil)
+    "
+     ^General^   | ^Search^           | _!_: read    | _#_: deferred  | ^Switches^
+    -^^----------+-^^-----------------| _?_: unread  | _%_: pattern   |-^^------------------
+    _n_: next    | _s_: search        | _r_: refile  | _&_: custom    | _O_: sorting
+    _p_: prev    | _S_: edit prev qry | _u_: unmk    | _+_: flag      | _P_: threading
+    _]_: n unred | _/_: narrow search | _U_: unmk *  | _-_: unflag    | _Q_: full-search
+    _[_: p unred | _b_: search bkmk   | _d_: trash   | _T_: thr       | _V_: skip dups
+    _y_: sw view | _B_: edit bkmk     | _D_: delete  | _t_: subthr    | _W_: include-related
+    _R_: reply   | _{_: previous qry  | _m_: move    |-^^-------------+-^^------------------
+    _C_: compose | _}_: next query    | _a_: action  | _|_: thru shl  | _`_: update, reindex
+    _F_: forward | _C-+_: show more   | _A_: mk4actn | _H_: help      | _;_: context-switch
+    _o_: org-cap | _C--_: show less   | _*_: *thing  | _q_: quit hdrs | _j_: jump2maildir
+    "
+
+    ;; general
+    ("n" mu4e-headers-next)
+    ("p" mu4e-headers-previous)
+    ("[" mu4e-select-next-unread)
+    ("]" mu4e-select-previous-unread)
+    ("y" mu4e-select-other-view)
+    ("R" mu4e-compose-reply)
+    ("C" mu4e-compose-new)
+    ("F" mu4e-compose-forward)
+    ("o" my/org-capture-mu4e)                  ; differs from built-in
+
+    ;; search
+    ("s" mu4e-headers-search)
+    ("S" mu4e-headers-search-edit)
+    ("/" mu4e-headers-search-narrow)
+    ("b" mu4e-headers-search-bookmark)
+    ("B" mu4e-headers-search-bookmark-edit)
+    ("{" mu4e-headers-query-prev)              ; differs from built-in
+    ("}" mu4e-headers-query-next)              ; differs from built-in
+    ("C-+" mu4e-headers-split-view-grow)
+    ("C--" mu4e-headers-split-view-shrink)
+
+    ;; mark stuff
+    ("!" mu4e-headers-mark-for-read)
+    ("?" mu4e-headers-mark-for-unread)
+    ("r" mu4e-headers-mark-for-refile)
+    ("u" mu4e-headers-mark-for-unmark)
+    ("U" mu4e-mark-unmark-all)
+    ("d" mu4e-headers-mark-for-trash)
+    ("D" mu4e-headers-mark-for-delete)
+    ("m" mu4e-headers-mark-for-move)
+    ("a" mu4e-headers-action)                  ; not really a mark per-se
+    ("A" mu4e-headers-mark-for-action)         ; differs from built-in
+    ("*" mu4e-headers-mark-for-something)
+
+    ("#" mu4e-mark-resolve-deferred-marks)
+    ("%" mu4e-headers-mark-pattern)
+    ("&" mu4e-headers-mark-custom)
+    ("+" mu4e-headers-mark-for-flag)
+    ("-" mu4e-headers-mark-for-unflag)
+    ("t" mu4e-headers-mark-subthread)
+    ("T" mu4e-headers-mark-thread)
+
+    ;; miscellany
+    ("q" mu4e~headers-quit-buffer)
+    ("H" mu4e-display-manual)
+    ("|" mu4e-view-pipe)                       ; does not seem built-in any longer
+
+    ;; switches
+    ("O" mu4e-headers-change-sorting)
+    ("P" mu4e-headers-toggle-threading)
+    ("Q" mu4e-headers-toggle-full-search)
+    ("V" mu4e-headers-toggle-skip-duplicates)
+    ("W" mu4e-headers-toggle-include-related)
+
+    ;; more miscellany
+    ("`" mu4e-update-mail-and-index)           ; differs from built-in
+    (";" mu4e-context-switch)
+    ("j" mu4e~headers-jump-to-maildir)
+
+    ("." nil))
+#+END_SRC
+
+*** mu4e keybindings
+#+BEGIN_SRC emacs-lisp
+  (bind-keys
+   :map mu4e-headers-mode-map
+
+   ("{" . mu4e-headers-query-prev)             ; differs from built-in
+   ("}" . mu4e-headers-query-next)             ; differs from built-in
+   ("o" . my/org-capture-mu4e)                 ; differs from built-in
+
+   ("A" . mu4e-headers-mark-for-action)        ; differs from built-in
+
+   ("`" . mu4e-update-mail-and-index)          ; differs from built-in
+   ("|" . mu4e-view-pipe)               	     ; does not seem to be built in any longer
+   ("." . hydra-mu4e-headers/body))
+#+END_SRC
 
 * Other peoples configs
 - https://caolan.org/dotfiles/emacs.html
