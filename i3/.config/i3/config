@@ -128,6 +128,9 @@ exec --no-startup-id exec spotify --force-device-scale-factor=2 &
 # Web Browser
 exec --no-startup-id exec google-chrome-stable
 
+# Slack. FML.
+exec --no-startup-id exec slack
+
 #################################################################
 # Applications bound to Workspaces
 #################################################################
@@ -138,6 +141,8 @@ for_window [class="Spotify"] move container to workspace $wk10
 # Start the appropriate programs on the right workspaces
 # To get the class, run xprop
 for_window [class="Google-chrome"] move container to workspace $wk3
+
+for_window [class="Slack"] move container to workspace $wk4
 
 #################################################################
 # Sticky Windows
@@ -354,7 +359,7 @@ bindsym $mod+a focus parent
 set $wk1 1: terminals
 set $wk2 2: emacs
 set $wk3 3: www
-set $wk4 4
+set $wk4 4: coms
 set $wk5 5
 set $wk6 6
 set $wk7 7

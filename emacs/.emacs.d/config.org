@@ -200,30 +200,53 @@ Create a backup to a designated dir, mirroring the full path ala ergomacs
 1. USE tabs when we can. From an inclusive usability standpoint you're being a dick
 by expecting those with visual impairments to bend to your will.
 2. When we can't, or chose not to we should have an easy way to let emacs handle
-   this for us.
-[[http://blog.binchen.org/posts/easy-indentation-setup-in-emacs-for-web-development.html][SRC]]
+   this for us. [[http://blog.binchen.org/posts/easy-indentation-setup-in-emacs-for-web-development.html][SRC]]
+3. setq-local in the opening of =kef/setup-indent= is causing this error while
+   opening a js-mode file
+#+BEGIN_QUOTE
+Debugger entered--Lisp error: (error "Don’t know how to make a localized variable an alias")
+  defvaralias(js2-basic-offset js-indent-level nil)
+  byte-code("\301\302!\210\301\303!\210\301\304!\210\301\305!\210\306\010\307\"\203\036\0\301\310!\210\2028\0\311\312\313\314#\210\315\316\317\"\210\315\320\321\"\210\315\322\323\"\210\315\324\325\"\210\314\207" [emacs-version require cl-lib imenu js etags version< "25.0" js2-old-indent defvaralias js2-basic-offset js-indent-level nil defalias js2-proper-indentation js--proper-indentation js2-jsx-indent-line js-jsx-indent-line js2-indent-line js-indent-line js2-re-search-forward js--re-search-forward] 4)
+  js2-mode()
+  set-auto-mode-0(js2-mode nil)
+  set-auto-mode()
+  normal-mode(t)
+  after-find-file(nil t)
+  find-file-noselect-1(#<buffer sketch.js> "~/Dropbox/edu/cm1005-Intro-to-Programming01/gp4-starter/sketch.js" nil nil "~/Dropbox/edu/cm1005-Intro-to-Programming01/gp4-starter/sketch.js" (1444777 66309))
+  find-file-noselect("/home/kef/Dropbox/edu/cm1005-Intro-to-Programming01/gp4-starter/sketch.js" nil nil nil)
+  find-file("/home/kef/Dropbox/edu/cm1005-Intro-to-Programming01/gp4-starter/sketch.js")
+  counsel-find-file-action("/home/kef/Dropbox/edu/cm1005-Intro-to-Programming01/gp4-starter/sketch.js")
+  ivy-call()
+  ivy-read("Find file: " read-file-name-internal :matcher counsel--find-file-matcher :initial-input nil :action counsel-find-file-action :preselect nil :require-match confirm-after-completion :history file-name-history :keymap (keymap (96 lambda (&optional arg) "nil (`nil')" (interactive "p") (if (string= "" ivy-text) (execute-kbd-macro (kbd "M-o b")) (self-insert-command arg))) (C-backspace . counsel-up-directory) (67108991 . counsel-up-directory)) :caller counsel-find-file)
+  counsel--find-file-1("Find file: " nil counsel-find-file-action counsel-find-file)
+  counsel-find-file()
+  funcall-interactively(counsel-find-file)
+  call-interactively(counsel-find-file nil nil)
+  command-execute(counsel-find-file)
+#+END_QUOTE
+
 #+BEGIN_SRC emacs-lisp
-  (defun my-setup-indent (n)
+  (defun kef/setup-indent (n)
     ;; java/c/c++
-    (setq-local c-basic-offset n)
+    (setq c-basic-offset n)
     ;; web development
-    (setq-local coffee-tab-width n) ; coffeescript
-    (setq-local javascript-indent-level n) ; javascript-mode
-    (setq-local js-indent-level n) ; js-mode
-    (setq-local js2-basic-offset n) ; js2-mode, in latest js2-mode, it's alias of js-indent-level
-    (setq-local web-mode-markup-indent-offset n) ; web-mode, html tag in html file
-    (setq-local web-mode-css-indent-offset n) ; web-mode, css in html file
-    (setq-local web-mode-code-indent-offset n) ; web-mode, js code in html file
-    (setq-local css-indent-offset n) ; css-mode
+    (setq coffee-tab-width n) ; coffeescript
+    (setq javascript-indent-level n) ; javascript-mode
+    (setq js-indent-level n) ; js-mode
+    (setq js2-basic-offset n) ; js2-mode, in latest js2-mode, it's alias of js-indent-level
+    (setq web-mode-markup-indent-offset n) ; web-mode, html tag in html file
+    (setq web-mode-css-indent-offset n) ; web-mode, css in html file
+    (setq web-mode-code-indent-offset n) ; web-mode, js code in html file
+    (setq css-indent-offset n) ; css-mode
     )
 
   (defun kef/tabs-code-style ()
     (interactive)
     (message "tab code style!")
     ;; use tab instead of space
-    (setq-local indent-tabs-mode t)
+    (setq indent-tabs-mode t)
     ;; indent 4 spaces width
-    (my-setup-indent 4))
+    (kef/setup-indent 4))
 
   (defun kef/spaces-code-style ()
     (interactive)
@@ -231,7 +254,7 @@ by expecting those with visual impairments to bend to your will.
     ;; use space instead of tab
     (setq indent-tabs-mode nil)
     ;; indent 2 spaces width
-    (my-setup-indent 2))
+    (kef/setup-indent 2))
 
   (defun kef/setup-develop-environment ()
     (interactive)
@@ -245,10 +268,10 @@ by expecting those with visual impairments to bend to your will.
           (kef/tabs-code-style))))
 
   ;; prog-mode-hook requires emacs24+
-  (add-hook 'prog-mode-hook 'my-setup-develop-environment)
+  (add-hook 'prog-mode-hook 'kef/setup-develop-environment)
   ;; a few major-modes does NOT inherited from prog-mode
-  (add-hook 'lua-mode-hook 'my-setup-develop-environment)
-  (add-hook 'web-mode-hook 'my-setup-develop-environment)
+  (add-hook 'lua-mode-hook 'kef/setup-develop-environment)
+  (add-hook 'web-mode-hook 'kef/setup-develop-environment)
 
   ;; Just switch to tabs now.
   (kef/tabs-code-style)
@@ -362,7 +385,7 @@ From http://pages.sachachua.com/.emacs.d/Sacha.html#sec-1-4-8
 
   (defun kef/locally-disable-show-paren ()
     (interactive)
-    (setq-local show-paren-mode nil))
+    (setq show-paren-mode nil))
 
   (add-hook 'ruby-mode-hook
             #'kef/locally-disable-show-paren)
@@ -873,8 +896,8 @@ Turn on rainbow-mode for web/css.
     (custom-set-variables '(js2-strict-inconsistent-return-warning nil))
     (custom-set-variables '(js2-strict-missing-semi-warning nil))
 
-    (setq js-indent-level 2)
-    (setq js2-indent-level 2)
+    (setq js-indent-level 4)
+    (setq js2-indent-level 4)
     (setq js2-basic-offset 2)
     (setq js2-highlight-level 1)         ; some highlighting.
     '(js2-auto-indent-p t)               ; it's nice for commas to right themselves.
@@ -885,11 +908,11 @@ Turn on rainbow-mode for web/css.
     ;; http://ternjs.net/doc/manual.html#emacs
     (use-package tern :ensure
       :config
-      (defun my-js-mode-hook ()
+      (defun kef/js-mode-hook ()
         "Hook for `js-mode'."
-        (set (make-local-variable 'company-backends)
+        (set (make-variable 'company-backends)
              '((company-tern company-files))))
-      (add-hook 'js2-mode-hook 'my-js-mode-hook)
+      (add-hook 'js2-mode-hook 'kef/js-mode-hook)
       (add-hook 'js2-mode-hook 'company-mode))
 
     (add-hook 'js2-mode-hook 'tern-mode)
@@ -979,6 +1002,10 @@ Use =company-mode= everywhere
 
 ** Thesaurus
 - thesaurus.el
+- synonymous.el
+#+BEGIN_SRC emacs-lisp
+  (use-package synonymous :ensure)
+#+END_SRC
 ** Spellchecking
 flyspell - in all text modes
 [[https://emacs.stackexchange.com/questions/31300/can-you-turn-on-flyspell-for-comments-but-not-strings][flypsell for comments, but not strings]]
@@ -1144,7 +1171,7 @@ TODO: mu4e-view-actions view in browser
   ;;      (mu4e-sent-folder "/kfring/Sent")
   ;;      (user-mail-address "me@kfring.com")
   ;;      (smtpmail-smtp-user "me")
-  ;;      (smtpmail-local-domain "kfring.com")
+  ;;      (smtpmail-domain "kfring.com")
   ;;      (smtpmail-default-smtp-server "smtp.gmail.com")
   ;;      (smtpmail-smtp-server "smtp.gmail.com")
   ;;      (smtpmail-smtp-service 587)
@@ -1453,9 +1480,9 @@ matter to much. Refile targets seem to be more important to have limits on.
 
 #+BEGIN_SRC emacs-lisp
   (setq org-agenda-files '("~/org/life.org"
-                          "~/org/work.org"
-                          "~/org/edu.org"))
-  ;; (setq org-agenda-files '("~/org/"))
+                           "~/org/work.org"
+                           "~/org/edu.org"
+                           "~/.emacs.d/config.org"))
 #+END_SRC
 
 Some very crafty org-agenda view stuff including habits from [[https://blog.aaronbieber.com/2016/09/24/an-agenda-for-life-with-org-mode.html][Aaron Beiber]]
@@ -1500,7 +1527,7 @@ Set a keybinding of =Super-s= to bring up this view.
     (when (not split)
       (delete-other-windows)))
 
-  ;;(global-set-key (kbd "s-s") 'kef/pop-to-org-agenda)  ;; We're not really using this? Maybe we are. Revist later
+  ;; (global-set-key (kbd "s-s") 'kef/pop-to-org-agenda)  ;; We're not really using this? Maybe we are. Revist later
 #+END_SRC
 *** Colorize SRC blocks
 #+BEGIN_SRC emacs-lisp
@@ -1716,7 +1743,7 @@ Interesting keymaps to keep you sane.
     ("R" mu4e-compose-reply)
     ("C" mu4e-compose-new)
     ("F" mu4e-compose-forward)
-    ("o" my/org-capture-mu4e)                  ; differs from built-in
+    ("o" kef/org-capture-mu4e)                  ; differs from built-in
 
     ;; search
     ("s" mu4e-headers-search)
@@ -1777,7 +1804,7 @@ Interesting keymaps to keep you sane.
 
    ("{" . mu4e-headers-query-prev)             ; differs from built-in
    ("}" . mu4e-headers-query-next)             ; differs from built-in
-   ("o" . my/org-capture-mu4e)                 ; differs from built-in
+   ("o" . kef/org-capture-mu4e)                 ; differs from built-in
 
    ("A" . mu4e-headers-mark-for-action)        ; differs from built-in
 
