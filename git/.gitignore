@@ -28,7 +28,7 @@ emacs.d/projects.el
 auto-save-list
 tramp
 .\#*
-.network-security.data
+network-security.data
 
 # Org-mode
 .org-id-locations

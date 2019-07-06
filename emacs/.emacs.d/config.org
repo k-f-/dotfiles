@@ -1071,6 +1071,17 @@ Use org structures and tables in message mode
   (add-hook 'message-mode-hook 'turn-on-orgstruct++)
 #+END_SRC
 
+We're using mbsync to pull in our email.  We should have systemd scripts in
+=~/.config/systemd/user/=
+#+BEGIN_QUOTE
+To start the timer, you should type systemctl --user start checkmail.timer.
+Using the command systemctl --user status checkmail.timer will allow you to see
+if the timer was successfully started.
+To start the timer automatically, issue the systemctl --user start checkmail.timer command.
+
+Another neat command is systemctl --user list-timers. This will list all of the timers that you have active and how long until they’re triggered again. Neat stuff. Systemd is pretty clever.
+#+END_QUOTE
+
 TODO: mu4e-view-actions view in browser
 #+BEGIN_SRC emacs-lisp
   ;; installed from release.
@@ -1142,7 +1153,10 @@ TODO: mu4e-view-actions view in browser
   )
 #+END_SRC
 
-*** TODO Sending email
+*** Sending email
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2019-07-05 Fri 20:45]
+:END:
 #+BEGIN_SRC emacs-lisp
   ;; sending mail -- replace USERNAME with your gmail username
   ;; also, make sure the gnutls command line utils are installed
@@ -1160,51 +1174,6 @@ TODO: mu4e-view-actions view in browser
 	smtpmail-smtp-server "smtp.gmail.com"
 	smtpmail-smtp-service 587
 	smtpmail-debug-info t)
-  ;; Other source
-  ;; I have my "default" parameters from Gmail
-  ;; (setq mu4e-sent-folder "/Users/kef/.mail/kfring/Sent"
-  ;;       ;; mu4e-sent-messages-behavior 'delete ;; Unsure how this should be configured
-  ;;       mu4e-drafts-folder "/Users/kef/.mail/kfring/Drafts"
-  ;;       user-mail-address "me@kfring.com"
-  ;;       smtpmail-default-smtp-server "smtp.gmail.com"
-  ;;       smtpmail-smtp-server "smtp.gmail.com"
-  ;;       smtpmail-smtp-service 587)
-
-  ;; ;; Now I set a list of
-  ;; (defvar my-mu4e-account-alist
-  ;;   '(("Gmail"
-  ;;      (mu4e-sent-folder "/kfring/Sent")
-  ;;      (user-mail-address "me@kfring.com")
-  ;;      (smtpmail-smtp-user "me")
-  ;;      (smtpmail-domain "kfring.com")
-  ;;      (smtpmail-default-smtp-server "smtp.gmail.com")
-  ;;      (smtpmail-smtp-server "smtp.gmail.com")
-  ;;      (smtpmail-smtp-service 587)
-  ;;      )
-  ;;      ;; Include any other accounts here ...
-  ;;     ))
-
-  ;; (defun my-mu4e-set-account ()
-  ;;   "Set the account for composing a message.
-  ;;    This function is taken from:
-  ;;      https://www.djcbsoftware.nl/code/mu/mu4e/Multiple-accounts.html"
-  ;;   (let* ((account
-  ;;     (if mu4e-compose-parent-message
-  ;;         (let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
-  ;;     (string-match "/\\(.*?\\)/" maildir)
-  ;;     (match-string 1 maildir))
-  ;;       (completing-read (format "Compose with account: (%s) "
-  ;;              (mapconcat #'(lambda (var) (car var))
-  ;;             my-mu4e-account-alist "/"))
-  ;;            (mapcar #'(lambda (var) (car var)) my-mu4e-account-alist)
-  ;;            nil t nil nil (caar my-mu4e-account-alist))))
-  ;;    (account-vars (cdr (assoc account my-mu4e-account-alist))))
-  ;;     (if account-vars
-  ;;   (mapc #'(lambda (var)
-  ;;       (set (car var) (cadr var)))
-  ;;         account-vars)
-  ;;       (error "No email account found"))))
-  ;; (add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
 #+END_SRC
 
 *** mu4e-conversations

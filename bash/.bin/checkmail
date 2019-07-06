@@ -5,10 +5,10 @@ STATE=`nmcli networking connectivity`
 
 if [ $STATE = 'full' ]
 then
-    ~/.bin/msmtp-runqueue
-    mbsync -c ~/.mbsyncrc -a 
-#    notmuch new
-    emacsclient -e '(mu4e-update-index)'
+#    ~/.bin/msmtp-runqueue
+    mbsync -c ~/.mbsyncrc -a
+#   notmuch new
+#    emacsclient -e '(mu4e-update-index)'
     exit 0
 
 fi
