@@ -11,6 +11,7 @@
   - [[#package-sources][Package Sources]]
   - [[#bootstrap-use-package][Bootstrap =use-package=]]
 - [[#start-up][Start Up]]
+  - [[#gpg2][GPG2]]
   - [[#authentication][Authentication]]
   - [[#file-handling-locations-and-loading][File Handling, Locations and Loading]]
   - [[#character-encoding-and-indentation][Character Encoding and Indentation]]
@@ -101,6 +102,10 @@ Install and load =use-package=
 #+END_SRC
 
 * Start Up
+** GPG2
+#+BEGIN_SRC emacs-lisp
+(setq epg-gpg-program "/usr/bin/gpg2")
+#+END_SRC
 ** Authentication
 #+BEGIN_SRC emacs-lisp
   (setq auth-sources '("~/.gnupg/shared/authinfo.gpg"
@@ -1143,19 +1148,19 @@ TODO: mu4e-view-actions view in browser
   ;; also, make sure the gnutls command line utils are installed
   ;; package 'gnutls-bin' in Debian/Ubuntu, 'gnutls' in Archlinux.
 
-  ;; (require 'smtpmail)
+  (require 'smtpmail)
 
-  ;; (setq message-send-mail-function 'smtpmail-send-it
-  ;;       starttls-use-gnutls t
-  ;;       smtpmail-starttls-credentials
-  ;;       '(("smtp.gmail.com" 587 nil nil))
-  ;;       smtpmail-auth-credentials
-  ;;       (expand-file-name "~/.authinfo.gpg")
-  ;;       smtpmail-default-smtp-server "smtp.gmail.com"
-  ;;       smtpmail-smtp-server "smtp.gmail.com"
-  ;;       smtpmail-smtp-service 587
-  ;;       smtpmail-debug-info t)
-
+  (setq message-send-mail-function 'smtpmail-send-it
+	starttls-use-gnutls t
+	smtpmail-starttls-credentials
+	'(("smtp.gmail.com" 587 nil nil))
+	smtpmail-auth-credentials
+	(expand-file-name "~/.authinfo.gpg")
+	smtpmail-default-smtp-server "smtp.gmail.com"
+	smtpmail-smtp-server "smtp.gmail.com"
+	smtpmail-smtp-service 587
+	smtpmail-debug-info t)
+  ;; Other source
   ;; I have my "default" parameters from Gmail
   ;; (setq mu4e-sent-folder "/Users/kef/.mail/kfring/Sent"
   ;;       ;; mu4e-sent-messages-behavior 'delete ;; Unsure how this should be configured
@@ -1238,6 +1243,7 @@ TODO: mu4e-view-actions view in browser
 #+END_SRC
 
 *** [[#mu4e-1][mu4e-hydra]
+
 ** News Reader
 Elfeed is a very nice RSS/Atom reader for emacs.
 *** Key Bindings
