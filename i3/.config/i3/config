@@ -123,7 +123,7 @@ exec --no-startup-id systemctl --user start checkmail.timer &
 # Start xautolock for screen locking. We can toggle this with $mod+Shift+u
 # Bottom-right corner of screen for mouse should prevent locking.
 # Lock after 10 minutes
-exec xautolock -corners 00-0 -detectsleep -time 10 -locker "~/.bin/lock" -notify 10 -notifier "notify-send -u normal -t 10000 -- 'LOCKING screen'"
+exec xautolock -corners 00-0 -detectsleep -time 10 -locker "~/.bin/lock" #-notify 10 -notifier "notify-send -u normal -t 10000 -- 'LOCKING screen'"
 
 # Spotify
 exec --no-startup-id exec spotify --force-device-scale-factor=2 &

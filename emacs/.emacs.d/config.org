@@ -1061,18 +1061,18 @@ And show changes in the gutter (fringe).
     (set-face-foreground 'git-gutter:deleted "red"))
 #+END_SRC
 
-** TODO Email
+** Email
 mu, 4 emacs
 [https://www.djcbsoftware.nl/code/mu/mu4e/][mu4e docs]
-Use org structures and tables in message mode
 *** TODO mu4e
+Use org structures and tables in message mode
 #+BEGIN_SRC emacs-lisp
   (add-hook 'message-mode-hook 'turn-on-orgtbl)
   (add-hook 'message-mode-hook 'turn-on-orgstruct++)
 #+END_SRC
 
 We're using mbsync to pull in our email.  We should have systemd scripts in
-=~/.config/systemd/user/=
+=~/.config/systemd/user/= [[https://bostonenginerd.com/posts/notmuch-of-a-mail-setup-part-1-mbsync-msmtp-and-systemd/][src]]
 #+BEGIN_QUOTE
 To start the timer, you should type systemctl --user start checkmail.timer.
 Using the command systemctl --user status checkmail.timer will allow you to see
@@ -1183,6 +1183,7 @@ TODO: mu4e-view-actions view in browser
   (global-mu4e-conversation-mode)
 #+END_SRC
 
+*** [[#mu4e-1][mu4e-hydra]
 *** mu4e-alert
 #+BEGIN_SRC emacs-lisp
   (use-package mu4e-alert :ensure
@@ -1210,8 +1211,6 @@ TODO: mu4e-view-actions view in browser
   ;;   (run-with-timer 0 60 'gjstein-refresh-mu4e-alert-mode-line)
   ;;   )
 #+END_SRC
-
-*** [[#mu4e-1][mu4e-hydra]
 
 ** News Reader
 Elfeed is a very nice RSS/Atom reader for emacs.
