@@ -231,55 +231,55 @@ Debugger entered--Lisp error: (error "Don’t know how to make a localized varia
 #+END_QUOTE
 
 #+BEGIN_SRC emacs-lisp
-  (defun kef/setup-indent (n)
-    ;; java/c/c++
-    (setq c-basic-offset n)
-    ;; web development
-    (setq coffee-tab-width n) ; coffeescript
-    (setq javascript-indent-level n) ; javascript-mode
-    (setq js-indent-level n) ; js-mode
-    (setq js2-basic-offset n) ; js2-mode, in latest js2-mode, it's alias of js-indent-level
-    (setq web-mode-markup-indent-offset n) ; web-mode, html tag in html file
-    (setq web-mode-css-indent-offset n) ; web-mode, css in html file
-    (setq web-mode-code-indent-offset n) ; web-mode, js code in html file
-    (setq css-indent-offset n) ; css-mode
-    )
+  ;; (defun kef/setup-indent (n)
+  ;;   ;; java/c/c++
+  ;;   (setq c-basic-offset n)
+  ;;   ;; web development
+  ;;   (setq coffee-tab-width n) ; coffeescript
+  ;;   (setq javascript-indent-level n) ; javascript-mode
+  ;;   (setq js-indent-level n) ; js-mode
+  ;;   (setq js2-basic-offset n) ; js2-mode, in latest js2-mode, it's alias of js-indent-level
+  ;;   (setq web-mode-markup-indent-offset n) ; web-mode, html tag in html file
+  ;;   (setq web-mode-css-indent-offset n) ; web-mode, css in html file
+  ;;   (setq web-mode-code-indent-offset n) ; web-mode, js code in html file
+  ;;   (setq css-indent-offset n) ; css-mode
+  ;;   )
 
-  (defun kef/tabs-code-style ()
-    (interactive)
-    (message "tab code style!")
-    ;; use tab instead of space
-    (setq indent-tabs-mode t)
-    ;; indent 4 spaces width
-    (kef/setup-indent 4))
+  ;; (defun kef/tabs-code-style ()
+  ;;   (interactive)
+  ;;   (message "tab code style!")
+  ;;   ;; use tab instead of space
+  ;;   (setq indent-tabs-mode t)
+  ;;   ;; indent 4 spaces width
+  ;;   (kef/setup-indent 4))
 
-  (defun kef/spaces-code-style ()
-    (interactive)
-    (message "spaces code style!")
-    ;; use space instead of tab
-    (setq indent-tabs-mode nil)
-    ;; indent 2 spaces width
-    (kef/setup-indent 2))
+  ;; (defun kef/spaces-code-style ()
+  ;;   (interactive)
+  ;;   (message "spaces code style!")
+  ;;   ;; use space instead of tab
+  ;;   (setq indent-tabs-mode nil)
+  ;;   ;; indent 2 spaces width
+  ;;   (kef/setup-indent 2))
 
-  (defun kef/setup-develop-environment ()
-    (interactive)
-    (let ((proj-dir (file-name-directory (buffer-file-name))))
-      ;; if hobby project path contains string "hobby-proj1"
-      (if (string-match-p "hobby-proj1" proj-dir)
-          (kef/spaces-code-style))
+  ;; (defun kef/setup-develop-environment ()
+  ;;   (interactive)
+  ;;   (let ((proj-dir (file-name-directory (buffer-file-name))))
+  ;;     ;; if hobby project path contains string "hobby-proj1"
+  ;;     (if (string-match-p "hobby-proj1" proj-dir)
+  ;;         (kef/spaces-code-style))
 
-      ;; if commericial project path contains string "commerical-proj"
-      (if (string-match-p "commerical-proj" proj-dir)
-          (kef/tabs-code-style))))
+  ;;     ;; if commericial project path contains string "commerical-proj"
+  ;;     (if (string-match-p "commerical-proj" proj-dir)
+  ;;         (kef/tabs-code-style))))
 
-  ;; prog-mode-hook requires emacs24+
-  (add-hook 'prog-mode-hook 'kef/setup-develop-environment)
-  ;; a few major-modes does NOT inherited from prog-mode
-  (add-hook 'lua-mode-hook 'kef/setup-develop-environment)
-  (add-hook 'web-mode-hook 'kef/setup-develop-environment)
+  ;; ;; prog-mode-hook requires emacs24+
+  ;; (add-hook 'prog-mode-hook 'kef/setup-develop-environment)
+  ;; ;; a few major-modes does NOT inherited from prog-mode
+  ;; (add-hook 'lua-mode-hook 'kef/setup-develop-environment)
+  ;; (add-hook 'web-mode-hook 'kef/setup-develop-environment)
 
-  ;; Just switch to tabs now.
-  (kef/tabs-code-style)
+  ;; ;; Just switch to tabs now.
+  ;; (kef/tabs-code-style)
 #+END_SRC
 
 *** Sentence Endings
@@ -419,12 +419,6 @@ From http://pages.sachachua.com/.emacs.d/Sacha.html#sec-1-4-8
   (defvar *kef/theme-light* 'doom-tomorrow-day)
   (defvar *kef/current-theme* *kef/theme-dark*)
 
-  ;; disable other themes before loading new one
-  (defadvice load-theme (before theme-dont-propagate activate)
-    "Disable theme before loading new one."
-    (mapcar #'disable-theme custom-enabled-themes))
-
-
   (defun kef/next-theme (theme)
     (if (eq theme 'default)
         (disable-theme *kef/current-theme*)
@@ -445,7 +439,9 @@ what is already existing.  This makes a lot of sense if your theme is modular.
 - There may be a difference in how =emacs --daemon= and =emacsclient -nc= load
   themes as well.
 #+BEGIN_SRC emacs-lisp
+  ;; disable other themes before loading new one
   (defadvice load-theme (before theme-dont-propagate activate)
+    "Disable theme before loading new one."
     (mapc #'disable-theme custom-enabled-themes))
 #+END_SRC
 
@@ -454,7 +450,7 @@ Lets stop fucking around with broken themes and just use =zenburn=.
 base16 seems to work well. perhaps we can find a light theme we like here.
 #+BEGIN_SRC emacs-lisp
   ;; (use-package zenburn-theme :ensure t)
-  ;; (use-package base16-theme :ensure t)
+  (use-package base16-theme :ensure t)
 #+END_SRC
 
 **** doom-themes
@@ -473,12 +469,12 @@ base16 seems to work well. perhaps we can find a light theme we like here.
 **** enable-theme:
 #+BEGIN_SRC emacs-lisp
   ;;(load-theme 'zenburn t t)
-  ;;(load-theme 'base16-one-light t t)
+  ;;(load-theme 'base16-tomorrow t t)
 
   ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
   ;; may have their own settings.
   (load-theme 'doom-tomorrow-day t)
-  ;;(load-theme 'dichromacy t)
+  ;; (load-theme 'dichromacy t)
 
 #+END_SRC
 
@@ -635,7 +631,7 @@ Move between open windows with =M-o= as well as =C-x o=.
   (global-set-key (kbd "M-o") 'other-window)
 #+END_SRC
 
-*** Window (Buffer) splits and closures
+*** TODO Window (Buffer) splits and closures
 :LOGBOOK:
 - State "DONE"       from "TODO"       [2019-07-04 Thu 21:49]
 :END:
@@ -652,12 +648,12 @@ Removed super-key usage here and replicated i3-like bindings with C- instead of 
     (split-window-horizontally)
     (other-window 1 nil)
     (switch-to-next-buffer))
-
-  (global-set-key (kbd "C-q") (kbd "C-x 0")) ;; Like our i3 config of s-q
+  ;; lets use something other than S or F? S is for search. F is Forward. Left hand side key? C-u?
+  (global-set-key (kbd "C-q") (kbd "C-x 0")) ;; Like our i3 config of s-q ;; F is used by emacs for movement.. duh.
   (global-set-key (kbd "C-S-q") (kbd "C-x 1")) ;; close others with shift. In i3 the translation would be mod$-shift
 
-  (global-set-key (kbd "C-s") 'hsplit-last-buffer)   ;; i3: mod-s
-  (global-set-key (kbd "C-S-s") 'vsplit-last-buffer) ;; i3: mod-shift-s
+  (global-set-key (kbd "C-u") 'hsplit-last-buffer)   ;; i3: mod-s
+  (global-set-key (kbd "C-S-u") 'vsplit-last-buffer) ;; i3: mod-shift-s
 #+END_SRC
 
 ** Ivy, Swiper and Counsel.
@@ -681,7 +677,7 @@ The Holy Trinity
 
   (use-package swiper :ensure
     :config
-    (global-set-key (kbd "C-f") 'swiper)) ;; use swiper-search bound to C-f like browsers. This will take awhile to get used to.
+    (global-set-key (kbd "C-s") 'swiper)) ;; use swiper-search bound to C-f like browsers. This will take awhile to get used to.
 
   (use-package counsel :ensure
     :config
@@ -718,7 +714,12 @@ Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g.
     (setq ivy-rich-path-style 'abbrev)) ;; To abbreviate paths using abbreviate-file-name (e.g. replace “/home/username” with “~”
 #+END_SRC
 
-** Text Formatting, Selection and Editing
+** TODO Text Formatting, Selection and Editing
+- [ ] look at [[https://github.com/freetonik/emacs-dotfiles/blob/master/init.org#navigation-and-editing][freetonik's]] bindings for text selection that are more os-x like.  I really do
+  want to avoid using the Super-key in Linux for anything other than our Window
+  manager. IIRC, OSX uses the CMD(Apple) key as Super in emacs.
+- [ ] [[https://stackoverflow.com/questions/162896/emacs-on-mac-os-x-leopard-key-bindings][handy list of OSX keybindings]]
+
 *** Save my location within a file
 Using =save-place-mode= saves the location of point for every file I visit. If I
 close the file or close the editor, then later re-open it, point will be at the
@@ -944,7 +945,7 @@ Turn on rainbow-mode for web/css.
 ** R
 Let's get emacs talking with R.  We need to let emacs know how to run R Code.
 #+BEGIN_SRC emacs-lisp
-  (use-package ess :ensure)
+  ;;(use-package ess :ensure)
 #+END_SRC
 
 * Extended Configuration
@@ -1082,48 +1083,107 @@ To start the timer automatically, issue the systemctl --user start checkmail.tim
 Another neat command is systemctl --user list-timers. This will list all of the timers that you have active and how long until they’re triggered again. Neat stuff. Systemd is pretty clever.
 #+END_QUOTE
 
-TODO: mu4e-view-actions view in browser
+TODO: redo mbsync with [[https://www.reddit.com/r/emacs/comments/bfsck6/mu4e_for_dummies/][mu4e for dummies]]
 #+BEGIN_SRC emacs-lisp
-  ;; installed from release.
-  (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
-  (setq mu4e-maildir       "~/.mail")   ;; top-level Maildir
+    ;; installed from release.
+    (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+    (require 'mu4e)
 
-  ;; Note: This shows no email, wonder if it's been fixed in 1.0
-  ;; Ignore duplicates
-  (setq mu4e-headers-skip-duplicates t)
+    (setq mu4e-maildir       "~/.mail")   ;; top-level Maildir
 
-  ;; GMail already adds sent mail to the Sent Mail folder.
-  (setq mu4e-sent-messages-behavior 'delete)
+    ;; from https://www.reddit.com/r/emacs/comments/bfsck6/mu4e_for_dummies/elgoumx
+    (add-hook 'mu4e-headers-mode-hook
+              (defun my/mu4e-change-headers ()
+                (interactive)
+                (setq mu4e-headers-fields
+                      `((:human-date . 25) ;; alternatively, use :date
+                        (:flags . 6)
+                        (:from . 22)
+                        (:thread-subject . ,(- (window-body-width) 70)) ;; alternatively, use :subject
+                        (:size . 7)))))
 
-  ;; don't keep message buffers around
-  (setq message-kill-buffer-on-exit t)
+    ;; if you use date instead of human-date in the above, use this setting
+    ;; give me ISO(ish) format date-time stamps in the header list
+    ;; (setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
 
-  ;; Some hooks that I find useful:
-  (add-hook 'mu4e-view-mode-hook #'visual-line-mode)
-  ;; Spell checking ftw.
-  (add-hook 'mu4e-compose-mode-hook 'flyspell-mode)
+      ; get mail
+      (setq mu4e-get-mail-command "mbsync -c ~/.mbsyncrc -a"
+        ;; mu4e-html2text-command "w3m -T text/html" ;;using the default mu4e-shr2text
+        mu4e-view-prefer-html t
+        mu4e-update-interval 120
+        mu4e-headers-auto-update t
+        mu4e-compose-signature-auto-include nil
+        mu4e-compose-format-flowed t)
 
-  ;; Sometimes html email is just not readable in a text based client, this lets me open the
-  ;; email in my browser.
-  ;; (add-to-list 'mu4e-view-actions '("View in browser" . mu4e-action-view-in-browser) t)
+    ;; to view selected message in the browser, no signin, just html mail
+    (add-to-list 'mu4e-view-actions
+                 '("ViewInBrowser" . mu4e-action-view-in-browser) t)
 
-  ;; This hook correctly modifies the \Inbox and \Starred flags on email when they are marked.
-  ;; Without it refiling (archiving) and flagging (starring) email won't properly result in
-  ;; the corresponding gmail action.
-  (add-hook 'mu4e-mark-execute-pre-hook
-            (lambda (mark msg)
-              (cond ((member mark '(refile trash)) (mu4e-action-retag-message msg "-\\Inbox"))
-                    ((equal mark 'flag) (mu4e-action-retag-message msg "\\Starred"))
-                    ((equal mark 'unflag) (mu4e-action-retag-message msg "-\\Starred")))))
+    ;; enable inline images
+    (setq mu4e-view-show-images t)
+    ;; use imagemagick, if available
+    (when (fboundp 'imagemagick-register-types)
+        (imagemagick-register-types))
 
-  ;; mu4e uses its own version of message-mode. The only benefit I know of is that it enables completion for To, CC and BCC fields. That is really useful though!
-  (setq mail-user-agent 'mu4e-user-agent)
+    ;; every new email composition gets its own frame!
+    (setq mu4e-compose-in-new-buffer t)
 
-  ;; For some reason it uses its own signature variable. Not anymore!
-  (defvaralias 'mu4e-compose-signature 'message-signature)
+    ;; Note: This shows no email, wonder if it's been fixed in 1.0
+    ;; Ignore duplicates
+    (setq mu4e-headers-skip-duplicates t)
 
-  (setq mu4e-completing-read-function 'ivy-completing-read
-        mu4e-confirm-quit nil) ; Ivy for completion
+    ;; GMail already adds sent mail to the Sent Mail folder.
+    (setq mu4e-sent-messages-behavior 'delete)
+
+    ;; don't keep message buffers around
+    (setq message-kill-buffer-on-exit t)
+    ;;rename files when moving
+    ;;NEEDED FOR MBSYNC
+    (setq mu4e-change-filenames-when-moving t)
+
+    ;;set up queue for offline email
+    ;;use mu mkdir  ~/Maildir/acc/queue to set up first
+    (setq smtpmail-queue-mail nil)  ;; start in normal mode
+
+    ;;from the info manual
+    (setq mu4e-attachment-dir  "~/Downloads")
+    (setq mu4e-compose-dont-reply-to-self t)
+
+    (require 'org-mu4e)
+
+    ;; convert org mode to HTML automatically
+    ;; (setq org-mu4e-convert-to-html t)  ;; Until we can squelch the TOC, we're leaving this off.
+
+    ;;from vxlabs config
+    ;; show full addresses in view message (instead of just names)
+    ;; toggle per name with M-RET
+    (setq mu4e-view-show-addresses 't)
+
+      ;; Some hooks
+    (add-hook 'mu4e-view-mode-hook #'visual-line-mode)
+    (add-hook 'mu4e-compose-mode-hook #'org-mu4e-compose-org-mode)
+    (add-hook 'mu4e-compose-mode-hook #'toc-org-mode -1)  ;; really don't want a table of contents in our emails
+  ;; but this is the wrong place to fix this. It's likely happening when the EXPORT of the email to HTML occurs.
+    (add-hook 'mu4e-compose-mode-hook 'use-hard-newlines -1)
+    (add-hook 'mu4e-compose-mode-hook #'flyspell-mode)
+
+      ;; This hook correctly modifies the \Inbox and \Starred flags on email when they are marked.
+      ;; Without it refiling (archiving) and flagging (starring) email won't properly result in
+      ;; the corresponding gmail action.
+      (add-hook 'mu4e-mark-execute-pre-hook
+                (lambda (mark msg)
+                  (cond ((member mark '(refile trash)) (mu4e-action-retag-message msg "-\\Inbox"))
+                        ((equal mark 'flag) (mu4e-action-retag-message msg "\\Starred"))
+                        ((equal mark 'unflag) (mu4e-action-retag-message msg "-\\Starred")))))
+
+      ;; mu4e uses its own version of message-mode. The only benefit I know of is that it enables completion for To, CC and BCC fields. That is really useful though!
+      (setq mail-user-agent 'mu4e-user-agent)
+
+      ;; For some reason it uses its own signature variable. Not anymore!
+      (defvaralias 'mu4e-compose-signature 'message-signature)
+
+      (setq mu4e-completing-read-function 'ivy-completing-read
+            mu4e-confirm-quit nil) ; Ivy for completion
 #+END_SRC
 
 *** mu4e-context
@@ -1131,26 +1191,28 @@ TODO: mu4e-view-actions view in browser
   ;; Set contexts based on if it's a gmail account or not.
   ;; ref: http://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and-/
   ;; This sets up my two different context for my personal and school emails
-  (require 'mu4e-context)
+  (setq mu4e-context-policy 'pick-first)
+  (setq mu4e-compose-context-policy 'always-ask)
   (setq mu4e-contexts
-        `( ,(make-mu4e-context    ;; me@kfring.com
-             :name "me@kfring"
-             :enter-func (lambda () (mu4e-message "Switch to the me@kfring context"))
-             :match-func (lambda (msg)
-                           (when msg
-                             (mu4e-message-maildir-matches msg "^/kfring")))
-             :leave-func (lambda () (mu4e-clear-caches))
-             :vars '(
-                     (user-mail-address     . "me@kfring.com")
-                     (user-full-name        . "Kyle Fring")
-                     (mu4e-sent-folder      . "/kfring/Sent")
-                     (mu4e-drafts-folder    . "/kfring/Drafts")
-                     (mu4e-trash-folder     . "/kfring/Trash")
-                     (mu4e-refile-folder    . "/kfring/All-Mail")
-                     )
-             )
-           )
-  )
+	(list
+	 (make-mu4e-context    ;; me@kfring.com
+	  :name "me@kfring"
+	  :enter-func (lambda () (mu4e-message "Switch to the me@kfring context"))
+	  :match-func (lambda (msg)
+			(when msg
+			  (mu4e-message-maildir-matches msg "^/kfring")))
+	  :leave-func (lambda () (mu4e-clear-caches))
+	  :vars '(
+		  (user-mail-address     . "me@kfring.com")
+		  (user-full-name        . "Kyle Fring")
+		  (mu4e-sent-folder      . "/kfring/Sent")
+		  (mu4e-drafts-folder    . "/kfring/Drafts")
+		  (mu4e-trash-folder     . "/kfring/Trash")
+		  (mu4e-refile-folder    . "/kfring/All-Mail")
+		  )
+	  )
+	 )
+	)
 #+END_SRC
 
 *** Sending email
@@ -1607,9 +1669,15 @@ Can we use org-download to set files to be saved in specific locations?????
 [[https://github.com/rememberYou/.emacs.d/blob/master/config.org#org-mode][src]]
 If like me, you’re tired of manually updating your tables of contents, toc-org will maintain a table of contents at the first heading that has a :TOC: tag.
 #+BEGIN_SRC emacs-lisp
-  (use-package toc-org
-    :after org
-    :hook (org-mode . toc-org-enable))
+  (use-package toc-org)
+  ;; :after org
+  ;; :hook (org-mode . toc-org-enable))
+
+  ;; We want to set up toc-org-mode to ONLY EVER do its thing if the headline has the :TOC: tag.
+  ;; (add-hook 'org-mode (lambda ()
+                        ;; (unless (eq major-mode 'mu4e-compose-mode)
+                        ;;   (toc-org-enable))))
+  ;; (add-hook 'org~mu4e-mime-convert-to-html #'toc-org-mode -1)
 #+END_SRC
 
 For a cleaner online mode.

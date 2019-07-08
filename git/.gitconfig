@@ -43,5 +43,8 @@
 	signingkey = 3AA5C34371567BD2
 	email = me@kfring.com
 	name = Kyle Fring
+	signkey = ADEEC8C79ADE8412
 [github]
 	user = k-f-
+[gpg]
+	program = gpg2

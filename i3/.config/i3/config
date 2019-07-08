@@ -115,10 +115,10 @@ exec --no-startup-id urxvt -e ~/.bin/gotop &
 exec --no-startup-id urxvt
 
 # Invoke the Emacs daemon
-exec --no-startup-id emacs --daemon &
+exec --no-startup-id emacs --deamon
 
 # Start our email checking systemd timer.
-exec --no-startup-id systemctl --user start checkmail.timer &
+#exec --no-startup-id systemctl --user start checkmail.timer &
 
 # Start xautolock for screen locking. We can toggle this with $mod+Shift+u
 # Bottom-right corner of screen for mouse should prevent locking.
