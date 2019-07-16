@@ -1,6 +1,6 @@
 export EDITOR="$HOME/.bin/em"
 export TERMINAL="urxvt"
-export READER="zathura"
+export READER="envince"
 export FILE="pcmanfm"
 export ALTERNATE_EDITOR=""
 #export BROWSER="google-chrome-stable"

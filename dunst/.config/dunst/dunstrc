@@ -1,5 +1,5 @@
 [global]
-	font = San Fransico Display 15
+	font = San Fransico Display 10
 
 # Allow a small subset of html markup:
 #   <b>bold</b>
@@ -70,7 +70,7 @@ hide_duplicates_count = yes
 # The width can be negative.  In this case the actual width is the
 # screen width minus the width defined in within the geometry option.
 #geometry = "250x50-40+40"
-geometry = "300x50-15+49"
+geometry = "600x0-15+49"
 
 # Shrink window if it's smaller than the width.  Will be ignored if
 # width is 0.
@@ -148,7 +148,7 @@ dmenu = /usr/bin/dmenu -p dunst:
 browser = /usr/bin/firefox -new-tab
 
 # Align icons left/right/off
-icon_position = off
+icon_position = left
 max_icon_size = 80
 
 # Paths to default icons.

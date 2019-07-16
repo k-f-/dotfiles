@@ -106,6 +106,20 @@ Install and load =use-package=
 #+BEGIN_SRC emacs-lisp
 (setq epg-gpg-program "/usr/bin/gpg2")
 #+END_SRC
+
+Both Company and Abbrev will auto-complete encrypted contents if you let them.
+Lets not.
+#+BEGIN_SRC emacs-lisp
+  (setq dabbrev-ignored-buffer-regexps '(".*\.org$" ".*\.gpg$" "^ [*].*"))
+
+  (defun kef/company-dabbrev-ignore (buffer)
+    (let (res)
+      ;; don't search in org files, encrypted files, or hidden buffers
+      (dolist (re '("\.org$" "\.gpg$" "^ [*]") res)
+        (if (string-match-p re (buffer-name buffer))
+            (setq res t)))))
+  (setq company-dabbrev-ignore-buffers 'kef/company-dabbrev-ignore)
+#+END_SRC
 ** Authentication
 #+BEGIN_SRC emacs-lisp
   (setq auth-sources '("~/.gnupg/shared/authinfo.gpg"
@@ -1110,7 +1124,7 @@ TODO: redo mbsync with [[https://www.reddit.com/r/emacs/comments/bfsck6/mu4e_for
       (setq mu4e-get-mail-command "mbsync -c ~/.mbsyncrc -a"
         ;; mu4e-html2text-command "w3m -T text/html" ;;using the default mu4e-shr2text
         mu4e-view-prefer-html t
-        mu4e-update-interval 120
+        mu4e-update-interval 300
         mu4e-headers-auto-update t
         mu4e-compose-signature-auto-include nil
         mu4e-compose-format-flowed t)
@@ -1572,7 +1586,35 @@ Set a keybinding of =Super-s= to bring up this view.
 
 *** Org-TODO Keywords
 #+BEGIN_SRC emacs-lisp
-  (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w@/!)" "|" "IN-PROGRESS (i)"  "|" "DONE(d!)" "CANCELLED(c@)")))
+  ;;(setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w@/!)" "|" "DONE(d!)" "CANCELLED(c@)")))
+
+  (setq org-todo-keywords
+        (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+                (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
+
+  (setq org-todo-keyword-faces
+        (quote (("NEXT" :foreground "cyan" :weight bold)
+                ("DONE" :foreground "gray" :weight bold)
+                ("WAITING" :foreground "orange" :weight bold)
+                ("HOLD" :foreground "magenta" :weight bold)
+                ("CANCELLED" :foreground "gray" :weight bold))))
+#+END_SRC
+
+Don't harass me while I'm just changing keyword states, thanks!
+#+BEGIN_SRC emacs-lisp
+  (setq org-treat-S-cursor-todo-selection-as-state-change nil)
+#+END_SRC
+
+Lets add tags to our items?
+#+BEGIN_SRC emacs-lisp
+  (setq org-todo-state-tags-triggers
+        (quote (("CANCELLED" ("CANCELLED" . t))
+                ("WAITING" ("WAITING" . t))
+                ("HOLD" ("WAITING") ("HOLD" . t))
+                (done ("WAITING") ("HOLD"))
+                ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+                ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+                ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
 #+END_SRC
 
 *** Capture templates

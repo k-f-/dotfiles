@@ -26,7 +26,7 @@
 [commit]
   gpgsign = true
   template = ~/.gitmessage
-	gpgsign = true
+  gpgsign = true
 [core]
   excludesfile = ~/.gitignore
 	pager = diff-so-fancy | less --tabs=4 -RFX

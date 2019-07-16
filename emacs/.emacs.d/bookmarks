@@ -12,10 +12,10 @@
  (tags "star")
  (handler . elfeed-search-bookmark-handler))
 ("org-capture-last-stored"
- (filename . "~/org/albums.org")
- (front-context-string . "*** [2019-07-05 ")
- (rear-context-string . "hing up, huh?\"\n\n")
- (position . 6765))
+ (filename . "~/org/life.org")
+ (front-context-string . "** TODO emacs-di")
+ (rear-context-string . "ing\n\n* Personal\n")
+ (position . 114))
 ("elfeed-unread"
  (location . "+unread")
  (tags "unread")

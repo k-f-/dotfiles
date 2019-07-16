@@ -2,8 +2,10 @@
 
 sudo apt install \
      aptitude \
+     autorandr \ 
      build-essential \
      curl \
+     dunst \
      emacs26 \
      feh \
      fonts-font-awesome \
@@ -51,7 +53,6 @@ sudo apt install \
      xdotool \
      xsel \
      youtube-dl \
-     zathura \
 
 # For tlp power management.
 sudo apt install \

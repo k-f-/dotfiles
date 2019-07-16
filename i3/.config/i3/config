@@ -14,6 +14,7 @@ set $shutdown sudo -A shutdown -h now
 set $reboot sudo -A reboot
 set $netrefresh --no-startup-id sudo -A systemctl restart NetworkManager
 set $hibernate sudo -A systemctl suspend
+set $lockscreen-wallpaper ~/.dotfiles/x-windows/.wallpaper/jellyfish01.png
 
 # Open a file browser window
 bindsym $mod+n exec pcmanfm &
@@ -24,12 +25,12 @@ bindsym XF86AudioNext exec playerctl next
 bindsym XF86AudioPrev exec playerctl previous
 
 # lockscreen - mod+u
-bindsym $mod+u exec --no-startup-id ~/.bin/lock
+#bindsym $mod+u exec --no-startup-id ~/.bin/lock
+bindsym $mod+u exec --no-startup-id betterlockscreen -l dim
 
 # xautolock-toggle mod+shift+u
 # This is a little gross from [https://unix.stackexchange.com/questions/144843/get-xautolock-status] but it works for the moment. Lets change it to the actual option of -toggle later.
 bindsym $mod+Shift+u exec --no-startup-id "if xautolock -exit; then (notify-send -u normal -t 1000 -- 'LOCK OFF') 2> /dev/null; else notify-send -u normal -t 1000 -- 'LOCK on'; xautolock -time 2 -locker ' ~/.bin/lock' -notify 10 -notifier \\"notify-send -u normal -t 100 -- 'LOCKING screen ...'\\"; fi"
-#bindsym $mod+Shift+l exec "notify-send 'autolocking: off'"
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -124,6 +125,9 @@ exec --no-startup-id emacs --deamon
 # Bottom-right corner of screen for mouse should prevent locking.
 # Lock after 10 minutes
 exec xautolock -corners 00-0 -detectsleep -time 10 -locker "~/.bin/lock" #-notify 10 -notifier "notify-send -u normal -t 10000 -- 'LOCKING screen'"
+
+# Using "betterlockscreen" fork of i3lock-color we need to cache our lock-screen image so we can lock quickly.
+exec betterlockscreen -u $lockscreen-wallpaper
 
 # Spotify
 exec --no-startup-id exec spotify --force-device-scale-factor=2 &
