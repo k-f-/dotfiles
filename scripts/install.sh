@@ -3,6 +3,8 @@
 # Install all the necessary Debian packages, especially `stow`.
 #./install_debian_packages.sh
 
+cd ~/.dotfiles
+
 stow bash
 stow compton
 stow dunst
@@ -19,7 +21,7 @@ stow rofi
 stow systemd
 stow vim
 stow x-windows
-stow zathura
+stow secrets 
 
 # Link .bash_profile -> .bashrc
 rm -f ~/.bash_profile
