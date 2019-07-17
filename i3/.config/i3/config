@@ -125,7 +125,7 @@ exec --no-startup-id emacs --deamon
 # Bottom-right corner of screen for mouse should prevent locking.
 # Lock after 10 minutes
 #exec xautolock -corners 00-0 -detectsleep -time 10 -locker "~/.bin/lock" #-notify 10 -notifier "notify-send -u normal -t 10000 -- 'LOCKING screen'"
-exec xautolock -corners 00-0 -detectsleep -time 10 -locker betterlockscreen -l dim
+exec xautolock -corners 00-0 -detectsleep -time 10 -locker "betterlockscreen -l dim"
 
 # Using "betterlockscreen" fork of i3lock-color we need to cache our lock-screen image so we can lock quickly.
 exec betterlockscreen -u $lockscreen-wallpaper -r 3840x2160     # Size/Aspect for XPS15/4k + samsung 1920x1080 external
