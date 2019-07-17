@@ -14,7 +14,7 @@ set $shutdown sudo -A shutdown -h now
 set $reboot sudo -A reboot
 set $netrefresh --no-startup-id sudo -A systemctl restart NetworkManager
 set $hibernate sudo -A systemctl suspend
-set $lockscreen-wallpaper ~/.dotfiles/x-windows/.wallpaper/jellyfish01.png
+set $lockscreen-wallpaper ~/.dotfiles/x-windows/.wallpaper/daftpunk.png
 
 # Open a file browser window
 bindsym $mod+n exec pcmanfm &
@@ -124,10 +124,11 @@ exec --no-startup-id emacs --deamon
 # Start xautolock for screen locking. We can toggle this with $mod+Shift+u
 # Bottom-right corner of screen for mouse should prevent locking.
 # Lock after 10 minutes
-exec xautolock -corners 00-0 -detectsleep -time 10 -locker "~/.bin/lock" #-notify 10 -notifier "notify-send -u normal -t 10000 -- 'LOCKING screen'"
+#exec xautolock -corners 00-0 -detectsleep -time 10 -locker "~/.bin/lock" #-notify 10 -notifier "notify-send -u normal -t 10000 -- 'LOCKING screen'"
+exec xautolock -corners 00-0 -detectsleep -time 10 -locker betterlockscreen -l dim
 
 # Using "betterlockscreen" fork of i3lock-color we need to cache our lock-screen image so we can lock quickly.
-exec betterlockscreen -u $lockscreen-wallpaper
+exec betterlockscreen -u $lockscreen-wallpaper -r 3840x2160     # Size/Aspect for XPS15/4k + samsung 1920x1080 external
 
 # Spotify
 exec --no-startup-id exec spotify --force-device-scale-factor=2 &
