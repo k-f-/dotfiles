@@ -1893,7 +1893,7 @@ Interesting keymaps to keep you sane.
    ("A" . mu4e-headers-mark-for-action)        ; differs from built-in
 
    ("`" . mu4e-update-mail-and-index)          ; differs from built-in
-   ("|" . mu4e-view-pipe)               	     ; does not seem to be built in any longer
+   ("|" . mu4e-view-pipe)                      ; does not seem built-in any longer
    ("." . hydra-mu4e-headers/body))
 #+END_SRC
 
