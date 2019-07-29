@@ -30,7 +30,7 @@ bindsym $mod+u exec --no-startup-id betterlockscreen -l dim
 
 # xautolock-toggle mod+shift+u
 # This is a little gross from [https://unix.stackexchange.com/questions/144843/get-xautolock-status] but it works for the moment. Lets change it to the actual option of -toggle later.
-bindsym $mod+Shift+u exec --no-startup-id "if xautolock -exit; then (notify-send -u normal -t 1000 -- 'LOCK OFF') 2> /dev/null; else notify-send -u normal -t 1000 -- 'LOCK on'; xautolock -time 2 -locker ' ~/.bin/lock' -notify 10 -notifier \\"notify-send -u normal -t 100 -- 'LOCKING screen ...'\\"; fi"
+bindsym $mod+Shift+u exec --no-startup-id "if xautolock -exit; then (notify-send -u normal -t 1000 -- ' disabled') 2> /dev/null; else notify-send -u normal -t 1000 -- ' autolock'; xautolock -corners 00-0 -detectsleep -time 10 -locker "betterlockscreen -l dim"; fi"
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -173,7 +173,7 @@ gaps outer 4
 # changing how borders look
 #for_window [class="^.*"] border normal 0
 #for_window [class="^.*"] border none 0
-for_window [class="^.*"] border pixel 2
+for_window [class="^.*"] border pixel 5
 
 # Borders only if there is more than one pane
 smart_borders on

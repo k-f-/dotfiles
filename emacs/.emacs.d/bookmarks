@@ -13,7 +13,7 @@
  (handler . elfeed-search-bookmark-handler))
 ("org-capture-last-stored"
  (filename . "~/org/life.org")
- (front-context-string . "** TODO lukesmit")
+ (front-context-string . "** TODO Get tick")
  (rear-context-string . "ing\n\n* Personal\n")
  (position . 114))
 ("elfeed-unread"
