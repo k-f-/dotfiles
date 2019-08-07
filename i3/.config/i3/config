@@ -30,7 +30,7 @@ bindsym $mod+u exec --no-startup-id betterlockscreen -l dim
 
 # xautolock-toggle mod+shift+u
 # This is a little gross from [https://unix.stackexchange.com/questions/144843/get-xautolock-status] but it works for the moment. Lets change it to the actual option of -toggle later.
-bindsym $mod+Shift+u exec --no-startup-id "if xautolock -exit; then (notify-send -u normal -t 1000 -- ' disabled') 2> /dev/null; else notify-send -u normal -t 1000 -- ' autolock'; xautolock -corners 00-0 -detectsleep -time 10 -locker "betterlockscreen -l dim"; fi"
+bindsym $mod+Shift+u exec --no-startup-id "if xautolock -exit; then (notify-send -u normal -t 1000 -- ' disabled') 2> /dev/null; else notify-send -u normal -t 1000 -- ' autolock'; xautolock -corners 00-0 -detectsleep -time 10 -locker 'betterlockscreen -l dim'; fi"
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -116,7 +116,7 @@ exec --no-startup-id urxvt -e ~/.bin/gotop &
 exec --no-startup-id urxvt
 
 # Invoke the Emacs daemon
-exec --no-startup-id emacs --deamon
+exec --no-startup-id emacs --daemon
 
 # Start our email checking systemd timer.
 #exec --no-startup-id systemctl --user start checkmail.timer &
