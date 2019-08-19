@@ -1535,6 +1535,23 @@ matter to much. Refile targets seem to be more important to have limits on.
                            "~/.emacs.d/config.org"))
 #+END_SRC
 
+Org-Habit
+#+BEGIN_SRC emacs-lisp
+  ; Enable habit tracking
+  (setq org-modules (quote (org-habit)))
+
+  ; position the habit graph on the agenda to the right of the default
+  (setq org-habit-graph-column 50)
+
+  (setq org-habit-show-habits-only-for-today nil)
+  (set 'org-habit-show-all-today t)
+  (setq org-habit-graph-column 60)
+  (setq org-habit-following-days 3)
+
+  (setq org-habit-today-glyph ?‖)
+  (setq org-habit-completed-glyph ?✓)
+#+END_SRC
+
 Some very crafty org-agenda view stuff including habits from [[https://blog.aaronbieber.com/2016/09/24/an-agenda-for-life-with-org-mode.html][Aaron Beiber]]
 #+BEGIN_SRC emacs-lisp
   (setq org-agenda-custom-commands
