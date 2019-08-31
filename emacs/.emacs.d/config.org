@@ -272,8 +272,8 @@ Debugger entered--Lisp error: (error "Don’t know how to make a localized varia
   ;;   (message "spaces code style!")
   ;;   ;; use space instead of tab
   ;;   (setq indent-tabs-mode nil)
-  ;;   ;; indent 2 spaces width
-  ;;   (kef/setup-indent 2))
+  ;;   ;; indent 4 spaces width
+  ;;   (kef/setup-indent 4))
 
   ;; (defun kef/setup-develop-environment ()
   ;;   (interactive)
@@ -918,7 +918,7 @@ Turn on rainbow-mode for web/css.
 
     (setq js-indent-level 4)
     (setq js2-indent-level 4)
-    (setq js2-basic-offset 2)
+    (setq js2-basic-offset 4)
     (setq js2-highlight-level 1)         ; some highlighting.
     '(js2-auto-indent-p t)               ; it's nice for commas to right themselves.
     '(js2-enter-indents-newline t)       ; don't need to push tab before typing
@@ -1099,29 +1099,29 @@ Another neat command is systemctl --user list-timers. This will list all of the 
 
 TODO: redo mbsync with [[https://www.reddit.com/r/emacs/comments/bfsck6/mu4e_for_dummies/][mu4e for dummies]]
 #+BEGIN_SRC emacs-lisp
-    ;; installed from release.
-    (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
-    (require 'mu4e)
+  ;; installed from release.
+  (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+  (require 'mu4e)
 
-    (setq mu4e-maildir       "~/.mail")   ;; top-level Maildir
+  (setq mu4e-maildir       "~/.mail")   ;; top-level Maildir
 
-    ;; from https://www.reddit.com/r/emacs/comments/bfsck6/mu4e_for_dummies/elgoumx
-    (add-hook 'mu4e-headers-mode-hook
-              (defun my/mu4e-change-headers ()
-                (interactive)
-                (setq mu4e-headers-fields
-                      `((:human-date . 25) ;; alternatively, use :date
-                        (:flags . 6)
-                        (:from . 22)
-                        (:thread-subject . ,(- (window-body-width) 70)) ;; alternatively, use :subject
-                        (:size . 7)))))
+  ;; from https://www.reddit.com/r/emacs/comments/bfsck6/mu4e_for_dummies/elgoumx
+  (add-hook 'mu4e-headers-mode-hook
+            (defun my/mu4e-change-headers ()
+              (interactive)
+              (setq mu4e-headers-fields
+                    `((:human-date . 25) ;; alternatively, use :date
+                      (:flags . 6)
+                      (:from . 22)
+                      (:thread-subject . ,(- (window-body-width) 70)) ;; alternatively, use :subject
+                      (:size . 7)))))
 
-    ;; if you use date instead of human-date in the above, use this setting
-    ;; give me ISO(ish) format date-time stamps in the header list
-    ;; (setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
+  ;; if you use date instead of human-date in the above, use this setting
+  ;; give me ISO(ish) format date-time stamps in the header list
+  ;; (setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
 
-      ; get mail
-      (setq mu4e-get-mail-command "mbsync -c ~/.mbsyncrc -a"
+                                          ; get mail
+  (setq mu4e-get-mail-command "mbsync -c ~/.mbsyncrc -a"
         ;; mu4e-html2text-command "w3m -T text/html" ;;using the default mu4e-shr2text
         mu4e-view-prefer-html t
         mu4e-update-interval 300
@@ -1129,75 +1129,88 @@ TODO: redo mbsync with [[https://www.reddit.com/r/emacs/comments/bfsck6/mu4e_for
         mu4e-compose-signature-auto-include nil
         mu4e-compose-format-flowed t)
 
-    ;; to view selected message in the browser, no signin, just html mail
-    (add-to-list 'mu4e-view-actions
-                 '("ViewInBrowser" . mu4e-action-view-in-browser) t)
+  ;; to view selected message in the browser, no signin, just html mail
+  (add-to-list 'mu4e-view-actions
+               '("ViewInBrowser" . mu4e-action-view-in-browser) t)
 
-    ;; enable inline images
-    (setq mu4e-view-show-images t)
-    ;; use imagemagick, if available
-    (when (fboundp 'imagemagick-register-types)
-        (imagemagick-register-types))
+  ;; enable inline images
+  (setq mu4e-view-show-images t)
+  ;; use imagemagick, if available
+  (when (fboundp 'imagemagick-register-types)
+    (imagemagick-register-types))
 
-    ;; every new email composition gets its own frame!
-    (setq mu4e-compose-in-new-buffer t)
+  ;; every new email composition gets its own frame!
+  (setq mu4e-compose-in-new-buffer t)
 
-    ;; Note: This shows no email, wonder if it's been fixed in 1.0
-    ;; Ignore duplicates
-    (setq mu4e-headers-skip-duplicates t)
+  ;; Note: This shows no email, wonder if it's been fixed in 1.0
+  ;; Ignore duplicates
+  (setq mu4e-headers-skip-duplicates t)
 
-    ;; GMail already adds sent mail to the Sent Mail folder.
-    (setq mu4e-sent-messages-behavior 'delete)
+  ;; GMail already adds sent mail to the Sent Mail folder.
+  (setq mu4e-sent-messages-behavior 'delete)
 
-    ;; don't keep message buffers around
-    (setq message-kill-buffer-on-exit t)
-    ;;rename files when moving
-    ;;NEEDED FOR MBSYNC
-    (setq mu4e-change-filenames-when-moving t)
+  ;; don't keep message buffers around
+  (setq message-kill-buffer-on-exit t)
+  ;;rename files when moving
+  ;;NEEDED FOR MBSYNC
+  (setq mu4e-change-filenames-when-moving t)
 
-    ;;set up queue for offline email
-    ;;use mu mkdir  ~/Maildir/acc/queue to set up first
-    (setq smtpmail-queue-mail nil)  ;; start in normal mode
+  ;;set up queue for offline email
+  ;;use mu mkdir  ~/Maildir/acc/queue to set up first
+  (setq smtpmail-queue-mail nil)  ;; start in normal mode
 
-    ;;from the info manual
-    (setq mu4e-attachment-dir  "~/Downloads")
-    (setq mu4e-compose-dont-reply-to-self t)
+  ;;from the info manual
+  (setq mu4e-attachment-dir  "~/Downloads")
+  (setq mu4e-compose-dont-reply-to-self t)
 
-    (require 'org-mu4e)
+  (require 'org-mu4e)
 
-    ;; convert org mode to HTML automatically
-    ;; (setq org-mu4e-convert-to-html t)  ;; Until we can squelch the TOC, we're leaving this off.
+  ;; convert org mode to HTML automatically
+  ;; (setq org-mu4e-convert-to-html t)  ;; Until we can squelch the TOC, we're leaving this off.
 
-    ;;from vxlabs config
-    ;; show full addresses in view message (instead of just names)
-    ;; toggle per name with M-RET
-    (setq mu4e-view-show-addresses 't)
+  ;;from vxlabs config
+  ;; show full addresses in view message (instead of just names)
+  ;; toggle per name with M-RET
+  (setq mu4e-view-show-addresses 't)
 
-      ;; Some hooks
-    (add-hook 'mu4e-view-mode-hook #'visual-line-mode)
-    (add-hook 'mu4e-compose-mode-hook #'org-mu4e-compose-org-mode)
-    (add-hook 'mu4e-compose-mode-hook #'toc-org-mode -1)  ;; really don't want a table of contents in our emails
+  ;; Some hooks
+  (add-hook 'mu4e-view-mode-hook #'visual-line-mode)
+  (add-hook 'mu4e-compose-mode-hook #'org-mu4e-compose-org-mode)
+  (add-hook 'mu4e-compose-mode-hook #'toc-org-mode -1)  ;; really don't want a table of contents in our emails
   ;; but this is the wrong place to fix this. It's likely happening when the EXPORT of the email to HTML occurs.
-    (add-hook 'mu4e-compose-mode-hook 'use-hard-newlines -1)
-    (add-hook 'mu4e-compose-mode-hook #'flyspell-mode)
+  (add-hook 'mu4e-compose-mode-hook 'use-hard-newlines -1)
+  (add-hook 'mu4e-compose-mode-hook #'flyspell-mode)
 
-      ;; This hook correctly modifies the \Inbox and \Starred flags on email when they are marked.
-      ;; Without it refiling (archiving) and flagging (starring) email won't properly result in
-      ;; the corresponding gmail action.
-      (add-hook 'mu4e-mark-execute-pre-hook
-                (lambda (mark msg)
-                  (cond ((member mark '(refile trash)) (mu4e-action-retag-message msg "-\\Inbox"))
-                        ((equal mark 'flag) (mu4e-action-retag-message msg "\\Starred"))
-                        ((equal mark 'unflag) (mu4e-action-retag-message msg "-\\Starred")))))
+  ;; enable format=flowed
+  ;; - mu4e sets up visual-line-mode and also fill (M-q) to do the right thing
+  ;; - each paragraph is a single long line; at sending, emacs will add the
+  ;;   special line continuation characters.
+  ;; - also see visual-line-fringe-indicators setting below
+  (setq mu4e-compose-format-flowed t)
+  ;; because it looks like email clients are basically ignoring format=flowed,
+  ;; let's complicate their lives too. send format=flowed with looong lines. :)
+  ;; https://www.ietf.org/rfc/rfc2822.txt
+  (setq fill-flowed-encode-column 998)
+  ;; in mu4e with format=flowed, this gives me feedback where the soft-wraps are
+  (setq visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow))
 
-      ;; mu4e uses its own version of message-mode. The only benefit I know of is that it enables completion for To, CC and BCC fields. That is really useful though!
-      (setq mail-user-agent 'mu4e-user-agent)
+  ;; This hook correctly modifies the \Inbox and \Starred flags on email when they are marked.
+  ;; Without it refiling (archiving) and flagging (starring) email won't properly result in
+  ;; the corresponding gmail action.
+  (add-hook 'mu4e-mark-execute-pre-hook
+            (lambda (mark msg)
+              (cond ((member mark '(refile trash)) (mu4e-action-retag-message msg "-\\Inbox"))
+                    ((equal mark 'flag) (mu4e-action-retag-message msg "\\Starred"))
+                    ((equal mark 'unflag) (mu4e-action-retag-message msg "-\\Starred")))))
 
-      ;; For some reason it uses its own signature variable. Not anymore!
-      (defvaralias 'mu4e-compose-signature 'message-signature)
+  ;; mu4e uses its own version of message-mode. The only benefit I know of is that it enables completion for To, CC and BCC fields. That is really useful though!
+  (setq mail-user-agent 'mu4e-user-agent)
 
-      (setq mu4e-completing-read-function 'ivy-completing-read
-            mu4e-confirm-quit nil) ; Ivy for completion
+  ;; For some reason it uses its own signature variable. Not anymore!
+  (defvaralias 'mu4e-compose-signature 'message-signature)
+
+  (setq mu4e-completing-read-function 'ivy-completing-read
+        mu4e-confirm-quit nil) ; Ivy for completion
 #+END_SRC
 
 *** mu4e-context
