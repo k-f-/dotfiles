@@ -27,6 +27,7 @@
   - [[#html--css][HTML & CSS]]
   - [[#javascript][JavaScript]]
   - [[#r][R]]
+  - [[#emacs-lsp][emacs-lsp]]
 - [[#extended-configuration][Extended Configuration]]
   - [[#abbrevs-auto-completion--snippets][Abbrevs, Auto-completion & Snippets]]
   - [[#dictionary][Dictionary]]
@@ -41,7 +42,7 @@
   - [[#org-mode][Org-Mode]]
   - [[#latex][LaTeX]]
   - [[#pandoc][Pandoc]]
-  - [[#blogging][Blogging]]
+  - [[#blog-with-hugo][Blog with Hugo]]
   - [[#hydras][Hydras]]
 #+END_QUOTE
 
@@ -796,9 +797,18 @@ Control-R is still launching backwards-isearch sometimes.
 
 *** TODO multiple-cursors
 - https://github.com/magnars/multiple-cursors.el
-We need to configure some keybindings. Check out the github page for suggestions.
+We need to configure some keybindings. Check out the github page for
+suggestions.
+Make <return> insert a newline; multiple-cursors-mode disables with C-g.
+
 #+BEGIN_SRC emacs-lisp
-  (use-package multiple-cursors :ensure t)
+  (use-package multiple-cursors
+    :ensure t
+    :config
+    (setq mc/always-run-for-all 1)
+    (global-set-key (kbd "C-=") 'mc/mark-next-like-this)
+    (global-set-key (kbd "C-+") 'mc/mark-all-dwim)
+    (define-key mc/keymap (kbd "<return>") nil))
 #+END_SRC
 
 ** File Browsing
@@ -962,6 +972,8 @@ Let's get emacs talking with R.  We need to let emacs know how to run R Code.
   ;;(use-package ess :ensure)
 #+END_SRC
 
+** TODO emacs-lsp
+Lets get this working one day.
 * Extended Configuration
 ** Abbrevs, Auto-completion & Snippets
 *** Company Mode
@@ -1026,6 +1038,7 @@ Use =company-mode= everywhere
 #+BEGIN_SRC emacs-lisp
   (use-package synonymous :ensure)
 #+END_SRC
+
 ** Spellchecking
 flyspell - in all text modes
 [[https://emacs.stackexchange.com/questions/31300/can-you-turn-on-flyspell-for-comments-but-not-strings][flypsell for comments, but not strings]]
@@ -1042,7 +1055,6 @@ flyspell - in all text modes
 #+BEGIN_SRC emacs-lisp
   (use-package writegood-mode :ensure)
   (add-hook 'text-mode-hook 'writegood-mode)
-
 #+END_SRC
 
 ** Version Control
@@ -1079,7 +1091,7 @@ And show changes in the gutter (fringe).
 ** Email
 mu, 4 emacs
 [https://www.djcbsoftware.nl/code/mu/mu4e/][mu4e docs]
-*** TODO mu4e
+*** mu4e
 Use org structures and tables in message mode
 #+BEGIN_SRC emacs-lisp
   (add-hook 'message-mode-hook 'turn-on-orgtbl)
@@ -1097,7 +1109,6 @@ To start the timer automatically, issue the systemctl --user start checkmail.tim
 Another neat command is systemctl --user list-timers. This will list all of the timers that you have active and how long until they’re triggered again. Neat stuff. Systemd is pretty clever.
 #+END_QUOTE
 
-TODO: redo mbsync with [[https://www.reddit.com/r/emacs/comments/bfsck6/mu4e_for_dummies/][mu4e for dummies]]
 #+BEGIN_SRC emacs-lisp
   ;; installed from release.
   (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
@@ -1272,7 +1283,7 @@ TODO: redo mbsync with [[https://www.reddit.com/r/emacs/comments/bfsck6/mu4e_for
   (global-mu4e-conversation-mode)
 #+END_SRC
 
-*** [[#mu4e-1][mu4e-hydra]
+*** [[#mu4e-1][mu4e-hydra]]
 *** mu4e-alert
 #+BEGIN_SRC emacs-lisp
   (use-package mu4e-alert :ensure
@@ -1455,49 +1466,6 @@ really helpful for some modes (like =projectile=, for example).
     (setq which-key-idle-delay 1.0))
 #+END_SRC
 
-*** TODO Deft
-- We never use Deft.  Just remove it? AGAIN?
-Deft-Mode custom functions via: http://pragmaticemacs.com/emacs/tweaking-deft-quicker-notes/
-Custom function to save window-layout when launching deft-mode
-advise deft to save window config
-#+BEGIN_SRC emacs-lisp
-(use-package deft :ensure
-  :bind ("<f7>" . deft)
-  :commands (deft)
-  :config (setq deft-directory "~/Dropbox/org/" deft-extensions
-                '("md" "org" "txt")))
-(setq deft-default-extension "org")
-(setq deft-use-filename-as-title nil)
-(setq deft-use-filter-string-for-filename t)
-(setq deft-file-naming-rules '((noslash . "-")
-                               (nospace . "-")
-                               (case-fn . downcase)))
-(setq deft-text-mode 'org-mode)
-;; filenames - replace space and slash with - lcase
-(setq deft-file-naming-rules
-      '((noslash . "-")
-        (nospace . "-")
-        (case-fn . downcase)))
-(defun kef/deft-save-windows (orig-fun &rest args)
-  (setq kef/pre-deft-window-config (current-window-configuration))
-  (apply orig-fun args)
-  )
-(advice-add 'deft :around #'kef/deft-save-windows)
-;;function to quit a deft edit cleanly back to pre deft window
-(defun kef/quit-deft ()
-;;  "Save buffer, kill buffer, kill deft buffer, and restore window config to the way it was before deft was invoked"
-  (interactive)
-  (save-buffer)
-  (kill-this-buffer)
-  (switch-to-buffer "*Deft*")
-  (kill-this-buffer)
-  (when (window-configuration-p kef/pre-deft-window-config)
-    (set-window-configuration kef/pre-deft-window-config)
-    )
-  )
-(global-set-key (kbd "C-c q") 'kef/quit-deft)
-#+END_SRC
-
 ** Org-Mode
 A good enough reason to use Emacs on it's own.
 #+BEGIN_SRC emacs-lisp
@@ -1506,6 +1474,11 @@ A good enough reason to use Emacs on it's own.
     (setq org-startup-indented t)           ;; Indent org-file display
     (setq org-src-tab-acts-natively t)
     )
+#+END_SRC
+
+Lets not mistakenly edit collapsed text.
+#+BEGIN_SRC emacs-lisp
+  (setq-default org-catch-invisible-edits 'smart)
 #+END_SRC
 
 Set some org-mode keybindings
@@ -1521,13 +1494,11 @@ Store all my org files in =~/org=, which is symlinked to ~/Dropbox/org/.
   (setq org-directory "~/org")
 #+END_SRC
 
-*** TODO Refile Targets
+*** Refile Targets
 Refile targets should include all files? and down to 9 levels into them.
 Work on this later to make the refile targets make sense for our workflow.
 #+BEGIN_SRC emacs-lisp
-  (setq org-refile-targets (quote (("notes.org" :maxlevel . 3) ;; Top level headings in notes
-                                   ("kfring.org" :maxlevel . 2) ;; Top level in personal blog
-                                   (org-agenda-files :maxlevel . 9))))
+  (setq org-refile-targets (quote ((org-agenda-files :maxlevel . 3))))
 
   (setq org-outline-path-complete-in-steps nil)         ;; Refile in a single go
   (setq org-refile-use-outline-path t)                  ;; Show full paths for refiling
@@ -1556,7 +1527,7 @@ Org-Habit
   ; position the habit graph on the agenda to the right of the default
   (setq org-habit-graph-column 50)
 
-  (setq org-habit-show-habits-only-for-today nil)
+  (setq org-habit-show-habits-only-for-today t)
   (set 'org-habit-show-all-today t)
   (setq org-habit-graph-column 60)
   (setq org-habit-following-days 3)
@@ -1565,7 +1536,7 @@ Org-Habit
   (setq org-habit-completed-glyph ?✓)
 #+END_SRC
 
-Some very crafty org-agenda view stuff including habits from [[https://blog.aaronbieber.com/2016/09/24/an-agenda-for-life-with-org-mode.html][Aaron Beiber]]
+Crafty org-agenda view stuff including habits from [[https://blog.aaronbieber.com/2016/09/24/an-agenda-for-life-with-org-mode.html][Aaron Beiber]]
 #+BEGIN_SRC emacs-lisp
   (setq org-agenda-custom-commands
         '(("d" "Daily agenda and all TODOs"
@@ -1654,23 +1625,19 @@ ref: https://orgmode.org/manual/Template-elements.html#Template-elements
                                  ;; A list of things to do that I do NOT get direct compensation for.
                                  ;; These things will get refiled into life.org or edu.org eventually.
                                  ;; Think about if it is more efficacious to just put them in directly or do the whole weekly refile thing.
-                                 (file+headline "~/org/life.org" "Personal")
+                                 (file+headline "~/org/life.org" "INBOX")
                                  "* TODO %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
 
-                                ;; A todo list for work related items, things I get paid money for.
+                                ;; A todo list for things I get paid money for.
                                 ("w" "Todo [work]" entry (file+headline "~/org/work.org" "Tasks")
                                  "* TODO %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
 
                                 ;; a place to keep ideas for some other time.  Ideas for Projects that we could maybe one-day accomplish
                                 ("m" "New Idea" entry (file+headline "~/org/ideas.org" "Ideas")
-                                 "* WAITING %^{Short Description}\n:PROPERTIES:\n:CREATED: %U\n:END:\n%?%^{More details?}\n" :prepend w)
-
-                                ;; Hyperlink Capture
-                                ("l" "Hyperlink" item (file+headline "~/org/life.org" "Links")
-                                 "- [[%?%^{url}][%^{Description?}]]")
+                                 "* WAITING %^{Short Description}\n:PROPERTIES:\n:CREATED: %U\n:END:\n%?%^{More details?}\n" :prepend t)
 
                                 ;; general Note Capture
-                                ("n" "Note" entry (file+headline "~/org/life.org" "Notes")
+                                ("n" "Note" entry (file+headline "~/org/life.org" "INBOX")
                                  "* %^{Title}\n:PROPERTIES:\n:CREATED: %U\n:END:\n%^{Content}" :empty-lines 1)
 
                                 ;; Album capture for weekly item.
@@ -1686,8 +1653,8 @@ ref: https://orgmode.org/manual/Template-elements.html#Template-elements
 
                                 ;; Not cute that we're using the year here, but file+headline does not support variables and it's one second every twelve months. Whatever.
                                 ("a" "Album Notes" entry
-                                 (file+headline "~/org/albums.org" "2019")
-                                 "*** %u %^{Artist} - %^{Album Name}\n:PROPERTIES:\n:CREATED: %U\n:END:\n- Release: %^{Release}\n- Link: [[%^{URL}][Spotify]]\n- Tracks: %^{Tracks}\n- Playtime: %^{Playtime}\n- %^{Content}\n%?" :empty-lines 1)
+                                 (file+headline "~/org/albums.org" "Albums" "2019")
+                                 "*** %u %^{Artist} - %^{Album Name}\n:PROPERTIES:\n:CREATED: %U\n:END:\n- Release: %^{Release}\n- Link: [[%^{URL}][Spotify]]\n- Tracks: %^{Tracks}\n- Playtime: %^{Playtime}\n- %^{Content}\n%?" :prepend t :empty-lines 1)
 
                                 ;; Date-tree
                                 ("j" "Journal" entry (file+datetree "~/org/journal.org")
@@ -1695,13 +1662,12 @@ ref: https://orgmode.org/manual/Template-elements.html#Template-elements
 
                                 ;; Climbing capture templates
                                 ;; use %u for non-interactive time-stamps
-                                ;; climb.org capture templates for routes/boulder problems
                                 ("r" "Route" table-line
-                                 (file+headline "~/org/climb.org" "Routes")
+                                 (file+headline "~/org/life.org" "Climbing" "Routes")
                                  "|%u|%?%^{Route Name?|NA}|%^{Yosemite Grade?|5.}|%^{Attempts?|0}|%^{Style?|Sport|Trad}|%^{Notes?}|")
 
                                 ("b" "Boulder Problem" table-line
-                                 (file+headline "~/org/climb.org" "Boulder Problems")
+                                 (file+headline "~/org/life.org" "Climbing" "Boulder Problems")
                                  "|%u|%?%^{Problem Name?|NA}|%^{V-Grade?|NA}|%^{Attempts?|0}|%^{Notes?}|")
                                 ))
 #+END_SRC
@@ -1711,6 +1677,10 @@ ref: https://orgmode.org/manual/Template-elements.html#Template-elements
   (setq org-log-into-drawer t)
 #+END_SRC
 
+*** log when "DONE"
+#+BEGIN_SRC emacs-lisp
+  (setq org-log-done 'time)
+#+END_SRC
 *** org-bullets
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets)
@@ -1718,11 +1688,11 @@ ref: https://orgmode.org/manual/Template-elements.html#Template-elements
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+END_SRC
 
-*** TODO org-pomodoro
+*** org-pomodoro
 :LOGBOOK:
 - State "DONE"       from "TODO"       [2019-06-14 Fri 07:33]
 :END:
-Look to see if we can do a standard pomodoro cycle.
+I'm not in love with this package.
 #+BEGIN_SRC emacs-lisp
   (use-package org-pomodoro :ensure)
 #+END_SRC
@@ -1766,8 +1736,8 @@ Document processing.
   (use-package pandoc-mode :ensure)
 #+END_SRC
 
-** Blogging
-Blogging with Hugo using org-mode.
+** Blog with Hugo
+Hugo using org-mode.
 #+BEGIN_SRC emacs-lisp
   (use-package ox-hugo
     :ensure t
