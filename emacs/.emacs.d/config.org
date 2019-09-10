@@ -1514,8 +1514,6 @@ matter to much. Refile targets seem to be more important to have limits on.
 
 #+BEGIN_SRC emacs-lisp
   (setq org-agenda-files '("~/org/life.org"
-                           "~/org/work.org"
-                           "~/org/edu.org"
                            "~/.emacs.d/config.org"))
 #+END_SRC
 
@@ -1670,6 +1668,31 @@ ref: https://orgmode.org/manual/Template-elements.html#Template-elements
                                  (file+headline "~/org/life.org" "Climbing" "Boulder Problems")
                                  "|%u|%?%^{Problem Name?|NA}|%^{V-Grade?|NA}|%^{Attempts?|0}|%^{Notes?}|")
                                 ))
+
+  (with-eval-after-load 'org-capture
+    (defun org-hugo-new-subtree-post-capture-template ()
+      "Returns `org-capture' template string for new Hugo post.
+  See `org-capture-templates' for more information."
+      (let* ((title (read-from-minibuffer "Post Title: ")) ;Prompt to enter the post title
+             (fname (org-hugo-slug title)))
+        (mapconcat #'identity
+                   `(
+                     ,(concat "* TODO " title)
+                     ":PROPERTIES:"
+                     ,(concat ":EXPORT_FILE_NAME: " fname)
+                     ":END:"
+                     "%?\n")          ;Place the cursor here finally
+                   "\n")))
+
+    (add-to-list 'org-capture-templates
+                 '("h"                ;`org-capture' binding + h
+                   "Hugo post"
+                   entry
+                   ;; It is assumed that below file is present in `org-directory'
+                   ;; and that it has a "Blog Ideas" heading. It can even be a
+                   ;; symlink pointing to the actual location of all-posts.org!
+                   (file+olp "life.org" "kfring.com")
+                   (function org-hugo-new-subtree-post-capture-template))))
 #+END_SRC
 
 *** Log into drawer
