@@ -13,9 +13,9 @@
  (handler . elfeed-search-bookmark-handler))
 ("org-capture-last-stored"
  (filename . "~/org/life.org")
- (front-context-string . "** TODO TN Drive")
- (rear-context-string . "ing\n\n* Personal\n")
- (position . 84))
+ (front-context-string . "** TODO Venmo Ma")
+ (rear-context-string . "le yes\n\n* INBOX\n")
+ (position . 117))
 ("elfeed-unread"
  (location . "+unread")
  (tags "unread")

@@ -1,4 +1,4 @@
 #!/bin/sh
 
-feh --bg-fill ~/.wallpaper/jellyfish01.png 
+feh --bg-fill ~/.wallpaper/green-gradient.png 
 
