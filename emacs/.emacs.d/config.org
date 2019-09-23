@@ -514,6 +514,12 @@ much space is kept between the cursor and the bottom of the buffer.
         hscroll-step 5)
 #+END_SRC
 
+*** GoldenRatio
+#+BEGIN_SRC emacs-lisp
+  (use-package golden-ratio :ensure)
+  (setq golden-ratio-auto-scale t)
+  (golden-ratio-mode 1)
+#+END_SRC
 ** Functions
 *** Kill current buffer.
 #+BEGIN_SRC emacs-lisp
@@ -1627,7 +1633,7 @@ ref: https://orgmode.org/manual/Template-elements.html#Template-elements
                                  "* TODO %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
 
                                 ;; A todo list for things I get paid money for.
-                                ("w" "Todo [work]" entry (file+headline "~/org/work.org" "Tasks")
+                                ("w" "Todo [work]" entry (file+headline "~/org/life.org" "Tasks")
                                  "* TODO %i%? \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
 
                                 ;; a place to keep ideas for some other time.  Ideas for Projects that we could maybe one-day accomplish
@@ -1636,7 +1642,7 @@ ref: https://orgmode.org/manual/Template-elements.html#Template-elements
 
                                 ;; general Note Capture
                                 ("n" "Note" entry (file+headline "~/org/life.org" "INBOX")
-                                 "* %^{Title}\n:PROPERTIES:\n:CREATED: %U\n:END:\n%^{Content}" :empty-lines 1)
+                                 "* %^{Title}\n:PROPERTIES:\n:CREATED: %U\n:END:\n%^{Content}" :prepend t)
 
                                 ;; Album capture for weekly item.
                                 ;; Artist Name: #main > div > div.Root__top-container > div.Root__main-view.Root__main-view--has-upsell-bar > div > div > div > section > div > div > div.col-xs-12.col-lg-3.col-xl-4 > div > header > div:nth-child(1) > div > div > div.mo-meta.ellipsis-one-line > div > a
@@ -1651,8 +1657,8 @@ ref: https://orgmode.org/manual/Template-elements.html#Template-elements
 
                                 ;; Not cute that we're using the year here, but file+headline does not support variables and it's one second every twelve months. Whatever.
                                 ("a" "Album Notes" entry
-                                 (file+headline "~/org/albums.org" "Albums" "2019")
-                                 "*** %u %^{Artist} - %^{Album Name}\n:PROPERTIES:\n:CREATED: %U\n:END:\n- Release: %^{Release}\n- Link: [[%^{URL}][Spotify]]\n- Tracks: %^{Tracks}\n- Playtime: %^{Playtime}\n- %^{Content}\n%?" :prepend t :empty-lines 1)
+                                 (file+olp "~/org/life.org" "Albums" "2019")
+                                 "*** %u %^{Artist} - %^{Album Name}\n:PROPERTIES:\n:CREATED: %U\n:END:\n- Release: %^{Release}\n- Link: [[%^{URL}][Spotify]]\n- Tracks: %^{Tracks}\n- Playtime: %^{Playtime}\n- %^{Content}\n%?" :prepend t)
 
                                 ;; Date-tree
                                 ("j" "Journal" entry (file+datetree "~/org/journal.org")
@@ -1661,11 +1667,11 @@ ref: https://orgmode.org/manual/Template-elements.html#Template-elements
                                 ;; Climbing capture templates
                                 ;; use %u for non-interactive time-stamps
                                 ("r" "Route" table-line
-                                 (file+headline "~/org/life.org" "Climbing" "Routes")
+                                 (file+olp "~/org/life.org" "Climbing" "Routes")
                                  "|%u|%?%^{Route Name?|NA}|%^{Yosemite Grade?|5.}|%^{Attempts?|0}|%^{Style?|Sport|Trad}|%^{Notes?}|")
 
                                 ("b" "Boulder Problem" table-line
-                                 (file+headline "~/org/life.org" "Climbing" "Boulder Problems")
+                                 (file+olp "~/org/life.org" "Climbing" "Boulder Problems")
                                  "|%u|%?%^{Problem Name?|NA}|%^{V-Grade?|NA}|%^{Attempts?|0}|%^{Notes?}|")
                                 ))
 
