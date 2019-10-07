@@ -22,6 +22,7 @@ stow systemd
 stow vim
 stow x-windows
 stow secrets 
+stow youtube-dl
 
 # Link .bash_profile -> .bashrc
 rm -f ~/.bash_profile
