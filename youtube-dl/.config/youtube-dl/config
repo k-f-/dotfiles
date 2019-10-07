@@ -1,20 +1,24 @@
-# youtube-dl 
+# youtube-dl
+# Mostly from:
+# https://www.reddit.com/r/DataHoarder/comments/c6fh4x/after_hoarding_over_50k_youtube_videos_here_is/
 
 # write to archive for being run periodically
---download-archive "archive.log" 
+--download-archive "archive.log"
 
 # Embed me subtitles and thumbnails, please.
--i --add-metadata --all-subs --embed-subs --embed-thumbnail 
+-i --add-metadata --all-subs --embed-subs --embed-thumbnail
 
 # Don't download Liked/Favorites
---match-filter "playlist_title != 'Liked videos' & playlist_title != 'Favorites'" 
+--match-filter "playlist_title != 'Liked videos' & playlist_title != 'Favorites'"
+
+# grab json so we have complate metadata.
+--write-info-json--write-info-json
 
 # Get cascadinly worse quality
--f "(bestvideo[vcodec^=av01][height>=1080][fps>30]/bestvideo[vcodec=vp9.2][height>=1080][fps>30]/bestvideo[vcodec=vp9][height>=1080][fps>30]/bestvideo[vcodec^=av01][height>=1080]/bestvideo[vcodec=vp9.2][height>=1080]/bestvideo[vcodec=vp9][height>=1080]/bestvideo[height>=1080]/bestvideo[vcodec^=av01][height>=720][fps>30]/bestvideo[vcodec=vp9.2][height>=720][fps>30]/bestvideo[vcodec=vp9][height>=720][fps>30]/bestvideo[vcodec^=av01][height>=720]/bestvideo[vcodec=vp9.2][height>=720]/bestvideo[vcodec=vp9][height>=720]/bestvideo[height>=720]/bestvideo)+(bestaudio[acodec=opus]/bestaudio)/best" 
+-f "(bestvideo[vcodec^=av01][height>=1080][fps>30]/bestvideo[vcodec=vp9.2][height>=1080][fps>30]/bestvideo[vcodec=vp9][height>=1080][fps>30]/bestvideo[vcodec^=av01][height>=1080]/bestvideo[vcodec=vp9.2][height>=1080]/bestvideo[vcodec=vp9][height>=1080]/bestvideo[height>=1080]/bestvideo[vcodec^=av01][height>=720][fps>30]/bestvideo[vcodec=vp9.2][height>=720][fps>30]/bestvideo[vcodec=vp9][height>=720][fps>30]/bestvideo[vcodec^=av01][height>=720]/bestvideo[vcodec=vp9.2][height>=720]/bestvideo[vcodec=vp9][height>=720]/bestvideo[height>=720]/bestvideo)+(bestaudio[acodec=opus]/bestaudio)/best"
 
 # Make mkv's
---merge-output-format mkv 
+--merge-output-format mkv
 
 # Drop it into our Dropbox folder. We can sort this later.
 -o "$HOME/Dropbox/Videos/yt-dl/%(playlist)s/%(playlist_index)s - %(title)s - %(id)s.%(ext)s" "https://www.youtube.com/playlist?list=PLl-gb0E4MII0L5lz8uQ8j5aSFQQHoAzXx"
-
