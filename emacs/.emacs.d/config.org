@@ -1319,7 +1319,7 @@ Another neat command is systemctl --user list-timers. This will list all of the 
 #+END_SRC
 
 ** News Reader
-Elfeed is a very nice RSS/Atom reader for emacs.
+Elfeed -  RSS/Atom reader for emacs.
 *** Key Bindings
 #+BEGIN_SRC emacs-lisp
   (use-package elfeed
@@ -1765,6 +1765,16 @@ Document processing.
   (use-package pandoc-mode :ensure)
 #+END_SRC
 
+** PDF-Tools
+#+BEGIN_SRC emacs-lisp
+  (use-package pdf-tools
+    :ensure t
+    :mode ("\\.pdf\\'" . pdf-view-mode)
+    :config
+    (pdf-tools-install)
+    (setq-default pdf-view-display-size 'fit-page)
+    (setq pdf-annot-activate-created-annotations t))
+#+END_SRC
 ** Blog with Hugo
 Hugo using org-mode.
 #+BEGIN_SRC emacs-lisp
