@@ -9,7 +9,7 @@
 -i --add-metadata --all-subs --embed-subs --embed-thumbnail
 
 # Don't download Liked/Favorites
---match-filter "playlist_title != 'Liked videos' & playlist_title != 'Favorites'"
+#--match-filter "playlist_title != 'Liked videos' & playlist_title != 'Favorites'"
 
 # grab json so we have complate metadata.
 --write-info-json
