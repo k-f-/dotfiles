@@ -520,6 +520,13 @@ much space is kept between the cursor and the bottom of the buffer.
   (setq golden-ratio-auto-scale t)
   (golden-ratio-mode 1)
 #+END_SRC
+
+*** dimmer-mode
+#+BEGIN_SRC emacs-lisp
+  (use-package dimmer :ensure)
+  (dimmer-mode)
+  (setq dimmer-fraction 0.50)
+#+END_SRC
 ** Functions
 *** Kill current buffer.
 #+BEGIN_SRC emacs-lisp
@@ -1523,6 +1530,11 @@ matter to much. Refile targets seem to be more important to have limits on.
                            "~/.emacs.d/config.org"))
 #+END_SRC
 
+Default to hiding items with a DEADLINE that are DONE.
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-skip-deadline-if-done t)
+#+END_SRC
+
 Org-Habit
 #+BEGIN_SRC emacs-lisp
   ; Enable habit tracking
@@ -1775,6 +1787,7 @@ Document processing.
     (setq-default pdf-view-display-size 'fit-page)
     (setq pdf-annot-activate-created-annotations t))
 #+END_SRC
+
 ** Blog with Hugo
 Hugo using org-mode.
 #+BEGIN_SRC emacs-lisp

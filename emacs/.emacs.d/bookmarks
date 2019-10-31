@@ -4,18 +4,18 @@
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
 (("org-refile-last-stored"
  (filename . "~/org/life.org")
- (front-context-string . "*** Clean Honda ")
- (rear-context-string . "ed 16:25]\n:END:\n")
- (position . 916))
+ (front-context-string . "**** TODO youtub")
+ (rear-context-string . "ri 14:35]\n:END:\n")
+ (position . 7691))
 ("elfeed-starred"
  (location . "+star")
  (tags "star")
  (handler . elfeed-search-bookmark-handler))
 ("org-capture-last-stored"
  (filename . "~/org/life.org")
- (front-context-string . "** TODO Venmo Ma")
- (rear-context-string . "le yes\n\n* INBOX\n")
- (position . 117))
+ (front-context-string . "** TODO emacs - ")
+ (rear-context-string . "ed 13:06]\n:END:\n")
+ (position . 1471))
 ("elfeed-unread"
  (location . "+unread")
  (tags "unread")
