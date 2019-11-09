@@ -549,19 +549,6 @@ much space is kept between the cursor and the bottom of the buffer.
   (global-set-key (kbd "C-c e") 'kef/visit-emacs-config)
 #+END_SRC
 
-*** youtube-dl
-Fire off a youtube-dl process
-#+BEGIN_SRC emacs-lisp
-  (defun youtube-dl ()
-    (interactive)
-    (let* ((str (current-kill 0))
-           (default-directory "~/Downloads")
-           (proc (get-buffer-process (ansi-term "/bin/bash"))))
-      (term-send-string
-       proc
-       (concat "cd ~/Downloads && youtube-dl " str "\n"))))
-#+END_SRC
-
 *** Ignore running processes when killing emacs
 #+BEGIN_SRC emacs-lisp
   ;; add `flet'
@@ -730,7 +717,7 @@ The Holy Trinity
   (use-package flx :ensure)
   (use-package avy :ensure
       :bind
-  ("C-c SPC" . avy-goto-char))
+  ("C-c C-SPC" . avy-goto-char-timer))
 #+END_SRC
 
 Ivy-rich make Ivy a bit more friendly by adding information to ivy buffers, e.g. description of commands in =M-x=, meta info about buffers in =ivy-switch-buffer=, etc.
@@ -754,13 +741,13 @@ close the file or close the editor, then later re-open it, point will be at the
 last place I visited.
 
 #+BEGIN_SRC emacs-lisp
-  (save-place-mode t)
+  (setq save-place-mode t)
 #+END_SRC
 
 *** Cut/copy/comment current line if no region selected
 via: https://caolan.org/dotfiles/emacs.html#org172314d
 #+BEGIN_QUOTE
-In many programs, like SlickEdit, TextMate and VisualStudio, “cut” and “copy” act on the current line if no text is visually selected. For this, I originally used code from Tim Krones Emacs config, but now I'm using the whole-line-or-region package, which can be customised to use the same line-or-region style for comments too. See comments in whole-line-or-region.el for details.
+In programs like SlickEdit, TextMate and VisualStudio, “cut” and “copy” act on the current line if no text is visually selected. For this, I originally used code from Tim Krones Emacs config, but now I'm using the whole-line-or-region package, which can be customised to use the same line-or-region style for comments too. See comments in whole-line-or-region.el for details.
 #+END_QUOTE
 
 #+BEGIN_SRC emacs-lisp
@@ -769,6 +756,7 @@ In many programs, like SlickEdit, TextMate and VisualStudio, “cut” and “co
                '(comment-dwim whole-line-or-region-comment-dwim nil))
   (whole-line-or-region-mode 1)
 #+END_SRC
+
 *** Trailing white space removal
 #+BEGIN_SRC emacs-lisp
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -822,59 +810,6 @@ Make <return> insert a newline; multiple-cursors-mode disables with C-g.
     (global-set-key (kbd "C-=") 'mc/mark-next-like-this)
     (global-set-key (kbd "C-+") 'mc/mark-all-dwim)
     (define-key mc/keymap (kbd "<return>") nil))
-#+END_SRC
-
-** File Browsing
-I'm not in love with any of this. Maybe we'll scrap it and start over soon.
-
-Dried shortcut to *R*un an application
-#+BEGIN_SRC emacs-lisp
-  (define-key dired-mode-map "r" 'dired-start-process)
-#+END_SRC
-Tell dried what types of files to open with what.
-#+BEGIN_SRC emacs-lisp
-  ;; (require 'dired-x)
-
-  ;; (setq dired-guess-shell-alist-user
-  ;;       '(("\\.pdf\\'" "zathura" "evince" "okular")
-  ;;         ("\\.\\(?:djvu\\|eps\\)\\'" "evince")
-  ;;         ("\\.\\(?:jpg\\|jpeg\\|png\\|gif\\|xpm\\)\\'" "eog")
-  ;;         ("\\.\\(?:xcf\\)\\'" "gimp")
-  ;;         ("\\.csv\\'" "libreoffice")
-  ;;         ("\\.tex\\'" "pdflatex" "latex")
-  ;;         ("\\.\\(?:mp4\\|mkv\\|avi\\|flv\\|ogv\\)\\(?:\\.part\\)?\\'"
-  ;;          "vlc")
-  ;;         ("\\.\\(?:mp3\\|flac\\)\\'" "rhythmbox")
-  ;;         ("\\.html?\\'" "brave-browser")
-  ;;         ("\\.cue?\\'" "audacious")))
-#+END_SRC
-Add nohup to vlc launch.
-#+BEGIN_SRC emacs-lisp
-  ;; (require 'dired-aux)
-
-  ;; (defvar dired-filelist-cmd
-  ;;   '(("vlc" "-L")))
-
-  ;; (defun dired-start-process (cmd &optional file-list)
-  ;;   (interactive
-  ;;    (let ((files (dired-get-marked-files
-  ;;                  t current-prefix-arg)))
-  ;;      (list
-  ;;       (dired-read-shell-command "& on %s: "
-  ;;                                 current-prefix-arg files)
-  ;;       files)))
-  ;;   (let (list-switch)
-  ;;     (start-process
-  ;;      cmd nil shell-file-name
-  ;;      shell-command-switch
-  ;;      (format
-  ;;       "nohup 1>/dev/null 2>/dev/null %s \"%s\""
-  ;;       (if (and (> (length file-list) 1)
-  ;;                (setq list-switch
-  ;;                      (cadr (assoc cmd dired-filelist-cmd))))
-  ;;           (format "%s %s" cmd list-switch)
-  ;;         cmd)
-  ;;       (mapconcat #'expand-file-name file-list "\" \"")))))
 #+END_SRC
 
 * Languages
@@ -1048,8 +983,10 @@ Use =company-mode= everywhere
 ** Thesaurus
 - thesaurus.el
 - synonymous.el
+- powerthesaurus.el
 #+BEGIN_SRC emacs-lisp
-  (use-package synonymous :ensure)
+  (use-package powerthesaurus :ensure)
+  (global-set-key (kbd "C-c t") 'powerthesaurus-lookup-word-dwim)
 #+END_SRC
 
 ** Spellchecking
