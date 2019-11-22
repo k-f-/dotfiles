@@ -79,13 +79,16 @@ Start the server unless it is already running.
 #+END_SRC
 
 ** Package Sources
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path "~/.emacs.d/lisp")
+#+END_SRC
 - https://stackoverflow.com/questions/14836958/updating-packages-in-emacs
 #+BEGIN_SRC emacs-lisp
   (require 'package)
   (setq package-enable-at-startup nil)
   (setq package-archives '(
-                           ("melpa" . "http://melpa.org/packages/")
-                           ("gnu"   . "http://elpa.gnu.org/packages/")))
+			   ("melpa" . "http://melpa.org/packages/")
+			   ("gnu"   . "http://elpa.gnu.org/packages/")))
   (package-refresh-contents)
   (package-initialize)
 #+END_SRC
@@ -121,6 +124,7 @@ Lets not.
             (setq res t)))))
   (setq company-dabbrev-ignore-buffers 'kef/company-dabbrev-ignore)
 #+END_SRC
+
 ** Authentication
 #+BEGIN_SRC emacs-lisp
   (setq auth-sources '("~/.gnupg/shared/authinfo.gpg"
@@ -195,7 +199,12 @@ Create a backup to a designated dir, mirroring the full path ala ergomacs
 
 *** Automatically change or reload the buffer when the file is modified externally
 #+BEGIN_SRC emacs-lisp
-  (global-auto-revert-mode t)
+  (eval-after-load 'auto-revert-mode
+    '(diminish 'auto-revert-mode))
+  (global-auto-revert-mode 1)
+  (add-hook 'dired-mode-hook 'auto-revert-mode)
+  (setq global-auto-revert-non-file-buffers t
+        auto-revert-verbose nil)
 #+END_SRC
 
 ** Character Encoding and Indentation
@@ -381,10 +390,10 @@ Org-mode is just better, lets use it as our default.
 *** Display org-mode agenda on startup
 - https://stackoverflow.com/questions/23528287/how-to-display-custom-agenda-view-on-emacs-startup
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'after-init-hook
-            (lambda ()
-              (org-agenda nil "d")
-              (delete-other-windows)))
+  ;; (add-hook 'after-init-hook
+            ;; (lambda ()
+              ;; (org-agenda nil "d")
+              ;; (delete-other-windows)))
 #+END_SRC
 
 *** y-n not Yes-No
@@ -527,6 +536,32 @@ much space is kept between the cursor and the bottom of the buffer.
   (dimmer-mode)
   (setq dimmer-fraction 0.50)
 #+END_SRC
+
+*** desktop-mode
+#+BEGIN_SRC emacs-lisp
+  (defvar *my-desktop-save* nil
+    "Should I save the desktop when Emacs is shutting down?")
+
+  (add-hook 'desktop-after-read-hook
+            (lambda () (setq *my-desktop-save* t)))
+
+  (advice-add 'desktop-save :around
+              (lambda (fn &rest args)
+                (if (bound-and-true-p *my-desktop-save*)
+                    (apply fn args))))
+
+  (desktop-save-mode)
+  (setq desktop-restore-eager 10)
+  (setq desktop-save t)
+  (setq desktop-auto-save-timeout 60)
+  (setq desktop-load-locked-desktop t)
+#+END_SRC
+
+*** find-desktop
+#+BEGIN_SRC emacs-lisp
+  (require 'find-desktop)
+#+END_SRC
+
 ** Functions
 *** Kill current buffer.
 #+BEGIN_SRC emacs-lisp
@@ -858,6 +893,14 @@ Turn on rainbow-mode for web/css.
 #+END_SRC
 
 ** JavaScript
+Skewer - live js/html/css dev
+[[https://github.com/skeeto/skewer-mode#manual-version][GitHub - skeeto/skewer-mode: Live web development in Emacs]]
+#+BEGIN_SRC emacs-lisp
+  (use-package skewer-mode :ensure)
+  (add-hook 'css-mode-hook 'skewer-css-mode)
+  (add-hook 'html-mode-hook 'skewer-html-mode)
+#+END_SRC
+
 #+BEGIN_SRC emacs-lisp
   ;; js2-mode
   ;; https://github.com/mooz/js2-mode
@@ -891,6 +934,7 @@ Turn on rainbow-mode for web/css.
         (set (make-variable 'company-backends)
              '((company-tern company-files))))
       (add-hook 'js2-mode-hook 'kef/js-mode-hook)
+      (add-hook 'js2-mode-hook 'skewer-mode)
       (add-hook 'js2-mode-hook 'company-mode))
 
     (add-hook 'js2-mode-hook 'tern-mode)
@@ -1540,8 +1584,6 @@ Set a keybinding of =Super-s= to bring up this view.
 
 *** Org-TODO Keywords
 #+BEGIN_SRC emacs-lisp
-  ;;(setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w@/!)" "|" "DONE(d!)" "CANCELLED(c@)")))
-
   (setq org-todo-keywords
         (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
                 (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
@@ -1680,7 +1722,7 @@ I'm not in love with this package.
 We can now replace our link-capture-template with this one?
 #+BEGIN_SRC emacs-lisp
   (use-package org-cliplink :ensure t)
-  (global-set-key (kbd "C-x p i") 'org-cliplink)
+  (global-set-key (kbd "C-x c l") 'org-cliplink)
 #+END_SRC
 
 *** TODO org-download
