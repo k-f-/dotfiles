@@ -1,0 +1,223 @@
+;; -*- mode: emacs-lisp; coding: emacs-mule; -*-
+;; --------------------------------------------------------------------------
+;; Desktop File for Emacs
+;; --------------------------------------------------------------------------
+;; Created Fri Nov 22 15:15:07 2019
+;; Desktop file format version 208
+;; Emacs version 26.3
+
+;; Global section:
+(setq desktop-saved-frameset [frameset 1 (24024 16843 587985 497000) (desktop . "208") "kef@osh" nil nil ((((minibuffer . t) (undecorated) (override-redirect) (font-backend xft x) (font-parameter . "Iosevka Term Semibold 11") (font . "-CYEL-Iosevka Term-semibold-normal-normal-*-29-*-*-*-m-0-iso10646-1") (border-width . 0) (internal-border-width . 0) (right-divider-width . 0) (bottom-divider-width . 0) (vertical-scroll-bars) (horizontal-scroll-bars) (foreground-color . "#4d4d4c") (background-color . "#ffffff") (mouse-color . "black") (border-color . "black") (screen-gamma) (line-spacing) (left-fringe . 8) (right-fringe . 8) (no-special-glyphs) (scroll-bar-foreground . "#F8F8F2") (scroll-bar-background . "#F8F8F2") (menu-bar-lines . 0) (tool-bar-lines . 0) (title) (wait-for-wm . t) (tool-bar-position . top) (inhibit-double-buffering) (icon-type . t) (auto-raise) (auto-lower) (cursor-type . box) (scroll-bar-width . 0) (scroll-bar-height . 0) (alpha) (no-focus-on-map) (no-accept-focus) (fullscreen) (visibility . t) (skip-taskbar) (z-group) (environment) (display-type . color) (background-mode . light) (cursor-color . "#4271ae") (sticky) (frameset--id . "B190-D8FD-2219-A37F") (frameset--mini t . t) (modeline . t) (unsplittable) (icon-name) (display . ":0") (explicit-name) (frameset--text-pixel-width . 3824) (frameset--text-pixel-height . 2119) (height . 60) (width . 254) (left . 3840) (top . 41)) ((min-height . 8) (min-width . 20) (min-height-ignore . 5) (min-width-ignore . 8) (min-height-safe . 2) (min-width-safe . 4) (min-pixel-height . 280) (min-pixel-width . 300) (min-pixel-height-ignore . 175) (min-pixel-width-ignore . 120) (min-pixel-height-safe . 70) (min-pixel-width-safe . 60)) hc (pixel-width . 3840) (pixel-height . 2084) (total-width . 256) (total-height . 60) (normal-height . 1.0) (normal-width . 1.0) (combination-limit) (leaf (pixel-width . 2115) (pixel-height . 2084) (total-width . 141) (total-height . 60) (normal-height . 1.0) (normal-width . 0.55078125) (buffer "config.org" (selected) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 63118) (start . 62542))) (vc (last . t) (pixel-width . 1725) (pixel-height . 2084) (total-width . 115) (total-height . 60) (normal-height . 1.0) (normal-width . 0.44921875) (combination-limit) (leaf (pixel-width . 1725) (pixel-height . 797) (total-width . 115) (total-height . 23) (normal-height . 0.3824376199616123) (normal-width . 1.0) (buffer "musicVis template" (selected) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 247) (start . 1))) (leaf (last . t) (pixel-width . 1725) (pixel-height . 1287) (total-width . 115) (total-height . 37) (normal-height . 0.6175623800383877) (normal-width . 1.0) (buffer "needles.js" (selected . t) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 1) (start . 1))))))])
+(setq desktop-missing-file-warning nil)
+(setq tags-file-name nil)
+(setq tags-table-list nil)
+(setq search-ring nil)
+(setq regexp-search-ring '("kbd" "todo" "agenda" "desktop" "frame-" "super" "desktop" "emacs" "desktop" "add-hook" "javascr" "JavaScript"))
+(setq register-alist nil)
+(setq file-name-history '("/home/kef/.emacs.d/" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/" "/home/kef/edu/" "/home/kef/.emacs.d/init.el" "/home/kef/org/ini" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/sketch.js" "/home/kef/.dotfiles/emacs/.emacs.d/init.el" "/home/kef/.dotfiles/emacs/.emacs.d/lisp/find-desktop.el" "/home/kef/.dotfiles/bash/.bin/em" "/home/kef/.dotfiles/i3/.config/i3/config" "/home/kef/.dotfiles/emacs/.emacs.d/" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/spectrum.js" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/visualisations.js" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/controlsAndInput.js" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/README.md" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/playbackButton.js" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/index.html"))
+
+;; Buffer section -- buffers listed in same order as in buffer list:
+(desktop-create-buffer 208
+  "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/needles.js"
+  "needles.js"
+  'js2-mode
+  '(override-global-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode skewer-mode tern-mode company-mode yas-minor-mode flyspell-mode js2-refactor-mode which-key-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((buffer-display-time 24024 16842 474491 920000) (buffer-file-coding-system . undecided-unix))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  nil
+  "musicVis template"
+  'dired-mode
+  '(override-global-mode auto-revert-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode company-mode which-key-mode)
+  247
+  '(nil nil)
+  t
+  '("/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/")
+  '((buffer-display-time 24024 16842 474491 493000))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  nil
+  "w05"
+  'dired-mode
+  '(override-global-mode auto-revert-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode company-mode which-key-mode)
+  465
+  '(nil nil)
+  t
+  '("/home/kef/edu/cm1010-Intro-to-Programming02/w05/")
+  '((buffer-display-time 24024 16818 210763 220000))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  nil
+  "cm1010-Intro-to-Programming02"
+  'dired-mode
+  '(override-global-mode auto-revert-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode company-mode which-key-mode)
+  359
+  '(nil nil)
+  t
+  '("/home/kef/edu/cm1010-Intro-to-Programming02/")
+  '((buffer-display-time 24024 16816 980052 258000))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  nil
+  "edu"
+  'dired-mode
+  '(override-global-mode auto-revert-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode company-mode which-key-mode)
+  317
+  '(nil nil)
+  t
+  '("/home/kef/edu/")
+  '((buffer-display-time 24024 16802 708647 451000))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/kef/org/life.org"
+  "life.org"
+  'org-mode
+  '(auto-fill-mode override-global-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode company-mode yas-minor-mode flyspell-mode writegood-mode which-key-mode org-indent-mode)
+  2770
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-display-time 24024 16802 708646 870000) (buffer-file-coding-system . utf-8-unix) (fill-column . 80) (truncate-lines . t))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/kef/.dotfiles/emacs/.emacs.d/config.org"
+  "config.org"
+  'org-mode
+  '(auto-fill-mode override-global-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode company-mode yas-minor-mode flyspell-mode writegood-mode which-key-mode org-indent-mode)
+  63118
+  '(55419 nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-display-time 24024 16842 474490 442000) (buffer-file-coding-system . utf-8-unix) (fill-column . 80) (truncate-lines . t))
+  '((mark-ring (14724 1))))
+
+(desktop-create-buffer 208
+  "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/sketch.js"
+  "sketch.js"
+  'js2-mode
+  '(override-global-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode skewer-mode tern-mode company-mode yas-minor-mode flyspell-mode js2-refactor-mode which-key-mode)
+  752
+  '(949 nil)
+  nil
+  nil
+  '((buffer-display-time 24024 14688 824752 222000) (buffer-file-coding-system . undecided-unix))
+  '((mark-ring (361 670 949 670 673 361 949))))
+
+(desktop-create-buffer 208
+  "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/README.md"
+  "README.md"
+  'fundamental-mode
+  '(override-global-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode company-mode which-key-mode)
+  3680
+  '(1162 nil)
+  nil
+  nil
+  '((buffer-display-time 24024 14688 824754 754000) (buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (564 2965 3090 2368 2367 2367 2368 2409 2686 3090 2965 564 766 1162 3680))))
+
+(desktop-create-buffer 208
+  "/home/kef/.dotfiles/emacs/.emacs.d/lisp/find-desktop.el"
+  "find-desktop.el"
+  'emacs-lisp-mode
+  '(eldoc-mode override-global-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode company-mode yas-minor-mode flyspell-mode which-key-mode)
+  1368
+  '(1 nil)
+  nil
+  nil
+  '((buffer-display-time 24024 13458 150108 729000) (buffer-file-coding-system . prefer-utf-8-unix))
+  '((mark-ring (1357))))
+
+(desktop-append-buffer-args 208
+  "/home/kef/.dotfiles/i3/.config/i3/config"
+  "config"
+  'conf-space-mode
+  '(override-global-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode company-mode yas-minor-mode which-key-mode)
+  4078
+  '(4058 nil)
+  nil
+  nil
+  '((buffer-display-time 24024 13084 42915 320000) (buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (1))))
+
+(desktop-append-buffer-args 208
+  "/home/kef/.dotfiles/bash/.bin/em"
+  "em"
+  'sh-mode
+  '(override-global-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode company-mode yas-minor-mode flyspell-mode which-key-mode)
+  148
+  '(nil nil)
+  nil
+  nil
+  '((buffer-display-time 24024 13082 459986 698000) (buffer-file-coding-system . undecided-unix))
+  '((mark-ring nil)))
+
+(desktop-append-buffer-args 208
+  "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/spectrum.js"
+  "spectrum.js"
+  'js2-mode
+  '(override-global-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode skewer-mode tern-mode company-mode yas-minor-mode flyspell-mode js2-refactor-mode which-key-mode)
+  1
+  '(418 nil)
+  nil
+  nil
+  '((buffer-display-time 24024 12586 776339 708000) (buffer-file-coding-system . undecided-unix))
+  '((mark-ring (465 418 1151 1140 1139 504 735 684 1215 1139 1139 725 1028 1029 735 1203))))
+
+(desktop-append-buffer-args 208
+  "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/playbackButton.js"
+  "playbackButton.js"
+  'js2-mode
+  '(override-global-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode skewer-mode tern-mode company-mode yas-minor-mode flyspell-mode js2-refactor-mode which-key-mode)
+  64
+  '(nil nil)
+  nil
+  nil
+  '((buffer-display-time 24023 63670 749954 208000) (buffer-file-coding-system . undecided-unix))
+  '((mark-ring nil)))
+
+(desktop-append-buffer-args 208
+  "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/visualisations.js"
+  "visualisations.js"
+  'js2-mode
+  '(override-global-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode skewer-mode tern-mode company-mode yas-minor-mode flyspell-mode js2-refactor-mode which-key-mode)
+  729
+  '(609 t)
+  nil
+  nil
+  '((buffer-display-time 24024 2064 602260 9000) (buffer-file-coding-system . undecided-unix))
+  '((mark-ring (792 792 792 696 609))))
+
+(desktop-append-buffer-args 208
+  "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/controlsAndInput.js"
+  "controlsAndInput.js"
+  'js2-mode
+  '(override-global-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode skewer-mode tern-mode company-mode yas-minor-mode flyspell-mode js2-refactor-mode which-key-mode)
+  957
+  '(1037 nil)
+  nil
+  nil
+  '((buffer-display-time 24024 13726 279317 798000) (buffer-file-coding-system . undecided-unix))
+  '((mark-ring (1352 1205 1216 902 902 462 456 1459 1327 1379 1352 1379 1246 1381 1216 957))))
+
+(desktop-append-buffer-args 208
+  "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/index.html"
+  "index.html"
+  'web-mode
+  '(override-global-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode rainbow-mode company-mode yas-minor-mode flyspell-mode which-key-mode)
+  441
+  '(468 nil)
+  nil
+  nil
+  '((buffer-display-time 24023 63620 891241 516000) (buffer-file-coding-system . undecided-unix) (case-fold-search . t))
+  '((mark-ring (461 468 461 635 420 468 635 461 441 597))))
+
