@@ -116,10 +116,13 @@ exec --no-startup-id urxvt -e ~/.bin/gotop &
 exec --no-startup-id urxvt
 
 # Invoke the Emacs daemon
-exec --no-startup-id emacs --daemon
+#exec --no-startup-id emacs --daemon
 
 # Start an emacsclient
-exec --no-startup-id emacsclient -a "" -c
+#exec --no-startup-id emacsclient -a "" -c
+
+# Start emacs
+exec --no-startup-id emacs
 
 # Start our email checking systemd timer.
 #exec --no-startup-id systemctl --user start checkmail.timer &
