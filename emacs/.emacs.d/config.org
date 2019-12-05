@@ -1586,14 +1586,14 @@ Set a keybinding of =Super-s= to bring up this view.
 #+BEGIN_SRC emacs-lisp
   (setq org-todo-keywords
         (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-                (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
+                (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELED(c@/!)"))))
 
   (setq org-todo-keyword-faces
         (quote (("NEXT" :foreground "cyan" :weight bold)
                 ("DONE" :foreground "gray" :weight bold)
                 ("WAITING" :foreground "orange" :weight bold)
                 ("HOLD" :foreground "magenta" :weight bold)
-                ("CANCELLED" :foreground "gray" :weight bold))))
+                ("CANCELED" :foreground "gray" :weight bold))))
 #+END_SRC
 
 Don't harass me while I'm just changing keyword states, thanks!
@@ -1604,13 +1604,13 @@ Don't harass me while I'm just changing keyword states, thanks!
 Lets add tags to our items?
 #+BEGIN_SRC emacs-lisp
   (setq org-todo-state-tags-triggers
-        (quote (("CANCELLED" ("CANCELLED" . t))
+        (quote (("CANCELED" ("CANCELED" . t))
                 ("WAITING" ("WAITING" . t))
                 ("HOLD" ("WAITING") ("HOLD" . t))
                 (done ("WAITING") ("HOLD"))
-                ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
-                ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
-                ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
+                ("TODO" ("WAITING") ("CANCELED") ("HOLD"))
+                ("NEXT" ("WAITING") ("CANCELED") ("HOLD"))
+                ("DONE" ("WAITING") ("CANCELED") ("HOLD")))))
 #+END_SRC
 
 *** Capture templates
