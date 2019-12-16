@@ -2,44 +2,56 @@
 ;; --------------------------------------------------------------------------
 ;; Desktop File for Emacs
 ;; --------------------------------------------------------------------------
-;; Created Mon Dec 16 15:18:51 2019
+;; Created Mon Dec 16 17:31:04 2019
 ;; Desktop file format version 208
 ;; Emacs version 26.3
 
 ;; Global section:
-(setq desktop-saved-frameset [frameset 1 (24055 59051 708911 475000) (desktop . "208") "kef@osh" nil nil ((((minibuffer . t) (undecorated) (override-redirect) (font-backend xft x) (font . "-CYEL-Iosevka Term-semibold-normal-normal-*-29-*-*-*-m-0-iso10646-1") (font-parameter . "Iosevka Term Semibold 11") (border-width . 0) (internal-border-width . 0) (right-divider-width . 0) (bottom-divider-width . 0) (vertical-scroll-bars) (horizontal-scroll-bars) (foreground-color . "#c5c8c6") (background-color . "#1d1f21") (mouse-color . "black") (border-color . "black") (screen-gamma) (line-spacing) (left-fringe . 8) (right-fringe . 8) (no-special-glyphs) (scroll-bar-foreground . "#F8F8F2") (scroll-bar-background . "#F8F8F2") (menu-bar-lines . 0) (tool-bar-lines . 0) (title) (wait-for-wm . t) (tool-bar-position . top) (inhibit-double-buffering) (icon-type . t) (auto-raise) (auto-lower) (cursor-type . box) (scroll-bar-width . 0) (scroll-bar-height . 0) (alpha) (no-focus-on-map) (no-accept-focus) (fullscreen) (visibility . t) (skip-taskbar) (z-group) (display-type . color) (background-mode . dark) (cursor-color . "#81a2be") (sticky) (environment) (modeline . t) (unsplittable) (frameset--id . "A287-0266-F936-5100") (frameset--mini t . t) (display . ":0") (icon-name) (explicit-name) (frameset--text-pixel-width . 3824) (frameset--text-pixel-height . 2119) (height . 60) (width . 254) (left . 3840) (top . 41)) ((min-height . 4) (min-width . 30) (min-height-ignore . 3) (min-width-ignore . 12) (min-height-safe . 1) (min-width-safe . 6) (min-pixel-height . 140) (min-pixel-width . 450) (min-pixel-height-ignore . 105) (min-pixel-width-ignore . 180) (min-pixel-height-safe . 35) (min-pixel-width-safe . 90)) hc (pixel-width . 3840) (pixel-height . 2084) (total-width . 256) (total-height . 60) (normal-height . 1.0) (normal-width . 1.0) (combination-limit) (leaf (pixel-width . 1280) (pixel-height . 2084) (total-width . 85) (total-height . 60) (normal-height . 1.0) (normal-width . 0.3333333333333333) (buffer "*Org Agenda*" (selected) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 1528) (start . 1))) (leaf (pixel-width . 665) (pixel-height . 2084) (total-width . 44) (total-height . 60) (normal-height . 1.0) (normal-width . 0.17317708333333331) (buffer "life.org" (selected) (hscroll . 12) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 117572) (start . 88361))) (leaf (last . t) (pixel-width . 1895) (pixel-height . 2084) (total-width . 127) (total-height . 60) (normal-height . 1.0) (normal-width . 0.4934895833333333) (buffer "i3bar.conf" (selected . t) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 931) (start . 1)))))])
+(setq desktop-saved-frameset [frameset 1 (24056 1448 785096 190000) (desktop . "208") "kef@osh" nil nil ((((minibuffer . t) (undecorated) (override-redirect) (font-backend xft x) (font . "-CYEL-Iosevka Term-semibold-normal-normal-*-29-*-*-*-m-0-iso10646-1") (font-parameter . "Iosevka Term Semibold 11") (border-width . 0) (internal-border-width . 0) (right-divider-width . 0) (bottom-divider-width . 0) (vertical-scroll-bars) (horizontal-scroll-bars) (foreground-color . "#c5c8c6") (background-color . "#1d1f21") (mouse-color . "black") (border-color . "black") (screen-gamma) (line-spacing) (left-fringe . 8) (right-fringe . 8) (no-special-glyphs) (scroll-bar-foreground . "#F8F8F2") (scroll-bar-background . "#F8F8F2") (menu-bar-lines . 0) (tool-bar-lines . 0) (title) (wait-for-wm . t) (tool-bar-position . top) (inhibit-double-buffering) (icon-type . t) (auto-raise) (auto-lower) (cursor-type . box) (scroll-bar-width . 0) (scroll-bar-height . 0) (alpha) (no-focus-on-map) (no-accept-focus) (fullscreen) (visibility . t) (skip-taskbar) (z-group) (display-type . color) (background-mode . dark) (cursor-color . "#81a2be") (sticky) (environment) (modeline . t) (unsplittable) (frameset--id . "A287-0266-F936-5100") (frameset--mini t . t) (display . ":0") (icon-name) (explicit-name) (frameset--text-pixel-width . 3824) (frameset--text-pixel-height . 2123) (height . 60) (width . 254) (left . 3840) (top . 37)) ((min-height . 4) (min-width . 20) (min-height-ignore . 3) (min-width-ignore . 8) (min-height-safe . 1) (min-width-safe . 4) (min-pixel-height . 140) (min-pixel-width . 300) (min-pixel-height-ignore . 105) (min-pixel-width-ignore . 120) (min-pixel-height-safe . 35) (min-pixel-width-safe . 60)) hc (pixel-width . 3840) (pixel-height . 2088) (total-width . 256) (total-height . 60) (normal-height . 1.0) (normal-width . 1.0) (combination-limit) (leaf (pixel-width . 1935) (pixel-height . 2088) (total-width . 129) (total-height . 60) (normal-height . 1.0) (normal-width . 0.50390625) (buffer "*Org Agenda*" (selected) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 1528) (start . 1))) (leaf (last . t) (pixel-width . 1905) (pixel-height . 2088) (total-width . 127) (total-height . 60) (normal-height . 1.0) (normal-width . 0.49609375) (buffer "life.org" (selected . t) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 118940) (start . 117530)))))])
 (setq desktop-missing-file-warning nil)
 (setq tags-file-name nil)
 (setq tags-table-list nil)
 (setq search-ring nil)
-(setq regexp-search-ring '("discre" "theme" "discrete" "laundr" "programming" "discrete" "xps" "mathematics" "mathema" "console.log" "this.need" "centrex" "javascript" "cancelle" "cancelled" "kbd"))
+(setq regexp-search-ring '("budget" "font" "discre" "theme" "discrete" "laundr" "programming" "discrete" "xps" "mathematics" "mathema" "console.log" "this.need" "centrex" "javascript" "cancelle"))
 (setq register-alist nil)
-(setq file-name-history '("/home/kef/.dotfiles/i3/.config/i3/i3bar.conf" "/home/kef/org/life.org" "/home/kef/.emacs.d/init.el" "/home/kef/edu/cm1010-Intro-to-Programming02/w07/" "/home/kef/edu/cm1010-Intro-to-Programming02/w07./ " "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/needles.js" "/home/kef/edu/cm1010-Intro-to-Programming02/" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/" "/home/kef/.emacs.d/" "/home/kef/.dotfiles/emacs/.emacs.d/init.el" "/home/kef/.dotfiles/i3/.config/i3/config" "/home/kef/.dotfiles/emacs/.emacs.d/config.org" "/home/kef/edu/" "/home/kef/org/ini" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/sketch.js" "/home/kef/.dotfiles/emacs/.emacs.d/lisp/find-desktop.el" "/home/kef/.dotfiles/bash/.bin/em" "/home/kef/.dotfiles/emacs/.emacs.d/" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/spectrum.js" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/visualisations.js" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/controlsAndInput.js" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/README.md" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/playbackButton.js" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/index.html"))
+(setq file-name-history '("/home/kef/.dotfiles/i3/.config/i3/i3bar.conf" "/home/kef/.dotfiles/i3/.config/i3/config" "/home/kef/org/life.org" "/home/kef/.emacs.d/init.el" "/home/kef/edu/cm1010-Intro-to-Programming02/w07/" "/home/kef/edu/cm1010-Intro-to-Programming02/w07./ " "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/needles.js" "/home/kef/edu/cm1010-Intro-to-Programming02/" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/" "/home/kef/.emacs.d/" "/home/kef/.dotfiles/emacs/.emacs.d/init.el" "/home/kef/.dotfiles/emacs/.emacs.d/config.org" "/home/kef/edu/" "/home/kef/org/ini" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/sketch.js" "/home/kef/.dotfiles/emacs/.emacs.d/lisp/find-desktop.el" "/home/kef/.dotfiles/bash/.bin/em" "/home/kef/.dotfiles/emacs/.emacs.d/" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/spectrum.js" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/visualisations.js" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/controlsAndInput.js" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/README.md" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/playbackButton.js" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/index.html"))
 
 ;; Buffer section -- buffers listed in same order as in buffer list:
-(desktop-create-buffer 208
-  "/home/kef/.dotfiles/i3/.config/i3/i3bar.conf"
-  "i3bar.conf"
-  'conf-unix-mode
-  '(override-global-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode company-mode yas-minor-mode which-key-mode)
-  931
-  '(931 nil)
-  nil
-  nil
-  '((buffer-display-time 24055 58984 104983 31000) (buffer-file-coding-system . utf-8-unix))
-  '((mark-ring (931))))
-
 (desktop-create-buffer 208
   "/home/kef/org/life.org"
   "life.org"
   'org-mode
   '(auto-fill-mode override-global-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode company-mode yas-minor-mode flyspell-mode writegood-mode which-key-mode org-indent-mode)
-  117572
-  '(71 nil)
+  118940
+  '(118913 nil)
   nil
   nil
-  '((indent-tabs-mode) (buffer-display-time 24055 58984 104981 943000) (buffer-file-coding-system . utf-8-unix) (fill-column . 80) (truncate-lines . t))
-  '((mark-ring (225 473 215 21719 21658 21596 21596 21286 13878 36408 35974 35964 21286 21276 13878 85948))))
+  '((indent-tabs-mode) (buffer-display-time 24056 1373 117583 934000) (buffer-file-coding-system . utf-8-unix) (fill-column . 80) (truncate-lines . t))
+  '((mark-ring (71 225 473 215 21719 21658 21596 21596 21286 13878 36408 35974 35964 21286 21276 195589))))
+
+(desktop-create-buffer 208
+  "/home/kef/.dotfiles/i3/.config/i3/i3bar.conf"
+  "i3bar.conf"
+  'conf-unix-mode
+  '(override-global-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode company-mode yas-minor-mode which-key-mode)
+  942
+  '(931 nil)
+  nil
+  nil
+  '((buffer-display-time 24055 59358 677943 131000) (buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (931))))
+
+(desktop-create-buffer 208
+  "/home/kef/.dotfiles/i3/.config/i3/config"
+  "config"
+  'conf-space-mode
+  '(override-global-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode company-mode yas-minor-mode which-key-mode)
+  8691
+  '(1 nil)
+  nil
+  nil
+  '((buffer-display-time 24055 59259 185364 639000) (buffer-file-coding-system . utf-8-unix))
+  '((mark-ring nil)))
 
 (desktop-create-buffer 208
   "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/needles.js"
@@ -125,7 +137,7 @@
   '((buffer-display-time 24040 24985 615350 63000))
   '((mark-ring nil)))
 
-(desktop-create-buffer 208
+(desktop-append-buffer-args 208
   "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/README.md"
   "README.md"
   'fundamental-mode
