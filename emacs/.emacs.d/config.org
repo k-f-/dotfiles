@@ -497,7 +497,7 @@ base16 seems to work well. perhaps we can find a light theme we like here.
 
   ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
   ;; may have their own settings.
-  (load-theme 'doom-tomorrow-day t)
+  (load-theme 'doom-tomorrow-night t)
   ;; (load-theme 'dichromacy t)
 
 #+END_SRC
@@ -525,9 +525,12 @@ much space is kept between the cursor and the bottom of the buffer.
 
 *** GoldenRatio
 #+BEGIN_SRC emacs-lisp
-  (use-package golden-ratio :ensure)
-  (setq golden-ratio-auto-scale t)
-  (golden-ratio-mode 1)
+    (use-package golden-ratio :ensure)
+  ;  (setq golden-ratio-auto-scale t)
+    (golden-ratio-mode 1)
+
+    (setq golden-ratio-adjust-factor .8
+          golden-ratio-wide-adjust-factor .8)
 #+END_SRC
 
 *** dimmer-mode

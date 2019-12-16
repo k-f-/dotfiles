@@ -245,7 +245,7 @@ client.background       #F8F8F2
 # i3Bar
 #################################################################
 bar {
-	font pango:San Francisco Text 9
+	font pango:Fontawesome 9
 	position top
         i3bar_command "i3bar -t"
         status_command i3status -c ~/.config/i3/i3bar.conf
