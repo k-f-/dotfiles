@@ -13,9 +13,9 @@
  (handler . elfeed-search-bookmark-handler))
 ("org-capture-last-stored"
  (filename . "~/org/life.org")
- (front-context-string . "** TODO CHA -> A")
+ (front-context-string . "** TODO kfring.c")
  (rear-context-string . "ed 13:06]\n:END:\n")
- (position . 2339))
+ (position . 3145))
 ("elfeed-unread"
  (location . "+unread")
  (tags "unread")

@@ -32,6 +32,6 @@ ln -sv ~/.bashrc ~/.bash_profile
 # s: soft
 # v: verbose
 # n: only if $file2 doesn't not exist
-ln -svn ~/Dropbox/org ~/org
-ln -svn ~/Dropbox/elfeed ~/.elfeed
-ln -svn ~/Dropbox/fonts ~/.fonts
+ln -svn ~/Dropbox/00-Notes/org ~/org
+ln -svn ~/Dropbox/01-Meta/elfeed ~/.elfeed
+ln -svn ~/Dropbox/01-Meta/fonts ~/.fonts
