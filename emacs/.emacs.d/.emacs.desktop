@@ -2,44 +2,56 @@
 ;; --------------------------------------------------------------------------
 ;; Desktop File for Emacs
 ;; --------------------------------------------------------------------------
-;; Created Wed Jan  8 18:18:50 2020
+;; Created Tue Jan 21 12:31:18 2020
 ;; Desktop file format version 208
 ;; Emacs version 26.3
 
 ;; Global section:
-(setq desktop-saved-frameset [frameset 1 (24086 25434 363430 755000) (desktop . "208") "kef@osh" nil nil ((((minibuffer . t) (undecorated) (override-redirect) (font-backend xft x) (font . "-CYEL-Iosevka Term-semibold-normal-normal-*-29-*-*-*-m-0-iso10646-1") (font-parameter . "Iosevka Term Semibold 11") (border-width . 0) (internal-border-width . 0) (right-divider-width . 0) (bottom-divider-width . 0) (vertical-scroll-bars) (horizontal-scroll-bars) (foreground-color . "#c5c8c6") (background-color . "#1d1f21") (mouse-color . "black") (border-color . "black") (screen-gamma) (line-spacing) (left-fringe . 8) (right-fringe . 8) (no-special-glyphs) (scroll-bar-foreground . "#F8F8F2") (scroll-bar-background . "#F8F8F2") (menu-bar-lines . 0) (tool-bar-lines . 0) (title) (wait-for-wm . t) (tool-bar-position . top) (inhibit-double-buffering) (icon-type . t) (auto-raise) (auto-lower) (cursor-type . box) (scroll-bar-width . 0) (scroll-bar-height . 0) (alpha) (no-focus-on-map) (no-accept-focus) (fullscreen) (visibility . t) (skip-taskbar) (z-group) (display-type . color) (background-mode . dark) (cursor-color . "#81a2be") (sticky) (environment) (modeline . t) (unsplittable) (frameset--id . "012A-77B9-6952-FD93") (frameset--mini t . t) (display . ":0") (frameset--text-pixel-width . 3824) (frameset--text-pixel-height . 2123) (height . 60) (width . 254) (left . 3840) (top . 37) (icon-name) (explicit-name)) ((min-height . 4) (min-width . 20) (min-height-ignore . 3) (min-width-ignore . 8) (min-height-safe . 1) (min-width-safe . 4) (min-pixel-height . 140) (min-pixel-width . 300) (min-pixel-height-ignore . 105) (min-pixel-width-ignore . 120) (min-pixel-height-safe . 35) (min-pixel-width-safe . 60)) hc (pixel-width . 3840) (pixel-height . 2088) (total-width . 256) (total-height . 60) (normal-height . 1.0) (normal-width . 1.0) (combination-limit) (leaf (pixel-width . 1935) (pixel-height . 2088) (total-width . 129) (total-height . 60) (normal-height . 1.0) (normal-width . 0.50390625) (buffer "sketch.js" (selected) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 803) (start . 1))) (leaf (last . t) (pixel-width . 1905) (pixel-height . 2088) (total-width . 127) (total-height . 60) (normal-height . 1.0) (normal-width . 0.49609375) (buffer "nutrients-1974-2016.js" (selected . t) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 924) (start . 1)))))])
+(setq desktop-saved-frameset [frameset 1 (24103 13670 230716 847000) (desktop . "208") "kef@osh" nil nil ((((minibuffer . t) (undecorated) (override-redirect) (font-backend xft x) (font . "-CYEL-Iosevka Term-semibold-normal-normal-*-29-*-*-*-m-0-iso10646-1") (font-parameter . "Iosevka Term Semibold 11") (border-width . 0) (internal-border-width . 0) (right-divider-width . 0) (bottom-divider-width . 0) (vertical-scroll-bars) (horizontal-scroll-bars) (foreground-color . "#c5c8c6") (background-color . "#1d1f21") (mouse-color . "black") (border-color . "black") (screen-gamma) (line-spacing) (left-fringe . 8) (right-fringe . 8) (no-special-glyphs) (scroll-bar-foreground . "#F8F8F2") (scroll-bar-background . "#F8F8F2") (menu-bar-lines . 0) (tool-bar-lines . 0) (title) (wait-for-wm . t) (tool-bar-position . top) (inhibit-double-buffering) (icon-type . t) (auto-raise) (auto-lower) (cursor-type . box) (scroll-bar-width . 0) (scroll-bar-height . 0) (alpha) (no-focus-on-map) (no-accept-focus) (fullscreen) (visibility . t) (skip-taskbar) (z-group) (display-type . color) (background-mode . dark) (cursor-color . "#81a2be") (sticky) (environment) (modeline . t) (unsplittable) (frameset--id . "012A-77B9-6952-FD93") (frameset--mini t . t) (display . ":0") (icon-name) (explicit-name) (frameset--text-pixel-width . 1864) (frameset--text-pixel-height . 2071) (height . 59) (width . 124) (left . 16) (top . 53)) ((min-height . 4) (min-width . 20) (min-height-ignore . 3) (min-width-ignore . 8) (min-height-safe . 1) (min-width-safe . 4) (min-pixel-height . 140) (min-pixel-width . 300) (min-pixel-height-ignore . 105) (min-pixel-width-ignore . 120) (min-pixel-height-safe . 35) (min-pixel-width-safe . 60)) hc (pixel-width . 1880) (pixel-height . 2036) (total-width . 125) (total-height . 58) (normal-height . 1.0) (normal-width . 1.0) (combination-limit) (leaf (pixel-width . 935) (pixel-height . 2036) (total-width . 62) (total-height . 58) (normal-height . 1.0) (normal-width . 0.49609375) (buffer "*Org Agenda*" (selected . t) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 1103) (start . 1))) (leaf (last . t) (pixel-width . 945) (pixel-height . 2036) (total-width . 63) (total-height . 58) (normal-height . 1.0) (normal-width . 0.50390625) (buffer "life.org" (selected) (hscroll . 0) (fringes 8 8 nil) (margins nil) (scroll-bars nil 0 t nil 0 t) (vscroll . 0) (dedicated) (point . 126018) (start . 113812)))))])
 (setq desktop-missing-file-warning nil)
 (setq tags-file-name nil)
 (setq tags-table-list nil)
 (setq search-ring nil)
-(setq regexp-search-ring '("numYears" "%" "numYears" "console." "if" "numYears" "row" "this.data" "getNum" "getnum" "null" "random" "stroke" "start" "previous" "year':"))
+(setq regexp-search-ring '("Discr" "startslider" "overlap" "slider" "startyear" "slider" "margin" "console" "text" "minYear" "console" "previous" "this.set" "X" "100" "xtic"))
 (setq register-alist nil)
-(setq file-name-history '("/home/kef/edu/cm1010-Intro-to-Programming02/Data-Project/Code/nutrients-1974-2016.js" "/home/kef/edu/cm1010-Intro-to-Programming02/Data-Project/" "/home/kef/edu/cm1010-Intro-to-Programming02/Data-Project/Code/sketch.js" "/home/kef/edu/cm1010-Intro-to-Programming02/Data-Project/Code/uk-food-attitudes.js" "/home/kef/edu/cm1010-Intro-to-Programming02/Data-Project/Code/" "/home/kef/edu/cm1010-Intro-to-Programming02/Data-Project/so-data/so-data-munge.py" "/home/kef/edu/cm1010-Intro-to-Programming02/Data-Project/Code" "/home/kef/edu/cm1010-Intro-to-Programming02/prog-mid-term.org" "/home/kef/edu/cm1020-Discrete-Mathematics/Mid-Term/DM-Midterm-Assessment-Coursework-final-updated-22-11-19-uploaded-v3.pdf" "/home/kef/edu/cm1020-Discrete-Mathematics/Mid-Term/dm-midterm.org" "/home/kef/edu/" "/home/kef/edu/cm1020-Discrete-Mathematics/w02/pr-02.org" "/home/kef/edu/cm1020-Discrete-Mathematics/Mid-Term/template.tex" "/home/kef/edu/cm1020-Discrete-Mathematics/truthtables.py" "/home/kef/edu/cm1020-Discrete-Mathematics/Mid-Term/dm-midterm.tex" "/home/kef/Dropbox/Videos/Movies/Star Wars Trilogy/magnetlink.txt" "/home/kef/.dotfiles/i3/.config/i3/i3bar.conf" "/home/kef/.dotfiles/i3/.config/i3/config" "/home/kef/org/life.org" "/home/kef/.emacs.d/init.el" "/home/kef/edu/cm1010-Intro-to-Programming02/w07/" "/home/kef/edu/cm1010-Intro-to-Programming02/w07./ " "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/needles.js" "/home/kef/edu/cm1010-Intro-to-Programming02/" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/" "/home/kef/.emacs.d/" "/home/kef/.dotfiles/emacs/.emacs.d/init.el" "/home/kef/.dotfiles/emacs/.emacs.d/config.org" "/home/kef/org/ini" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/sketch.js" "/home/kef/.dotfiles/emacs/.emacs.d/lisp/find-desktop.el" "/home/kef/.dotfiles/bash/.bin/em" "/home/kef/.dotfiles/emacs/.emacs.d/" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/spectrum.js" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/visualisations.js" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/controlsAndInput.js" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/README.md" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/playbackButton.js" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/index.html"))
+(setq file-name-history '("/home/kef/edu/cm1010-Intro-to-Programming02/Data-Project/Code/climate-change.js" "/home/kef/edu/cm1010-Intro-to-Programming02/Data-Project/Code/nutrients-1974-2016.js" "/home/kef/edu/cm1010-Intro-to-Programming02/Data-Project/" "/home/kef/edu/cm1010-Intro-to-Programming02/Data-Project/Code/sketch.js" "/home/kef/edu/cm1010-Intro-to-Programming02/Data-Project/Code/uk-food-attitudes.js" "/home/kef/edu/cm1010-Intro-to-Programming02/Data-Project/Code/" "/home/kef/edu/cm1010-Intro-to-Programming02/Data-Project/so-data/so-data-munge.py" "/home/kef/edu/cm1010-Intro-to-Programming02/Data-Project/Code" "/home/kef/edu/cm1010-Intro-to-Programming02/prog-mid-term.org" "/home/kef/edu/cm1020-Discrete-Mathematics/Mid-Term/DM-Midterm-Assessment-Coursework-final-updated-22-11-19-uploaded-v3.pdf" "/home/kef/edu/cm1020-Discrete-Mathematics/Mid-Term/dm-midterm.org" "/home/kef/edu/" "/home/kef/edu/cm1020-Discrete-Mathematics/w02/pr-02.org" "/home/kef/edu/cm1020-Discrete-Mathematics/Mid-Term/template.tex" "/home/kef/edu/cm1020-Discrete-Mathematics/truthtables.py" "/home/kef/edu/cm1020-Discrete-Mathematics/Mid-Term/dm-midterm.tex" "/home/kef/Dropbox/Videos/Movies/Star Wars Trilogy/magnetlink.txt" "/home/kef/.dotfiles/i3/.config/i3/i3bar.conf" "/home/kef/.dotfiles/i3/.config/i3/config" "/home/kef/org/life.org" "/home/kef/.emacs.d/init.el" "/home/kef/edu/cm1010-Intro-to-Programming02/w07/" "/home/kef/edu/cm1010-Intro-to-Programming02/w07./ " "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/needles.js" "/home/kef/edu/cm1010-Intro-to-Programming02/" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/" "/home/kef/.emacs.d/" "/home/kef/.dotfiles/emacs/.emacs.d/init.el" "/home/kef/.dotfiles/emacs/.emacs.d/config.org" "/home/kef/org/ini" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/sketch.js" "/home/kef/.dotfiles/emacs/.emacs.d/lisp/find-desktop.el" "/home/kef/.dotfiles/bash/.bin/em" "/home/kef/.dotfiles/emacs/.emacs.d/" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/spectrum.js" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/visualisations.js" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/controlsAndInput.js" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/README.md" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/playbackButton.js" "/home/kef/edu/cm1010-Intro-to-Programming02/w05/musicVis template/index.html"))
 
 ;; Buffer section -- buffers listed in same order as in buffer list:
 (desktop-create-buffer 208
-  "/home/kef/edu/cm1010-Intro-to-Programming02/Data-Project/Code/nutrients-1974-2016.js"
-  "nutrients-1974-2016.js"
+  "/home/kef/org/life.org"
+  "life.org"
+  'org-mode
+  '(auto-fill-mode override-global-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode company-mode yas-minor-mode flyspell-mode writegood-mode which-key-mode org-indent-mode)
+  126018
+  '(17775 nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-display-time 24101 52022 119780 909000) (buffer-file-coding-system . utf-8-unix) (fill-column . 80) (truncate-lines . t))
+  '((mark-ring (77780 77668 73435 38556 22938 23744 23682 23620 23558 23496 23434 23372 23310 23248 23186 23124))))
+
+(desktop-create-buffer 208
+  "/home/kef/edu/cm1010-Intro-to-Programming02/Data-Project/Code/climate-change.js"
+  "climate-change.js"
   'js2-mode
   '(override-global-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode skewer-mode tern-mode company-mode yas-minor-mode flyspell-mode which-key-mode js2-refactor-mode)
-  924
-  '(3538 nil)
+  1778
+  '(1983 nil)
   nil
   nil
-  '((buffer-display-time 24086 25080 282032 797000) (buffer-file-coding-system . undecided-unix))
-  '((mark-ring (4913 2082 557 4458 2129 2082 3305 3305 3305 2517 2608 2384 2349 2446 2521 3537))))
+  '((buffer-display-time 24098 34756 102307 824000) (buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (4824 3642 3132 2359 3132 3642 4870 4824 5182 4438 450 1983))))
 
 (desktop-create-buffer 208
   "/home/kef/edu/cm1010-Intro-to-Programming02/Data-Project/Code/sketch.js"
   "sketch.js"
   'js2-mode
   '(override-global-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode skewer-mode tern-mode company-mode yas-minor-mode flyspell-mode which-key-mode js2-refactor-mode)
-  803
+  928
   '(718 nil)
   nil
   nil
-  '((buffer-display-time 24086 23532 980266 666000) (buffer-file-coding-system . undecided-unix))
-  '((mark-ring (672 653 928 928 928 928 928 652 653 806 578 806 887 805 803))))
+  '((buffer-display-time 24098 11074 417086 579000) (buffer-file-coding-system . undecided-unix))
+  '((mark-ring (672 653 928 928 928 928 928 652 653 806 578 806 887 805 803 928))))
 
 (desktop-create-buffer 208
   "/home/kef/edu/cm1010-Intro-to-Programming02/Data-Project/Code/uk-food-attitudes.js"
@@ -50,8 +62,20 @@
   '(nil nil)
   nil
   nil
-  '((buffer-display-time 24086 18796 614326 520000) (buffer-file-coding-system . undecided-unix))
+  '((buffer-display-time 24098 1609 247065 99000) (buffer-file-coding-system . undecided-unix))
   '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/kef/edu/cm1010-Intro-to-Programming02/Data-Project/Code/nutrients-1974-2016.js"
+  "nutrients-1974-2016.js"
+  'js2-mode
+  '(override-global-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode skewer-mode tern-mode company-mode yas-minor-mode flyspell-mode which-key-mode js2-refactor-mode)
+  3119
+  '(3584 nil)
+  nil
+  nil
+  '((buffer-display-time 24098 34760 121842 785000) (buffer-file-coding-system . undecided-unix))
+  '((mark-ring (3589 2882 3006 2960 450 1069 4518 2672 2960 2960 2475 2854 2674 2728 3205 3114))))
 
 (desktop-create-buffer 208
   "/home/kef/edu/cm1010-Intro-to-Programming02/Data-Project/Code/pay-gap-1997-2017.js"
@@ -62,7 +86,7 @@
   '(1 nil)
   nil
   nil
-  '((buffer-display-time 24086 18724 574022 11000) (buffer-file-coding-system . undecided-unix))
+  '((buffer-display-time 24098 1537 207592 434000) (buffer-file-coding-system . undecided-unix))
   '((mark-ring nil)))
 
 (desktop-create-buffer 208
@@ -74,7 +98,7 @@
   '(845 nil)
   nil
   nil
-  '((buffer-display-time 24086 18651 489834 143000) (buffer-file-coding-system . utf-8-unix))
+  '((buffer-display-time 24098 1464 985751 720000) (buffer-file-coding-system . utf-8-unix))
   '((mark-ring (796 624 1252 1061 1231 1261 713 623 480 871 981))))
 
 (desktop-create-buffer 208
@@ -86,7 +110,7 @@
   '(nil nil)
   t
   '("/home/kef/edu/cm1010-Intro-to-Programming02/Data-Project/Code/")
-  '((buffer-display-time 24086 18165 782965 343000))
+  '((buffer-display-time 24098 979 411843 312000))
   '((mark-ring nil)))
 
 (desktop-create-buffer 208
@@ -94,11 +118,11 @@
   "Data-Project"
   'dired-mode
   '(override-global-mode auto-revert-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode company-mode which-key-mode)
-  237
+  310
   '(nil nil)
   t
   '("/home/kef/edu/cm1010-Intro-to-Programming02/Data-Project/")
-  '((buffer-display-time 24086 18164 578577 26000))
+  '((buffer-display-time 24098 978 263703 642000))
   '((mark-ring nil)))
 
 (desktop-create-buffer 208
@@ -110,10 +134,10 @@
   '(nil nil)
   t
   '("/home/kef/edu/cm1010-Intro-to-Programming02/")
-  '((buffer-display-time 24086 18139 185631 74000))
+  '((buffer-display-time 24101 30735 652318 417000))
   '((mark-ring nil)))
 
-(desktop-create-buffer 208
+(desktop-append-buffer-args 208
   nil
   "DataVis-template-complete"
   'dired-mode
@@ -122,10 +146,10 @@
   '(nil nil)
   t
   '("/home/kef/edu/cm1010-Intro-to-Programming02/DataVis-template-complete/")
-  '((buffer-display-time 24086 18136 315729 16000))
+  '((buffer-display-time 24098 13801 191689 886000))
   '((mark-ring nil)))
 
-(desktop-create-buffer 208
+(desktop-append-buffer-args 208
   "/home/kef/.dotfiles/emacs/.emacs.d/config.org"
   "config.org"
   'org-mode
@@ -134,20 +158,8 @@
   '(34070 nil)
   nil
   nil
-  '((indent-tabs-mode) (buffer-display-time 24086 15297 895879 724000) (buffer-file-coding-system . utf-8-unix) (fill-column . 80) (truncate-lines . t))
+  '((indent-tabs-mode) (buffer-display-time 24097 63677 117250 919000) (buffer-file-coding-system . utf-8-unix) (fill-column . 80) (truncate-lines . t))
   '((mark-ring (31623))))
-
-(desktop-append-buffer-args 208
-  "/home/kef/org/life.org"
-  "life.org"
-  'org-mode
-  '(auto-fill-mode override-global-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode company-mode yas-minor-mode flyspell-mode writegood-mode which-key-mode org-indent-mode)
-  3214
-  '(105744 nil)
-  nil
-  nil
-  '((indent-tabs-mode) (buffer-display-time 24086 14863 75165 98000) (buffer-file-coding-system . utf-8-unix) (fill-column . 80) (truncate-lines . t))
-  '((mark-ring (38278 22660 23466 23404 23342 23280 23218 23156 23094 23032 22970 22908 22846 22784 22722 105680))))
 
 (desktop-append-buffer-args 208
   "/home/kef/edu/cm1010-Intro-to-Programming02/prog-mid-term.org"
@@ -158,7 +170,7 @@
   '(2414 nil)
   nil
   nil
-  '((indent-tabs-mode) (buffer-display-time 24085 21667 810715 217000) (buffer-file-coding-system . utf-8-unix) (fill-column . 80) (truncate-lines . t))
+  '((indent-tabs-mode) (buffer-display-time 24097 4513 438525 90000) (buffer-file-coding-system . utf-8-unix) (fill-column . 80) (truncate-lines . t))
   '((mark-ring (1189 562 525 25 49 564 271 313 313 565 560 313 2045 2414 2045 2414))))
 
 (desktop-append-buffer-args 208
@@ -170,7 +182,7 @@
   '(1 nil)
   t
   '("/home/kef/edu/cm1010-Intro-to-Programming02/overflow-datasets/2012/")
-  '((buffer-display-time 24084 34402 894172 344000))
+  '((buffer-display-time 24096 17249 461502 639000))
   '((mark-ring nil)))
 
 (desktop-append-buffer-args 208
@@ -182,7 +194,7 @@
   '(nil nil)
   t
   '("/home/kef/edu/cm1010-Intro-to-Programming02/overflow-datasets/")
-  '((buffer-display-time 24084 34379 33973 605000))
+  '((buffer-display-time 24096 17226 507206 515000))
   '((mark-ring nil)))
 
 (desktop-append-buffer-args 208
@@ -194,7 +206,7 @@
   '(nil nil)
   t
   '("/home/kef/edu/cm1010-Intro-to-Programming02/overflow-datasets/2013/")
-  '((buffer-display-time 24084 34377 938927 707000))
+  '((buffer-display-time 24096 17226 307073 307000))
   '((mark-ring nil)))
 
 (desktop-append-buffer-args 208
@@ -206,7 +218,7 @@
   '(nil nil)
   t
   '("/home/kef/edu/cm1010-Intro-to-Programming02/overflow-datasets/2014/")
-  '((buffer-display-time 24084 34376 181412 795000))
+  '((buffer-display-time 24096 17225 471903 994000))
   '((mark-ring nil)))
 
 (desktop-append-buffer-args 208
@@ -218,6 +230,18 @@
   '(nil nil)
   t
   '("/home/kef/edu/cm1010-Intro-to-Programming02/overflow-datasets/2016/")
-  '((buffer-display-time 24084 34373 627738 1000))
+  '((buffer-display-time 24096 17223 967532 876000))
+  '((mark-ring nil)))
+
+(desktop-append-buffer-args 208
+  "/home/kef/org/life.org_archive"
+  "life.org_archive"
+  'org-mode
+  '(auto-fill-mode override-global-mode global-auto-revert-mode golden-ratio-mode dimmer-mode ivy-mode whole-line-or-region-local-mode company-mode yas-minor-mode flyspell-mode writegood-mode which-key-mode org-indent-mode)
+  99264
+  '(nil nil)
+  nil
+  nil
+  '((indent-tabs-mode) (buffer-display-time 24101 30743 248063 161000) (buffer-file-coding-system . utf-8-unix) (fill-column . 80) (truncate-lines . t))
   '((mark-ring nil)))
 
