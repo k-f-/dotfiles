@@ -1651,7 +1651,7 @@ ref: https://orgmode.org/manual/Template-elements.html#Template-elements
 
                                 ;; Not cute that we're using the year here, but file+headline does not support variables and it's one second every twelve months. Whatever.
                                 ("a" "Album Notes" entry
-                                 (file+olp "~/org/life.org" "Albums" "2019")
+                                 (file+olp "~/org/life.org" "Albums" "2020")
                                  "*** %u %^{Artist} - %^{Album Name}\n:PROPERTIES:\n:CREATED: %U\n:END:\n- Release: %^{Release}\n- Link: [[%^{URL}][Spotify]]\n- Tracks: %^{Tracks}\n- Playtime: %^{Playtime}\n- %^{Content}\n%?" :prepend t)
 
                                 ;; Date-tree
