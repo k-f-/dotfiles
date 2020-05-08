@@ -3,8 +3,6 @@ backup/
 elpa/
 emacs/.emacs.d/url/
 auto-save-list
-config.el
-custom.el
 ido.last
 smex-items
 projectile-bookmarks.eld
