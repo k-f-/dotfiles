@@ -159,14 +159,14 @@
        web               ; the tubes
 
        :email
-       ;;(mu4e) ; (mu4e +gmail)
+       (mu4e -gmail)
        ;;notmuch
        ;;(wanderlust +gmail)
 
        :app
        calendar
        ;;irc               ; how neckbeards socialize
-       ;;(rss +org)        ; emacs as an RSS reader
+       (rss +org)          ; emacs as an RSS reader (elfeed)
        ;;twitter           ; twitter client https://twitter.com/vnought
 
        :config
