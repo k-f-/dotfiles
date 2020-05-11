@@ -1,7 +1,10 @@
 ! #####################################################
 ! urxvt
 ! #####################################################
-URxvt.font: 'xft:Iosevka Term Semibold:pixelsize=25' 
+*.font: 'xft:Iosevka Term Semibold:pixelsize=25' 
+*.boldFont: 'xft:Iosevka Term Semibold:pixelsize=25' 
+*.italicFont: 'xft:Iosevka Term Semibold:pixelsize=25' 
+*.boldItalicFont: 'xft:Iosevka Term Semibold:pixelsize=25' 
 URxvt.scrollBar: false
 URxvt.scrollBar_right: false
 URxvt.allow_bold: true
@@ -12,9 +15,8 @@ URxvt.background:        rgba:0000/0000/0000/dddd
 URxvt.shading: 30
 
 URxvt.urgentOnBell: true
-URxvt.visualBell: true
+!URxvt.visualBell: true
 URxvt.loginShell: true
-URxvt.internalBorder: 20
 URxvt.lineSpace: 0
 URxvt.saveline: 2048
 URxvt.cursorBlink: true
