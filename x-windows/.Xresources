@@ -5,12 +5,12 @@
 !---------------------------------------
 ! HiDPI for XPS15
 
-Xft.dpi: 192
-Xft.lcdfilter:  lcddefault
-Xft.hintstyle:  hintlight
-Xft.hinting: true
-Xft.antialias: true
-Xft.rgba: rgb
+!Xft.dpi: 192
+!Xft.lcdfilter:  lcddefault
+!Xft.hintstyle:  hintlight
+!Xft.hinting: true
+!Xft.antialias: true
+!Xft.rgba: rgb
 
 !---------------------------------------
 ! Dracula Theme
@@ -96,8 +96,8 @@ Xft.rgba: rgb
 ! Rofi
 !---------------------------------------
 
-rofi.font: San Francisco Text 20
-rofi.lines: 7
-rofi.matching: fuzzy
-rofi.location: 7 !https://github.com/DaveDavenport/rofi/wiki/WindowPosition
-rofi.color-enabled: true
+!rofi.font: San Francisco Text 20
+!rofi.lines: 7
+!rofi.matching: fuzzy
+!rofi.location: 7 !https://github.com/DaveDavenport/rofi/wiki/WindowPosition
+!rofi.color-enabled: true
