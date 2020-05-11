@@ -3,7 +3,7 @@
 # ~/.xinitrc
 #
 # Executed by startx (run your window manager from here)
-xrdb -merge ~/.Xresources
+#xrdb -merge ~/.Xresources
 
 # load last background
-source ~/.fehbg
+#source ~/.fehbg
