@@ -1,10 +1,26 @@
-#include ".Xresources.d/rxvt-unicode"
+! #####################################################
+! urxvt
+! #####################################################
+URxvt.font: xft:Iosevka Term Semibold:pixelsize=28
 
-!---------------------------------------
-! Dracula Theme
-!---------------------------------------
+URxvt.scrollBar: false
+URxvt.scrollBar_right: false
+URxvt.allow_bold: true
+
+! Use fake transparency (better with tiling)
+URxvt.transparent: true
+URxvt.background: rgba:0000/0000/0000/dddd
+URxvt.shading: 30
+
+URxvt.urgentOnBell: true
+!URxvt.visualBell: true
+URxvt.loginShell: true
+URxvt.lineSpace: 0
+URxvt.saveline: 2048
+URxvt.cursorBlink: true
+URxvt.internalBorder: 24
+
 ! Dracula Xresources palette
-
 *.foreground: #F8F8F2
 *.background: #282A36
 *.color0:     #000000
