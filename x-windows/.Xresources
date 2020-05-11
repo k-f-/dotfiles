@@ -1,7 +1,8 @@
 ! #####################################################
 ! urxvt
 ! #####################################################
-URxvt.font: xft:Iosevka Term Semibold:pixelsize=28
+URxvt*iconFile: /home/kyle/.dotfiles/x-windows/urxvt.svg
+URxvt*font: xft:Iosevka Term Semibold:pixelsize=28
 
 URxvt.scrollBar: false
 URxvt.scrollBar_right: false
@@ -13,12 +14,16 @@ URxvt.background: rgba:0000/0000/0000/dddd
 URxvt.shading: 30
 
 URxvt.urgentOnBell: true
-!URxvt.visualBell: true
 URxvt.loginShell: true
 URxvt.lineSpace: 0
 URxvt.saveline: 2048
 URxvt.cursorBlink: true
 URxvt.internalBorder: 24
+
+! hyperlinks
+URxvt.perl-ext-common: default,matcher
+URxvt.url-launcher: /usr/bin/xdg-open
+URxvt.matcher.button: 1
 
 ! Dracula Xresources palette
 *.foreground: #F8F8F2
