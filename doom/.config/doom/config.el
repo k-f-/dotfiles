@@ -51,3 +51,9 @@
 ;;
 ;; You can also try 'gd' (or 'C-c g d') to jump to their definition and see how
 ;; they are implemented.
+
+;; Basic Config
+(setq backup-directory-alist `(("." . "~/.emacs-tmp/")))
+(setq auto-save-file-name-transforms `((".*" "~/.emacs-tmp/" t)))
+;; Auto revert-mode. Look ma, no hands...
+(global-auto-revert-mode t)
