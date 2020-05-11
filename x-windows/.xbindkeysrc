@@ -1,5 +1,8 @@
 # -*- shell-script -*-
+# make CapsLock behave like Ctrl:
+setxkbmap -option ctrl:nocaps
 
+# -- base ubuntu rebinds for xps15 9560
 "xbacklight -dec 5"
   XF86MonBrightnessDown
 
