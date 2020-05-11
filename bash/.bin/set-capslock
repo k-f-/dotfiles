@@ -1,0 +1,7 @@
+# make CapsLock behave like Ctrl:
+setxkbmap -option ctrl:nocaps
+
+# xcape must run after remaping keys
+# make short-pressed Ctrl behave like Escape:
+xcape -e 'Control_L=Escape'
+
