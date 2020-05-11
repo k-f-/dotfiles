@@ -5,4 +5,4 @@ EMACSCLIENT="/usr/bin/emacsclient"
 
 $EMACSCLIENT -c $@ &
 #$EMACSCLIENT -c '' $@
-i3-msg "[class=Emacs] focus"
+#i3-msg "[class=Emacs] focus"
