@@ -5,27 +5,26 @@ sysresources=/etc/X11/xinit/.Xresources
 sysmodmap=/etc/X11/xinit/.Xmodmap
 
 # use unclutter to hide mouse cursor
-unclutter -idle 1 -noevents &
+exec unclutter -idle 1 -noevents &
 
 # make CapsLock behave like Ctrl:
-setxkbmap -option ctrl:nocaps &
+exec setxkbmap -option ctrl:nocaps &
 
 # xcape must run after remaping keys
 # make short-pressed Ctrl behave like Escape:
-#xcape -e 'Control_L=Escape' &
+exec xcape -e 'Control_L=Escape' &
 
 # Merge in everything else.
 [[ -f ~/.Xresources ]] && xrdb -merge -I$HOME ~/.Xresources
 
 # merge in defaults and keymaps
-
 if [ -f $sysresources ]; then
     xrdb -merge $sysresources
 fi
 
-if [ -f $sysmodmap ]; then
-    xmodmap $sysmodmap
-fi
+#if [ -f $sysmodmap ]; then
+#    xmodmap $sysmodmap
+#fi
 
 if [ -f "$userresources" ]; then
     xrdb -merge "$userresources"
