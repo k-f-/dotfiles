@@ -6,19 +6,10 @@
 cd ~/.dotfiles
 
 stow bash
-stow compton
-stow dunst
 stow emacs
 stow git
 stow gnupg
-stow i3
 stow mail
-stow mpd
-stow mpv
-stow pcmanfm
-stow ranger
-stow rofi
-stow systemd
 stow vim
 stow x-windows
 stow secrets 
