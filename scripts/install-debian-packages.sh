@@ -5,9 +5,6 @@ sudo apt install \
      autorandr \ 
      build-essential \
      curl \
-     dunst \
-     emacs26 \
-     feh \
      fonts-font-awesome \
      git \
      gnupg2 \
@@ -19,18 +16,12 @@ sudo apt install \
      make \
      mosh \
      msmtp \
-     notmuch \
      openssl \
      pandoc \
-     pass \
      pasystray \
      procmail \
-     pwgen \
-     python3-proselint \
-     ranger \
      redshift \
      rlwrap \
-     rofi \
      rxvt-unicode \
      sdvc \
      scrot \
@@ -39,9 +30,7 @@ sudo apt install \
      texlive-base \
      texlive-fonts-recommended \
      texlive-latex-base \
-     tree \
      unclutter \
-     unifont \
      unrar \
      urlscan \
      urlview \
