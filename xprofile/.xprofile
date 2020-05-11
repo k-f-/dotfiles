@@ -1,8 +1,0 @@
-# use unclutter to hide mouse cursor
-nohup unclutter -idle 1 -noevents &
-
-# make CapsLock behave like Ctrl:
-nohup setxkbmap -option ctrl:nocaps &
-
-# make short-pressed Ctrl behave like Escape:
-nohup xcape -e 'Control_L=Escape' &
