@@ -1,0 +1,30 @@
+# First section: remote IMAP account
+IMAPAccount fastmail
+Host imap.fastmail.com
+Port 993
+User myemailaddress@mydomain.com
+PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.mbsyncpass.personal.gpg"
+SSLType IMAPS
+SSLVersions TLSv1.2
+
+IMAPStore fastmail-remote
+Account fastmail
+
+# This section describes the local storage
+MaildirStore fastmail-local
+Path ~/.mail/
+Inbox ~/.mail/INBOX
+# The SubFolders option allows to represent all
+# IMAP subfolders as local subfolders
+SubFolders Verbatim
+
+# This section a "channel", a connection between remote and local
+Channel fastmail
+Master :fastmail-remote:
+Slave :fastmail-local:
+Patterns *
+Expunge None
+CopyArrivalDate yes
+Sync All
+Create Slave
+SyncState *
