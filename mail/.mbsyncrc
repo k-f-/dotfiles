@@ -1,9 +1,10 @@
+# gpg --output doc.gpg --symmetric doc
 # First section: remote IMAP account
 IMAPAccount fastmail
 Host imap.fastmail.com
 Port 993
-User myemailaddress@mydomain.com
-PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.mbsyncpass.personal.gpg"
+User me@kfring.com 
+PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.mbsync-fastmail.gpg"
 SSLType IMAPS
 SSLVersions TLSv1.2
 
@@ -12,8 +13,8 @@ Account fastmail
 
 # This section describes the local storage
 MaildirStore fastmail-local
-Path ~/.mail/
-Inbox ~/.mail/INBOX
+Path ~/.mail/kfring.com/
+Inbox ~/.mail/kfring.com/INBOX
 # The SubFolders option allows to represent all
 # IMAP subfolders as local subfolders
 SubFolders Verbatim
