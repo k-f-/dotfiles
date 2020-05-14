@@ -24,5 +24,4 @@ ln -sv ~/.bashrc ~/.bash_profile
 # v: verbose
 # n: only if $file2 doesn't not exist
 ln -svn ~/Dropbox/00-Notes/org ~/org
-ln -svn ~/Dropbox/01-Meta/elfeed ~/.elfeed
 ln -svn ~/Dropbox/01-Meta/fonts ~/.fonts

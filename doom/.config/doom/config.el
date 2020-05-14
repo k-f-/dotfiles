@@ -55,5 +55,38 @@
 ;; Basic Config
 (setq backup-directory-alist `(("." . "~/.emacs-tmp/")))
 (setq auto-save-file-name-transforms `((".*" "~/.emacs-tmp/" t)))
+
 ;; Auto revert-mode. Look ma, no hands...
 (global-auto-revert-mode t)
+
+;; Auth
+(setq auth-sources '("~/.authinfo.gpg"))
+
+;; mu4e configuration
+;; mu4e path
+(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+
+(set-email-account! "kfring.com"
+  '((mu4e-sent-folder       . "/kfring.com/Sent")
+    (mu4e-drafts-folder     . "/kfring.com/Drafts")
+    (mu4e-trash-folder      . "/kfring.com/Trash")
+    (mu4e-refile-folder     . "/kfring.com/Archive")
+    (smtpmail-smtp-user     . "me@kfring.com")
+    (user-mail-address      . "me@kfring.com")    ;; only needed for mu < 1.4
+    (mu4e-compose-signature . "\nk-f-")
+    (mue4e-headers-skip-duplicates  t)
+    (mu4e-attachments-dir "~/Downloads")
+    (mu4e-compose-signature-auto-include nil)
+))
+;; send email config
+ (setq message-send-mail-function 'smtpmail-send-it
+	starttls-use-gnutls t
+	smtpmail-starttls-credentials
+	'(("smtp.fastmail.com" 587 nil nil))
+	;;smtpmail-auth-credentials
+	;;(expand-file-name "~/.authinfo.gpg")
+	smtpmail-default-smtp-server "smtp.fastmail.com"
+	smtpmail-smtp-server "smtp.fastmail.com"
+	smtpmail-smtp-service 587
+	smtpmail-debug-info t)
+
