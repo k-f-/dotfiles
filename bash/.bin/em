@@ -3,6 +3,6 @@
 EMACS="/usr/bin/emacs"
 EMACSCLIENT="/usr/bin/emacsclient"
 
-$EMACSCLIENT -c $@ &
+$EMACSCLIENT -n -a emacs $@ &
 #$EMACSCLIENT -c '' $@
 #i3-msg "[class=Emacs] focus"

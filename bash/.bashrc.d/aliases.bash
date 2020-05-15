@@ -4,6 +4,9 @@
 alias akita="mosh root@akita.kfring.com"
 
 ###
+alias vim="nvim"
+
+###
 alias spotify-hdpi="spotify --force-device-scale-factor=2 &" # HiDPI flags.
 
 ###
