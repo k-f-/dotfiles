@@ -5,6 +5,7 @@ sudo apt install \
      autorandr \ 
      build-essential \
      curl \
+     emacs \
      fonts-font-awesome \
      git \
      gnupg2 \
@@ -16,6 +17,7 @@ sudo apt install \
      make \
      mosh \
      msmtp \
+     neovim \
      openssl \
      pandoc \
      pasystray \
@@ -23,6 +25,7 @@ sudo apt install \
      redshift \
      rlwrap \
      rxvt-unicode \
+     sbcl \
      sdvc \
      scrot \
      stow \
@@ -36,6 +39,7 @@ sudo apt install \
      urlview \
      vim \
      vlc \
+     wget \
      w3m \
      xbindkeys \
      xcape \
