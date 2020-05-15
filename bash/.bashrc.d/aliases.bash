@@ -31,15 +31,11 @@ alias speedtest='echo "scale=2; `curl  --progress-bar -w "%{speed_download}" htt
 alias tree="tree -C" # add colors
 alias ut="tar xavf"
 
-usage() {
-  du -sch "$@" | sort -h
-}
-
 ### Package management
 alias agi="sudo apt install"
 alias agr="sudo apt remove"
 alias acs="apt search"
-alias agu="sudo apt update && sudo apt full-upgrade && sudo apt autoremove && sudo aptitude clean"
+alias agu="sudo apt update && sudo apt full-upgrade && sudo apt autoremove && sudo apt autoclean"
 alias ali="apt-mark showmanual"
 alias pkgcount="sudo dpkg-query -f '${binary:Package}\n' -W | wc -l"
 
