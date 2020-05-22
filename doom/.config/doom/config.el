@@ -20,6 +20,8 @@
 ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 ;; font string. You generally only need these two:
 (setq doom-font (font-spec :family "Iosevka" :size 34))
+(setq doom-variable-pitch-font (font-spec :family "Iosevka Sparkle"))
+(setq doom-serif-font (font-spec :family "Iosevka Etoile"))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
@@ -35,6 +37,7 @@
 (setq display-line-numbers-type t)
 
 (setq org-log-into-drawer t)
+(setq org-deadline-warning-days 0)
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
 ;; - `load!' for loading external *.el files relative to this one
@@ -61,6 +64,11 @@
 
 ;; Auth
 (setq auth-sources '("~/.authinfo.gpg"))
+
+;; Sentences end with a single space. Fight me bro.
+(setq sentence-end-double-space nil)
+
+
 
 ;; mu4e configuration
 ;; mu4e path
