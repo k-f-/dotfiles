@@ -2,7 +2,7 @@
 ! urxvt
 ! #####################################################
 URxvt*iconFile: /home/kyle/.dotfiles/x-windows/urxvt.svg
-URxvt*font: xft:Iosevka Term Semibold:pixelsize=30
+URxvt*font: xft:Iosevka Term Semibold:pixelsize=24
 !URxvt*font: xft:Iosevka Aile:pixelsize=30
 
 URxvt.scrollBar: false
