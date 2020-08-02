@@ -87,16 +87,16 @@
     (mu4e-compose-signature-auto-include nil)
 ))
 ;; send email config
- (setq message-send-mail-function 'smtpmail-send-it
-	starttls-use-gnutls t
-	smtpmail-starttls-credentials
-	'(("smtp.fastmail.com" 587 nil nil))
+ ;;(setq message-send-mail-function 'smtpmail-send-it
+	;;starttls-use-gnutls t
+	;;smtpmail-starttls-credentials
+	;;'(("smtp.fastmail.com" 587 nil nil))
 	;;smtpmail-auth-credentials
 	;;(expand-file-name "~/.authinfo.gpg")
-	smtpmail-default-smtp-server "smtp.fastmail.com"
-	smtpmail-smtp-server "smtp.fastmail.com"
-	smtpmail-smtp-service 587
-	smtpmail-debug-info t)
+	;;smtpmail-default-smtp-server "smtp.fastmail.com"
+	;;smtpmail-smtp-server "smtp.fastmail.com"
+	;;smtpmail-smtp-service 587
+	;;smtpmail-debug-info t)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
