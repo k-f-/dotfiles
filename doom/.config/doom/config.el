@@ -68,8 +68,6 @@
 ;; Sentences end with a single space. Fight me bro.
 (setq sentence-end-double-space nil)
 
-
-
 ;; mu4e configuration
 ;; mu4e path
 (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
