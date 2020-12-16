@@ -7,7 +7,7 @@
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
 (setq user-full-name "Kyle Fring"
-      user-mail-address "me@kfring.com")
+      user-mail-address "kyle@fring.io")
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
@@ -57,7 +57,7 @@
 
 ;; Basic Config
 (setq backup-directory-alist `(("." . "~/.emacs-tmp/")))
-(setq auto-save-file-name-transforms `((".*" "~/.emacs-tmp/" t)))
+;;(setq auto-save-file-name-transforms `((".*" "~/.emacs-tmp/" t)))
 
 ;; Auto revert-mode. Look ma, no hands...
 (global-auto-revert-mode t)
@@ -77,8 +77,8 @@
     (mu4e-drafts-folder     . "/kfring.com/Drafts")
     (mu4e-trash-folder      . "/kfring.com/Trash")
     (mu4e-refile-folder     . "/kfring.com/Archive")
-    (smtpmail-smtp-user     . "me@kfring.com")
-    (user-mail-address      . "me@kfring.com")    ;; only needed for mu < 1.4
+    (smtpmail-smtp-user     . "kyle@fring.io")
+    (user-mail-address      . "kyle@fring.io")    ;; only needed for mu < 1.4
     (mu4e-compose-signature . "\nk-f-")
     (mue4e-headers-skip-duplicates  t)
     (mu4e-attachments-dir "~/Downloads")
@@ -102,9 +102,3 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(send-mail-function (quote mailclient-send-it)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
