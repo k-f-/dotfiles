@@ -1,5 +1,5 @@
 export EDITOR="$HOME/.bin/em"
-export TERMINAL="urxvt"
+export TERMINAL="kitty"
 export READER="envince"
 export FILE="pcmanfm"
 export ALTERNATE_EDITOR="neovim"
