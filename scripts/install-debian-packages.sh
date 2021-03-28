@@ -46,6 +46,7 @@ sudo apt install \
      xdotool \
      xsel \
      youtube-dl \
+     kitty \
 
 # For tlp power management.
 sudo apt install \
