@@ -19,7 +19,7 @@
 ;;
 ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 ;; font string. You generally only need these two:
-(setq doom-font (font-spec :family "Iosevka" :size 24))
+(setq doom-font (font-spec :family "PragmataPro Mono Liga" :size 24))
 (setq doom-variable-pitch-font (font-spec :family "Iosevka Sparkle"))
 (setq doom-serif-font (font-spec :family "Iosevka Etoile"))
 
@@ -36,7 +36,7 @@
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type t)
 
-(setq org-log-into-drawer t)
+(setq org-log-into-drawer f)
 (setq org-deadline-warning-days 0)
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
@@ -72,11 +72,11 @@
 ;; mu4e path
 (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
 
-(set-email-account! "kfring.com"
-  '((mu4e-sent-folder       . "/kfring.com/Sent")
-    (mu4e-drafts-folder     . "/kfring.com/Drafts")
-    (mu4e-trash-folder      . "/kfring.com/Trash")
-    (mu4e-refile-folder     . "/kfring.com/Archive")
+(set-email-account! "fring.io"
+  '((mu4e-sent-folder       . "/fring.io/Sent")
+    (mu4e-drafts-folder     . "/fring.io/Drafts")
+    (mu4e-trash-folder      . "/fring.io/Trash")
+    (mu4e-refile-folder     . "/fring.io/Archive")
     (smtpmail-smtp-user     . "kyle@fring.io")
     (user-mail-address      . "kyle@fring.io")    ;; only needed for mu < 1.4
     (mu4e-compose-signature . "\nk-f-")
