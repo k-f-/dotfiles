@@ -5,7 +5,6 @@ sudo apt install \
      autorandr \ 
      build-essential \
      curl \
-     emacs \
      fonts-font-awesome \
      git \
      gnupg2 \
@@ -49,6 +48,8 @@ sudo apt install \
      kitty \
      fzf \
      ripgrep \
+     libtool-bin \
+
 # For tlp power management.
 sudo apt install \
      acpi-call-dkms \
