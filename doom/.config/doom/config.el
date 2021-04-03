@@ -36,7 +36,7 @@
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type t)
 
-(setq org-log-into-drawer f)
+(setq org-log-into-drawer nil)
 (setq org-deadline-warning-days 0)
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
