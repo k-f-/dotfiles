@@ -26,7 +26,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-one)
+(setq doom-theme 'doom-horizon)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -86,15 +86,15 @@
 ))
 ;; send email config
  (setq message-send-mail-function 'smtpmail-send-it
-	starttls-use-gnutls t
-	smtpmail-starttls-credentials
-	'(("smtp.fastmail.com" 587 nil nil))
-	smtpmail-auth-credentials
-	(expand-file-name "~/.authinfo.gpg")
-	smtpmail-default-smtp-server "smtp.fastmail.com"
-	smtpmail-smtp-server "smtp.fastmail.com"
-	smtpmail-smtp-service 587
-	smtpmail-debug-info t)
+       starttls-use-gnutls t
+       smtpmail-starttls-credentials
+       '(("smtp.fastmail.com" 587 nil nil))
+       smtpmail-auth-credentials
+       (expand-file-name "~/.authinfo.gpg")
+       smtpmail-default-smtp-server "smtp.fastmail.com"
+       smtpmail-smtp-server "smtp.fastmail.com"
+       smtpmail-smtp-service 587
+       smtpmail-debug-info t)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
