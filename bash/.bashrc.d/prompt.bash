@@ -16,10 +16,10 @@ __quiet_git_ps1() {
   fi
 }
 
-#export PS1='\[$(tput bold)\]\[\033[38;5;50m\]\u\[$(tput sgr0)\]\[$(tput sgr0)\]\[\033[38;5;15m\]@\[$(tput bold)\]\[$(tput sgr0)\]\[\033[38;5;111m\]\h\[$(tput sgr0)\]\[$(tput sgr0)\]\[\033[38;5;15m\] in \033[36m\]\w$(__quiet_git_ps1) \[\033[00m\]\n \[$(tput sgr0)\]'
+export PS1='\[$(tput bold)\]\[\033[38;5;50m\]\u\[$(tput sgr0)\]\[$(tput sgr0)\]\[\033[38;5;15m\]@\[$(tput bold)\]\[$(tput sgr0)\]\[\033[38;5;111m\]\h\[$(tput sgr0)\]\[$(tput sgr0)\]\[\033[38;5;15m\] in \033[36m\]\w$(__quiet_git_ps1) \[\033[00m\]\n \[$(tput sgr0)\]'
 
 # rainbowsssss
-export PS1='\[$(tput bold)\]\[$(tput setaf 1)\][\[$(tput setaf 3)\]\u\[$(tput setaf 2)\]@\[$(tput setaf 4)\]\h \[$(tput setaf 5)\]\W\[$(tput setaf 1)]\]$(tput setaf 7)\]$(__quiet_git_ps1)\[$(tput sgr0)\] '
+#export PS1='\[$(tput bold)\]\[$(tput setaf 1)\][\[$(tput setaf 3)\]\u\[$(tput setaf 2)\]@\[$(tput setaf 4)\]\h \[$(tput setaf 5)\]\W\[$(tput setaf 1)]\]$(tput setaf 7)\]$(__quiet_git_ps1)\[$(tput sgr0)\] '
 
 # Old
 #PS1='\u@\h \[\033[36m\][\w$(__quiet_git_ps1)] \$ \[\033[00m\]'
