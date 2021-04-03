@@ -7,13 +7,16 @@ cd ~/.dotfiles
 
 stow bash
 stow emacs
+stow doom
 stow git
 stow gnupg
+stow kitty
 stow mail
 stow vim
 stow x-windows
 stow secrets 
 stow youtube-dl
+
 
 # Link .bash_profile -> .bashrc
 rm -f ~/.bash_profile

@@ -1,7 +1,12 @@
 # -*- mode: sh -*-
 
 GIT_PS1_SHOWDIRTYSTATE=true
-
+GIT_PS1_SHOWSTASHSTATE=1
+GIT_PS1_SHOWUNTRACKEDFILES=1
+# Explicitly unset color (default anyhow). Use 1 to set it.
+GIT_PS1_SHOWCOLORHINTS=
+GIT_PS1_DESCRIBE_STYLE="branch"
+GIT_PS1_SHOWUPSTREAM="auto git"
 # __git_ps1 reports "((unknown))" in directories with broken git
 # repositories; unfortunately, pre-commit hooks are generally kept in
 # an empty git repo in $HOME, resulting in unneeded grossness.
