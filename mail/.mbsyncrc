@@ -3,8 +3,8 @@
 IMAPAccount fastmail
 Host imap.fastmail.com
 Port 993
-User me@kfring.com
-PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.authinfo.gpg | awk '/machine smtp.fastmail.com login me@kfring.com/ {print $NF}'"
+User kyle@fring.io
+PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.authinfo.gpg | awk '/machine smtp.fastmail.com login kyle@fring.io/ {print $NF}'"
 #PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.mbsync-fastmail.gpg"
 SSLType IMAPS
 SSLVersions TLSv1.2
@@ -14,8 +14,8 @@ Account fastmail
 
 # This section describes the local storage
 MaildirStore fastmail-local
-Path ~/.mail/kfring.com/
-Inbox ~/.mail/kfring.com/INBOX
+Path ~/.mail/fring.io/
+Inbox ~/.mail/fring.io/INBOX
 # The SubFolders option allows to represent all
 # IMAP subfolders as local subfolders
 SubFolders Verbatim
