@@ -16,6 +16,6 @@ pathmunge $HOME/.bin after
 pathmunge $HOME/.local/bin after
 pathmunge $GOPATH/bin after
 pathmunge /snap/bin after
-pathmunge $HOME/.emacs.d/doom
+pathmunge $HOME/.emacs.d/bin after
 
 export PATH
