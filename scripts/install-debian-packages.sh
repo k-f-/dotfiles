@@ -47,7 +47,8 @@ sudo apt install \
      xsel \
      youtube-dl \
      kitty \
-
+     fzf \
+     ripgrep \
 # For tlp power management.
 sudo apt install \
      acpi-call-dkms \
