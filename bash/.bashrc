@@ -7,3 +7,5 @@ source ~/.bashrc.d/variables.bash
 source ~/.bashrc.d/utils.bash
 
 [[ -e ~/.bashrc.local ]] && { source "~/.bashrc.local"; exit; }; >&2;
+
+export PATH="$HOME/.poetry/bin:$PATH"
