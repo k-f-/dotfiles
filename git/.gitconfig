@@ -16,9 +16,15 @@
 [branch]
   autosetuprebase = always
 [color]
-  ui = true
+	ui = true
 [color "diff"]
-  meta = bold cyan
+	meta = 11
+	frag = magenta bold
+	func = 146 bold
+	commit = yellow bold
+	old = red bold
+	new = green bold
+	whitespace = red reverse
 [color "grep"]
   filename = magenta
   match = bold red
@@ -48,3 +54,10 @@
 	program = gpg2
 [pull]
 	rebase = false
+[interactive]
+	diffFilter = diff-so-fancy --patch
+[color "diff-highlight"]
+	oldNormal = red bold
+	oldHighlight = red bold 52
+	newNormal = green bold
+	newHighlight = green bold 22
