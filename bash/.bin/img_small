@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-# Create a copy of file next to it with _smaller appended.
-
-FILE1=$1
-
-magick "$FILE1" -strip -interlace Plane -gaussian-blur 0.05 -quality 85% "$FILE"_sm.jpg

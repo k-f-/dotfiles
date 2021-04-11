@@ -1,8 +1,0 @@
-#!/bin/sh
-# If emacs does not have an instance, start one and open.
-EMACS="/usr/bin/emacs"
-EMACSCLIENT="/usr/bin/emacsclient"
-
-$EMACSCLIENT -n -a emacs $@ &
-#$EMACSCLIENT -c '' $@
-#i3-msg "[class=Emacs] focus"
