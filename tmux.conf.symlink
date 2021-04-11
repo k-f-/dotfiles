@@ -1,0 +1,16 @@
+set -g default-terminal "xterm-256color"    # colors
+
+# emacs is the default unless $EDITOR or $VISUAL contain 'vi'
+set -g status-keys vi
+setw -g mode-keys vi
+
+set -g prefix2 C-a                          # GNU-Screen compatible prefix
+bind C-a send-prefix -2
+                                            
+tmux_conf_theme=powerline                   # powerline for tmux
+
+set -g base-index 1        		 	        # start windows numbering at 1
+setw -g pane-base-index 1   		 	    # make pane numbering consistent with windows
+
+setw -g automatic-rename on 		 	    # rename window to reflect current program
+set -g renumber-windows on		 	        # renumber windows when a window is closed 
