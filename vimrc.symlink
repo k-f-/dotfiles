@@ -1,0 +1,21 @@
+"####   GENERAL                 ###############################################
+set backspace=indent,eol,start  " Backspace behaviour
+set ruler                       " Give me some info
+set virtualedit=onemore         " Give me one character after EOL
+syntax on                       " Syntax Highlighting
+set tabstop=4 softtabstop=-1 shiftwidth=0 expandtab
+set nowrap                      " Don't wrap
+set smartindent                 " Smart Indent
+set hlsearch                    " highlight searches
+set showmatch                   " show match count
+set ignorecase smartcase        " be smart w/ case
+set autoread                    " reload open files
+set incsearch
+set number                      " line #'s
+set laststatus=2                " Always show filename
+set showmatch                   " show matching parenthesis
+set shortmess+=I                " Disable short message shown at start
+
+" useful commands I always forget:
+" gq - wrap selected text to 80 chars (emacs: M-q)
+" zz - center window to cursor (emacs: C-l)
