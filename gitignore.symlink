@@ -1,7 +1,0 @@
-*.swp
-*.log
-.DS_Store
-log/*
-tmp/*
-*~
-*.code-workspace
