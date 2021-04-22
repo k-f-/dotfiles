@@ -1,7 +1,10 @@
+#### FZF Exports
+export FZF_PREVIEW_COMMAND="bat --style=numbers,changes --wrap never --color always {} || cat {} || tree -C {}"
+export FZF_CTRL_T_OPTS="--min-height 30 --preview-window down:60% --preview-window noborder --preview '($FZF_PREVIEW_COMMAND) 2> /dev/null'"
+#### Regular Stuff
 export EDITOR="$HOME/.bin/em"
 export TERMINAL="kitty"
 export READER="envince"
-export FILE="pcmanfm"
 export ALTERNATE_EDITOR="neovim"
 #export BROWSER="google-chrome-stable"
 export EMAIL="me@kfring.com"

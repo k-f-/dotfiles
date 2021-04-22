@@ -3,10 +3,16 @@
 ### ssh/mosh aliases
 alias akita="mosh root@akita.kfring.com"
 
-###
+### BAT > CAT
+### https://github.com/sharkdp/bat
+### batcat because Ubuntu/Pop
+alias cat="bat"
+alias bat="batcat"
+
+### Vim-->NeoVim
 alias vim="nvim"
 
-###
+### Spotify was broken forever. Pop-OS fixes this. For posterity.
 alias spotify-hdpi="spotify --force-device-scale-factor=2 &" # HiDPI flags.
 
 ###
