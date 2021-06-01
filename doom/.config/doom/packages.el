@@ -1,7 +1,11 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; $DOOMDIR/packages.el
-(package! elfeed-dashboard :recipe (:type git :host github :repo "Manoj321/elfeed-dashboard"))
-(package! mu4e-dashboard :recipe (:type git :host github :repo "rougier/mu4e-dashboard"))
+;;(package! elfeed-dashboard :recipe (:type git :host github :repo "Manoj321/elfeed-dashboard"))
+;;(package! mu4e-dashboard :recipe (:type git :host github :repo "rougier/mu4e-dashboard"))
+(package! enlive)
+(package! seq)
+
+
 ;; To install a package with Doom you must declare them here, run 'doom sync' on
 ;; the command line, then restart Emacs for the changes to take effect.
 ;; Alternatively, use M-x doom/reload.
