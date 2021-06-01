@@ -107,3 +107,48 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(send-mail-function (quote mailclient-send-it)))
+
+;; Additional Scripting
+;; Alvaro Rameriez's web scraping from URL.
+(require 'enlive)
+(require 'seq)
+
+(defun ar/scrape-links-from-clipboard-url ()
+  "Scrape links from clipboard URL and return as a list. Fails if no URL in clipboard."
+  (unless (string-prefix-p "http" (current-kill 0))
+    (user-error "no URL in clipboard"))
+  (thread-last (enlive-query-all (enlive-fetch (current-kill 0)) [a])
+    (mapcar (lambda (element)
+              (string-remove-suffix "/" (enlive-attr element 'href))))
+    (seq-filter (lambda (link)
+                  (string-prefix-p "http" link)))
+    (seq-uniq)
+    (seq-sort (lambda (l1 l2)
+                (string-lessp (replace-regexp-in-string "^http\\(s\\)*://" "" l1)
+                              (replace-regexp-in-string "^http\\(s\\)*://" "" l2))))))
+
+(defun ar/view-completing-links-at-clipboard-url ()
+  "Scrape links from clipboard URL and open all in external browser."
+  (interactive)
+  (browse-url (completing-read "links: "
+                               (ar/scrape-links-from-clipboard-url))))
+(defun ar/browse-links-at-clipboard-url ()
+  (interactive)
+  (let ((links (ar/scrape-links-from-clipboard-url)))
+    (when (y-or-n-p (format "Open all %d links? " (length links)))
+      (mapc (lambda (link)
+              (browse-url link))
+            links))))
+(require 'org)
+
+(defun ar/view-links-at-clipboard-url ()
+  "Scrape links from clipboard URL and dump to an org buffer."
+  (interactive)
+  (with-current-buffer (get-buffer-create "*links*")
+    (org-mode)
+    (erase-buffer)
+    (mapc (lambda (link)
+            (insert (org-make-link-string link) "\n"))
+          (ar/scrape-links-from-clipboard-url))
+    (goto-char (point-min))
+    (switch-to-buffer (current-buffer))))
