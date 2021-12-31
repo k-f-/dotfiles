@@ -187,4 +187,4 @@
                                          (message "finished: %s" command)
                                          (dired project-dir))
                                      (user-error (format "%s\n%s" command output))))))
-    (set-process-filter proc #'comint-output-filter)))`
+    (set-process-filter proc #'comint-output-filter)))
