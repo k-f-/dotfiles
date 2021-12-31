@@ -7,7 +7,7 @@ alias akita="mosh root@akita.kfring.com"
 ### https://github.com/sharkdp/bat
 ### batcat because Ubuntu/Pop
 alias cat="bat"
-alias bat="batcat"
+#alias bat="batcat"
 
 ### Vim-->NeoVim
 alias vim="nvim"
@@ -22,7 +22,7 @@ alias chromedev="google-chrome-stable --disable-web-security --user-data-dir=/tm
 alias dc="docker-compose"
 alias gg="git grep -n"
 alias gs="git status -s"
-alias gpg="gpg2"
+alias gpg="gpg"
 alias less="less -R" # display colors correctly
 alias sbcl="rlwrap sbcl"
 alias lisp="sbcl --noinform"

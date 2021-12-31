@@ -7,7 +7,7 @@ export TERMINAL="kitty"
 export READER="envince"
 export ALTERNATE_EDITOR="neovim"
 #export BROWSER="google-chrome-stable"
-export EMAIL="me@kfring.com"
+export EMAIL="kyle@fring.io"
 export GOPATH="/usr/bin"
 export GPG_TTY=$(tty)
 export HISTFILESIZE=20000
@@ -17,3 +17,5 @@ export LC_ALL="en_US.UTF-8"
 export LC_CTYPE="en_US.UTF-8"
 export NAME="Kyle E. Fring"
 export PROMPT_DIRTRIM=3
+#### OS X Stop yelling at me for Bash, I know I'm a luddite.
+export BASH_SILENCE_DEPRECATION_WARNING=1
