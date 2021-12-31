@@ -4,7 +4,7 @@ IMAPAccount fastmail
 Host imap.fastmail.com
 Port 993
 User kyle@fring.io
-PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.authinfo.gpg | awk '/machine smtp.fastmail.com login kyle@fring.io/ {print $NF}'"
+PassCmd "gpg -q --for-your-eyes-only --no-tty -d ~/.authinfo.gpg | awk '/machine smtp.fastmail.com login kyle@fring.io/ {print $NF}'"
 #PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.mbsync-fastmail.gpg"
 SSLType IMAPS
 SSLVersions TLSv1.2
