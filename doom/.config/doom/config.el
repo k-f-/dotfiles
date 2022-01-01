@@ -75,7 +75,9 @@
 
 ;; mu4e configuration
 ;; mu4e path
-(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+;;(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+(add-to-list load-path "/opt/homebrew/Cellar/mu/1.6.10/share/emacs/site-lisp/mu/mu4e")
+
 
 (set-email-account! "fring.io"
   '((mu4e-sent-folder       . "/fring.io/Sent")
@@ -107,84 +109,3 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(send-mail-function (quote mailclient-send-it)))
-
-;; Additional Scripting
-;; Alvaro Rameriez's web scraping from URL.
-(require 'enlive)
-(require 'seq)
-
-(defun ar/scrape-links-from-clipboard-url ()
-  "Scrape links from clipboard URL and return as a list. Fails if no URL in clipboard."
-  (unless (string-prefix-p "http" (current-kill 0))
-    (user-error "no URL in clipboard"))
-  (thread-last (enlive-query-all (enlive-fetch (current-kill 0)) [a])
-    (mapcar (lambda (element)
-              (string-remove-suffix "/" (enlive-attr element 'href))))
-    (seq-filter (lambda (link)
-                  (string-prefix-p "http" link)))
-    (seq-uniq)
-    (seq-sort (lambda (l1 l2)
-                (string-lessp (replace-regexp-in-string "^http\\(s\\)*://" "" l1)
-                              (replace-regexp-in-string "^http\\(s\\)*://" "" l2))))))
-
-(defun ar/view-completing-links-at-clipboard-url ()
-  "Scrape links from clipboard URL and open all in external browser."
-  (interactive)
-  (browse-url (completing-read "links: "
-                               (ar/scrape-links-from-clipboard-url))))
-(defun ar/browse-links-at-clipboard-url ()
-  (interactive)
-  (let ((links (ar/scrape-links-from-clipboard-url)))
-    (when (y-or-n-p (format "Open all %d links? " (length links)))
-      (mapc (lambda (link)
-              (browse-url link))
-            links))))
-(require 'org)
-
-(defun ar/view-links-at-clipboard-url ()
-  "Scrape links from clipboard URL and dump to an org buffer."
-  (interactive)
-  (with-current-buffer (get-buffer-create "*links*")
-    (org-mode)
-    (erase-buffer)
-    (mapc (lambda (link)
-            (insert (org-make-link-string link) "\n"))
-          (ar/scrape-links-from-clipboard-url))
-    (goto-char (point-min))
-    (switch-to-buffer (current-buffer))))
-
-;; Clone REPO from URL
-(defun ar/git-clone-clipboard-url ()
-  "Clone git URL in clipboard asynchronously and open in dired when finished."
-  (interactive)
-  (cl-assert (string-match-p "^\\(http\\|https\\|ssh\\)://" (current-kill 0)) nil "No URL in clipboard")
-  (let* ((url (current-kill 0))
-         (download-dir (expand-file-name "~/Downloads/"))
-         (project-dir (concat (file-name-as-directory download-dir)
-                              (file-name-base url)))
-         (default-directory download-dir)
-         (command (format "git clone %s" url))
-         (buffer (generate-new-buffer (format "*%s*" command)))
-         (proc))
-    (when (file-exists-p project-dir)
-      (if (y-or-n-p (format "%s exists. delete?" (file-name-base url)))
-          (delete-directory project-dir t)
-        (user-error "Bailed")))
-    (switch-to-buffer buffer)
-    (setq proc (start-process-shell-command (nth 0 (split-string command)) buffer command))
-    (with-current-buffer buffer
-      (setq default-directory download-dir)
-      (shell-command-save-pos-or-erase)
-      (require 'shell)
-      (shell-mode)
-      (view-mode +1))
-    (set-process-sentinel proc (lambda (process state)
-                                 (let ((output (with-current-buffer (process-buffer process)
-                                                 (buffer-string))))
-                                   (kill-buffer (process-buffer process))
-                                   (if (= (process-exit-status process) 0)
-                                       (progn
-                                         (message "finished: %s" command)
-                                         (dired project-dir))
-                                     (user-error (format "%s\n%s" command output))))))
-    (set-process-filter proc #'comint-output-filter)))
