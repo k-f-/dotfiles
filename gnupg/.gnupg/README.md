@@ -8,9 +8,7 @@ To copy from a remote machine to your local:
 ``scp -r othermachine:~/.gnupg ~``
 
 If you're on the machine that already has the key:
-
 ``gpg --export-secret-key SOMEKEYID | ssh othermachine gpg --import``
 
 If you're on the machine that needs the key:
-
 ``ssh othermachine gpg --export-secret-key SOMEKEYID | gpg --import``
