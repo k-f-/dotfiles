@@ -5,17 +5,19 @@
 
 cd ~/.dotfiles
 
-stow bash
-stow emacs
-stow doom
-stow git
-stow gnupg
-stow kitty
-stow mail
-stow vim
-stow x-windows
-stow secrets 
-stow youtube-dl
+stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles bash
+stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles emacs
+stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles doom
+stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles git
+stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles gnupg
+stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles kitty
+stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles mail
+stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles vim
+stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles x-windows
+stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles secrets 
+stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles youtube-dl
+stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles ssh
+stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles zsh
 
 
 # Link .bash_profile -> .bashrc
