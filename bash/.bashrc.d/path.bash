@@ -18,4 +18,5 @@ pathmunge $GOPATH/bin after
 pathmunge /snap/bin after
 pathmunge $HOME/.emacs.d/bin after
 pathmunge $HOME/.poetry/env after
+pathmunge /opt/homebrew/bin after
 export PATH
