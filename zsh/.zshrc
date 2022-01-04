@@ -3,8 +3,7 @@
 
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_CUSTOM="$HOME/.zshrc.d"
-
-ZSH_THEME="robbyrussell"
+export GPG_TTY=$(tty)
 
 DISABLE_UPDATE_PROMPT="true"
 # Uncomment the following line if pasting URLs and other text is messed up.
@@ -22,6 +21,11 @@ HIST_STAMPS="yyyy-mm-dd"
 HIST_IGNORE_DUPS=true
 HIST_IGNORE_SPACE=true
 
+
+# Turn off all beeps
+unsetopt BEEP
+# Turn off autocomplete beeps
+unsetopt LIST_BEEP
 
 ## PLUGINS CONFIG
 #
