@@ -39,7 +39,7 @@
   	linenumber = bold blue
 [commit]
   	template = ~/.gitmessage
-	gpgsign = true
+	gpgSign = true
 [core]
 	excludesfile = ~/.gitignore
 	pager = diff-so-fancy | less --tabs=4 -RFX
@@ -56,7 +56,7 @@
 [user]
 	email = kyle@fring.io 
 	name = Kyle Fring
-	signingkey = 0B1B7568EC96D4C4
+	signingkey = A7ACD0E7AF960B61457A403C0B1B7568EC96D4C4! 
 [github]
 	user = k-f-
 [gpg]
@@ -71,3 +71,5 @@
 	newNormal = green bold
 	newHighlight = green bold 22
 
+[tag]
+	gpgSign = true
