@@ -28,8 +28,6 @@ unsetopt BEEP
 unsetopt LIST_BEEP
 
 ## PLUGINS CONFIG
-#
-
 plugins=(
   docker
   docker-compose
@@ -40,11 +38,12 @@ plugins=(
   macos
 )
 
+# Source OH-MY-ZSH so it loads at all.
 source $ZSH/oh-my-zsh.sh
 
 [ ! -d $ZSH_CUSTOM/plugins/zsh-autosuggestions ] && \
 	git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
-
+#
 [ ! -d $ZSH_CUSTOM/plugins/zsh-completions ] && \
 	git clone https://github.com/zsh-users/zsh-completions $ZSH_CUSTOM/plugins/zsh-completions
 
@@ -70,3 +69,6 @@ local return_status="%{$fg[red]%}%(?..=)%{$reset_color%}"
 PROMPT='${prompt_jobs}${prompt_host}$(git_prompt_info) %~ ${prompt_root} '
 
 RPROMPT="${return_status}%*"
+
+# Turn on zsh-autosuggestions
+fpath=($ZSH_HOME/zsh-completions/src $fpath)
