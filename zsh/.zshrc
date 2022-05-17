@@ -72,3 +72,9 @@ RPROMPT="${return_status}%*"
 
 # Turn on zsh-autosuggestions
 fpath=($ZSH_HOME/zsh-completions/src $fpath)
+
+# Load supplementary scripts
+source ~/.bashrc.d/aliases.bash
+source ~/.bashrc.d/exports.bash
+source ~/.bashrc.d/variables.bash
+source ~/.bashrc.d/utils.bash
