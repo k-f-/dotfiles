@@ -76,7 +76,7 @@
 ;; mu4e configuration
 ;; mu4e path
 ;;(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
-(add-to-list load-path "/opt/homebrew/Cellar/mu/1.6.10/share/emacs/site-lisp/mu/mu4e")
+(add-to-list load-path "/opt/homebrew/Cellar/mu/1.6.11/share/emacs/site-lisp/mu/mu4e")
 
 
 (set-email-account! "fring.io"
