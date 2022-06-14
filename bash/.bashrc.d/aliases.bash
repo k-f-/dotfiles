@@ -1,7 +1,10 @@
 # -*- mode: sh -*-
 
 ### ssh/mosh aliases
-alias akita="mosh root@akita.kfring.com"
+#alias akita="mosh root@akita.kfring.com"
+
+# Fix for Kitty throwing terminal error.
+[[ "$TERM" == "xterm-kitty" ]] && alias ssh="kitty +kitten ssh"
 
 ### BAT > CAT
 ### https://github.com/sharkdp/bat
