@@ -1,7 +1,15 @@
 #!/bin/sh
 # If emacs does not have an instance, start one and open.
+HOMEBREWEMACS="/opt/homebrew/bin/emacs"
 EMACS="/usr/bin/emacs"
-EMACSCLIENT="/usr/bin/emacsclient"
+
+if [ ! -f "$HOMEBREWEMACS" ]; then
+	EMACS="/opt/homebrew/bin/emacs"
+	EMACSCLIENT="/opt/homebrew/bin/emacsclient"
+elif [ ! -f "$EMACS" ]; then
+	EMACS="/usr/bin/emacs"
+	EMACSCLIENT="/usr/bin/emacsclient"
+fi
 
 $EMACSCLIENT -n -a emacs $@ &
 #$EMACSCLIENT -c '' $@
