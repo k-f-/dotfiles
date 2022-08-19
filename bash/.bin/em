@@ -3,10 +3,10 @@
 HOMEBREWEMACS="/opt/homebrew/bin/emacs"
 EMACS="/usr/bin/emacs"
 
-if [ ! -f "$HOMEBREWEMACS" ]; then
+if [ -f "$HOMEBREWEMACS" ]; then
 	EMACS="/opt/homebrew/bin/emacs"
 	EMACSCLIENT="/opt/homebrew/bin/emacsclient"
-elif [ ! -f "$EMACS" ]; then
+elif [ -f "$EMACS" ]; then
 	EMACS="/usr/bin/emacs"
 	EMACSCLIENT="/usr/bin/emacsclient"
 fi
