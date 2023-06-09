@@ -18,7 +18,8 @@ stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles secrets
 stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles youtube-dl
 stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles ssh
 stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles zsh
-
+stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles yabai
+stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles skhd
 
 # Link .bash_profile -> .bashrc
 rm -f ~/.bash_profile
