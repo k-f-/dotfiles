@@ -32,4 +32,5 @@ syntax enable
 
 
 colorscheme desert
+set rtp+=/opt/homebrew/opt/fzf
 set background=dark
