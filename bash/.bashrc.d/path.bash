@@ -16,6 +16,7 @@ pathmunge $HOME/.bin after
 pathmunge $HOME/.local/bin after
 pathmunge $GOPATH/bin after
 pathmunge /snap/bin after
+pathmunge /Users/kef/Library/Python/3.11/bin
 pathmunge $HOME/.emacs.d/bin after
 pathmunge $HOME/.poetry/env after
 pathmunge /opt/homebrew/bin after
