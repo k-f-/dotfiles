@@ -1,4 +1,6 @@
 zsh/.zshrc.d/plugins/
+.ssh/
+.gnupg/
 undo-tree/
 backup/
 elpa/
@@ -6,7 +8,6 @@ emacs/.emacs.d/url/
 auto-save-list
 ido.last
 smex-items
-projectile-bookmarks.eld
 places
 recentf
 history

@@ -1,5 +1,5 @@
 [core]
-	editor = emacsclient -t
+	editor = neovim 
 [alias]
 	aa = add --all
   	amend = commit --amend
@@ -40,7 +40,7 @@
   	linenumber = bold blue
 [commit]
   	template = ~/.gitmessage
-	gpgSign = true
+	gpgsign = true
 [core]
 	excludesfile = ~/.gitignore
 	pager = diff-so-fancy | less --tabs=4 -RFX
@@ -57,7 +57,7 @@
 [user]
 	email = kyle@fring.io 
 	name = Kyle Fring
-	signingkey = A7ACD0E7AF960B61457A403C0B1B7568EC96D4C4! 
+	signingkey = 68C2CA4CD4545AD3
 [github]
 	user = k-f-
 [gpg]
