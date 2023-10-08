@@ -12,8 +12,18 @@
 # sudo yabai --load-sa
 #
 
-yabai -m rule --add app="^System Settings$" manage=off
-yabai -m rule --add app="^Calculator$" manage=off
+yabai -m rule --add label="System Settings" app="^System Settings$" manage=off
+yabai -m rule --add label="App Store" app="^App Store$" manage=off
+yabai -m rule --add label="Activity Monitor" app="^Activity Monitor$" manage=off
+yabai -m rule --add label="1Password" app="^1Password$" manage=off
+yabai -m rule --add label="Calculator" app="^Calculator$" manage=off
+yabai -m rule --add label="Dictionary" app="^Dictionary$" manage=off
+yabai -m rule --add label="VirtualBox" app="^VirtualBox$" manage=off
+yabai -m rule --add label="iVmware Settings" app="^VMware Fusion$" manage=off
+yabai -m rule --add label="Microsoft AutoUpdate" app="^Microsoft AutoUpdate$" manage=off
+yabai -m rule --add label="About" title="^About$" manage=off
+yabai -m rule --add label="League Client" app="^League of Legends (TM) Client$" manage=off
+yabai -m rule --add label="League Launcher" app="^League of Legends$" manage=off
 
 # global settings
 yabai -m config                                 \
@@ -37,7 +47,7 @@ yabai -m config                                 \
     window_border_radius         12             \
     window_border_blur           off            \
     window_border_hidpi          on             \
-    window_border                off            \
+    window_border                on             \
     split_ratio                  0.50           \
     split_type                   auto           \
     auto_balance                 off            \
