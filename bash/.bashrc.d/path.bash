@@ -20,4 +20,5 @@ pathmunge /Users/kef/Library/Python/3.11/bin
 pathmunge $HOME/.emacs.d/bin after
 pathmunge $HOME/.poetry/env after
 pathmunge /opt/homebrew/bin after
+pathmunge /opt/homebrew/opt/ruby/bin
 export PATH
