@@ -26,6 +26,7 @@ yabai -m space 2 --label "Comms1"
 yabai -m space 3 --label "Browser"
 yabai -m space 4 --label "Code"
 yabai -m space 5 --label "Org"
+yabai -m space 6 --label "Games"
 
 # Start
 yabai -m rule --add app="Finder" space="Start"
@@ -45,14 +46,13 @@ yabai -m rule --add app="iTerm" space="Code"
 yabai -m rule --add app="Terminal" space="Code"
 
 # Personal Comms
-yabai -m rule --add app="Discord" space="Comms1"
+yabai -m rule --add app="Spotify" space="Comms1"
 yabai -m rule --add app="Signal" space="Comms1"
 yabai -m rule --add app="Messages" space="Comms1"
 
 # Misc
 yabai -m rule --add app="Calendar" space="Org"
 yabai -m rule --add app="Mail" space="Org"
-yabai -m rule --add app="App Store" space="Org"
 
 # apps to not manage (ignore)
 yabai -m rule --add app="^System Preferences$" manage=off
@@ -135,7 +135,7 @@ yabai -m signal --add event=window_focused action="sketchybar --trigger window_f
 yabai -m signal --add event=window_created action="sketchybar --trigger windows_on_spaces"
 yabai -m signal --add event=window_destroyed action="sketchybar --trigger windows_on_spaces"
 
-yabai -m signal --add event=window_created action='yabai -m query --windows --window $YABAI_WINDOW_ID | jq -er ".resizable == 0 and .floating == 0" && yabai -m window $YABAI_WINDOW_ID --toggle float' label='test' active='yes'
+#yabai -m signal --add event=window_created action='yabai -m query --windows --window $YABAI_WINDOW_ID | jq -er ".resizable == 0 and .floating == 0" && yabai -m window $YABAI_WINDOW_ID --toggle float' label='test' active='yes'
 
 #echo "updating..."
 #YABAI_CERT=yabai-cert sh -c "$(curl -fsSL "https://git.io/update-yabai")" &
