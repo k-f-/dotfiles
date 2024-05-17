@@ -12,7 +12,6 @@
 # sudo yabai --load-sa
 #
 
-
 # general space settings
 yabai -m config layout                       bsp
 yabai -m config top_padding                  0
@@ -125,6 +124,9 @@ yabai -m config                                 \
     mouse_action1                move           \
     mouse_action2                resize         \
     mouse_drop_action            swap
+
+# add 20 padding to the top and bottom of all spaces regardless of the display it belongs to
+yabai -m config external_bar all:0:20
 
 echo "yabai configuration loaded.."
 
