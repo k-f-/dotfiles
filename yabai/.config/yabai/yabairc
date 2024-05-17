@@ -28,31 +28,36 @@ yabai -m space 4 --label "Code"
 yabai -m space 5 --label "Org"
 yabai -m space 6 --label "Games"
 
-# Start
+# Start - 1
 yabai -m rule --add app="Finder" space="Start"
 yabai -m rule --add app="Filezilla" space="Start"
 yabai -m rule --add app="Activity Monitor" space="Start"
 yabai -m rule --add app="Todoist" space="Start"
 
-# Browser
-yabai -m rule --add app="Firefox" space="Browser"
-yabai -m rule --add app="Brave" space="Browser"
-yabai -m rule --add app="Safari" space="Browser"
-
-# Programming
-yabai -m rule --add app="Visual Studio Code" space="Code"
-yabai -m rule --add app="Kitty" space="Code"
-yabai -m rule --add app="iTerm" space="Code"
-yabai -m rule --add app="Terminal" space="Code"
-
-# Personal Comms
+# Personal Comms - 2
 yabai -m rule --add app="Spotify" space="Comms1"
 yabai -m rule --add app="Signal" space="Comms1"
 yabai -m rule --add app="Messages" space="Comms1"
 
-# Misc
+# Browser - 3
+yabai -m rule --add app="Firefox" space="Browser"
+yabai -m rule --add app="Brave" space="Browser"
+yabai -m rule --add app="Safari" space="Browser"
+
+# Programming - 4
+yabai -m rule --add app="Visual Studio Code" space="Code"
+yabai -m rule --add app="kitty" space="Code"
+yabai -m rule --add app="iTerm" space="Code"
+yabai -m rule --add app="Terminal" space="Code"
+
+# Org - 5
 yabai -m rule --add app="Calendar" space="Org"
 yabai -m rule --add app="Mail" space="Org"
+
+# Games - 6
+yabai -m rule --add label="League Client" app="^League of Legends (TM) Client$" space="Games"
+yabai -m rule --add label="League Launcher" app="^League of Legends$" space="Games"
+yabai -m rule --add label="Steam" app="^Steam Helper$"
 
 # apps to not manage (ignore)
 yabai -m rule --add app="^System Preferences$" manage=off
@@ -63,8 +68,8 @@ yabai -m rule --add app="^balenaEtcher$" manage=off
 yabai -m rule --add app="^Creative Cloud$" manage=off
 yabai -m rule --add app="^Logi Options$" manage=off
 yabai -m rule --add app="^Alfred Preferences$" manage=off
-yabai -m rule --add label="Finder" app="^Finder$" title="(Co(py|nnect)|Move|Info|Pref)" manage=off
-yabai -m rule --add label="Safari" app="^Safari$" title="^(General|(Tab|Password|Website|Extension)s|AutoFill|Se(arch|curity)|Privacy|Advance)$" manage=off
+#yabai -m rule --add label="Finder" app="^Finder$" title="(Co(py|nnect)|Move|Info|Pref)" manage=off
+#yabai -m rule --add label="Safari" app="^Safari$" title="^(General|(Tab|Password|Website|Extension)s|AutoFill|Se(arch|curity)|Privacy|Advance)$" manage=off
 yabai -m rule --add label="macfeh" app="^macfeh$" manage=off
 yabai -m rule --add label="App Store" app="^App Store$" manage=off
 yabai -m rule --add label="Activity Monitor" app="^Activity Monitor$" manage=off
@@ -84,8 +89,8 @@ yabai -m rule --add label="VirtualBox" app="^VirtualBox$" manage=off
 yabai -m rule --add label="iVmware Settings" app="^VMware Fusion$" manage=off
 yabai -m rule --add label="Microsoft AutoUpdate" app="^Microsoft AutoUpdate$" manage=off
 yabai -m rule --add label="About" title="^About$" manage=off
-yabai -m rule --add label="League Client" app="^League of Legends (TM) Client$" manage=off
-yabai -m rule --add label="League Launcher" app="^League of Legends$" manage=off
+#yabai -m rule --add label="League Client" app="^League of Legends (TM) Client$" manage=off
+#yabai -m rule --add label="League Launcher" app="^League of Legends$" manage=off
 yabai -m rule --add label="VLC" app="^vlc$" manage=off
 
 # global settings
@@ -126,14 +131,14 @@ yabai -m config                                 \
     mouse_drop_action            swap
 
 # add 20 padding to the top and bottom of all spaces regardless of the display it belongs to
-yabai -m config external_bar all:0:40
+yabai -m config external_bar all:40:-20
 
 echo "yabai configuration loaded.."
 
 # SketchyBar Hooks
-yabai -m signal --add event=window_focused action="sketchybar --trigger window_focus"
-yabai -m signal --add event=window_created action="sketchybar --trigger windows_on_spaces"
-yabai -m signal --add event=window_destroyed action="sketchybar --trigger windows_on_spaces"
+#yabai -m signal --add event=window_focused action="sketchybar --trigger window_focus"
+#yabai -m signal --add event=window_created action="sketchybar --trigger windows_on_spaces"
+#yabai -m signal --add event=window_destroyed action="sketchybar --trigger windows_on_spaces"
 
 #yabai -m signal --add event=window_created action='yabai -m query --windows --window $YABAI_WINDOW_ID | jq -er ".resizable == 0 and .floating == 0" && yabai -m window $YABAI_WINDOW_ID --toggle float' label='test' active='yes'
 
