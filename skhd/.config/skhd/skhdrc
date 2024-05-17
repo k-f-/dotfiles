@@ -1,3 +1,6 @@
+# Applications
+cmd - return : /Applications/Kitty.app/Contents/MacOS/kitty --single-instance -d ~ &> /dev/null
+
 # -- Changing Window Focus --
 
 # change window focus within space
@@ -13,7 +16,7 @@ alt - g: yabai -m display --focus east
 # -- Modifying the Layout --
 
 # rotate layout clockwise
-shift + alt - r : yabai -m space --rotate 90 
+shift + alt - r : yabai -m space --rotate 90
 
 # flip along y-axis
 shift + alt - y : yabai -m space --mirror y-axis
