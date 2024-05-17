@@ -41,8 +41,8 @@ yabai -m rule --add app="Safari" space="Browser"
 # Programming
 yabai -m rule --add app="Visual Studio Code" space="Code"
 yabai -m rule --add app="Kitty" space="Code"
-yabai -m rule --add app="iTerm" space="Browser"
-yabai -m rule --add app="Terminal" space="Browser"
+yabai -m rule --add app="iTerm" space="Code"
+yabai -m rule --add app="Terminal" space="Code"
 
 # Personal Comms
 yabai -m rule --add app="Discord" space="Comms1"
@@ -126,7 +126,7 @@ yabai -m config                                 \
     mouse_drop_action            swap
 
 # add 20 padding to the top and bottom of all spaces regardless of the display it belongs to
-yabai -m config external_bar all:0:20
+yabai -m config external_bar all:0:40
 
 echo "yabai configuration loaded.."
 
