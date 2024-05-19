@@ -10,19 +10,68 @@
 #
 # yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
 # sudo yabai --load-sa
-#
+
+#!/usr/bin/env bash
+
+set -x
+
+# ====== Variables =============================
+
+declare -A gaps
+declare -A color
+
+gaps["top"]="4"
+gaps["bottom"]="0.9"
+gaps["left"]="4"
+gaps["right"]="4"
+gaps["inner"]="4"
+
+color["focused"]="0xE0808080"
+color["normal"]="0x00010101"
+color["preselect"]="0xE02d74da"
 
 # general space settings
 yabai -m config layout                       bsp
-yabai -m config top_padding                  0
-yabai -m config bottom_padding               0
-yabai -m config left_padding                 0
-yabai -m config right_padding                0
-yabai -m config window_gap                   24
+yabai -m config top_padding                 "${gaps["top"]}"
+yabai -m config bottom_padding              "${gaps["bottom"]}"
+yabai -m config left_padding                "${gaps["left"]}"
+yabai -m config right_padding               "${gaps["right"]}"
+yabai -m config window_gap                  "${gaps["inner"]}"
+
+# global settings
+yabai -m config                                 \
+    mouse_follows_focus          on             \
+    focus_follows_mouse          off            \
+    window_origin_display        default        \
+    window_placement             second_child   \
+    window_zoom_persist          on             \
+    window_topmost               off            \
+    window_shadow                on             \
+    window_animation_duration    0.0            \
+    window_animation_frame_rate  120            \
+    window_opacity_duration      0.0            \
+    active_window_opacity        1.0            \
+    normal_window_opacity        0.90           \
+    window_opacity               off            \
+    insert_feedback_color        "${color["preselect"]}"        \
+    active_window_border_color   "${color["focused"]}"          \
+    normal_window_border_color   "${color["normal"]}"           \
+    window_border_width          4              \
+    window_border_radius         12             \
+    window_border_blur           off            \
+    window_border_hidpi          on             \
+    window_border                on             \
+    split_ratio                  0.50           \
+    split_type                   auto           \
+    auto_balance                 off            \
+    mouse_modifier               fn             \
+    mouse_action1                move           \
+    mouse_action2                resize         \
+    mouse_drop_action            swap
 
 # Space labels
 yabai -m space 1 --label "Start"
-yabai -m space 2 --label "Comms1"
+yabai -m space 2 --label "Comms"
 yabai -m space 3 --label "Browser"
 yabai -m space 4 --label "Code"
 yabai -m space 5 --label "Org"
@@ -35,9 +84,9 @@ yabai -m rule --add app="Activity Monitor" space="Start"
 yabai -m rule --add app="Todoist" space="Start"
 
 # Personal Comms - 2
-yabai -m rule --add app="Spotify" space="Comms1"
-yabai -m rule --add app="Signal" space="Comms1"
-yabai -m rule --add app="Messages" space="Comms1"
+yabai -m rule --add app="Spotify" space="Comms"
+yabai -m rule --add app="Signal" space="Comms"
+yabai -m rule --add app="Messages" space="Comms"
 
 # Browser - 3
 yabai -m rule --add app="Firefox" space="Browser"
@@ -45,7 +94,7 @@ yabai -m rule --add app="Brave" space="Browser"
 yabai -m rule --add app="Safari" space="Browser"
 
 # Programming - 4
-yabai -m rule --add app="Visual Studio Code" space="Code"
+yabai -m rule --add label="VSCode" app="Code" space="Code"
 yabai -m rule --add app="kitty" space="Code"
 yabai -m rule --add app="iTerm" space="Code"
 yabai -m rule --add app="Terminal" space="Code"
@@ -55,9 +104,11 @@ yabai -m rule --add app="Calendar" space="Org"
 yabai -m rule --add app="Mail" space="Org"
 
 # Games - 6
-yabai -m rule --add label="League Client" app="^League of Legends (TM) Client$" space="Games"
-yabai -m rule --add label="League Launcher" app="^League of Legends$" space="Games"
-yabai -m rule --add label="Steam" app="^Steam Helper$"
+yabai -m rule --add label="League Client" app="^League of Legends$" manage=off space="Games"
+yabai -m rule --add label="Riot Launcher" app="^Riot Client$" manage=off space="Games"
+yabai -m rule --add label="Steam" app="^Steam Helper$" manage=off space="Games"
+yabai -m rule --add label="Discord" app="^Discord$" manage=off space="Games"
+yabai -m config --space Games layout float
 
 # apps to not manage (ignore)
 yabai -m rule --add app="^System Preferences$" manage=off
@@ -89,51 +140,17 @@ yabai -m rule --add label="VirtualBox" app="^VirtualBox$" manage=off
 yabai -m rule --add label="iVmware Settings" app="^VMware Fusion$" manage=off
 yabai -m rule --add label="Microsoft AutoUpdate" app="^Microsoft AutoUpdate$" manage=off
 yabai -m rule --add label="About" title="^About$" manage=off
-#yabai -m rule --add label="League Client" app="^League of Legends (TM) Client$" manage=off
-#yabai -m rule --add label="League Launcher" app="^League of Legends$" manage=off
 yabai -m rule --add label="VLC" app="^vlc$" manage=off
 
-# global settings
-yabai -m config                                 \
-    mouse_follows_focus          on             \
-    focus_follows_mouse          off            \
-    window_origin_display        default        \
-    window_placement             second_child   \
-    window_zoom_persist          on             \
-    window_topmost               off            \
-    window_shadow                on             \
-    window_animation_duration    0.0            \
-    window_animation_frame_rate  120            \
-    window_opacity_duration      0.0            \
-    active_window_opacity        1.0            \
-    normal_window_opacity        0.90           \
-    window_opacity               off            \
-    insert_feedback_color        0xffd75f5f     \
-    active_window_border_color   0xff775759     \
-    normal_window_border_color   0xff555555     \
-    window_border_width          4              \
-    window_border_radius         12             \
-    window_border_blur           off            \
-    window_border_hidpi          on             \
-    window_border                on             \
-    split_ratio                  0.50           \
-    split_type                   auto           \
-    auto_balance                 off            \
-    top_padding                  12             \
-    bottom_padding               12             \
-    left_padding                 12             \
-    right_padding                12             \
-    window_gap                   06             \
-    layout                       bsp            \
-    mouse_modifier               fn             \
-    mouse_action1                move           \
-    mouse_action2                resize         \
-    mouse_drop_action            swap
-
 # add 20 padding to the top and bottom of all spaces regardless of the display it belongs to
-yabai -m config external_bar all:40:-20
+#yabai -m config external_bar all:0:0
 
-echo "yabai configuration loaded.."
+## HACK! When some windows get closed you lose focus
+yabai -m signal --add event=application_terminated action="yabai -m query --windows --window &> /dev/null || yabai -m window --focus mouse"
+yabai -m signal --add event=window_destroyed action="yabai -m query --windows --window &> /dev/null || yabai -m window --focus mouse"
+
+set +x
+printf "yabai configuration loaded..\\n"
 
 # SketchyBar Hooks
 #yabai -m signal --add event=window_focused action="sketchybar --trigger window_focus"
