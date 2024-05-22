@@ -2,6 +2,27 @@
 
 xattr -d com.apple.quarantine /Applications/SpaceId.app
 
+# Disable Homebrew telemetry.
+__HOMEBREW_PREFIX=`brew --prefix`
+HOMEBREW_NO_ANALYTICS=1
+export HOMEBREW_NO_ANALYTICS
+
+# For each specified GNU utility installed by Homebrew
+for gnubrew in coreutils findutils make grep gawk gnu-units
+do
+    # Reference the packaged files _without_ "g" prefixes
+    __libexec_prefix=$__HOMEBREW_PREFIX/opt/$gnubrew/libexec
+
+    # Add the executables to the front of PATH
+    test -d "$__libexec_prefix/gnubin" &&
+        PATH=$__libexec_prefix/gnubin:$PATH
+
+    # Add the man pages to the front of MANPATH
+    test -d "$__libexec_prefix/gnuman" &&
+        MANPATH=$__libexec_prefix/gnuman${MANPATH:+":$MANPATH"}
+done
+export PATH MANPATH
+
 # macOS Settings
 echo "Changing macOS defaults..."
 defaults write com.apple.screencapture name kef-screenshot
