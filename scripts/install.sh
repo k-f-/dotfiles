@@ -14,7 +14,7 @@ stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles kitty
 stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles mail
 stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles vim
 stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles x-windows
-stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles secrets 
+stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles secrets
 stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles youtube-dl
 stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles ssh
 stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles zsh
