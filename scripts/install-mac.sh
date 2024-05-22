@@ -1,7 +1,21 @@
 # useful url: https://www.alchemists.io/projects/mac_os-config/
 
-xattr -d com.apple.quarantine /Applications/SpaceId.app
+# Put downloads folder into iCloud
+ln -svn /Users/kef/Library/Mobile Documents/com~apple~CloudDocs/Downloads ~/Downloads
 
+# Allow SpaceId.app
+xattr -d com.apple.quarantine /Applications/SpaceId.app
+## Requires: brew
+# By default, Homebrew installs GNU utilities by prefixing each of their
+# installed files with "g", thus avoiding name conflicts with existing tools.
+#
+# However, sometimes it is desireable to prefer the GNU version of a utility to
+# the standard BSD version that ships with Darwin, without specifying the "g"
+# prefix.  There are a few options: override the Homebrew installation process,
+# alias commands as needed, or add to PATH and MANPATH as needed.
+#
+# For now, I prefer the third option, as I see this as being slightly easier
+# to document my configuration.
 # Disable Homebrew telemetry.
 __HOMEBREW_PREFIX=`brew --prefix`
 HOMEBREW_NO_ANALYTICS=1
