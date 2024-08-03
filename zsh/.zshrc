@@ -37,6 +37,7 @@ plugins=(
   fast-syntax-highlighting
   macos
 )
+source <(fzf --zsh)
 
 # Source OH-MY-ZSH so it loads at all.
 source $ZSH/oh-my-zsh.sh
