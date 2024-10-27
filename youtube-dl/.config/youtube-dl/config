@@ -21,4 +21,4 @@
 --merge-output-format mkv
 
 # Drop it into our Dropbox folder. We can sort this later.
--o "$HOME/Dropbox/yt-dl/%(playlist)s/%(playlist_index)s - %(title)s - %(id)s.%(ext)s"
+-o "$HOME/Documents/Videos/yt-dl/%(playlist)s/%(playlist_index)s - %(title)s - %(id)s.%(ext)s"
