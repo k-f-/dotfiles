@@ -106,6 +106,7 @@ yabai -m rule --add label="League Client" app="^League of Legends$" manage=off s
 yabai -m rule --add label="Riot Launcher" app="^Riot Client$" manage=off space="Games"
 yabai -m rule --add label="Steam" app="^Steam Helper$" manage=off space="Games"
 yabai -m rule --add label="Discord" app="^Discord$" manage=off space="Games"
+yabai -m rule --add label="LiesofP" app="^LiesofP$" manage=off space="Games"
 yabai -m config --space Games layout float
 
 # apps to not manage (ignore)
