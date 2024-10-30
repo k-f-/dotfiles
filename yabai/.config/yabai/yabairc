@@ -8,12 +8,24 @@
 # see this wiki page for information:
 #  - https://github.com/koekeishiya/yabai/wiki/Installing-yabai-(latest-release)#configure-scripting-addition
 #
-# yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
-# sudo yabai --load-sa
+# To update the sodoers file run:
+# echo "$(whoami) ALL=(root) NOPASSWD: sha256:$(shasum -a 256 $(which yabai) | cut -d " " -f 1) $(which yabai) --load-sa" | sudo tee /private/etc/sudoers.d/yabai
+yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+sudo yabai --load-sa
 
 #!/usr/bin/env bash
+# ====== CheatSheet=============================
+# yabai -m query --displays --display | jq .index
 
+# yabai -m query --spaces
+# yabai -m query --spaces --space Comms
+#
+# yabai -m query --windows
+
+# yabai -m rule --list
 # ====== Variables =============================
+alias yc="yabai -m config"
+alias yr="yabai -m rule --add"
 
 declare -A gaps
 declare -A color
@@ -75,8 +87,12 @@ yabai -m space 4 --label "Code"
 yabai -m space 5 --label "Org"
 yabai -m space 6 --label "Games"
 
+# Turn off Managing for all windows unless declared.
+#yabai -m rule --add app="." manage=off
+#yabai -m rule --add app="." sub-layer=normal
+
 # Start - 1
-yabai -m rule --add app="Finder" space="Start"
+yabai -m rule --add app="Finder" space="Start" manage=off
 yabai -m rule --add app="Filezilla" space="Start"
 yabai -m rule --add app="Activity Monitor" space="Start"
 yabai -m rule --add app="Todoist" space="Start"
@@ -93,7 +109,7 @@ yabai -m rule --add app="Safari" space="Browser"
 
 # Programming - 4
 yabai -m rule --add label="VSCode" app="Code" space="Code"
-yabai -m rule --add app="kitty" space="Code"
+yabai -m rule --add label="kitty" app="kitty" space="Code"
 yabai -m rule --add app="iTerm" space="Code"
 yabai -m rule --add app="Terminal" space="Code"
 
@@ -102,11 +118,11 @@ yabai -m rule --add app="Calendar" space="Org"
 yabai -m rule --add app="Mail" space="Org"
 
 # Games - 6
-yabai -m rule --add label="League Client" app="^League of Legends$" manage=off space="Games"
-yabai -m rule --add label="Riot Launcher" app="^Riot Client$" manage=off space="Games"
-yabai -m rule --add label="Steam" app="^Steam Helper$" manage=off space="Games"
-yabai -m rule --add label="Discord" app="^Discord$" manage=off space="Games"
-yabai -m rule --add label="LiesofP" app="^LiesofP$" manage=off space="Games"
+yabai -m rule --add label="League Client" app="League of Legends" space="Games"
+yabai -m rule --add label="Riot Launcher" app="Riot Client" space="Games"
+yabai -m rule --add label="Steam" app="^Steam Helper$" space="Games"
+yabai -m rule --add label="Discord" app="^Discord$" space="Games"
+yabai -m rule --add label="LiesofP" app="^LiesofP$" space="Games"
 yabai -m config --space Games layout float
 
 # apps to not manage (ignore)
@@ -131,7 +147,7 @@ yabai -m rule --add label="Software Update" title="Software Update" manage=off
 yabai -m rule --add label="About This Mac" app="System Information" title="About This Mac" manage=off
 yabai -m rule --add label="System Settings" app="^System Settings$" manage=off
 yabai -m rule --add label="App Store" app="^App Store$" manage=off
-yabai -m rule --add label="Activity Monitor" app="^Activity Monitor$" manage=off
+#yabai -m rule --add label="Activity Monitor" app="^Activity Monitor$" manage=off
 yabai -m rule --add label="1Password" app="^1Password$" manage=off
 yabai -m rule --add label="Calculator" app="^Calculator$" manage=off
 yabai -m rule --add label="Dictionary" app="^Dictionary$" manage=off
@@ -144,9 +160,13 @@ yabai -m rule --add label="VLC" app="^vlc$" manage=off
 # add 20 padding to the top and bottom of all spaces regardless of the display it belongs to
 #yabai -m config external_bar all:0:0
 
+## Flash Window when Focus Changed.
+#yabai -m signal --add label="flash_focus" event="window_focused" action="yabai -m window \$YABAI_WINDOW_ID --opacity 0.1 && sleep $(yabai -m config window_opacity_duration) && yabai -m window \$YABAI_WINDOW_ID --opacity 0.0"
+
 ## HACK! When some windows get closed you lose focus
 yabai -m signal --add event=application_terminated action="yabai -m query --windows --window &> /dev/null || yabai -m window --focus mouse"
 yabai -m signal --add event=window_destroyed action="yabai -m query --windows --window &> /dev/null || yabai -m window --focus mouse"
+yabai -m signal --add event=space_changed action="landscape"
 
 printf "yabai configuration loaded..\\n"
 
@@ -155,7 +175,7 @@ printf "yabai configuration loaded..\\n"
 #yabai -m signal --add event=window_created action="sketchybar --trigger windows_on_spaces"
 #yabai -m signal --add event=window_destroyed action="sketchybar --trigger windows_on_spaces"
 
-#yabai -m signal --add event=window_created action='yabai -m query --windows --window $YABAI_WINDOW_ID | jq -er ".resizable == 0 and .floating == 0" && yabai -m window $YABAI_WINDOW_ID --toggle float' label='test' active='yes'
+#yabai -m signal --add event=window_created action="yabai -m query --windows --window $YABAI_WINDOW_ID | jq -er ".resizable == 0 and .floating == 0" && yabai -m window $YABAI_WINDOW_ID --toggle float" label="test" active="yes"
 
 #echo "updating..."
 #YABAI_CERT=yabai-cert sh -c "$(curl -fsSL "https://git.io/update-yabai")" &
