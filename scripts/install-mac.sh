@@ -77,5 +77,11 @@ defaults write NSGlobalDomain WebKitDeveloperExtras -bool true
 defaults write com.apple.mail AddressesIncludeNameOnPasteboard -bool false
 defaults write -g NSWindowShouldDragOnGesture YES
 
+# Yabai SIP Disable
+csrutil status
+echo "(optional) Disable SIP for advanced yabai features."
+echo "(optional) Add sudoer manually:\n '$(whoami) ALL = (root) NOPASSWD: sha256:$(shasum -a 256 $(which yabai) | awk "{print \$1;}") $(which yabai) --load-sa' to '/private/etc/sudoers.d/yabai'"
+echo "Installation complete...\n"
+
 # Change Hostname
 sudo scutil --set HostName kef-mbp
