@@ -78,52 +78,82 @@ yabai -m config                                 \
     mouse_action1                move           \
     mouse_action2                resize         \
     mouse_drop_action            swap
+## START - SIP DISABLED SPECIFIC
+# Destroy < 7 spaces
+for _ in $(yabai -m query --spaces | jq '.[].index | select(. > 6)'); do
+  yabai -m space --destroy 7
+done
+
+# Function to setup spaces
+function setup_space {
+  local idx="$1"
+  local name="$2"
+  local space=
+  echo "setup space $idx : $name"
+
+  space=$(yabai -m query --spaces --space "$idx")
+  if [ -z "$space" ]; then
+    yabai -m space --create
+  fi
+
+  yabai -m space "$idx" --label "$name"
+}
+# Setup Spaces and Label
+setup_space 1 start
+setup_space 2 comms
+setup_space 3 browser
+setup_space 4 code
+setup_space 5 org
+setup_space 6 games
+## END - SIP DISABLED SPECIFIC
 
 # Space labels
-yabai -m space 1 --label "Start"
-yabai -m space 2 --label "Comms"
-yabai -m space 3 --label "Browser"
-yabai -m space 4 --label "Code"
-yabai -m space 5 --label "Org"
-yabai -m space 6 --label "Games"
+#yabai -m space 1 --label "start"
+#yabai -m space 2 --label "comms"
+#yabai -m space 3 --label "browser"
+#yabai -m space 4 --label "code"
+#yabai -m space 5 --label "org"
+#yabai -m space 6 --label "games"
 
 # Turn off Managing for all windows unless declared.
 #yabai -m rule --add app="." manage=off
 #yabai -m rule --add app="." sub-layer=normal
 
 # Start - 1
-yabai -m rule --add app="Finder" space="Start" manage=off
-yabai -m rule --add app="Filezilla" space="Start"
-yabai -m rule --add app="Activity Monitor" space="Start"
-yabai -m rule --add app="Todoist" space="Start"
+yabai -m rule --add app="Finder" space="start" manage=off
+yabai -m rule --add app="Filezilla" space="start"
+yabai -m rule --add app="Activity Monitor" space="start"
+yabai -m rule --add app="Todoist" space="start"
 
 # Personal Comms - 2
-yabai -m rule --add app="Spotify" space="Comms"
-yabai -m rule --add app="Signal" space="Comms"
-yabai -m rule --add app="Messages" space="Comms"
+yabai -m rule --add app="Spotify" space="comms"
+yabai -m rule --add app="Signal" space="comms"
+yabai -m rule --add app="Messages" space="comms"
 
 # Browser - 3
-yabai -m rule --add app="Firefox" space="Browser"
-yabai -m rule --add app="Brave" space="Browser"
-yabai -m rule --add app="Safari" space="Browser"
+yabai -m rule --add app="Firefox" space="browser"
+yabai -m rule --add app="Brave" space="browser"
+yabai -m rule --add app="Safari" space="browser"
 
 # Programming - 4
-yabai -m rule --add label="VSCode" app="Code" space="Code"
-yabai -m rule --add label="kitty" app="kitty" space="Code"
-yabai -m rule --add app="iTerm" space="Code"
-yabai -m rule --add app="Terminal" space="Code"
+yabai -m rule --add label="VSCode" app="Code" space="code"
+yabai -m rule --add label="kitty" app="kitty" space="code"
+yabai -m rule --add app="iTerm" space="code"
+yabai -m rule --add app="Terminal" space="code"
 
 # Org - 5
-yabai -m rule --add app="Calendar" space="Org"
-yabai -m rule --add app="Mail" space="Org"
+yabai -m rule --add app="Calendar" space="org"
+yabai -m rule --add app="Mail" space="org"
+yabai -m rule --add app="Notes" space="org"
+yabai -m rule --add app="Reminders" space="org"
 
 # Games - 6
-yabai -m rule --add label="League Client" app="League of Legends" space="Games"
-yabai -m rule --add label="Riot Launcher" app="Riot Client" space="Games"
-yabai -m rule --add label="Steam" app="^Steam Helper$" space="Games"
-yabai -m rule --add label="Discord" app="^Discord$" space="Games"
-yabai -m rule --add label="LiesofP" app="^LiesofP$" space="Games"
-yabai -m config --space Games layout float
+yabai -m rule --add label="League Client" app="League of Legends" space="games"
+yabai -m rule --add label="Riot Launcher" app="Riot Client" space="games"
+yabai -m rule --add label="Steam" app="^Steam Helper$" space="games"
+yabai -m rule --add label="Discord" app="^Discord$" space="games"
+yabai -m rule --add label="LiesofP" app="^LiesofP$" space="games"
+yabai -m config --space games layout float
 
 # apps to not manage (ignore)
 yabai -m rule --add app="^System Preferences$" manage=off
