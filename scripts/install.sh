@@ -5,6 +5,7 @@
 
 cd ~/.dotfiles
 
+stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles aerospace
 stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles bash
 stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles emacs
 stow --target="$HOME" --verbose=4 --ignore='^README.*' --dotfiles doom
