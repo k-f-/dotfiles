@@ -19,6 +19,7 @@ STOW_TARGET="${HOME}"
 
 # All packages that might be installed
 ALL_PACKAGES=(
+    aerospace
     bash
     doom
     emacs

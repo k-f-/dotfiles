@@ -30,6 +30,7 @@ CORE_PACKAGES=(
 
 # Optional packages - can be skipped with --minimal
 OPTIONAL_PACKAGES=(
+    aerospace
     doom
     emacs
     gnupg
