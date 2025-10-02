@@ -1,5 +1,5 @@
 # AeroSpace Configuration
-# Place this at ~/.aerospace.toml
+# Enhanced config matching yabai/skhd workflow
 # See: https://github.com/nikitabobko/AeroSpace
 
 # Start AeroSpace at login
@@ -23,17 +23,15 @@ default-root-container-layout = 'tiles'
 default-root-container-orientation = 'auto'
 
 # Mouse follows focus when focused monitor changes
-# Drop it from your config, if you don't like this behavior
-# See https://nikitabobko.github.io/AeroSpace/guide#on-focus-changed-callbacks
-# See https://nikitabobko.github.io/AeroSpace/config-examples#move-mouse-when-focus-changes
+# Matches yabai's mouse_follows_focus = on
 on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 
-# Gaps between windows (inner gaps)
+# Gaps between windows (matches yabai config: 4px all around, 0.9 bottom)
 [gaps]
 inner.horizontal = 4
 inner.vertical =   4
 outer.left =       4
-outer.bottom =     4
+outer.bottom =     1  # Matches yabai's 0.9 (rounded up)
 outer.top =        4
 outer.right =      4
 
@@ -57,48 +55,74 @@ outer.right =      4
 
 # All possible commands: https://nikitabobko.github.io/AeroSpace/commands
 
-# See: https://nikitabobko.github.io/AeroSpace/commands#exec-and-forget
-# You can uncomment the following lines to open up terminal with alt + enter shortcut (like in i3)
-# alt-enter = '''exec-and-forget osascript -e '
-# tell application "Terminal"
-#     do script
-#     activate
-# end tell'
-# '''
+# ============================================================================
+# Applications (matches skhd: cmd-return for kitty)
+# ============================================================================
+cmd-return = 'exec-and-forget open -na /Applications/Kitty.app'
 
-# See: https://nikitabobko.github.io/AeroSpace/commands#layout
-alt-slash = 'layout tiles horizontal vertical'
-alt-comma = 'layout accordion horizontal vertical'
-
-# See: https://nikitabobko.github.io/AeroSpace/commands#focus
+# ============================================================================
+# Window Navigation (matches skhd: alt-hjkl)
+# ============================================================================
 alt-h = 'focus left'
 alt-j = 'focus down'
 alt-k = 'focus up'
 alt-l = 'focus right'
 
-# See: https://nikitabobko.github.io/AeroSpace/commands#move
+# ============================================================================
+# Moving Windows (matches skhd: shift+alt-hjkl)
+# ============================================================================
 alt-shift-h = 'move left'
 alt-shift-j = 'move down'
 alt-shift-k = 'move up'
 alt-shift-l = 'move right'
 
-# See: https://nikitabobko.github.io/AeroSpace/commands#resize
+# ============================================================================
+# Monitor/Display Focus (matches skhd: alt-s/g for west/east)
+# ============================================================================
+alt-s = 'focus-monitor left'
+alt-g = 'focus-monitor right'
+
+# Move window to monitor (matches skhd: shift+alt-s/g)
+alt-shift-s = 'move-node-to-monitor left'
+alt-shift-g = 'move-node-to-monitor right'
+
+# ============================================================================
+# Window Resizing (matches skhd behavior)
+# ============================================================================
 alt-shift-minus = 'resize smart -50'
 alt-shift-equal = 'resize smart +50'
 
-# See: https://nikitabobko.github.io/AeroSpace/commands#workspace
-alt-1 = 'workspace 1'
-alt-2 = 'workspace 2'
-alt-3 = 'workspace 3'
-alt-4 = 'workspace 4'
-alt-5 = 'workspace 5'
-alt-6 = 'workspace 6'
+# ============================================================================
+# Layout Modifications (matches skhd: shift+alt-r/y/x)
+# ============================================================================
+alt-shift-r = 'layout tiles horizontal vertical'  # Rotate/toggle layout
+alt-shift-y = 'layout tiles vertical horizontal'  # Mirror Y-axis equivalent
+alt-shift-x = 'layout tiles horizontal vertical'  # Mirror X-axis equivalent
+
+# ============================================================================
+# Window State Toggles (matches skhd)
+# ============================================================================
+alt-shift-t = 'layout floating tiling'  # Toggle floating (shift+alt-t)
+alt-shift-m = 'fullscreen'               # Maximize/fullscreen (shift+alt-m)
+alt-shift-e = 'balance-sizes'            # Balance windows (shift+alt-e)
+
+# ============================================================================
+# Workspace Switching (matches yabai labels: Start/Comms/Browser/Code/Org/Games)
+# ============================================================================
+alt-1 = 'workspace 1'  # Start
+alt-2 = 'workspace 2'  # Comms
+alt-3 = 'workspace 3'  # Browser
+alt-4 = 'workspace 4'  # Code
+alt-5 = 'workspace 5'  # Org
+alt-6 = 'workspace 6'  # Games
 alt-7 = 'workspace 7'
 alt-8 = 'workspace 8'
 alt-9 = 'workspace 9'
 alt-0 = 'workspace 10'
 
-# See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
+# ============================================================================
+# Move Window to Workspace (matches skhd: shift+alt-1 through 7)
+# ============================================================================
 alt-shift-1 = 'move-node-to-workspace 1'
 alt-shift-2 = 'move-node-to-workspace 2'
 alt-shift-3 = 'move-node-to-workspace 3'
@@ -110,42 +134,87 @@ alt-shift-8 = 'move-node-to-workspace 8'
 alt-shift-9 = 'move-node-to-workspace 9'
 alt-shift-0 = 'move-node-to-workspace 10'
 
-# See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
+# ============================================================================
+# Workspace Navigation (matches skhd: shift+alt-p/n for prev/next)
+# ============================================================================
+alt-shift-p = 'workspace --wrap-around prev'
+alt-shift-n = 'workspace --wrap-around next'
+
+# Workspace back-and-forth
 alt-tab = 'workspace-back-and-forth'
-# See: https://nikitabobko.github.io/AeroSpace/commands#move-workspace-to-monitor
+
+# Move workspace to monitor
 alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
 
-# See: https://nikitabobko.github.io/AeroSpace/commands#mode
+# ============================================================================
+# Service Mode (advanced operations)
+# ============================================================================
 alt-shift-semicolon = 'mode service'
 
-# 'service' binding mode declaration.
-# See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
+# ============================================================================
+# Service Mode - Advanced Operations (alt+shift+;)
+# ============================================================================
 [mode.service.binding]
 esc = ['reload-config', 'mode main']
-r = ['flatten-workspace-tree', 'mode main'] # reset layout
-f = ['layout floating tiling', 'mode main'] # Toggle between floating and tiling layout
+r = ['flatten-workspace-tree', 'mode main']  # Reset layout
+f = ['layout floating tiling', 'mode main']  # Toggle floating
 backspace = ['close-all-windows-but-current', 'mode main']
 
-# sticky is not yet supported https://github.com/nikitabobko/AeroSpace/issues/2
-#s = ['layout sticky tiling', 'mode main']
-
+# Join windows (like i3 tabbed/stacked)
 alt-shift-h = ['join-with left', 'mode main']
 alt-shift-j = ['join-with down', 'mode main']
 alt-shift-k = ['join-with up', 'mode main']
 alt-shift-l = ['join-with right', 'mode main']
 
-# Workspace naming (similar to your yabai config)
+# Note: sticky windows not yet supported in AeroSpace
+# See: https://github.com/nikitabobko/AeroSpace/issues/2
+
+# ============================================================================
+# Workspace Auto-Assignment (matches yabai rules)
+# Get app-id by running: aerospace list-apps
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# Workspace 1: Start
+# ----------------------------------------------------------------------------
 [[on-window-detected]]
 if.app-id = 'com.apple.finder'
 run = 'move-node-to-workspace 1'
 
 [[on-window-detected]]
-if.app-id = 'org.signal.Signal'
-run = 'move-node-to-workspace 2'
+if.app-id = 'com.apple.ActivityMonitor'
+run = 'move-node-to-workspace 1'
 
+# Add Filezilla and Todoist if you use them
+# [[on-window-detected]]
+# if.app-id = 'org.filezilla-project.filezilla'
+# run = 'move-node-to-workspace 1'
+
+# ----------------------------------------------------------------------------
+# Workspace 2: Comms (Personal Communications)
+# ----------------------------------------------------------------------------
 [[on-window-detected]]
 if.app-id = 'com.spotify.client'
 run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
+if.app-id = 'org.whispersystems.signal-desktop'
+run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.MobileSMS'
+run = 'move-node-to-workspace 2'
+
+# ----------------------------------------------------------------------------
+# Workspace 3: Browser
+# ----------------------------------------------------------------------------
+[[on-window-detected]]
+if.app-id = 'org.mozilla.firefox'
+run = 'move-node-to-workspace 3'
+
+[[on-window-detected]]
+if.app-id = 'com.brave.Browser'
+run = 'move-node-to-workspace 3'
 
 [[on-window-detected]]
 if.app-id = 'com.apple.Safari'
@@ -155,10 +224,9 @@ run = 'move-node-to-workspace 3'
 if.app-id = 'com.google.Chrome'
 run = 'move-node-to-workspace 3'
 
-[[on-window-detected]]
-if.app-id = 'org.mozilla.firefox'
-run = 'move-node-to-workspace 3'
-
+# ----------------------------------------------------------------------------
+# Workspace 4: Code (Programming)
+# ----------------------------------------------------------------------------
 [[on-window-detected]]
 if.app-id = 'com.microsoft.VSCode'
 run = 'move-node-to-workspace 4'
@@ -168,7 +236,97 @@ if.app-id = 'net.kovidgoyal.kitty'
 run = 'move-node-to-workspace 4'
 
 [[on-window-detected]]
+if.app-id = 'com.googlecode.iterm2'
+run = 'move-node-to-workspace 4'
+
+[[on-window-detected]]
 if.app-id = 'com.apple.Terminal'
 run = 'move-node-to-workspace 4'
 
-# You can get app-id by running: aerospace list-apps
+# ----------------------------------------------------------------------------
+# Workspace 5: Org (Organization - Calendar, Mail)
+# ----------------------------------------------------------------------------
+[[on-window-detected]]
+if.app-id = 'com.apple.iCal'
+run = 'move-node-to-workspace 5'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.mail'
+run = 'move-node-to-workspace 5'
+
+# ----------------------------------------------------------------------------
+# Workspace 6: Games (Note: These should be floating in yabai)
+# AeroSpace doesn't have per-workspace layout settings yet
+# These apps will default to floating via the layout.floating rules below
+# ----------------------------------------------------------------------------
+[[on-window-detected]]
+if.app-id = 'com.riotgames.LeagueofLegends.GameClient'
+run = 'move-node-to-workspace 6'
+
+[[on-window-detected]]
+if.app-id = 'com.riotgames.RiotClient'
+run = 'move-node-to-workspace 6'
+
+[[on-window-detected]]
+if.app-id = 'com.valvesoftware.steam'
+run = 'move-node-to-workspace 6'
+
+[[on-window-detected]]
+if.app-id = 'com.hnc.Discord'
+run = 'move-node-to-workspace 6'
+
+# ============================================================================
+# Apps to Always Float (matches yabai manage=off rules)
+# ============================================================================
+[[on-window-detected]]
+if.app-id = 'com.apple.systempreferences'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.SystemPreferences'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.archiveutility'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.1password.1password'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.calculator'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.Dictionary'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.AppStore'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.ActivityMonitor'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'org.videolan.vlc'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'org.virtualbox.app.VirtualBox'
+run = 'layout floating'
+
+# Game launchers and clients should be floating
+[[on-window-detected]]
+if.app-id = 'com.riotgames.LeagueofLegends.GameClient'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.riotgames.RiotClient'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.valvesoftware.steam'
+run = 'layout floating'
