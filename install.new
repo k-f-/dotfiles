@@ -20,7 +20,7 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 STOW_TARGET="${HOME}"
 BACKUP_DIR="${HOME}/.dotfiles-backup-$(date +%Y%m%d-%H%M%S)"
 
-# Core packages that should be installed on all systems
+# Core packages that should be installed on all systems (alphabetically sorted)
 CORE_PACKAGES=(
     bash
     git
@@ -28,7 +28,7 @@ CORE_PACKAGES=(
     zsh
 )
 
-# Optional packages - can be skipped with --minimal
+# Optional packages - can be skipped with --minimal (alphabetically sorted)
 OPTIONAL_PACKAGES=(
     aerospace
     doom

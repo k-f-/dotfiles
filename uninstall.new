@@ -17,7 +17,7 @@ set -euo pipefail
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 STOW_TARGET="${HOME}"
 
-# All packages that might be installed
+# All packages that might be installed (alphabetically sorted)
 ALL_PACKAGES=(
     aerospace
     bash
