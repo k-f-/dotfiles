@@ -1,0 +1,394 @@
+#!/usr/bin/env bash
+#
+# Dotfiles Installation Script
+# A modern, maintainable installer for dotfiles using GNU Stow
+#
+# Usage: ./install [OPTIONS]
+#   --help          Show this help message
+#   --dry-run       Show what would be done without making changes
+#   --no-packages   Skip package installation
+#   --minimal       Install only core packages
+#   --verbose       Show detailed output
+
+set -euo pipefail
+
+# -----------------------------------------------------------------------------
+# Configuration
+# -----------------------------------------------------------------------------
+
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+STOW_TARGET="${HOME}"
+BACKUP_DIR="${HOME}/.dotfiles-backup-$(date +%Y%m%d-%H%M%S)"
+
+# Core packages that should be installed on all systems
+CORE_PACKAGES=(
+    bash
+    git
+    vim
+    zsh
+)
+
+# Optional packages - can be skipped with --minimal
+OPTIONAL_PACKAGES=(
+    doom
+    emacs
+    gnupg
+    kitty
+    mail
+    secrets
+    sketchybar
+    skhd
+    ssh
+    x-windows
+    yabai
+    youtube-dl
+)
+
+# Flags
+DRY_RUN=false
+INSTALL_PACKAGES=true
+MINIMAL=false
+VERBOSE=false
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# -----------------------------------------------------------------------------
+# Helper Functions
+# -----------------------------------------------------------------------------
+
+print_header() {
+    echo -e "\n${BLUE}==>${NC} ${1}"
+}
+
+print_success() {
+    echo -e "${GREEN}✓${NC} ${1}"
+}
+
+print_warning() {
+    echo -e "${YELLOW}!${NC} ${1}"
+}
+
+print_error() {
+    echo -e "${RED}✗${NC} ${1}" >&2
+}
+
+print_verbose() {
+    if [[ "${VERBOSE}" == "true" ]]; then
+        echo -e "  ${1}"
+    fi
+}
+
+show_help() {
+    cat << EOF
+Dotfiles Installation Script
+
+Usage: ./install [OPTIONS]
+
+OPTIONS:
+    --help          Show this help message
+    --dry-run       Show what would be done without making changes
+    --no-packages   Skip package manager installations
+    --minimal       Install only core packages (bash, git, vim, zsh)
+    --verbose       Show detailed output
+
+EXAMPLES:
+    ./install                    # Full installation
+    ./install --minimal          # Install core configs only
+    ./install --dry-run          # Preview changes without applying
+
+EOF
+    exit 0
+}
+
+# Detect operating system
+detect_os() {
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        echo "macos"
+    elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        if [[ -f /etc/debian_version ]]; then
+            echo "debian"
+        elif [[ -f /etc/redhat-release ]]; then
+            echo "redhat"
+        else
+            echo "linux"
+        fi
+    else
+        echo "unknown"
+    fi
+}
+
+# Check if a command exists
+command_exists() {
+    command -v "$1" &> /dev/null
+}
+
+# Install package manager packages
+install_packages() {
+    local os="$1"
+
+    if [[ "${INSTALL_PACKAGES}" != "true" ]]; then
+        print_warning "Skipping package installation (--no-packages)"
+        return 0
+    fi
+
+    print_header "Installing packages for ${os}..."
+
+    case "${os}" in
+        macos)
+            if ! command_exists brew; then
+                print_error "Homebrew not found. Install from https://brew.sh"
+                return 1
+            fi
+
+            if [[ -f "${DOTFILES_DIR}/homebrew/Brewfile" ]]; then
+                print_verbose "Running: brew bundle --file=${DOTFILES_DIR}/homebrew/Brewfile"
+                if [[ "${DRY_RUN}" == "false" ]]; then
+                    brew bundle --file="${DOTFILES_DIR}/homebrew/Brewfile" || {
+                        print_warning "Some Homebrew packages failed to install"
+                    }
+                fi
+                print_success "Homebrew packages processed"
+            else
+                print_warning "Brewfile not found at ${DOTFILES_DIR}/homebrew/Brewfile"
+            fi
+            ;;
+
+        debian)
+            if [[ -f "${DOTFILES_DIR}/scripts/install-debian-packages.sh" ]]; then
+                print_verbose "Running: ${DOTFILES_DIR}/scripts/install-debian-packages.sh"
+                if [[ "${DRY_RUN}" == "false" ]]; then
+                    bash "${DOTFILES_DIR}/scripts/install-debian-packages.sh" || {
+                        print_warning "Some Debian packages failed to install"
+                    }
+                fi
+                print_success "Debian packages processed"
+            else
+                print_warning "Debian package script not found"
+            fi
+            ;;
+
+        *)
+            print_warning "Unknown OS, skipping package installation"
+            ;;
+    esac
+}
+
+# Backup existing files that would conflict with stow
+backup_conflicts() {
+    local package="$1"
+    local package_dir="${DOTFILES_DIR}/${package}"
+
+    if [[ ! -d "${package_dir}" ]]; then
+        return 0
+    fi
+
+    # Find files that would be created by stow
+    while IFS= read -r -d '' file; do
+        local rel_path="${file#$package_dir/}"
+        local target_file="${STOW_TARGET}/${rel_path}"
+
+        # If target exists and is not a symlink managed by stow
+        if [[ -e "${target_file}" ]] && [[ ! -L "${target_file}" ]]; then
+            print_verbose "Backing up: ${target_file}"
+            if [[ "${DRY_RUN}" == "false" ]]; then
+                mkdir -p "$(dirname "${BACKUP_DIR}/${rel_path}")"
+                mv "${target_file}" "${BACKUP_DIR}/${rel_path}"
+            fi
+        fi
+    done < <(find "${package_dir}" -type f -print0)
+}
+
+# Stow a single package
+stow_package() {
+    local package="$1"
+    local package_dir="${DOTFILES_DIR}/${package}"
+
+    if [[ ! -d "${package_dir}" ]]; then
+        print_warning "Package directory not found: ${package}"
+        return 1
+    fi
+
+    print_verbose "Stowing ${package}..."
+
+    # Backup any conflicts first
+    backup_conflicts "${package}"
+
+    # Run stow
+    local stow_cmd="stow --target=\"${STOW_TARGET}\" --ignore='^README.*' --dotfiles"
+    if [[ "${VERBOSE}" == "true" ]]; then
+        stow_cmd="${stow_cmd} --verbose=4"
+    fi
+    stow_cmd="${stow_cmd} \"${package}\""
+
+    if [[ "${DRY_RUN}" == "true" ]]; then
+        stow_cmd="stow --no --target=\"${STOW_TARGET}\" --ignore='^README.*' --dotfiles \"${package}\""
+    fi
+
+    print_verbose "Running: ${stow_cmd}"
+
+    if eval "cd '${DOTFILES_DIR}' && ${stow_cmd}"; then
+        print_success "Stowed ${package}"
+        return 0
+    else
+        print_error "Failed to stow ${package}"
+        return 1
+    fi
+}
+
+# Create additional symlinks (bash_profile, etc.)
+create_additional_symlinks() {
+    print_header "Creating additional symlinks..."
+
+    # Link .bash_profile -> .bashrc
+    if [[ -f "${HOME}/.bashrc" ]]; then
+        print_verbose "Linking .bash_profile -> .bashrc"
+        if [[ "${DRY_RUN}" == "false" ]]; then
+            rm -f "${HOME}/.bash_profile"
+            ln -sf "${HOME}/.bashrc" "${HOME}/.bash_profile"
+        fi
+        print_success "Linked .bash_profile -> .bashrc"
+    fi
+}
+
+# macOS specific setup
+setup_macos() {
+    print_header "Setting up macOS-specific configurations..."
+
+    if [[ -f "${DOTFILES_DIR}/scripts/install-mac.sh" ]]; then
+        print_warning "macOS system preferences can be configured"
+        echo "Run: bash ${DOTFILES_DIR}/scripts/install-mac.sh"
+        echo "This will modify system defaults and requires manual execution"
+    fi
+}
+
+# -----------------------------------------------------------------------------
+# Main Installation Logic
+# -----------------------------------------------------------------------------
+
+main() {
+    # Parse command line arguments
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --help|-h)
+                show_help
+                ;;
+            --dry-run)
+                DRY_RUN=true
+                print_warning "DRY RUN MODE - No changes will be made"
+                shift
+                ;;
+            --no-packages)
+                INSTALL_PACKAGES=false
+                shift
+                ;;
+            --minimal)
+                MINIMAL=true
+                shift
+                ;;
+            --verbose|-v)
+                VERBOSE=true
+                shift
+                ;;
+            *)
+                print_error "Unknown option: $1"
+                show_help
+                ;;
+        esac
+    done
+
+    # Banner
+    cat << "EOF"
+╔═══════════════════════════════════════╗
+║     Dotfiles Installation Script      ║
+╚═══════════════════════════════════════╝
+EOF
+
+    # Detect OS
+    local os
+    os=$(detect_os)
+    print_header "Detected OS: ${os}"
+
+    # Check for stow
+    if ! command_exists stow; then
+        print_error "GNU Stow is not installed!"
+        echo "Install it first:"
+        case "${os}" in
+            macos)
+                echo "  brew install stow"
+                ;;
+            debian)
+                echo "  sudo apt install stow"
+                ;;
+            *)
+                echo "  See: https://www.gnu.org/software/stow/"
+                ;;
+        esac
+        exit 1
+    fi
+    print_success "GNU Stow is installed"
+
+    # Install packages from package managers
+    install_packages "${os}"
+
+    # Determine which packages to install
+    local packages=("${CORE_PACKAGES[@]}")
+    if [[ "${MINIMAL}" != "true" ]]; then
+        packages+=("${OPTIONAL_PACKAGES[@]}")
+    fi
+
+    # Stow all packages
+    print_header "Installing dotfiles..."
+    local success_count=0
+    local fail_count=0
+
+    for package in "${packages[@]}"; do
+        if stow_package "${package}"; then
+            ((success_count++))
+        else
+            ((fail_count++))
+        fi
+    done
+
+    # Create additional symlinks
+    create_additional_symlinks
+
+    # Platform-specific setup
+    case "${os}" in
+        macos)
+            setup_macos
+            ;;
+    esac
+
+    # Summary
+    echo ""
+    print_header "Installation Summary"
+    echo "  Successfully installed: ${success_count} packages"
+    if [[ ${fail_count} -gt 0 ]]; then
+        echo "  Failed: ${fail_count} packages"
+    fi
+
+    if [[ -d "${BACKUP_DIR}" ]] && [[ -n "$(ls -A "${BACKUP_DIR}" 2>/dev/null)" ]]; then
+        echo "  Backups saved to: ${BACKUP_DIR}"
+    fi
+
+    if [[ "${DRY_RUN}" == "true" ]]; then
+        print_warning "This was a dry run - no changes were made"
+    else
+        print_success "Installation complete!"
+        echo ""
+        echo "Next steps:"
+        echo "  1. Restart your shell or run: source ~/.zshrc (or ~/.bashrc)"
+        echo "  2. Review the backup directory if needed: ${BACKUP_DIR}"
+        if [[ "${os}" == "macos" ]]; then
+            echo "  3. Optionally run macOS setup: bash ${DOTFILES_DIR}/scripts/install-mac.sh"
+        fi
+    fi
+}
+
+# Run main function
+main "$@"
