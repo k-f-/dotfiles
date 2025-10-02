@@ -86,16 +86,16 @@ OPTIONAL_PACKAGES=(doom emacs gnupg kitty mail ...)
 # Intelligent function with error handling
 stow_package() {
     local package="$1"
-    
+
     # Validate package exists
     if [[ ! -d "${DOTFILES_DIR}/${package}" ]]; then
         print_warning "Package directory not found: ${package}"
         return 1
     fi
-    
+
     # Backup conflicts
     backup_conflicts "${package}"
-    
+
     # Stow with proper error handling
     if eval "cd '${DOTFILES_DIR}' && stow ..."; then
         print_success "Stowed ${package}"
@@ -167,7 +167,7 @@ echo "Failed: ${fail_count} packages"
 ### Before ❌ - README.md
 ```markdown
 ## Personal Dotfiles
-#### 
+####
 - Mostly Doom Emacs & some bash via GNU Stow.
 - History lives in tags prefixed with ```archive```.
 - ymmv
@@ -325,7 +325,7 @@ Next steps:
 ### After ✅
 **Adding a new package:**
 1. Create directory structure
-2. Add files  
+2. Add files
 3. Open `install`
 4. Add package name to array:
    ```bash
