@@ -204,6 +204,58 @@ backup_conflicts() {
     done < <(find "${package_dir}" -type f -print0)
 }
 
+# Install dotfiles using stow
+install_dotfiles() {
+    local os="$1"
+
+    # Build packages array
+    local packages=("${CORE_PACKAGES[@]}")
+    if [[ "${MINIMAL}" != "true" ]]; then
+        packages+=("${OPTIONAL_PACKAGES[@]}")
+    fi
+
+    # Stow all packages
+    print_header "Installing dotfiles..."
+    print_verbose "Packages to install: ${packages[*]}"
+    local success_count=0
+    local fail_count=0
+
+    for package in "${packages[@]}"; do
+        if stow_package "${package}"; then
+            success_count=$((success_count + 1))
+        else
+            fail_count=$((fail_count + 1))
+        fi
+    done
+
+    # Create additional symlinks
+    create_additional_symlinks
+
+    # Platform-specific setup
+    case "${os}" in
+        macos)
+            setup_macos
+            ;;
+    esac
+
+    # Summary
+    echo ""
+    print_header "Installation Summary"
+    echo "  Successfully installed: ${success_count} packages"
+    if [[ ${fail_count} -gt 0 ]]; then
+        echo "  Failed: ${fail_count} packages"
+    fi
+
+    if [[ -d "${BACKUP_DIR}" ]] && [[ -n "$(ls -A "${BACKUP_DIR}" 2>/dev/null)" ]]; then
+        echo "  Backups saved to: ${BACKUP_DIR}"
+    fi
+
+    if [[ "${DRY_RUN}" == "true" ]]; then
+        echo ""
+        print_warning "DRY RUN completed - no actual changes were made"
+    fi
+}
+
 # Stow a single package
 stow_package() {
     local package="$1"
@@ -336,55 +388,19 @@ EOF
     # Install packages from package managers
     install_packages "${os}"
 
-    # Determine which packages to install
-    local packages=("${CORE_PACKAGES[@]}")
-    if [[ "${MINIMAL}" != "true" ]]; then
-        packages+=("${OPTIONAL_PACKAGES[@]}")
-    fi
+    # Install dotfiles
+    install_dotfiles "${os}"
 
-    # Stow all packages
-    print_header "Installing dotfiles..."
-    local success_count=0
-    local fail_count=0
-
-    for package in "${packages[@]}"; do
-        if stow_package "${package}"; then
-            ((success_count++))
-        else
-            ((fail_count++))
-        fi
-    done
-
-    # Create additional symlinks
-    create_additional_symlinks
-
-    # Platform-specific setup
-    case "${os}" in
-        macos)
-            setup_macos
-            ;;
-    esac
-
-    # Summary
-    echo ""
-    print_header "Installation Summary"
-    echo "  Successfully installed: ${success_count} packages"
-    if [[ ${fail_count} -gt 0 ]]; then
-        echo "  Failed: ${fail_count} packages"
-    fi
-
-    if [[ -d "${BACKUP_DIR}" ]] && [[ -n "$(ls -A "${BACKUP_DIR}" 2>/dev/null)" ]]; then
-        echo "  Backups saved to: ${BACKUP_DIR}"
-    fi
-
-    if [[ "${DRY_RUN}" == "true" ]]; then
-        print_warning "This was a dry run - no changes were made"
-    else
+    # Final message
+    if [[ "${DRY_RUN}" != "true" ]]; then
+        echo ""
         print_success "Installation complete!"
         echo ""
         echo "Next steps:"
         echo "  1. Restart your shell or run: source ~/.zshrc (or ~/.bashrc)"
-        echo "  2. Review the backup directory if needed: ${BACKUP_DIR}"
+        if [[ -d "${BACKUP_DIR}" ]] && [[ -n "$(ls -A "${BACKUP_DIR}" 2>/dev/null)" ]]; then
+            echo "  2. Review the backup directory if needed: ${BACKUP_DIR}"
+        fi
         if [[ "${os}" == "macos" ]]; then
             echo "  3. Optionally run macOS setup: bash ${DOTFILES_DIR}/scripts/install-mac.sh"
         fi
