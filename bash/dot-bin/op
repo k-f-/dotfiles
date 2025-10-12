@@ -1,0 +1,7 @@
+#!/bin/bash
+# if we're on osx, use 'open'
+if [[ $(uname) == Darwin ]]; then
+  open "$@"
+else
+  xdg-open "$@" &> /dev/null
+fi
