@@ -58,7 +58,7 @@ outer.right =      4
 # ============================================================================
 # Applications (matches skhd: cmd-return for kitty)
 # ============================================================================
-cmd-return = 'exec-and-forget open -na /Applications/Kitty.app'
+cmd-enter = 'exec-and-forget open -na /Applications/Kitty.app'
 
 # ============================================================================
 # Window Navigation (matches skhd: alt-hjkl)
@@ -102,12 +102,13 @@ alt-shift-x = 'layout tiles horizontal vertical'  # Mirror X-axis equivalent
 # ============================================================================
 # Window State Toggles (matches skhd)
 # ============================================================================
-alt-shift-t = 'layout floating tiling'  # Toggle floating (shift+alt-t)
+alt-shift-t = 'layout floating tiling'   # Toggle floating (shift+alt-t)
 alt-shift-m = 'fullscreen'               # Maximize/fullscreen (shift+alt-m)
 alt-shift-e = 'balance-sizes'            # Balance windows (shift+alt-e)
 
 # ============================================================================
-# Workspace Switching (matches yabai labels: Start/Comms/Browser/Code/Org/Games)
+# Workspace Switching (Only 1-6 to avoid empty workspaces)
+# Labels: Start/Comms/Browser/Code/Org/Games
 # ============================================================================
 alt-1 = 'workspace 1'  # Start
 alt-2 = 'workspace 2'  # Comms
@@ -115,13 +116,9 @@ alt-3 = 'workspace 3'  # Browser
 alt-4 = 'workspace 4'  # Code
 alt-5 = 'workspace 5'  # Org
 alt-6 = 'workspace 6'  # Games
-alt-7 = 'workspace 7'
-alt-8 = 'workspace 8'
-alt-9 = 'workspace 9'
-alt-0 = 'workspace 10'
 
 # ============================================================================
-# Move Window to Workspace (matches skhd: shift+alt-1 through 7)
+# Move Window to Workspace (Only 1-6)
 # ============================================================================
 alt-shift-1 = 'move-node-to-workspace 1'
 alt-shift-2 = 'move-node-to-workspace 2'
@@ -129,10 +126,6 @@ alt-shift-3 = 'move-node-to-workspace 3'
 alt-shift-4 = 'move-node-to-workspace 4'
 alt-shift-5 = 'move-node-to-workspace 5'
 alt-shift-6 = 'move-node-to-workspace 6'
-alt-shift-7 = 'move-node-to-workspace 7'
-alt-shift-8 = 'move-node-to-workspace 8'
-alt-shift-9 = 'move-node-to-workspace 9'
-alt-shift-0 = 'move-node-to-workspace 10'
 
 # ============================================================================
 # Workspace Navigation (matches skhd: shift+alt-p/n for prev/next)
@@ -140,11 +133,28 @@ alt-shift-0 = 'move-node-to-workspace 10'
 alt-shift-p = 'workspace --wrap-around prev'
 alt-shift-n = 'workspace --wrap-around next'
 
-# Workspace back-and-forth
-alt-tab = 'workspace-back-and-forth'
+# Workspace cycling with Alt+Tab (like switching desktops)
+alt-tab = 'workspace --wrap-around next'
+alt-shift-tab = 'workspace --wrap-around prev'
 
-# Move workspace to monitor
-alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
+# Workspace back-and-forth (jump to previous workspace)
+alt-backtick = 'workspace-back-and-forth'
+
+# Move workspace to different monitor (using alt-shift-w for "workspace")
+alt-shift-w = 'move-workspace-to-monitor --wrap-around next'
+
+# ============================================================================
+# Window Cycling
+# Note: macOS Alt+` natively cycles between windows of the same app
+# This is perfect for multiple code workspaces or terminal windows.
+# ============================================================================
+
+# ============================================================================
+# Utility Commands
+# ============================================================================
+# Organize windows into their designated workspaces
+# Organize windows into workspaces
+alt-shift-o = 'exec-and-forget aerospace-organize'
 
 # ============================================================================
 # Service Mode (advanced operations)
@@ -172,6 +182,12 @@ alt-shift-l = ['join-with right', 'mode main']
 # ============================================================================
 # Workspace Auto-Assignment (matches yabai rules)
 # Get app-id by running: aerospace list-apps
+#
+# IMPORTANT: These rules only apply to NEWLY OPENED windows!
+# To apply to existing windows:
+# 1. Reload config: Alt+Shift+; then Esc
+# 2. Manually move windows: Alt+Shift+[1-6]
+# 3. Or restart AeroSpace
 # ============================================================================
 
 # ----------------------------------------------------------------------------

@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+# AeroSpace Window Organization Script
+# Moves existing windows to their designated workspaces
+
+set -euo pipefail
+
+echo "🚀 Organizing AeroSpace windows..."
+
+# Function to move windows of a specific app to a workspace
+move_app_to_workspace() {
+    local app_id="$1"
+    local workspace="$2"
+    local app_name="$3"
+
+    # Check if app is running
+    if ! aerospace list-apps | grep -q "$app_id"; then
+        return 0
+    fi
+
+    # Get all window IDs
+    local all_windows=$(aerospace list-windows --all --format "%{window-id}|%{app-name}" 2>/dev/null || true)
+
+    # Filter windows for this app and move them
+    while IFS='|' read -r window_id window_app; do
+        if [[ -n "$window_id" ]] && aerospace list-apps | grep -q "$app_id"; then
+            # Check if this window belongs to our app by matching window title/app
+            if aerospace list-windows --all | grep "^$window_id" | grep -q "$app_name"; then
+                echo "  Moving $app_name window (ID: $window_id) to workspace $workspace"
+                aerospace move-node-to-workspace --window-id "$window_id" "$workspace" 2>&1 | grep -v "already belongs" || true
+            fi
+        fi
+    done <<< "$all_windows"
+}
+
+# Alternative: Move by app name instead of app-id
+move_by_app_name() {
+    local app_display_name="$1"
+    local workspace="$2"
+
+    # Get window IDs that match the app display name (using awk for better column parsing)
+    local window_ids=$(aerospace list-windows --all | awk -v app="$app_display_name" '$2 == "|" && $3 == app {print $1}' || true)
+
+    if [[ -n "$window_ids" ]]; then
+        while IFS= read -r window_id; do
+            if [[ -n "$window_id" ]]; then
+                echo "  Moving $app_display_name window (ID: $window_id) to workspace $workspace"
+                aerospace move-node-to-workspace --window-id "$window_id" "$workspace" 2>&1 | grep -v "already belongs" || true
+            fi
+        done <<< "$window_ids"
+    fi
+}
+
+# Workspace 1: Start
+echo "📁 Workspace 1 (Start): Finder, Activity Monitor"
+move_by_app_name "Finder" 1
+move_by_app_name "Activity Monitor" 1
+
+# Workspace 2: Comms
+echo "💬 Workspace 2 (Comms): Spotify, Signal, Messages"
+move_by_app_name "Spotify" 2
+move_by_app_name "Signal" 2
+move_by_app_name "Messages" 2
+
+# Workspace 3: Browser
+echo "🌐 Workspace 3 (Browser): Firefox, Brave, Safari, Chrome"
+move_by_app_name "Firefox" 3
+move_by_app_name "Brave Browser" 3
+move_by_app_name "Safari" 3
+move_by_app_name "Google Chrome" 3
+move_by_app_name "Chrome" 3
+
+# Workspace 4: Code
+echo "💻 Workspace 4 (Code): VS Code, Kitty, iTerm, Terminal"
+move_by_app_name "Code" 4
+move_by_app_name "kitty" 4
+move_by_app_name "iTerm2" 4
+move_by_app_name "Terminal" 4
+
+# Workspace 5: Org
+echo "📅 Workspace 5 (Org): Calendar, Mail"
+move_by_app_name "Calendar" 5
+move_by_app_name "Mail" 5
+
+# Workspace 6: Games
+echo "🎮 Workspace 6 (Games): League, Discord, Steam"
+move_by_app_name "League of Legends" 6
+move_by_app_name "Riot Client" 6
+move_by_app_name "Discord" 6
+move_by_app_name "Steam" 6
+
+echo ""
+echo "✅ Done! Windows organized into workspaces."
+echo ""
+echo "Keyboard shortcuts:"
+echo "  Alt+[1-6]         - Jump to workspace"
+echo "  Alt+Tab           - Cycle through workspaces (next)"
+echo "  Alt+Shift+Tab     - Cycle through workspaces (previous)"
+echo "  Alt+Backtick (~)  - Jump to previously active workspace"
+echo "  Alt+Shift+[1-6]   - Move current window to workspace"
+echo ""
+echo "Window cycling:"
+echo "  Alt+\` (backtick)  - Cycle windows of same app (native macOS - perfect for VS Code!)"
+echo "  Cmd+Tab           - macOS app switcher"
