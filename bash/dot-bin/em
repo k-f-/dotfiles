@@ -1,22 +1,144 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # ---------------------------------------------------------
-# If emacs does not have an instance, start one and open.
+# Smart editor launcher
+# Priority: VS Code > Neovim > Vim > Emacs
+# Works across macOS, Linux, and other Unix-like systems
+#
+# Use 'eem' for emacs-only launcher
+# ---------------------------------------------------------
 
-#HOMEBREWEMACS="/opt/homebrew/bin/emacs"
-#EMACS="/usr/bin/emacs"
+set -euo pipefail
 
-#if [ -f "$HOMEBREWEMACS" ]; then
-#	EMACS="/opt/homebrew/bin/emacs"
-#	EMACSCLIENT="/opt/homebrew/bin/emacsclient"
-#elif [ -f "$EMACS" ]; then
-#	EMACS="/usr/bin/emacs"
-#	EMACSCLIENT="/usr/bin/emacsclient"
-#fi
+# Function to check if a command exists
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
 
-#$EMACSCLIENT -n -a emacs $@ &
-#$EMACSCLIENT -c '' $@
-#i3-msg "[class=Emacs] focus"
+# Function to find VS Code on macOS
+find_vscode_mac() {
+    local vscode_paths=(
+        "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code"
+        "/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin/code"
+        "$HOME/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code"
+        "/usr/local/bin/code"
+        "/opt/homebrew/bin/code"
+    )
 
-#----------------------------------------------------------
+    for path in "${vscode_paths[@]}"; do
+        if [[ -x "$path" ]]; then
+            echo "$path"
+            return 0
+        fi
+    done
+    return 1
+}
 
-nvim $@
+# Function to launch VS Code
+launch_vscode() {
+    local vscode_cmd=""
+
+    # Detect OS
+    case "$(uname -s)" in
+        Darwin)  # macOS
+            if vscode_cmd=$(find_vscode_mac); then
+                "$vscode_cmd" "$@"
+                return 0
+            elif command_exists code; then
+                code "$@"
+                return 0
+            fi
+            ;;
+        Linux)
+            if command_exists code; then
+                code "$@"
+                return 0
+            elif command_exists code-insiders; then
+                code-insiders "$@"
+                return 0
+            fi
+            ;;
+        MINGW*|MSYS*|CYGWIN*)  # Windows
+            if command_exists code.cmd; then
+                code.cmd "$@"
+                return 0
+            elif command_exists code; then
+                code "$@"
+                return 0
+            fi
+            ;;
+    esac
+
+    return 1
+}
+
+# Function to launch neovim with config
+launch_neovim() {
+    # Check for neovim
+    if command_exists nvim; then
+        # Set neovim config path if it exists
+        local nvim_config="$HOME/.config/nvim"
+        if [[ -d "$nvim_config" ]]; then
+            export NVIM_APPNAME="nvim"
+        fi
+        nvim "$@"
+        return 0
+    fi
+
+    return 1
+}
+
+# Function to launch vim
+launch_vim() {
+    if command_exists vim; then
+        vim "$@"
+        return 0
+    fi
+
+    return 1
+}
+
+# Function to launch emacs as last resort
+launch_emacs() {
+    local emacs_paths=(
+        "/opt/homebrew/bin/emacs"
+        "/usr/local/bin/emacs"
+        "/usr/bin/emacs"
+        "/Applications/Emacs.app/Contents/MacOS/Emacs"
+    )
+
+    for path in "${emacs_paths[@]}"; do
+        if [[ -x "$path" ]]; then
+            "$path" "$@"
+            return 0
+        fi
+    done
+
+    if command_exists emacs; then
+        emacs "$@"
+        return 0
+    fi
+
+    return 1
+}
+
+# Main logic: Try editors in priority order
+main() {
+    if launch_vscode "$@"; then
+        exit 0
+    elif launch_neovim "$@"; then
+        exit 0
+    elif launch_vim "$@"; then
+        exit 0
+    elif launch_emacs "$@"; then
+        exit 0
+    else
+        echo "Error: No editor found" >&2
+        echo "Please install one of:" >&2
+        echo "  - Visual Studio Code (https://code.visualstudio.com/)" >&2
+        echo "  - Neovim (https://neovim.io/)" >&2
+        echo "  - Vim or Emacs" >&2
+        exit 1
+    fi
+}
+
+main "$@"

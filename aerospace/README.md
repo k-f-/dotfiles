@@ -20,16 +20,29 @@ The configuration file is located at `~/.aerospace.toml` and uses TOML format.
 - `Alt + h/j/k/l` - Focus left/down/up/right window
 - `Alt + Shift + h/j/k/l` - Move window left/down/up/right
 
+#### Window Cycling (Multi-Window VS Code Solution!)
+- **Alt + ` (backtick)** - Cycle between windows of same app (native macOS)
+- **This is your VS Code solution!** macOS natively cycles through windows of the same app
+- Press Alt+` to switch between your multiple VS Code workspaces
+
 #### Workspaces
-- `Alt + 1-9/0` - Switch to workspace 1-10
-- `Alt + Shift + 1-9/0` - Move window to workspace 1-10
-- `Alt + Tab` - Switch to previous workspace
+- `Alt + Tab` - Cycle to next workspace (only cycles through workspaces 1-6)
+- `Alt + Shift + Tab` - Cycle to previous workspace
+- `Alt + 1-6` - Jump directly to workspace 1-6
+- `Alt + Shift + 1-6` - Move current window to workspace 1-6
+- `Alt + Backtick (~)` - Jump to previously active workspace (back-and-forth)
+- `Alt + Shift + p/n` - Previous/next workspace (same as Alt+Shift+Tab/Alt+Tab)
+- `Alt + Shift + w` - Move workspace to next monitor
+
+**Note**: Only workspaces 1-6 are configured to avoid cycling through empty workspaces.
 
 #### Layout
-- `Alt + /` - Toggle between horizontal/vertical tiles layout
-- `Alt + ,` - Toggle accordion layout
+- `Alt + Shift + r` - Rotate layout (horizontal ↔ vertical)
 - `Alt + Shift + -` - Decrease window size
 - `Alt + Shift + =` - Increase window size
+- `Alt + Shift + t` - Toggle floating/tiling
+- `Alt + Shift + m` - Toggle fullscreen
+- `Alt + Shift + e` - Balance window sizes
 
 #### Service Mode
 - `Alt + Shift + ;` - Enter service mode
@@ -38,14 +51,25 @@ The configuration file is located at `~/.aerospace.toml` and uses TOML format.
   - `f` - Toggle floating/tiling
   - `Backspace` - Close all windows except current
 
+#### Window Organization
+
+- `Alt + Shift + o` - Organize existing windows into workspaces (runs `aerospace-organize` script)
+
 ### Workspace Auto-Assignment
+
+**IMPORTANT**: Auto-assignment only applies to *newly opened* windows. To organize existing windows:
+
+- **Press `Alt + Shift + o`** to run the organize script
+- Or manually run: `aerospace-organize`
 
 Windows are automatically assigned to workspaces based on application:
 
-- **Workspace 1 (Start)**: Finder
+- **Workspace 1 (Start)**: Finder, Activity Monitor
 - **Workspace 2 (Comms)**: Signal, Spotify, Messages
-- **Workspace 3 (Browser)**: Safari, Chrome, Firefox
-- **Workspace 4 (Code)**: VS Code, Kitty, Terminal
+- **Workspace 3 (Browser)**: Safari, Chrome, Firefox, Brave
+- **Workspace 4 (Code)**: VS Code, Kitty, Terminal, iTerm2
+- **Workspace 5 (Org)**: Calendar, Mail
+- **Workspace 6 (Games)**: Discord, Steam, League of Legends
 
 ## Installation
 

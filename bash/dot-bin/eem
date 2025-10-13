@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+# ---------------------------------------------------------
+# Emacs client launcher
+# If emacs does not have an instance, start one and open.
+# ---------------------------------------------------------
+
+set -euo pipefail
+
+# Function to check if a command exists
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+# Find emacs and emacsclient binaries
+find_emacs() {
+    local emacs_paths=(
+        "/opt/homebrew/bin/emacs"
+        "/usr/local/bin/emacs"
+        "/usr/bin/emacs"
+        "/Applications/Emacs.app/Contents/MacOS/Emacs"
+    )
+
+    for path in "${emacs_paths[@]}"; do
+        if [[ -x "$path" ]]; then
+            EMACS="$path"
+            # Try to find corresponding emacsclient
+            local client_path="${path}client"
+            if [[ -x "$client_path" ]]; then
+                EMACSCLIENT="$client_path"
+            elif command_exists emacsclient; then
+                EMACSCLIENT="emacsclient"
+            fi
+            return 0
+        fi
+    done
+
+    # Fallback to PATH
+    if command_exists emacs; then
+        EMACS="emacs"
+        EMACSCLIENT="emacsclient"
+        return 0
+    fi
+
+    return 1
+}
+
+# Main logic
+main() {
+    local EMACS=""
+    local EMACSCLIENT=""
+
+    if ! find_emacs; then
+        echo "Error: Emacs not found" >&2
+        echo "Please install Emacs first" >&2
+        exit 1
+    fi
+
+    # Try to connect to existing emacs server, or start new instance
+    if [[ -n "$EMACSCLIENT" ]]; then
+        # -n: Don't wait for the editor to return
+        # -a "": Start emacs if no server is running
+        # -c: Create new frame
+        $EMACSCLIENT -n -a "" -c "$@" &
+    else
+        # Fallback to just launching emacs
+        $EMACS "$@" &
+    fi
+}
+
+main "$@"
