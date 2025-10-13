@@ -30,7 +30,7 @@ This is a personal dotfiles repository managed with GNU Stow for symlink managem
 
 #### Core Packages (always installed)
 - bash
-- git  
+- git
 - vim
 - zsh
 
@@ -71,7 +71,7 @@ This is a personal dotfiles repository managed with GNU Stow for symlink managem
 #### Commit Messages
 Follow conventional commits:
 - `feat(scope): description` - New features
-- `fix(scope): description` - Bug fixes  
+- `fix(scope): description` - Bug fixes
 - `chore(scope): description` - Maintenance
 - `docs(scope): description` - Documentation
 
@@ -170,7 +170,7 @@ Before committing major changes:
 - Provide clear section headers
 - Include success/failure indicators (✅/❌/⚠️)
 
-### Working Style  
+### Working Style
 - **Always use Agent mode** for file operations
 - Gather context before making changes
 - Explain reasoning for complex changes
@@ -200,8 +200,8 @@ Before committing major changes:
 
 ## Remember
 
-> "We learned these lessons through pain (GPG key deletion, broken installs, etc.). 
-> Follow these rules to avoid repeating our mistakes!" 
+> "We learned these lessons through pain (GPG key deletion, broken installs, etc.).
+> Follow these rules to avoid repeating our mistakes!"
 > - Future You
 
 Last Updated: 2025-10-12
