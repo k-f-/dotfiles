@@ -1,0 +1,207 @@
+# AI Assistant Rules for Dotfiles Project
+
+## Project Overview
+This is a personal dotfiles repository managed with GNU Stow for symlink management across macOS (primary), with potential Linux/Windows support.
+
+## Core Principles
+
+### 1. GNU Stow Conventions
+- **ALWAYS use `dot-` prefix** for files that should become dotfiles in home directory
+  - Example: `bash/dot-bashrc` → `~/.bashrc`
+  - Example: `git/dot-gitconfig` → `~/.gitconfig`
+- **Use `.config` subdirectories** for XDG-compliant configs
+  - Example: `kitty/.config/kitty/kitty.conf` → `~/.config/kitty/kitty.conf`
+- **Stow command pattern**: `stow --target="$HOME" --dotfiles PACKAGE`
+- The `--dotfiles` flag converts `dot-` prefix to actual `.` in target
+
+### 2. File Operations
+- **Use Agent mode, NOT Ask mode** for file operations
+- Ask mode is known to cause destructive operations (we learned this the hard way)
+- Always verify file operations before committing
+
+### 3. Script Safety
+- **Use `set -euo pipefail`** in bash scripts for safety
+- **Arithmetic expansion**: Use `var=$((var + 1))` NOT `((var++))`
+  - The `((var++))` syntax can cause early exit with `set -e`
+- **Add `|| true`** to commands that might fail but shouldn't stop script
+- **Always include error handling** and user feedback
+
+### 4. Package Management
+
+#### Core Packages (always installed)
+- bash
+- git  
+- vim
+- zsh
+
+#### Optional Packages (alphabetically sorted)
+- aerospace (window manager - macOS)
+- doom (Doom Emacs)
+- emacs
+- gnupg
+- kitty (terminal emulator - ACTIVELY USED)
+- mail
+- secrets
+- sketchybar (status bar - macOS)
+- skhd (hotkey daemon - macOS, legacy)
+- ssh
+- x-windows
+- yabai (window manager - macOS, legacy - replaced by AeroSpace)
+- youtube-dl
+
+#### Package Structure Rules
+- One package = one application/tool
+- Keep package lists **alphabetically sorted**
+- Document which packages are legacy vs active
+
+### 5. Security & Privacy
+
+#### GPG/Secrets
+- **NEVER store GPG private keys in repo**
+- Only store config files (gpg.conf, gpg-agent.conf)
+- Private keys belong in `~/.gnupg/` (backed up via Time Machine)
+- GPG signing key: 68C2CA4CD4545AD3
+
+#### Sensitive Files
+- SSH configs can be stored but verify no private keys
+- Use `.stow-local-ignore` to prevent stowing sensitive files
+
+### 6. Git Workflow
+
+#### Commit Messages
+Follow conventional commits:
+- `feat(scope): description` - New features
+- `fix(scope): description` - Bug fixes  
+- `chore(scope): description` - Maintenance
+- `docs(scope): description` - Documentation
+
+#### Branching
+- Create feature branches for major changes
+- Use `refactor/` prefix for large refactors
+- Merge to main with `--no-ff` for clear history
+
+#### What NOT to Commit
+- Auto-generated files (Emacs .desktop, bookmarks, etc.)
+- Binary files (wallpapers, images) - use Git LFS if needed
+- Application caches and temp files
+- Private keys or tokens
+
+### 7. Installation Process
+
+#### Standard Installation
+```bash
+./install                    # Full install with all packages
+./install --dry-run         # Preview changes
+./install --verbose         # Detailed output
+./install --core-only       # Just core packages
+./install --minimal         # Alias for --core-only
+```
+
+#### Install Script Features
+- OS detection (macOS/Linux/Windows)
+- Conflict backup (timestamped to `~/dotfiles-backup-YYYYMMDD-HHMMSS/`)
+- Package manager integration (Homebrew on macOS)
+- Error handling with colored output
+- Dry-run mode for safety
+
+### 8. Code Style
+
+#### Bash Scripts
+- Use long flags for readability: `--verbose` not `-v`
+- Quote variables: `"${VAR}"` not `$VAR`
+- Use arrays for lists, not space-separated strings
+- Include comments explaining complex logic
+- Color output: Green (success), Red (error), Yellow (warning), Blue (info)
+
+#### Organization
+- Keep related configs together in same package
+- Use subdirectories for modular configs (e.g., `bash/dot-bashrc.d/`)
+- Document complex setups in package README.md
+
+### 9. Platform-Specific Notes
+
+#### macOS
+- Primary development platform
+- Uses Homebrew for package management
+- Window manager: AeroSpace (yabai/skhd are legacy)
+- Terminal: kitty (actively used)
+- GPG via Homebrew
+
+#### Linux
+- Future support planned
+- Package manager detection needed
+- X11/Wayland compatibility considerations
+
+### 10. Troubleshooting & Recovery
+
+#### Known Issues
+1. **GPG keys deleted during stow** - ALWAYS backup `~/.gnupg/` first
+2. **Missing functions in install script** - Verify all helper functions exist
+3. **Arithmetic in set -e scripts** - Use `$((var + 1))` syntax
+4. **Package conflicts** - Use `--adopt` flag or backup first
+
+#### Recovery Procedures
+- Time Machine local snapshots: `tmutil listlocalsnapshots /`
+- Git history: `git log --all --full-history -- path/to/file`
+- Restore from backup: Check `~/dotfiles-backup-*/`
+
+### 11. Testing Protocol
+
+Before committing major changes:
+1. ✅ Run `./install --dry-run` to preview
+2. ✅ Test actual install on non-critical files first
+3. ✅ Verify symlinks point to correct locations
+4. ✅ Source shell configs to check for errors
+5. ✅ Test uninstall script works correctly
+
+### 12. Documentation Standards
+
+- Keep README.md updated with current package list
+- Document dependencies and prerequisites
+- Include troubleshooting sections
+- Provide examples for common operations
+- Note platform-specific requirements
+
+## Session Preferences
+
+### Output Format
+- Use markdown formatting
+- Wrap filenames/commands in backticks
+- Provide clear section headers
+- Include success/failure indicators (✅/❌/⚠️)
+
+### Working Style  
+- **Always use Agent mode** for file operations
+- Gather context before making changes
+- Explain reasoning for complex changes
+- Ask for confirmation on destructive operations
+- Provide rollback instructions when relevant
+
+### Communication
+- Be concise but complete
+- Use examples liberally
+- Highlight important warnings
+- Celebrate successes 🎉
+
+## Important File Locations
+
+- Install script: `./install`
+- Uninstall script: `./uninstall`
+- Homebrew bundle: `homebrew/Brewfile`
+- Stow ignore patterns: `.stow-local-ignore`
+- This rules file: `.cursorrules`
+
+## DRY Principle
+
+- Don't duplicate configs across packages
+- Use symlinks within repo if needed
+- Share common configs via sourcing
+- Keep package lists in one place (install script)
+
+## Remember
+
+> "We learned these lessons through pain (GPG key deletion, broken installs, etc.). 
+> Follow these rules to avoid repeating our mistakes!" 
+> - Future You
+
+Last Updated: 2025-10-12
