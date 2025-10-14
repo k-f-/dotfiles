@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+#
+# aerospace-organize - Apply all workspace layouts
+# 
+# This script applies all defined layouts from the aerospace-layout-manager
+# to organize windows into their designated workspaces.
+
+set -euo pipefail
+
+# Get all available layouts
+layouts=$(aerospace-layout-manager --listLayouts)
+
+# Apply each layout
+for layout in $layouts; do
+    echo "Applying layout: $layout"
+    aerospace-layout-manager "$layout" 2>/dev/null || true
+done
+
+echo "✓ All layouts applied"
