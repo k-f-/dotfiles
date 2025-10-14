@@ -9,6 +9,7 @@
 #   --no-packages   Skip package installation
 #   --minimal       Install only core packages
 #   --verbose       Show detailed output
+#   --force         Skip backups and overwrite existing files
 
 set -euo pipefail
 
@@ -50,6 +51,7 @@ DRY_RUN=false
 INSTALL_PACKAGES=true
 MINIMAL=false
 VERBOSE=false
+FORCE=false
 
 # Colors for output
 RED='\033[0;31m'
@@ -96,11 +98,19 @@ OPTIONS:
     --no-packages   Skip package manager installations
     --minimal       Install only core packages (bash, git, vim, zsh)
     --verbose       Show detailed output
+    --force         Skip backups and overwrite existing files (use with caution!)
+
+HANDLING EXISTING FILES:
+    By default, existing files are backed up to ~/.dotfiles-backup-TIMESTAMP/
+    Existing symlinks to these dotfiles are detected and left alone.
+    Broken symlinks are automatically removed.
+    Use --dry-run to see what will happen before making changes.
 
 EXAMPLES:
-    ./install                    # Full installation
+    ./install                    # Full installation with backups
     ./install --minimal          # Install core configs only
     ./install --dry-run          # Preview changes without applying
+    ./install --force            # Overwrite existing files without backup
 
 EOF
     exit 0
@@ -191,14 +201,45 @@ backup_conflicts() {
     # Find files that would be created by stow
     while IFS= read -r -d '' file; do
         local rel_path="${file#$package_dir/}"
-        local target_file="${STOW_TARGET}/${rel_path}"
+        # Handle stow's --dotfiles convention: dot-foo -> .foo
+        local stowed_path="${rel_path//dot-/.}"
+        local target_file="${STOW_TARGET}/${stowed_path}"
 
-        # If target exists and is not a symlink managed by stow
-        if [[ -e "${target_file}" ]] && [[ ! -L "${target_file}" ]]; then
+        # Skip if target doesn't exist
+        [[ ! -e "${target_file}" ]] && [[ ! -L "${target_file}" ]] && continue
+
+        # If target is a symlink
+        if [[ -L "${target_file}" ]]; then
+            local link_target=$(readlink "${target_file}")
+
+            # Check if it points to our dotfiles
+            if [[ "${link_target}" == *"${DOTFILES_DIR}"* ]]; then
+                print_verbose "Symlink already managed: ${target_file}"
+                continue
+            fi
+
+            # Broken or stale symlink
+            if [[ ! -e "${target_file}" ]]; then
+                print_warning "Removing broken symlink: ${target_file} -> ${link_target}"
+                if [[ "${DRY_RUN}" == "false" ]]; then
+                    rm "${target_file}"
+                fi
+                continue
+            fi
+
+            # Symlink to somewhere else
+            print_warning "External symlink found: ${target_file} -> ${link_target}"
+            if [[ "${DRY_RUN}" == "false" ]]; then
+                mkdir -p "$(dirname "${BACKUP_DIR}/${stowed_path}")"
+                mv "${target_file}" "${BACKUP_DIR}/${stowed_path}"
+                echo "${link_target}" > "${BACKUP_DIR}/${stowed_path}.symlink-target"
+            fi
+        # Regular file exists
+        elif [[ -e "${target_file}" ]]; then
             print_verbose "Backing up: ${target_file}"
             if [[ "${DRY_RUN}" == "false" ]]; then
-                mkdir -p "$(dirname "${BACKUP_DIR}/${rel_path}")"
-                mv "${target_file}" "${BACKUP_DIR}/${rel_path}"
+                mkdir -p "$(dirname "${BACKUP_DIR}/${stowed_path}")"
+                mv "${target_file}" "${BACKUP_DIR}/${stowed_path}"
             fi
         fi
     done < <(find "${package_dir}" -type f -print0)
@@ -268,11 +309,14 @@ stow_package() {
 
     print_verbose "Stowing ${package}..."
 
-    # Backup any conflicts first
-    backup_conflicts "${package}"
+    # Backup any conflicts first (unless --force is used)
+    if [[ "${FORCE}" != "true" ]]; then
+        backup_conflicts "${package}"
+    fi
 
-    # Run stow
-    local stow_cmd="stow --target=\"${STOW_TARGET}\" --ignore='^README.*' --dotfiles"
+    # Run stow with --restow to handle existing symlinks gracefully
+    # --restow first unstows then restows, handling changes better
+    local stow_cmd="stow --restow --target=\"${STOW_TARGET}\" --ignore='^README.*' --dotfiles"
     if [[ "${VERBOSE}" == "true" ]]; then
         stow_cmd="${stow_cmd} --verbose=4"
     fi
@@ -289,6 +333,8 @@ stow_package() {
         return 0
     else
         print_error "Failed to stow ${package}"
+        print_warning "Try running with --dry-run first to see what would happen"
+        print_warning "Or manually remove conflicting files/symlinks in your home directory"
         return 1
     fi
 }
@@ -345,6 +391,11 @@ main() {
                 ;;
             --verbose|-v)
                 VERBOSE=true
+                shift
+                ;;
+            --force|-f)
+                FORCE=true
+                print_warning "FORCE MODE - Existing files will be overwritten without backup"
                 shift
                 ;;
             *)
