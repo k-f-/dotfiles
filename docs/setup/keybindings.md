@@ -83,7 +83,7 @@ AeroSpace is an i3-like tiling window manager for macOS. Configuration: [`aerosp
 
 | Keybinding | Action |
 |------------|--------|
-| `Alt + Shift + o` | Organize existing windows into workspaces |
+| `Alt + Shift + o` | Apply all workspace layouts (organize windows) |
 | `Alt + Shift + d` | Open dotfiles directory in VS Code |
 
 ### Service Mode
@@ -225,7 +225,7 @@ Native macOS keyboard shortcuts that complement the dotfiles setup.
 - `Ctrl + u` - Clear line
 
 **Utilities:**
-- `Alt + Shift + o` - Organize windows
+- `Alt + Shift + o` - Apply all workspace layouts (organize windows)
 - `Alt + Shift + d` - Open dotfiles
 
 ### Aliases

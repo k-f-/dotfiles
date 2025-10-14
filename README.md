@@ -92,7 +92,7 @@ After installation, these shortcuts and commands are immediately available:
 - **`Alt + Tab`** - Switch between workspaces
 - **`Alt + \``** - Cycle windows within same app (native macOS)
 - **`Alt + 1-6`** - Jump to workspace 1-6
-- **`Alt + Shift + o`** - Auto-organize windows into workspaces
+- **`Alt + Shift + o`** - Apply all workspace layouts (organize windows)
 - **`Alt + Shift + d`** - Open dotfiles in editor
 - **`Cmd + Enter`** - Open terminal
 
