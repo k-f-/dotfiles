@@ -174,21 +174,19 @@ main() {
 ---
 
 #### 📧 checkmail
+**Status**: **ARCHIVE** (Linux-specific, likely obsolete)
 **Semantic Goal**: Check email and notify of new messages
 
-**Current**: Simple mail checking script
-**Dependencies**: Mail system (mbsync, mu)
+**Current**: Linux-only email sync script
+**Dependencies**: nmcli, mbsync, mu4e/Emacs
+**Platform**: Linux-only
 
-**Cross-Platform Potential**:
-- macOS: Mail.app automation, `notmuch`, `mu`
-- Linux: `mbsync`, `offlineimap`, `notmuch`, `mu`
-- Windows: Outlook automation, PowerShell email cmdlets
+**Evaluation**:
+- Very specific to old Linux mail setup (nmcli, mbsync, notmuch/mu4e)
+- Not used on macOS
+- Modern email clients (Mail.app, Thunderbird, web clients) handle this better
 
-**Questions**:
-- Still using this mail setup?
-- What's the desired behavior? (count? notification? summary?)
-
-**Proposed Action**: TBD
+**Action**: **ARCHIVE** - Superseded by modern tools
 
 ---
 
@@ -315,10 +313,16 @@ main() {
 ---
 
 #### 🖼️ img_small
+**Status**: **KEEP & IMPROVE** (Fix bug, add help text)
 **Semantic Goal**: Resize/compress images
 
-**Current**: Image resizing script
-**Dependencies**: ImageMagick, sips, or similar
+**Current**: Image compression script using ImageMagick
+**Dependencies**: ImageMagick (`magick` command)
+**Platform**: Cross-platform (ImageMagick available on all platforms)
+**Current Issues**: 
+- Bug: Uses undefined variable `$FILE` instead of `$FILE1`
+- No help text or error handling
+- Hardcoded output suffix and quality
 
 **Cross-Platform Potential**: ⭐ HIGH VALUE
 - macOS: `sips` (built-in), ImageMagick
@@ -330,7 +334,7 @@ main() {
 - Uses best available tool per OS
 - Consistent output: optimized image with metadata preserved
 
-**Proposed Action**: KEEP & IMPROVE - Good candidate for cross-platform
+**Action**: **KEEP & IMPROVE** - Fix bug, modernize with help text and options
 
 ---
 
@@ -356,52 +360,69 @@ main() {
 ---
 
 #### 🔐 op
-**Semantic Goal**: N/A (1Password CLI wrapper or alias)
+**Status**: **KEEP AS-IS** (Already cross-platform!)
+**Semantic Goal**: Open files/URLs with default application
 
-**Current**: Likely 1Password CLI wrapper
-**Dependencies**: 1Password CLI
+**Current**: Cross-platform "open" command wrapper
+**Platform**: macOS + Linux (already cross-platform!)
+**Dependencies**: `open` (macOS), `xdg-open` (Linux)
 
-**Questions**:
-- Still using 1Password?
-- What's the wrapper doing? (alias or actual script?)
-- Better to use official CLI directly?
+**Implementation**:
+```bash
+if [[ $(uname) == Darwin ]]; then
+  open "$@"
+else
+  xdg-open "$@" &> /dev/null
+fi
+```
 
-**Proposed Action**: TBD - Examine first, likely ARCHIVE
+**Evaluation**:
+- ✅ Already follows our cross-platform pattern!
+- ✅ Uses OS detection (uname)
+- ✅ Uses native tools (open/xdg-open)
+- ✅ Consistent interface
+- Simple, effective, well-implemented
+
+**Action**: **KEEP AS-IS** - Perfect example of cross-platform done right!
 
 ---
 
 #### 🍎 osx-alias.sh
-**Semantic Goal**: Manage macOS Finder aliases
+**Status**: **KEEP AS-IS** (Platform-specific by design)
+**Semantic Goal**: Create macOS Finder aliases
 
-**Current**: macOS alias management
-**Platform**: macOS-only (Finder aliases)
+**Current**: macOS Finder alias creation via AppleScript
+**Platform**: macOS-only (by design)
+**Dependencies**: Finder, AppleScript (built-in on macOS)
 
-**Cross-Platform Potential**: Low (Finder-specific feature)
+**Evaluation**:
+- Finder aliases are macOS-specific feature (not symlinks)
+- Well-implemented with AppleScript
+- Handles files and folders
+- Platform-specific by nature (like creating .app bundles)
+- No cross-platform equivalent (Finder aliases ≠ symlinks ≠ Windows shortcuts)
 
-**Questions**:
-- Still using?
-- What exactly does it do?
-
-**Proposed Action**: TBD - Likely KEEP AS-IS (platform-specific by nature)
+**Action**: **KEEP AS-IS** - Platform-specific tool, well-implemented
 
 ---
 
 #### 🎨 set-capslock
-**Semantic Goal**: Remap Caps Lock key
+**Status**: **ARCHIVE** (Linux-specific, obsolete)
+**Semantic Goal**: Remap Caps Lock key to Control
 
-**Current**: Caps lock key remapping
-**Platform**: TBD (need to examine)
+**Current**: X11 key remapping script
+**Dependencies**: setxkbmap, xcape (X11 tools)
+**Platform**: Linux-only (X11)
 
-**Cross-Platform Potential**:
-- macOS: `hidutil` property mapping
-- Linux: `setxkbmap`, `xmodmap`
-- Windows: Registry modification, PowerShell
+**Evaluation**:
+- Very X11-specific (setxkbmap, xcape)
+- Modern alternatives better:
+  - macOS: System Settings or Karabiner-Elements
+  - Linux: GNOME Tweaks, KDE settings, or compositor config
+  - Windows: PowerToys Keyboard Manager, registry edits
+- Better handled at OS/desktop environment level
 
-**Questions**:
-- What does it remap to? (Ctrl? Esc?)
-- Better handled by OS settings/tools like Karabiner?
-
-**Proposed Action**: TBD - Examine implementation first
+**Action**: **ARCHIVE** - Superseded by OS-native settings
 
 ---
 
@@ -410,12 +431,13 @@ main() {
 **Platform**: TBD
 **Initial Assessment**: TBD
 
-**Questions**:
 #### 🖼️ set-wallpaper
+**Status**: **KEEP & IMPROVE** (Good cross-platform candidate)
 **Semantic Goal**: Change desktop wallpaper
 
-**Current**: Wallpaper setting script
-**Platform**: TBD (need to examine)
+**Current**: Simple wallpaper setter (Linux-only)
+**Platform**: Linux-only (feh)
+**Current Issue**: Hardcoded to ~/.wallpaper/plant02.png
 
 **Cross-Platform Potential**: ⭐ HIGH VALUE
 - macOS: `osascript` (AppleScript) to set wallpaper
@@ -427,46 +449,43 @@ main() {
 - Sets wallpaper on all desktops/monitors
 - Handles image formats appropriately
 
-**Proposed Action**: KEEP & IMPROVE - Excellent candidate for screenshot model
+**Action**: **KEEP & IMPROVE** - Modernize following screenshot model
 
 ---
 
 #### 📜 taillog
-**Semantic Goal**: Follow log files with enhancements
+**Status**: **KEEP AS-IS** (Simple and useful)
+**Semantic Goal**: Follow log files with syntax highlighting
 
-**Current**: Log tailing script
-**Dependencies**: tail (universal)
+**Current**: Wrapper around `tail -f` + `bat` for colored output
+**Dependencies**: `bat` (syntax highlighter)
+**Platform**: Cross-platform (`tail` universal, `bat` available everywhere)
 
-**Cross-Platform Potential**: Depends on what it adds
-- If just `tail -f` wrapper: Not much value
-- If adds colorization/filtering: Could use different tools per OS
+**Evaluation**:
+- Simple 3-line script: `tail -f $@ | bat --paging=never -l log`
+- Adds value: syntax highlighting and color to log tailing
+- Already works cross-platform (both tools available on all OSes)
+- No improvements needed
 
-**Questions**:
-- What value does it add over `tail -f`?
-- Still using?
-- Worth keeping vs direct `tail` or modern tools like `lnav`?
-
-**Proposed Action**: TBD - Examine, likely ARCHIVE unless adds real value
+**Action**: **KEEP AS-IS** - Working well, minimal and effective
 
 ---
 
 #### ⏰ wake-set-capslock
+**Status**: **ARCHIVE** (Linux-specific, obsolete)
 **Semantic Goal**: Set Caps Lock state on system wake
 
-**Current**: Caps lock on wake
-**Platform**: TBD (need to examine)
+**Current**: Linux sleep/wake hook script
+**Dependencies**: systemd sleep hooks, setxkbmap, xcape
+**Platform**: Linux-only
 
-**Cross-Platform Potential**: Platform-specific implementation likely
-- macOS: launchd with `SleepService` trigger
-- Linux: systemd sleep hooks
-- Windows: Task Scheduler with power event trigger
+**Evaluation**:
+- Companion to `set-capslock` - runs on system wake
+- Very specific to old Linux setup with systemd hooks
+- Not portable across platforms
+- Obsolete - modern OSes persist keyboard settings across sleep
 
-**Questions**:
-- Still needed?
-- What state does it set? (always on/off?)
-- Modern OS better handles this?
-
-**Proposed Action**: TBD - Examine, possibly ARCHIVE if obsolete
+**Action**: **ARCHIVE** - Obsolete, not needed on modern systems
 
 ---
 
