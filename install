@@ -52,6 +52,7 @@ INSTALL_PACKAGES=true
 MINIMAL=false
 VERBOSE=false
 FORCE=false
+RELINK=false  # Automatically relink symlinks from old dotfiles locations
 
 # Colors for output
 RED='\033[0;31m'
@@ -99,17 +100,24 @@ OPTIONS:
     --minimal       Install only core packages (bash, git, vim, zsh)
     --verbose       Show detailed output
     --force         Skip backups and overwrite existing files (use with caution!)
+    --relink        Automatically relink symlinks from old dotfiles locations
 
 HANDLING EXISTING FILES:
     By default, existing files are backed up to ~/.dotfiles-backup-TIMESTAMP/
     Existing symlinks to these dotfiles are detected and left alone.
     Broken symlinks are automatically removed.
+    
+    If you have symlinks from a previous dotfiles location (e.g., Dropbox/Code/dotfiles),
+    use --relink to automatically update them to the new location.
+    
     Use --dry-run to see what will happen before making changes.
 
 EXAMPLES:
     ./install                    # Full installation with backups
     ./install --minimal          # Install core configs only
     ./install --dry-run          # Preview changes without applying
+    ./install --relink           # Update symlinks from old dotfiles location
+    ./install --relink --dry-run # Preview relinking without changes
     ./install --force            # Overwrite existing files without backup
 
 EOF
@@ -189,6 +197,17 @@ install_packages() {
     esac
 }
 
+# Check if a symlink points to a dotfiles directory (any location)
+is_dotfiles_symlink() {
+    local target="$1"
+    # Common patterns for dotfiles directories
+    [[ "$target" == *"/dotfiles/"* ]] || \
+    [[ "$target" == *"/.dotfiles/"* ]] || \
+    [[ "$target" == *"/.dots/"* ]] || \
+    [[ "$target" == *"/Dropbox/Code/dotfiles/"* ]] || \
+    [[ "$target" == *"/iCloud/"*"/dotfiles/"* ]]
+}
+
 # Backup existing files that would conflict with stow
 backup_conflicts() {
     local package="$1"
@@ -211,14 +230,14 @@ backup_conflicts() {
         # If target is a symlink
         if [[ -L "${target_file}" ]]; then
             local link_target=$(readlink "${target_file}")
-
-            # Check if it points to our dotfiles
+            
+            # Check if it points to our current dotfiles directory
             if [[ "${link_target}" == *"${DOTFILES_DIR}"* ]]; then
                 print_verbose "Symlink already managed: ${target_file}"
                 continue
             fi
-
-            # Broken or stale symlink
+            
+            # Check if it's a broken/stale symlink
             if [[ ! -e "${target_file}" ]]; then
                 print_warning "Removing broken symlink: ${target_file} -> ${link_target}"
                 if [[ "${DRY_RUN}" == "false" ]]; then
@@ -226,10 +245,27 @@ backup_conflicts() {
                 fi
                 continue
             fi
-
-            # Symlink to somewhere else
+            
+            # Check if it points to another dotfiles directory
+            if is_dotfiles_symlink "${link_target}"; then
+                if [[ "${RELINK}" == "true" ]]; then
+                    print_verbose "Relinking from old dotfiles: ${target_file}"
+                    print_verbose "  Old: ${link_target}"
+                    print_verbose "  New: ${DOTFILES_DIR}/${package}/${rel_path}"
+                    if [[ "${DRY_RUN}" == "false" ]]; then
+                        rm "${target_file}"
+                    fi
+                else
+                    print_warning "Dotfiles symlink from different location: ${target_file}"
+                    print_warning "  Points to: ${link_target}"
+                    print_warning "  Use --relink to automatically update these symlinks"
+                fi
+                continue
+            fi
+            
+            # Symlink to somewhere else (not dotfiles)
             print_warning "External symlink found: ${target_file} -> ${link_target}"
-            if [[ "${DRY_RUN}" == "false" ]]; then
+            if [[ "${DRY_RUN}" == "false" ]] && [[ "${FORCE}" == "true" ]]; then
                 mkdir -p "$(dirname "${BACKUP_DIR}/${stowed_path}")"
                 mv "${target_file}" "${BACKUP_DIR}/${stowed_path}"
                 echo "${link_target}" > "${BACKUP_DIR}/${stowed_path}.symlink-target"
@@ -243,9 +279,7 @@ backup_conflicts() {
             fi
         fi
     done < <(find "${package_dir}" -type f -print0)
-}
-
-# Install dotfiles using stow
+}# Install dotfiles using stow
 install_dotfiles() {
     local os="$1"
 
@@ -396,6 +430,11 @@ main() {
             --force|-f)
                 FORCE=true
                 print_warning "FORCE MODE - Existing files will be overwritten without backup"
+                shift
+                ;;
+            --relink|-r)
+                RELINK=true
+                print_success "RELINK MODE - Will update symlinks from old dotfiles locations"
                 shift
                 ;;
             *)
