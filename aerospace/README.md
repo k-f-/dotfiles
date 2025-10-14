@@ -54,6 +54,7 @@ The configuration file is located at `~/.aerospace.toml` and uses TOML format.
 #### Window Organization
 
 - `Alt + Shift + o` - Organize existing windows into workspaces (runs `aerospace-organize` script)
+- `Alt + Shift + d` - Open dotfiles directory in VS Code for quick editing
 
 ### Workspace Auto-Assignment
 
