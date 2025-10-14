@@ -256,8 +256,11 @@ backup_conflicts() {
                 continue
             fi
 
-            # Check if it points to another dotfiles directory
-            if is_dotfiles_symlink "${link_target}"; then
+            # Check if it points to another dotfiles directory (NOT the current one)
+            if is_dotfiles_symlink "${link_target}" && \
+               [[ "${link_target}" != *"${DOTFILES_DIR}"* ]] && \
+               [[ "${resolved_target}" != "${DOTFILES_DIR}"* ]]; then
+                # Only relink if it's pointing to a DIFFERENT dotfiles directory
                 if [[ "${RELINK}" == "true" ]]; then
                     print_verbose "Relinking from old dotfiles: ${target_file}"
                     print_verbose "  Old: ${link_target}"
