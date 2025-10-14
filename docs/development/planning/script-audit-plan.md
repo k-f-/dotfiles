@@ -332,22 +332,23 @@ main() {
 ---
 
 #### 🔒 lock
+**Status**: ✅ KEEP & IMPROVE (Just updated!)
 **Semantic Goal**: Lock screen / start screensaver
 
-**Current**: Screen lock script
-**Platform**: TBD (need to examine)
+**Current**: Cross-platform screen lock utility
+**Platform**: macOS, Linux, Windows
 
-**Cross-Platform Potential**: ⭐ HIGH VALUE
-- macOS: `pmset displaysleepnow` or `osascript` lock
-- Linux: `xdg-screensaver lock`, `loginctl lock-session`
+**Cross-Platform Implementation**:
+- macOS: `pmset displaysleepnow` (with osascript fallback)
+- Linux: `loginctl lock-session`, `xdg-screensaver lock`, multiple fallbacks
 - Windows: `rundll32.exe user32.dll,LockWorkStation`
 
-**Semantic Interface**: `lock`
+**Semantic Interface**: `lock [--help]`
 - One command works everywhere
-- Immediately locks screen/starts screensaver
-- No output needed (just lock)
+- Immediately locks screen using native OS tools
+- Help text with --help flag
 
-**Proposed Action**: KEEP & IMPROVE - Perfect for screenshot model
+**Action**: ✅ COMPLETED - Modernized following screenshot model
 
 ---
 
