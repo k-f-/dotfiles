@@ -19,7 +19,7 @@ This repository contains my personal configuration files (dotfiles) for various 
 - **Email**: mbsync, msmtp, mu (email workflow)
 - **Other**: X11 configs, YouTube downloader settings
 
-**📖 See [KEYBINDINGS.md](KEYBINDINGS.md) for complete keyboard shortcuts reference**
+**📖 See [keybindings.md](docs/setup/keybindings.md) for complete keyboard shortcuts reference**
 
 ## 🚀 Quick Start
 
@@ -89,7 +89,7 @@ After installation, these shortcuts and commands are immediately available:
 
 ### Keyboard Shortcuts (macOS + AeroSpace)
 - **`Alt + h/j/k/l`** - Navigate windows (Vim-style)
-- **`Alt + Tab`** - Switch between workspaces 
+- **`Alt + Tab`** - Switch between workspaces
 - **`Alt + \``** - Cycle windows within same app (native macOS)
 - **`Alt + 1-6`** - Jump to workspace 1-6
 - **`Alt + Shift + o`** - Auto-organize windows into workspaces
@@ -101,7 +101,7 @@ After installation, these shortcuts and commands are immediately available:
 dotfiles      # Open dotfiles directory in editor
 dots          # Short alias
 gs            # git status -s
-gg            # git grep -n  
+gg            # git grep -n
 em            # Smart editor (VS Code → neovim → vim)
 ```
 
