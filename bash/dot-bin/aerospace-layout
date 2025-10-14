@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-# Simple symlink/alias to aerospace-layout-manager-wrapper
-# This provides a shorter command name while maintaining compatibility
-
-# Get the directory of this script
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-# Call the wrapper with all arguments
-exec "$SCRIPT_DIR/aerospace-layout-manager-wrapper" "$@"
