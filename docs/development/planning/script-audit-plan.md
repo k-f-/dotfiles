@@ -1,15 +1,74 @@
 # Script Audit Plan
 
-**Date**: October 14, 2025  
+**Date**: October 14, 2025
 **Status**: Planning
 
 ## Overview
 
 Comprehensive audit of all scripts in `bash/dot-bin/` and `scripts/` directories to:
-1. Identify scripts for improvement/modernization
-2. Remove unused/obsolete scripts
-3. Make useful scripts cross-platform where applicable
-4. Document remaining scripts
+
+1. Make scripts **semantically equivalent across platforms** (macOS, Linux, Windows)
+2. Follow the **screenshot script model**: Detect OS → Use native tool → Produce consistent output
+3. Classify scripts using three-tier system
+4. Remove unused/obsolete scripts
+5. Document all remaining scripts
+
+## Core Principle: Cross-Platform Semantic Equivalence
+
+### The Screenshot Model
+
+Our modernized `screenshot` script demonstrates the ideal approach:
+
+```bash
+# 1. Detect OS once
+detect_os() {
+    case "$(uname -s)" in
+        Darwin*)    echo "macos" ;;
+        Linux*)     echo "linux" ;;
+        MINGW*|MSYS*|CYGWIN*) echo "windows" ;;
+    esac
+}
+
+# 2. Use OS-native tools for the same task
+take_screenshot() {
+    case "$os" in
+        macos)   screencapture -i "$output_file" ;;
+        linux)   scrot --select "$output_file" ;;
+        windows) # Windows Snipping Tool
+    esac
+}
+
+# 3. Produce identical output/behavior
+# - Same command-line interface (screenshot --select)
+# - Same output location (iCloud/Dropbox/Pictures)
+# - Same result (path copied to clipboard)
+```
+
+**Key Pattern**:
+- ✅ Single command works everywhere: `screenshot --select`
+- ✅ Uses native OS tools: `screencapture` (macOS), `scrot` (Linux), Snipping Tool (Windows)
+- ✅ Consistent behavior: Always saves to predictable location, copies path to clipboard
+- ✅ Graceful degradation: Checks for tool availability, provides helpful errors
+
+### Application to All Scripts
+
+For each script, ask:
+
+1. **What is the semantic goal?** (What does the user want to accomplish?)
+2. **What are the OS-native equivalents?** (What tool does this on each OS?)
+3. **Can we abstract the interface?** (Can one command work everywhere?)
+4. **Is the output consistent?** (Same result regardless of underlying tool?)
+
+**Examples**:
+
+| Script | Semantic Goal | macOS Tool | Linux Tool | Windows Tool |
+|--------|---------------|------------|------------|--------------|
+| `screenshot` | Take screenshot | `screencapture` | `scrot`/`gnome-screenshot` | Snipping Tool API |
+| `lock` | Lock screen | `pmset displaysleepnow` | `xdg-screensaver lock` | `rundll32.exe user32.dll,LockWorkStation` |
+| `set-wallpaper` | Change wallpaper | `osascript` | `feh`/`gsettings` | `SystemParametersInfo` |
+| `extract` | Extract archive | `tar`/`unzip` | `tar`/`unzip` | `tar`/`Expand-Archive` |
+
+---
 
 ## Audit Methodology
 
@@ -17,16 +76,17 @@ Comprehensive audit of all scripts in `bash/dot-bin/` and `scripts/` directories
 
 For each script, classify as:
 
-1. **KEEP & IMPROVE** - Actively used, worth maintaining and improving
-   - Make cross-platform (macOS, Linux, Windows where applicable)
+1. **KEEP & IMPROVE** - Make cross-platform with OS-native tools
+   - Implement OS detection
+   - Map semantic goal to native tools for each OS
+   - Ensure consistent interface and output
    - Add help text and error handling
-   - Modernize bash practices (set -euo pipefail, etc.)
-   - Add to documentation
+   - Follow screenshot model pattern
 
-2. **KEEP AS-IS** - Used but working fine, minimal effort
+2. **KEEP AS-IS** - Platform-specific by nature OR already working cross-platform
+   - Document platform limitations clearly
    - Add basic help/comments if missing
    - Leave implementation alone unless broken
-   - Document existence
 
 3. **ARCHIVE/REMOVE** - Obsolete, unused, or superseded
    - Move to archive or delete entirely
@@ -35,13 +95,63 @@ For each script, classify as:
 ### Evaluation Criteria
 
 For each script, answer:
-- **When last used?** (check shell history, git log)
-- **Still relevant?** (dependencies still installed, use case still valid)
-- **Cross-platform value?** (would it be useful on multiple OSes?)
-- **Maintenance burden?** (dependencies, complexity, breakage risk)
-- **Superseded?** (better tool/script exists)
 
----
+- **What's the semantic goal?** (User intent, not implementation)
+- **Cross-platform potential?** (Can this work on macOS, Linux, Windows?)
+- **OS-native tools available?** (What's the equivalent on each platform?)
+- **Still relevant?** (Dependencies installed, use case still valid)
+- **When last used?** (Check shell history, git log)
+- **Maintenance burden?** (Dependencies, complexity, breakage risk)
+- **Superseded?** (Better tool/script exists)
+
+### Cross-Platform Implementation Pattern
+
+```bash
+#!/usr/bin/env bash
+# [Script name and purpose]
+#
+# Usage: script-name [OPTIONS]
+# Works on: macOS, Linux, Windows
+
+set -euo pipefail
+
+# 1. OS Detection (reusable function)
+detect_os() {
+    case "$(uname -s)" in
+        Darwin*)    echo "macos" ;;
+        Linux*)     echo "linux" ;;
+        MINGW*|MSYS*|CYGWIN*) echo "windows" ;;
+        *)          echo "unknown" ;;
+    esac
+}
+
+# 2. Main logic with OS-specific implementations
+do_semantic_task() {
+    local os=$(detect_os)
+
+    case "$os" in
+        macos)
+            # macOS native tool
+            ;;
+        linux)
+            # Linux native tool(s) with fallbacks
+            ;;
+        windows)
+            # Windows native tool
+            ;;
+        *)
+            echo "Error: Unsupported OS" >&2
+            exit 1
+            ;;
+    esac
+}
+
+# 3. Consistent output/behavior regardless of OS
+main() {
+    do_semantic_task
+    # Same result on all platforms
+}
+```---
 
 ## Script Inventory
 
@@ -64,80 +174,94 @@ For each script, answer:
 ---
 
 #### 📧 checkmail
+**Semantic Goal**: Check email and notify of new messages
+
 **Current**: Simple mail checking script
 **Dependencies**: Mail system (mbsync, mu)
-**Initial Assessment**: TBD
+
+**Cross-Platform Potential**:
+- macOS: Mail.app automation, `notmuch`, `mu`
+- Linux: `mbsync`, `offlineimap`, `notmuch`, `mu`
+- Windows: Outlook automation, PowerShell email cmdlets
 
 **Questions**:
 - Still using this mail setup?
-- Would benefit from cross-platform support?
+- What's the desired behavior? (count? notification? summary?)
 
 **Proposed Action**: TBD
 
 ---
 
 #### 🎨 diff-so-fancy
+**Semantic Goal**: N/A (Binary tool, not a script)
+
 **Current**: Git diff formatter (likely the actual binary)
 **Dependencies**: None (self-contained)
-**Initial Assessment**: TBD
 
 **Questions**:
 - Is this a symlink or actual binary?
 - Still using for git diffs?
-- Better to install via package manager?
+- Better to install via package manager? (brew, apt, choco)
 
-**Proposed Action**: TBD
+**Proposed Action**: TBD - Likely ARCHIVE (use package manager instead)
 
 ---
 
-#### 🖥️ disp-external-and-laptop.sh
-**Current**: Display configuration script
-**Platform**: Linux (xrandr)
-**Initial Assessment**: TBD
+#### 🖥️ disp-external-and-laptop.sh / disp-laptop-only.sh
+**Semantic Goal**: Configure display layout (multiple displays vs laptop only)
+
+**Current**: Display configuration scripts
+**Platform**: Linux-only (xrandr)
+
+**Cross-Platform Potential**:
+- macOS: `displayplacer` or native System APIs
+- Linux: `xrandr`, `wlr-randr` (Wayland)
+- Windows: `DisplaySwitch.exe`, PowerShell `Set-DisplayResolution`
 
 **Questions**:
 - Still using this setup?
-- Specific to old hardware?
+- Generic display switching or specific to old hardware config?
+- Worth consolidating into single `display-mode` script?
 
-**Proposed Action**: TBD
+**Proposed Action**: TBD - High value if made generic
 
 ---
 
-#### 🖥️ disp-laptop-only.sh
-**Current**: Display configuration script
-**Platform**: Linux (xrandr)
-**Initial Assessment**: TBD
+#### � eem / em
+**Semantic Goal**: TBD (need to examine - likely editor wrappers)
+
+**Current**: Unknown (need to read files)
+
+**Cross-Platform Potential**: Depends on what they do
+- If editor launchers: Could use `$EDITOR` env var
+- If Emacs-specific: `emacs`, `emacsclient` exist on all platforms
 
 **Questions**:
-- Still using this setup?
-- Specific to old hardware?
+- What do these do?
+- Still used in workflow?
 
-**Proposed Action**: TBD
-
----
-
-#### 📝 eem
-**Current**: TBD (need to examine)
-**Initial Assessment**: TBD
+**Proposed Action**: TBD - Need examination
 
 ---
 
-#### 📝 em
-**Current**: TBD (need to examine)
-**Initial Assessment**: TBD
+#### � extract
+**Semantic Goal**: Extract any archive format to current directory
 
----
-
-#### 📦 extract
 **Current**: Universal archive extractor
-**Dependencies**: Various (tar, unzip, etc.)
-**Initial Assessment**: Likely useful
+**Dependencies**: Various (tar, unzip, 7z, etc.)
 
-**Questions**:
-- Still using?
-- Could be made more robust/cross-platform?
+**Cross-Platform Potential**: ⭐ HIGH VALUE
+- macOS: `tar`, `unzip`, `7z` (via homebrew)
+- Linux: `tar`, `unzip`, `7z`, `unrar`
+- Windows: `tar` (built-in), `Expand-Archive` (PowerShell), `7z`
 
-**Proposed Action**: TBD
+**Semantic Interface**: `extract file.{tar.gz,zip,7z,rar,...}`
+- Detects archive type from extension
+- Uses appropriate tool per OS
+- Extracts to current directory
+- Consistent output: "Extracted N files to ./directory"
+
+**Proposed Action**: KEEP & IMPROVE - Perfect candidate for screenshot model
 
 ---
 
@@ -155,94 +279,125 @@ For each script, answer:
 ---
 
 #### 🖥️ gnome-terminal.sh
+**Semantic Goal**: Configure terminal emulator settings
+
 **Current**: GNOME terminal configuration
-**Platform**: Linux (GNOME)
-**Initial Assessment**: TBD
+**Platform**: Linux-only (GNOME)
+
+**Cross-Platform Potential**:
+- macOS: Terminal.app/iTerm2 settings, Kitty config
+- Linux: gnome-terminal, konsole, Kitty
+- Windows: Windows Terminal settings, Alacritty
 
 **Questions**:
 - Still using GNOME?
-- Relevant for current setup?
+- Could be generalized to "terminal-setup" script?
 
-**Proposed Action**: TBD
+**Proposed Action**: TBD - Likely ARCHIVE (terminal-specific configs better in dotfiles)
 
 ---
 
 #### 📊 gotop
+**Semantic Goal**: N/A (Binary tool, not a script)
+
 **Current**: System monitor (likely the binary)
 **Dependencies**: None (self-contained)
-**Initial Assessment**: TBD
 
 **Questions**:
-- Is this a binary or script?
-- Better to install via package manager?
-- Still using?
+- Is this a binary? (`file bash/dot-bin/gotop`)
+- Better to install via package manager? (brew, apt, choco)
 
-**Proposed Action**: TBD
+**Proposed Action**: TBD - Likely ARCHIVE (use package manager instead)
 
 ---
 
 #### 🖼️ img_small
+**Semantic Goal**: Resize/compress images
+
 **Current**: Image resizing script
-**Dependencies**: ImageMagick or similar
-**Initial Assessment**: TBD
+**Dependencies**: ImageMagick, sips, or similar
 
-**Questions**:
-- Still using?
-- Could be made more robust?
+**Cross-Platform Potential**: ⭐ HIGH VALUE
+- macOS: `sips` (built-in), ImageMagick
+- Linux: ImageMagick, GraphicsMagick
+- Windows: ImageMagick, PowerShell Image cmdlets
 
-**Proposed Action**: TBD
+**Semantic Interface**: `img_small input.jpg [quality] [max-dimension]`
+- Auto-detects image format
+- Uses best available tool per OS
+- Consistent output: optimized image with metadata preserved
+
+**Proposed Action**: KEEP & IMPROVE - Good candidate for cross-platform
 
 ---
 
 #### 🔒 lock
+**Semantic Goal**: Lock screen / start screensaver
+
 **Current**: Screen lock script
-**Platform**: TBD
-**Initial Assessment**: TBD
+**Platform**: TBD (need to examine)
 
-**Questions**:
-- Platform-specific or cross-platform?
-- Still relevant with modern OS lock screens?
+**Cross-Platform Potential**: ⭐ HIGH VALUE
+- macOS: `pmset displaysleepnow` or `osascript` lock
+- Linux: `xdg-screensaver lock`, `loginctl lock-session`
+- Windows: `rundll32.exe user32.dll,LockWorkStation`
 
-**Proposed Action**: TBD
+**Semantic Interface**: `lock`
+- One command works everywhere
+- Immediately locks screen/starts screensaver
+- No output needed (just lock)
+
+**Proposed Action**: KEEP & IMPROVE - Perfect for screenshot model
 
 ---
 
 #### 🔐 op
+**Semantic Goal**: N/A (1Password CLI wrapper or alias)
+
 **Current**: Likely 1Password CLI wrapper
 **Dependencies**: 1Password CLI
-**Initial Assessment**: TBD
 
 **Questions**:
 - Still using 1Password?
+- What's the wrapper doing? (alias or actual script?)
 - Better to use official CLI directly?
 
-**Proposed Action**: TBD
+**Proposed Action**: TBD - Examine first, likely ARCHIVE
 
 ---
 
 #### 🍎 osx-alias.sh
+**Semantic Goal**: Manage macOS Finder aliases
+
 **Current**: macOS alias management
-**Platform**: macOS only
-**Initial Assessment**: TBD
+**Platform**: macOS-only (Finder aliases)
+
+**Cross-Platform Potential**: Low (Finder-specific feature)
 
 **Questions**:
 - Still using?
-- What does it do?
+- What exactly does it do?
 
-**Proposed Action**: TBD
+**Proposed Action**: TBD - Likely KEEP AS-IS (platform-specific by nature)
 
 ---
 
 #### 🎨 set-capslock
+**Semantic Goal**: Remap Caps Lock key
+
 **Current**: Caps lock key remapping
-**Platform**: TBD
-**Initial Assessment**: TBD
+**Platform**: TBD (need to examine)
+
+**Cross-Platform Potential**:
+- macOS: `hidutil` property mapping
+- Linux: `setxkbmap`, `xmodmap`
+- Windows: Registry modification, PowerShell
 
 **Questions**:
-- Platform-specific?
-- Better handled by OS settings?
+- What does it remap to? (Ctrl? Esc?)
+- Better handled by OS settings/tools like Karabiner?
 
-**Proposed Action**: TBD
+**Proposed Action**: TBD - Examine implementation first
 
 ---
 
@@ -252,36 +407,62 @@ For each script, answer:
 **Initial Assessment**: TBD
 
 **Questions**:
-- Cross-platform potential?
-- Still using?
+#### 🖼️ set-wallpaper
+**Semantic Goal**: Change desktop wallpaper
 
-**Proposed Action**: TBD
+**Current**: Wallpaper setting script
+**Platform**: TBD (need to examine)
+
+**Cross-Platform Potential**: ⭐ HIGH VALUE
+- macOS: `osascript` (AppleScript) to set wallpaper
+- Linux: `feh --bg-scale`, `gsettings` (GNOME), `nitrogen` (generic)
+- Windows: `SystemParametersInfo` via PowerShell/C#
+
+**Semantic Interface**: `set-wallpaper /path/to/image.jpg`
+- Single command works everywhere
+- Sets wallpaper on all desktops/monitors
+- Handles image formats appropriately
+
+**Proposed Action**: KEEP & IMPROVE - Excellent candidate for screenshot model
 
 ---
 
 #### 📜 taillog
+**Semantic Goal**: Follow log files with enhancements
+
 **Current**: Log tailing script
 **Dependencies**: tail (universal)
-**Initial Assessment**: Likely simple wrapper
+
+**Cross-Platform Potential**: Depends on what it adds
+- If just `tail -f` wrapper: Not much value
+- If adds colorization/filtering: Could use different tools per OS
 
 **Questions**:
 - What value does it add over `tail -f`?
 - Still using?
+- Worth keeping vs direct `tail` or modern tools like `lnav`?
 
-**Proposed Action**: TBD
+**Proposed Action**: TBD - Examine, likely ARCHIVE unless adds real value
 
 ---
 
 #### ⏰ wake-set-capslock
+**Semantic Goal**: Set Caps Lock state on system wake
+
 **Current**: Caps lock on wake
-**Platform**: TBD
-**Initial Assessment**: TBD
+**Platform**: TBD (need to examine)
+
+**Cross-Platform Potential**: Platform-specific implementation likely
+- macOS: launchd with `SleepService` trigger
+- Linux: systemd sleep hooks
+- Windows: Task Scheduler with power event trigger
 
 **Questions**:
-- macOS specific?
 - Still needed?
+- What state does it set? (always on/off?)
+- Modern OS better handles this?
 
-**Proposed Action**: TBD
+**Proposed Action**: TBD - Examine, possibly ARCHIVE if obsolete
 
 ---
 
@@ -391,7 +572,7 @@ find bash/dot-bin scripts -type f -mtime +365 -ls
 
 # Check dependencies
 for script in bash/dot-bin/*; do
-    echo "=== $script ===" 
+    echo "=== $script ==="
     grep -E "^(command|which|type) .*&>/dev/null" "$script" || true
 done
 ```

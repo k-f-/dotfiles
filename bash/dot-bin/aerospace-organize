@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # aerospace-organize - Apply all workspace layouts
-# 
+#
 # This script applies all defined layouts from the aerospace-layout-manager
 # to organize windows into their designated workspaces.
 

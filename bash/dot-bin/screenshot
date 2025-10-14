@@ -24,7 +24,7 @@ detect_os() {
 # Get screenshot directory
 get_screenshot_dir() {
     local os="$1"
-    
+
     # Check for iCloud Drive first (macOS)
     if [[ "$os" == "macos" ]] && [[ -d "$HOME/Library/Mobile Documents/com~apple~CloudDocs/Screenshots" ]]; then
         echo "$HOME/Library/Mobile Documents/com~apple~CloudDocs/Screenshots"
@@ -47,7 +47,7 @@ get_screenshot_dir() {
 copy_to_clipboard() {
     local file="$1"
     local os="$2"
-    
+
     case "$os" in
         macos)
             echo -n "$file" | pbcopy
@@ -72,7 +72,7 @@ take_screenshot() {
     local mode="$1"
     local output_file="$2"
     local os="$3"
-    
+
     case "$os" in
         macos)
             case "$mode" in
@@ -155,7 +155,7 @@ EOF
 # Main
 main() {
     local mode="select"
-    
+
     # Parse arguments
     while [[ $# -gt 0 ]]; do
         case "$1" in
@@ -182,20 +182,20 @@ main() {
                 ;;
         esac
     done
-    
+
     local os=$(detect_os)
     local screenshot_dir=$(get_screenshot_dir "$os")
-    
+
     # Create directory if it doesn't exist
     mkdir -p "$screenshot_dir"
-    
+
     # Generate filename with timestamp
     local timestamp=$(date +%Y%m%d_%H%M%S)
     local output_file="${screenshot_dir}/screenshot_${timestamp}.png"
-    
+
     # Take screenshot
     take_screenshot "$mode" "$output_file" "$os"
-    
+
     # Check if screenshot was created
     if [[ -f "$output_file" ]]; then
         echo "Screenshot saved: $output_file"
