@@ -232,7 +232,17 @@ backup_conflicts() {
             local link_target=$(readlink "${target_file}")
 
             # Check if it points to our current dotfiles directory
-            if [[ "${link_target}" == *"${DOTFILES_DIR}"* ]]; then
+            # Resolve relative symlinks to check if they point to current dotfiles
+            local resolved_target
+            if [[ "${link_target}" = /* ]]; then
+                # Absolute path
+                resolved_target="${link_target}"
+            else
+                # Relative path - resolve from $HOME
+                resolved_target="$(cd "${HOME}" && cd "$(dirname "${link_target}")" 2>/dev/null && pwd)/$(basename "${link_target}")" || resolved_target=""
+            fi
+
+            if [[ "${link_target}" == *"${DOTFILES_DIR}"* ]] || [[ "${resolved_target}" == "${DOTFILES_DIR}"* ]]; then
                 print_verbose "Symlink already managed: ${target_file}"
                 continue
             fi
@@ -279,7 +289,9 @@ backup_conflicts() {
             fi
         fi
     done < <(find "${package_dir}" -type f -print0)
-}# Install dotfiles using stow
+}
+
+# Install dotfiles using stow
 install_dotfiles() {
     local os="$1"
 

@@ -88,6 +88,8 @@ cask "1password"
 cask "aerospace"
 # Application launcher and productivity software
 cask "alfred"
+# Uninstaller for macOS with leftover removal
+cask "appcleaner"
 # Display management tool
 cask "betterdisplay"
 # Monitors common persistence locations
