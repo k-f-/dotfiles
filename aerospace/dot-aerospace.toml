@@ -153,8 +153,10 @@ alt-shift-w = 'move-workspace-to-monitor --wrap-around next'
 # Utility Commands
 # ============================================================================
 # Organize windows into their designated workspaces
-# Organize windows into workspaces
 alt-shift-o = 'exec-and-forget aerospace-organize'
+
+# Open dotfiles in editor
+alt-shift-d = 'exec-and-forget open -a "Visual Studio Code" ~/Documents/Code/dotfiles'
 
 # ============================================================================
 # Service Mode (advanced operations)

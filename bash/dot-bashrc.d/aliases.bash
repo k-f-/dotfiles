@@ -15,6 +15,10 @@ alias cat="bat"
 ### Vim-->NeoVim
 alias vim="nvim"
 
+### Dotfiles - quick access to edit configuration
+alias dotfiles="cd ~/Documents/Code/dotfiles && \$EDITOR ."
+alias dots="dotfiles"  # shorter alias
+
 ### Spotify was broken forever. Pop-OS fixes this. For posterity.
 alias spotify-hdpi="spotify --force-device-scale-factor=2 &" # HiDPI flags.
 
