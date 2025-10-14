@@ -1,5 +1,29 @@
 # Remaining Issues Summary
 
+## Cleanup Tasks
+
+### ✅ COMPLETED: Remove Redundant scripts/install.sh
+**Status**: Ready to delete (October 14, 2025)
+
+**Analysis**:
+- `scripts/install.sh`: Old stow-only script (30 lines, basic functionality)
+- `install` (root): Modern script (502 lines) with:
+  - Help system (`--help`, `--dry-run`, etc.)
+  - Package management (core vs optional)
+  - OS-specific setup prompts
+  - Backup functionality
+  - Error handling
+  - Interactive prompts
+
+**Decision**: Delete `scripts/install.sh` - completely replaced by root `install` script
+
+**Action Required**:
+```bash
+rm scripts/install.sh
+```
+
+---
+
 ## Issue #2: OSX Install.sh - STARTED
 
 ### Current Status
@@ -12,7 +36,7 @@
    ```bash
    # Already has:
    ln -svn /Users/kef/Library/Mobile Documents/com~apple~CloudDocs/Downloads ~/Downloads
-   
+
    # Need to add Documents and check for other folders
    ```
 
@@ -78,7 +102,7 @@
    - Example from issue:
      ```
      Workspace 2: Messages (top-left, 1/3 width, 50% height)
-                  Signal (bottom-left, 1/3 width, 50% height)  
+                  Signal (bottom-left, 1/3 width, 50% height)
                   Spotify (right, 2/3 width, 100% height)
      ```
 

@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Wrapper for aerospace-layout-manager
+# This allows us to use a consistent command regardless of installation method
+
+set -euo pipefail
+
+# Check if aerospace-layout-manager is installed globally
+if command -v aerospace-layout-manager &> /dev/null; then
+    # Use globally installed version
+    exec aerospace-layout-manager "$@"
+fi
+
+# Check if it exists in the submodule
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+SUBMODULE_PATH="$DOTFILES_ROOT/aerospace-layout-manager"
+
+if [[ -d "$SUBMODULE_PATH" ]]; then
+    # Try to run from submodule using bun
+    if command -v bun &> /dev/null; then
+        cd "$SUBMODULE_PATH"
+        exec bun run src/index.ts "$@"
+    else
+        echo "Error: Bun is not installed but aerospace-layout-manager submodule exists" >&2
+        echo "Install Bun: curl -fsSL https://bun.sh/install | bash" >&2
+        exit 1
+    fi
+fi
+
+# Not found anywhere
+echo "Error: aerospace-layout-manager is not installed" >&2
+echo "" >&2
+echo "Install it with one of these methods:" >&2
+echo "  1. Global install: curl -fsSL https://raw.githubusercontent.com/CarterMcAlister/aerospace-layout-manager/main/install.sh | bash" >&2
+echo "  2. Via submodule: cd $DOTFILES_ROOT && git submodule add https://github.com/CarterMcAlister/aerospace-layout-manager.git" >&2
+exit 1
