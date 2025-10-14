@@ -7,6 +7,8 @@
 #   --help      Show this help message
 #   --dry-run   Show what would be done without making changes
 #   --force     Don't ask for confirmation
+#   --list      List all dotfiles symlinks without removing
+#   --verbose   Show detailed output
 
 set -euo pipefail
 
@@ -40,6 +42,8 @@ ALL_PACKAGES=(
 
 DRY_RUN=false
 FORCE=false
+LIST_ONLY=false
+VERBOSE=false
 
 # Colors
 RED='\033[0;31m'
@@ -68,6 +72,62 @@ print_error() {
     echo -e "${RED}✗${NC} ${1}" >&2
 }
 
+print_verbose() {
+    if [[ "${VERBOSE}" == "true" ]] || [[ "${LIST_ONLY}" == "true" ]]; then
+        echo -e "  ${1}"
+    fi
+}
+
+# Find all symlinks in HOME that point to our dotfiles
+find_dotfiles_symlinks() {
+    local symlinks=()
+
+    # Search common locations where stow creates symlinks
+    local search_paths=(
+        "${HOME}/."*
+        "${HOME}/.config"/*
+        "${HOME}/.local"/*
+        "${HOME}/bin"/*
+    )
+
+    for path in "${search_paths[@]}"; do
+        # Skip if path doesn't exist or is not a symlink
+        [[ ! -L "$path" ]] && continue
+
+        local target
+        target=$(readlink "$path" 2>/dev/null || true)
+
+        # Check if it points to our dotfiles directory
+        if [[ "$target" == *"${DOTFILES_DIR}"* ]]; then
+            symlinks+=("$path")
+        fi
+    done
+
+    printf '%s\n' "${symlinks[@]}"
+}
+
+# List all dotfiles symlinks
+list_symlinks() {
+    print_header "Dotfiles Symlinks"
+
+    local count=0
+    while IFS= read -r symlink; do
+        if [[ -n "$symlink" ]]; then
+            local target
+            target=$(readlink "$symlink")
+            echo "  ${symlink} -> ${target}"
+            ((count++))
+        fi
+    done < <(find_dotfiles_symlinks)
+
+    echo ""
+    if [[ $count -eq 0 ]]; then
+        print_warning "No dotfiles symlinks found"
+    else
+        echo "Total: ${count} symlink(s)"
+    fi
+}
+
 show_help() {
     cat << EOF
 Dotfiles Uninstallation Script
@@ -78,10 +138,20 @@ OPTIONS:
     --help      Show this help message
     --dry-run   Show what would be done without making changes
     --force     Don't ask for confirmation
+    --list      List all dotfiles symlinks without removing anything
+    --verbose   Show detailed output during uninstall
 
 EXAMPLES:
-    ./uninstall              # Remove all dotfile symlinks
+    ./uninstall --list       # See what symlinks exist
     ./uninstall --dry-run    # Preview what would be removed
+    ./uninstall              # Remove all dotfile symlinks (with confirmation)
+    ./uninstall --force      # Remove without confirmation
+
+SAFETY:
+    - By default, asks for confirmation before removing
+    - Use --list to see what will be affected
+    - Use --dry-run to preview changes safely
+    - Your files in ${DOTFILES_DIR} are never deleted
 
 WARNING:
     This will remove all symlinks created by stow. Your configurations
@@ -100,12 +170,16 @@ unstow_package() {
         return 0
     fi
 
-    echo "  Unstowing ${package}..."
+    print_verbose "Unstowing ${package}..."
 
-    local stow_cmd="stow --delete --target=\"${STOW_TARGET}\" --ignore='^README.*' \"${package}\""
+    local stow_cmd="stow --delete --target=\"${STOW_TARGET}\" --ignore='^README.*' --dotfiles \"${package}\""
+
+    if [[ "${VERBOSE}" == "true" ]]; then
+        stow_cmd="${stow_cmd} --verbose=4"
+    fi
 
     if [[ "${DRY_RUN}" == "true" ]]; then
-        stow_cmd="stow --no --delete --target=\"${STOW_TARGET}\" --ignore='^README.*' \"${package}\""
+        stow_cmd="stow --no --delete --target=\"${STOW_TARGET}\" --ignore='^README.*' --dotfiles \"${package}\""
     fi
 
     if eval "cd '${DOTFILES_DIR}' && ${stow_cmd} 2>&1"; then
@@ -150,8 +224,16 @@ main() {
                 print_warning "DRY RUN MODE - No changes will be made"
                 shift
                 ;;
-            --force)
+            --force|-f)
                 FORCE=true
+                shift
+                ;;
+            --list|-l)
+                LIST_ONLY=true
+                shift
+                ;;
+            --verbose|-v)
+                VERBOSE=true
                 shift
                 ;;
             *)
@@ -167,6 +249,17 @@ main() {
 ║   Dotfiles Uninstallation Script     ║
 ╚═══════════════════════════════════════╝
 EOF
+
+    # If list-only mode, just show symlinks and exit
+    if [[ "${LIST_ONLY}" == "true" ]]; then
+        list_symlinks
+        exit 0
+    fi
+
+    # Show what will be removed
+    echo ""
+    print_header "Preview of changes"
+    list_symlinks
 
     # Confirmation
     if [[ "${FORCE}" != "true" ]] && [[ "${DRY_RUN}" != "true" ]]; then
