@@ -244,24 +244,27 @@ main() {
 
 ---
 
-#### � extract
+#### 📦 extract
+**Status**: ✅ KEEP & IMPROVE (Just updated!)
 **Semantic Goal**: Extract any archive format to current directory
 
-**Current**: Universal archive extractor
-**Dependencies**: Various (tar, unzip, 7z, etc.)
+**Current**: Cross-platform universal archive extractor
+**Platform**: macOS, Linux, Windows (with tools installed)
 
-**Cross-Platform Potential**: ⭐ HIGH VALUE
-- macOS: `tar`, `unzip`, `7z` (via homebrew)
-- Linux: `tar`, `unzip`, `7z`, `unrar`
-- Windows: `tar` (built-in), `Expand-Archive` (PowerShell), `7z`
+**Cross-Platform Implementation**:
+- Uses standard tools: `tar`, `unzip`, `7z`, `unrar`, etc.
+- Cross-platform path resolution (realpath/readlink/fallback)
+- Tool availability checks with helpful error messages
+- Works with: tar.gz, tar.bz2, tar.xz, zip, rar, 7z, gz, bz2, xz, lzma, Z, exe
 
-**Semantic Interface**: `extract file.{tar.gz,zip,7z,rar,...}`
-- Detects archive type from extension
-- Uses appropriate tool per OS
-- Extracts to current directory
-- Consistent output: "Extracted N files to ./directory"
+**Semantic Interface**: `extract [-c] <archive>`
+- `-c` flag to extract in current directory
+- Default: creates directory from archive name
+- `--help` flag for usage information
+- Verbose output showing extracted files
+- Consistent output: "✓ Extraction complete"
 
-**Proposed Action**: KEEP & IMPROVE - Perfect candidate for screenshot model
+**Action**: ✅ COMPLETED - Modernized with bash best practices
 
 ---
 
