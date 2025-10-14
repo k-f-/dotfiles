@@ -1,41 +1,213 @@
-#!/bin/sh
-# A general, all-purpose extraction script.
+#!/usr/bin/env bash
 #
-# Default behavior: Extract archive into new directory
-# Behavior with `-c` option: Extract contents into current directory
+# Cross-platform archive extraction utility
+# Automatically detects archive type and extracts using appropriate tool
+#
+# Usage: extract [OPTIONS] <archive>
+#   -c          Extract into current directory (default: create new directory)
+#   -h, --help  Show this help message
+#
+# Supported formats:
+#   tar.gz, tar.bz2, tar.xz, tgz, tbz2, zip, rar, 7z, gz, bz2, xz, lzma, Z, exe
+#
+# Works on: macOS, Linux, Windows (with appropriate tools installed)
 
-while getopts "hc" o; do case "${o}" in
-	c) extracthere="True" ;;
-	*) printf "Options:\\n   -c: Extract archive into current directory rather than a new one.\\n" && exit ;;
-esac done
+set -euo pipefail
 
-if [ -z "$extracthere" ]; then
-	archive="$(readlink -f "$*")" &&
-	directory="$(echo "$archive" | sed 's/\.[^\/.]*$//')" &&
-	mkdir -p "$directory" &&
-	cd "$directory" || exit
-else
-	archive="$(readlink -f "$(echo "$*" | cut -d' ' -f2)")"
-fi
+# Show help
+show_help() {
+    cat << EOF
+Cross-platform archive extraction utility
 
-[ "$archive" = "" ] && printf "Give archive to extract as argument.\\n" && exit
+Usage: extract [OPTIONS] <archive>
 
-if [ -f "$archive" ] ; then
-	case "$archive" in
-		*.tar.bz2|*.tar.xz|*.tbz2) tar xvjf "$archive" ;;
-		*.tar.gz|*.tgz) tar xvzf "$archive" ;;
-		*.lzma) unlzma "$archive" ;;
-		*.bz2) bunzip2 "$archive" ;;
-		*.rar) unrar x -ad "$archive" ;;
-		*.gz) gunzip "$archive" ;;
-		*.tar) tar xvf "$archive" ;;
-		*.zip) unzip "$archive" ;;
-		*.Z) uncompress "$archive" ;;
-		*.7z) 7z x "$archive" ;;
-		*.xz) unxz "$archive" ;;
-		*.exe) cabextract "$archive" ;;
-		*) printf "extract: '%s' - unknown archive method\\n" "$archive" ;;
-	esac
-else
-	printf "File \"%s\" not found.\\n" "$archive"
-fi
+OPTIONS:
+    -c          Extract into current directory
+                (default: create new directory named after archive)
+    -h, --help  Show this help message
+
+SUPPORTED FORMATS:
+    Compressed tarballs: .tar.gz, .tar.bz2, .tar.xz, .tgz, .tbz2
+    Archives:           .zip, .rar, .7z
+    Compressed files:   .gz, .bz2, .xz, .lzma, .Z
+    Windows:            .exe (cabinet files)
+
+EXAMPLES:
+    extract file.tar.gz          # Extract into ./file/ directory
+    extract -c file.zip          # Extract into current directory
+    extract archive.7z           # Extract into ./archive/ directory
+
+NOTES:
+    - Automatically creates directory from archive name (without extension)
+    - Detects archive type from file extension
+    - Uses native tools: tar, unzip, 7z, unrar, etc.
+    - Verbose output shows extracted files
+EOF
+}
+
+# Get absolute path (cross-platform)
+get_absolute_path() {
+    local path="$1"
+
+    # Try realpath first (common on Linux)
+    if command -v realpath &> /dev/null; then
+        realpath "$path" 2>/dev/null && return 0
+    fi
+
+    # Try readlink -f (GNU coreutils)
+    if readlink -f "$path" 2>/dev/null; then
+        return 0
+    fi
+
+    # Fallback for macOS (no readlink -f by default)
+    if [[ -e "$path" ]]; then
+        if [[ -d "$path" ]]; then
+            (cd "$path" && pwd)
+        else
+            echo "$(cd "$(dirname "$path")" && pwd)/$(basename "$path")"
+        fi
+    else
+        echo "Error: File not found: $path" >&2
+        return 1
+    fi
+}
+
+# Extract archive
+extract_archive() {
+    local archive="$1"
+    local extract_here="${2:-false}"
+
+    # Get absolute path to archive
+    local archive_path
+    if ! archive_path=$(get_absolute_path "$archive"); then
+        echo "Error: Could not resolve path: $archive" >&2
+        exit 1
+    fi
+
+    # Verify file exists
+    if [[ ! -f "$archive_path" ]]; then
+        echo "Error: File not found: $archive_path" >&2
+        exit 1
+    fi
+
+    # Determine extraction directory
+    if [[ "$extract_here" == "false" ]]; then
+        # Create directory from archive name (remove extension)
+        local directory
+        directory=$(basename "$archive_path" | sed 's/\.\(tar\.\)\?\(gz\|bz2\|xz\|zip\|rar\|7z\|lzma\|Z\|exe\|tgz\|tbz2\)$//')
+
+        mkdir -p "$directory"
+        cd "$directory" || exit 1
+        echo "Extracting into: $(pwd)/$directory/"
+    else
+        echo "Extracting into: $(pwd)/"
+    fi
+
+    # Extract based on file extension
+    case "$archive_path" in
+        *.tar.bz2|*.tbz2)
+            tar xvjf "$archive_path"
+            ;;
+        *.tar.gz|*.tgz)
+            tar xvzf "$archive_path"
+            ;;
+        *.tar.xz)
+            tar xvJf "$archive_path"
+            ;;
+        *.tar)
+            tar xvf "$archive_path"
+            ;;
+        *.zip)
+            unzip "$archive_path"
+            ;;
+        *.rar)
+            if command -v unrar &> /dev/null; then
+                unrar x -ad "$archive_path"
+            else
+                echo "Error: unrar not found. Install with: brew install unrar (macOS) or apt install unrar (Linux)" >&2
+                exit 1
+            fi
+            ;;
+        *.7z)
+            if command -v 7z &> /dev/null; then
+                7z x "$archive_path"
+            elif command -v 7za &> /dev/null; then
+                7za x "$archive_path"
+            else
+                echo "Error: 7z not found. Install with: brew install p7zip (macOS) or apt install p7zip-full (Linux)" >&2
+                exit 1
+            fi
+            ;;
+        *.gz)
+            gunzip -v "$archive_path"
+            ;;
+        *.bz2)
+            bunzip2 -v "$archive_path"
+            ;;
+        *.xz)
+            unxz -v "$archive_path"
+            ;;
+        *.lzma)
+            unlzma -v "$archive_path"
+            ;;
+        *.Z)
+            uncompress "$archive_path"
+            ;;
+        *.exe)
+            if command -v cabextract &> /dev/null; then
+                cabextract "$archive_path"
+            else
+                echo "Error: cabextract not found. Install with: brew install cabextract (macOS) or apt install cabextract (Linux)" >&2
+                exit 1
+            fi
+            ;;
+        *)
+            echo "Error: Unknown archive format: $archive_path" >&2
+            echo "Supported formats: tar.gz, tar.bz2, tar.xz, zip, rar, 7z, gz, bz2, xz, lzma, Z, exe" >&2
+            exit 1
+            ;;
+    esac
+
+    echo "✓ Extraction complete"
+}
+
+# Main
+main() {
+    local extract_here="false"
+    local archive=""
+
+    # Parse options
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -h|--help)
+                show_help
+                exit 0
+                ;;
+            -c)
+                extract_here="true"
+                shift
+                ;;
+            -*)
+                echo "Error: Unknown option: $1" >&2
+                echo "Run 'extract --help' for usage" >&2
+                exit 1
+                ;;
+            *)
+                archive="$1"
+                shift
+                ;;
+        esac
+    done
+
+    # Verify archive argument provided
+    if [[ -z "$archive" ]]; then
+        echo "Error: No archive specified" >&2
+        echo "Usage: extract [OPTIONS] <archive>" >&2
+        echo "Run 'extract --help' for more information" >&2
+        exit 1
+    fi
+
+    extract_archive "$archive" "$extract_here"
+}
+
+main "$@"
