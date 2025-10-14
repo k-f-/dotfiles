@@ -40,59 +40,77 @@ info "Checking iCloud Drive configuration..."
 
 ICLOUD_PATH="/Users/$USER/Library/Mobile Documents/com~apple~CloudDocs"
 
+# Function to check if a directory is using native iCloud sync
+is_icloud_synced() {
+    local dir="$1"
+    # Check for iCloud extended attributes (com.apple.icloud* attributes indicate native sync)
+    if [ -d "$dir" ]; then
+        if xattr "$dir" 2>/dev/null | grep -q "com.apple.icloud"; then
+            return 0
+        fi
+    fi
+    return 1
+}
+
 if [ -d "$ICLOUD_PATH" ]; then
     success "iCloud Drive detected at: $ICLOUD_PATH"
 
-    # Ask about Downloads symlink
-    if [ ! -L "$HOME/Downloads" ] && [ -d "$ICLOUD_PATH/Downloads" ]; then
-        ask "Create symlink for Downloads folder to iCloud Drive? (y/n)"
-        read -r response
-        if [[ "$response" =~ ^[Yy]$ ]]; then
-            # Backup existing Downloads if it exists and is not a symlink
-            if [ -d "$HOME/Downloads" ] && [ ! -L "$HOME/Downloads" ]; then
-                warning "Backing up existing Downloads to Downloads.backup"
-                mv "$HOME/Downloads" "$HOME/Downloads.backup"
-            fi
-            ln -svn "$ICLOUD_PATH/Downloads" "$HOME/Downloads"
-            success "Downloads symlinked to iCloud Drive"
-        fi
-    elif [ -L "$HOME/Downloads" ]; then
-        success "Downloads is already a symlink"
-    fi
+    info ""
+    info "iCloud Drive Sync Options:"
+    info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    info "You have two options for syncing folders with iCloud:"
+    info "  1. Native macOS iCloud sync (recommended for Documents/Desktop)"
+    info "  2. Manual symlinks (recommended for Downloads and custom folders)"
+    info ""
+    info "To enable native iCloud sync for Desktop & Documents:"
+    info "  → System Settings → Apple ID → iCloud Drive → Options"
+    info "  → Enable 'Desktop & Documents Folders'"
+    info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    info ""
 
-    # Ask about Documents symlink
-    if [ ! -L "$HOME/Documents" ] && [ -d "$ICLOUD_PATH/Documents" ]; then
-        ask "Create symlink for Documents folder to iCloud Drive? (y/n)"
-        read -r response
-        if [[ "$response" =~ ^[Yy]$ ]]; then
-            # Backup existing Documents if it exists and is not a symlink
-            if [ -d "$HOME/Documents" ] && [ ! -L "$HOME/Documents" ]; then
-                warning "Backing up existing Documents to Documents.backup"
-                mv "$HOME/Documents" "$HOME/Documents.backup"
-            fi
-            ln -svn "$ICLOUD_PATH/Documents" "$HOME/Documents"
-            success "Documents symlinked to iCloud Drive"
-        fi
-    elif [ -L "$HOME/Documents" ]; then
-        success "Documents is already a symlink"
-    fi
+    # Helper function to handle folder symlink
+    create_icloud_symlink() {
+        local folder_name="$1"
+        local home_path="$HOME/$folder_name"
+        local icloud_path="$ICLOUD_PATH/$folder_name"
 
-    # Ask about Desktop symlink (optional, some people prefer local)
-    if [ ! -L "$HOME/Desktop" ] && [ -d "$ICLOUD_PATH/Desktop" ]; then
-        ask "Create symlink for Desktop folder to iCloud Drive? (y/n)"
+        # Check if using native iCloud sync
+        if is_icloud_synced "$home_path"; then
+            success "$folder_name is using native macOS iCloud sync (recommended)"
+            return
+        fi
+
+        # Already a symlink
+        if [ -L "$home_path" ]; then
+            success "$folder_name is already a symlink"
+            return
+        fi
+
+        # iCloud folder doesn't exist
+        if [ ! -d "$icloud_path" ]; then
+            warning "iCloud $folder_name folder not found, skipping"
+            return
+        fi
+
+        # Ask user
+        ask "Create symlink for $folder_name folder to iCloud Drive? (y/n)"
         read -r response
         if [[ "$response" =~ ^[Yy]$ ]]; then
-            # Backup existing Desktop if it exists and is not a symlink
-            if [ -d "$HOME/Desktop" ] && [ ! -L "$HOME/Desktop" ]; then
-                warning "Backing up existing Desktop to Desktop.backup"
-                mv "$HOME/Desktop" "$HOME/Desktop.backup"
+            # Backup existing folder if it exists
+            if [ -d "$home_path" ] && [ ! -L "$home_path" ]; then
+                warning "Backing up existing $folder_name to ${folder_name}.backup"
+                mv "$home_path" "${home_path}.backup"
             fi
-            ln -svn "$ICLOUD_PATH/Desktop" "$HOME/Desktop"
-            success "Desktop symlinked to iCloud Drive"
+            ln -svn "$icloud_path" "$home_path"
+            success "$folder_name symlinked to iCloud Drive"
         fi
-    elif [ -L "$HOME/Desktop" ]; then
-        success "Desktop is already a symlink"
-    fi
+    }
+
+    # Process each folder
+    create_icloud_symlink "Downloads"
+    create_icloud_symlink "Documents"
+    create_icloud_symlink "Desktop"
+
 else
     warning "iCloud Drive not found. Skipping iCloud symlinks."
     warning "If you want to use iCloud Drive, enable it in System Settings > Apple ID > iCloud"
@@ -308,24 +326,17 @@ success "All macOS defaults configured!"
 warning "Some changes may require logging out and back in to take effect."
 
 #==============================================================================
-# Yabai Configuration (Optional - Requires SIP Disable)
+# System Integrity Protection (SIP) Status
 #==============================================================================
-info "Checking Yabai configuration..."
+info "Checking System Integrity Protection (SIP) status..."
+echo ""
 
 # Check SIP status
 csrutil status
 
-warning "For advanced Yabai features, System Integrity Protection (SIP) must be disabled."
-warning "This is OPTIONAL and reduces security. Only do this if you need advanced window management."
 echo ""
-info "To disable SIP:"
-echo "  1. Reboot into Recovery Mode (Command+R on Intel, hold power on Apple Silicon)"
-echo "  2. Open Terminal from Utilities menu"
-echo "  3. Run: csrutil disable"
-echo "  4. Reboot"
-echo ""
-info "After disabling SIP, add this line to /private/etc/sudoers.d/yabai:"
-echo "  $USER ALL = (root) NOPASSWD: sha256:$(shasum -a 256 $(which yabai) 2>/dev/null | awk "{print \$1;}") $(which yabai) --load-sa"
+info "Note: SIP is a macOS security feature. You typically want it enabled unless"
+info "      you need advanced system modifications (e.g., loading kernel extensions)."
 echo ""
 
 #==============================================================================
@@ -362,6 +373,32 @@ if command -v aerospace &> /dev/null; then
     # Check if Bun is installed (required for aerospace-layout-manager)
     if command -v bun &> /dev/null; then
         success "Bun runtime is installed"
+    else
+        warning "Bun is not installed (required for aerospace-layout-manager)"
+        ask "Install Bun runtime now? (y/n)"
+        read -r response
+        if [[ "$response" =~ ^[Yy]$ ]]; then
+            info "Installing Bun..."
+            if curl -fsSL https://bun.sh/install | bash; then
+                # Add Bun to PATH for current session
+                export BUN_INSTALL="$HOME/.bun"
+                export PATH="$BUN_INSTALL/bin:$PATH"
+                success "Bun installed successfully"
+            else
+                error "Failed to install Bun"
+                info "You can install it manually later with: curl -fsSL https://bun.sh/install | bash"
+                return
+            fi
+        else
+            warning "Skipping Bun installation"
+            info "aerospace-layout-manager requires Bun. Install it later with:"
+            echo "  curl -fsSL https://bun.sh/install | bash"
+            return
+        fi
+    fi
+
+    if command -v bun &> /dev/null; then
+        success "Bun runtime is available"
 
         # Check if aerospace-layout-manager is already installed globally
         if command -v aerospace-layout-manager &> /dev/null; then
@@ -378,22 +415,47 @@ if command -v aerospace &> /dev/null; then
                 info "Using aerospace-layout-manager from submodule..."
                 cd "$DOTFILES_DIR/aerospace-layout-manager"
 
+                # Make sure submodule is initialized and updated
+                git submodule update --init --recursive 2>/dev/null || true
+
                 # Install dependencies and link globally
                 bun install
                 bun link
 
                 success "aerospace-layout-manager installed from submodule"
             else
-                info "Submodule not found, installing via curl..."
-                if curl -fsSL https://raw.githubusercontent.com/CarterMcAlister/aerospace-layout-manager/main/install.sh | bash; then
-                    success "aerospace-layout-manager installed globally"
+                warning "Submodule not found at $DOTFILES_DIR/aerospace-layout-manager"
+                ask "Add aerospace-layout-manager as a git submodule? (recommended) (y/n)"
+                read -r response
+                if [[ "$response" =~ ^[Yy]$ ]]; then
+                    info "Adding submodule..."
+                    cd "$DOTFILES_DIR"
+                    if git submodule add https://github.com/CarterMcAlister/aerospace-layout-manager.git 2>/dev/null; then
+                        success "Submodule added"
+                        cd aerospace-layout-manager
+                        bun install
+                        bun link
+                        success "aerospace-layout-manager installed from submodule"
+                        info "Don't forget to commit the submodule:"
+                        echo "  cd $DOTFILES_DIR"
+                        echo "  git add .gitmodules aerospace-layout-manager"
+                        echo "  git commit -m 'Add aerospace-layout-manager submodule'"
+                    else
+                        error "Failed to add submodule"
+                        info "Falling back to global installation..."
+                        if curl -fsSL https://raw.githubusercontent.com/CarterMcAlister/aerospace-layout-manager/main/install.sh | bash; then
+                            success "aerospace-layout-manager installed globally"
+                        else
+                            error "Installation failed"
+                        fi
+                    fi
                 else
-                    warning "Failed to install aerospace-layout-manager via curl"
-                    info "You can manually add it as a submodule:"
-                    echo "  cd $DOTFILES_DIR"
-                    echo "  git submodule add https://github.com/CarterMcAlister/aerospace-layout-manager.git"
-                    echo "  cd aerospace-layout-manager"
-                    echo "  bun install && bun link"
+                    info "Installing via curl instead..."
+                    if curl -fsSL https://raw.githubusercontent.com/CarterMcAlister/aerospace-layout-manager/main/install.sh | bash; then
+                        success "aerospace-layout-manager installed globally"
+                    else
+                        error "Installation failed"
+                    fi
                 fi
             fi
         fi
@@ -436,7 +498,18 @@ if command -v mas &> /dev/null; then
     info "You can use 'mas uninstall <app_id>' to remove Mac App Store apps"
 else
     warning "mas (Mac App Store CLI) not found"
-    info "Install with: brew install mas"
+    ask "Install mas (Mac App Store CLI) now? (y/n)"
+    read -r response
+    if [[ "$response" =~ ^[Yy]$ ]]; then
+        info "Installing mas..."
+        if brew install mas; then
+            success "mas installed successfully"
+        else
+            error "Failed to install mas"
+        fi
+    else
+        info "Skipping mas installation. Install later with: brew install mas"
+    fi
 fi
 
 # Check if AppCleaner is installed
@@ -445,8 +518,22 @@ if [ -d "/Applications/AppCleaner.app" ]; then
     info "Use AppCleaner to completely remove applications and their files"
 else
     warning "AppCleaner not found"
-    info "AppCleaner helps completely remove apps and their associated files"
-    info "Download from: https://freemacsoft.net/appcleaner/"
+    ask "Install AppCleaner now? (y/n)"
+    read -r response
+    if [[ "$response" =~ ^[Yy]$ ]]; then
+        info "Installing AppCleaner via Homebrew..."
+        if brew install --cask appcleaner; then
+            success "AppCleaner installed successfully"
+            info "Launch AppCleaner from /Applications to configure it"
+        else
+            error "Failed to install AppCleaner"
+            info "Download manually from: https://freemacsoft.net/appcleaner/"
+        fi
+    else
+        info "Skipping AppCleaner installation"
+        info "Download later from: https://freemacsoft.net/appcleaner/"
+        info "Or install via Homebrew: brew install --cask appcleaner"
+    fi
 fi
 
 # Provide Homebrew cleanup commands
@@ -466,7 +553,7 @@ success "================================"
 echo ""
 info "Next steps:"
 echo "  1. Log out and back in for all changes to take effect"
-echo "  2. Review Yabai/SIP settings if needed"
+echo "  2. Review SIP status if you need system modifications"
 echo "  3. Run 'brew cleanup' to clean up Homebrew packages"
 echo "  4. Check System Settings to verify preferences"
 echo ""

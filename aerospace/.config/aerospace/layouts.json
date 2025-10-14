@@ -1,0 +1,97 @@
+{
+  "$schema": "https://raw.githubusercontent.com/CarterMcAlister/aerospace-layout-manager/main/layoutConfig.schema.json",
+  "stashWorkspace": "S",
+  "layouts": {
+    "comms": {
+      "workspace": "2",
+      "layout": "tiles",
+      "orientation": "horizontal",
+      "display": "main",
+      "windows": [
+        {
+          "orientation": "vertical",
+          "size": "1/3",
+          "windows": [
+            {
+              "bundleId": "com.apple.MobileSMS"
+            },
+            {
+              "bundleId": "org.whispersystems.signal-desktop"
+            }
+          ]
+        },
+        {
+          "bundleId": "com.spotify.client",
+          "size": "2/3"
+        }
+      ]
+    },
+    "code": {
+      "workspace": "4",
+      "layout": "h_tiles",
+      "orientation": "horizontal",
+      "display": "main",
+      "windows": [
+        {
+          "bundleId": "com.microsoft.VSCode",
+          "size": "2/3"
+        },
+        {
+          "orientation": "vertical",
+          "size": "1/3",
+          "windows": [
+            {
+              "bundleId": "net.kovidgoyal.kitty"
+            },
+            {
+              "bundleId": "com.googlecode.iterm2"
+            }
+          ]
+        }
+      ]
+    },
+    "browser": {
+      "workspace": "3",
+      "layout": "tiles",
+      "orientation": "horizontal",
+      "display": "main",
+      "windows": [
+        {
+          "bundleId": "org.mozilla.firefox"
+        }
+      ]
+    },
+    "org": {
+      "workspace": "5",
+      "layout": "v_tiles",
+      "orientation": "vertical",
+      "display": "main",
+      "windows": [
+        {
+          "bundleId": "com.apple.iCal",
+          "size": "1/2"
+        },
+        {
+          "bundleId": "com.apple.mail",
+          "size": "1/2"
+        }
+      ]
+    },
+    "start": {
+      "workspace": "1",
+      "layout": "tiles",
+      "orientation": "horizontal",
+      "display": "main",
+      "windows": [
+        {
+          "bundleId": "com.apple.finder",
+          "size": "2/3"
+        },
+        {
+          "bundleId": "com.apple.ActivityMonitor",
+          "size": "1/3"
+        }
+      ]
+    }
+  }
+}

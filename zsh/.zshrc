@@ -220,3 +220,10 @@ source ~/.bashrc.d/exports.bash
 source ~/.bashrc.d/variables.bash
 source ~/.bashrc.d/utils.bash
 source ~/.bashrc.d/path.bash
+
+# bun completions
+[ -s "/Users/kef/.bun/_bun" ] && source "/Users/kef/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"

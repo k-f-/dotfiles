@@ -1,3 +1,6 @@
 [submodule "kitty/.config/kitty/kitty_search"]
 	path = kitty/.config/kitty/kitty_search
 	url = https://github.com/trygveaa/kitty-kitten-search
+[submodule "aerospace-layout-manager"]
+	path = aerospace-layout-manager
+	url = https://github.com/CarterMcAlister/aerospace-layout-manager.git
