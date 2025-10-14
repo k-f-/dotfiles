@@ -106,10 +106,10 @@ HANDLING EXISTING FILES:
     By default, existing files are backed up to ~/.dotfiles-backup-TIMESTAMP/
     Existing symlinks to these dotfiles are detected and left alone.
     Broken symlinks are automatically removed.
-    
+
     If you have symlinks from a previous dotfiles location (e.g., Dropbox/Code/dotfiles),
     use --relink to automatically update them to the new location.
-    
+
     Use --dry-run to see what will happen before making changes.
 
 EXAMPLES:
@@ -230,13 +230,13 @@ backup_conflicts() {
         # If target is a symlink
         if [[ -L "${target_file}" ]]; then
             local link_target=$(readlink "${target_file}")
-            
+
             # Check if it points to our current dotfiles directory
             if [[ "${link_target}" == *"${DOTFILES_DIR}"* ]]; then
                 print_verbose "Symlink already managed: ${target_file}"
                 continue
             fi
-            
+
             # Check if it's a broken/stale symlink
             if [[ ! -e "${target_file}" ]]; then
                 print_warning "Removing broken symlink: ${target_file} -> ${link_target}"
@@ -245,7 +245,7 @@ backup_conflicts() {
                 fi
                 continue
             fi
-            
+
             # Check if it points to another dotfiles directory
             if is_dotfiles_symlink "${link_target}"; then
                 if [[ "${RELINK}" == "true" ]]; then
@@ -262,7 +262,7 @@ backup_conflicts() {
                 fi
                 continue
             fi
-            
+
             # Symlink to somewhere else (not dotfiles)
             print_warning "External symlink found: ${target_file} -> ${link_target}"
             if [[ "${DRY_RUN}" == "false" ]] && [[ "${FORCE}" == "true" ]]; then

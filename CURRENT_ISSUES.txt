@@ -1,4 +1,0 @@
-4	OPEN	Aerospace - Configure Layouts		2025-10-13T15:03:33Z
-3	OPEN	OSX Applications (Homebrew, AppStore, etc)		2025-10-13T15:21:13Z
-2	OPEN	OSX Install.sh		2025-10-13T15:04:31Z
-1	OPEN	Install on machine with existing symlinks.		2025-10-13T14:23:31Z

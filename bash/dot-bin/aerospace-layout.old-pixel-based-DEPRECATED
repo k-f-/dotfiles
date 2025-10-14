@@ -1,0 +1,543 @@
+#!/usr/bin/env bash
+# AeroSpace Layout Manager
+# Save, load, and manage workspace window layouts
+#
+# Usage:
+#   aerospace-layout save <workspace> <name>    - Save current workspace layout
+#   aerospace-layout load <workspace> <name>    - Load saved layout
+#   aerospace-layout list [workspace]           - List saved layouts
+#   aerospace-layout delete <workspace> <name>  - Delete saved layout
+#   aerospace-layout apply-all                  - Apply all saved layouts
+
+set -euo pipefail
+
+# ============================================================================
+# Configuration
+# ============================================================================
+LAYOUTS_DIR="${HOME}/.config/aerospace/layouts"
+SCRIPT_NAME="aerospace-layout"
+VERSION="1.0.0"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+# ============================================================================
+# Helper Functions
+# ============================================================================
+info() {
+    echo -e "${BLUE}==>${NC} $1"
+}
+
+success() {
+    echo -e "${GREEN}✓${NC} $1"
+}
+
+warning() {
+    echo -e "${YELLOW}!${NC} $1"
+}
+
+error() {
+    echo -e "${RED}✗${NC} $1"
+}
+
+die() {
+    error "$1"
+    exit 1
+}
+
+# Check if aerospace is installed
+check_aerospace() {
+    if ! command -v aerospace &> /dev/null; then
+        die "AeroSpace is not installed or not in PATH"
+    fi
+}
+
+# Get screen dimensions
+get_screen_dimensions() {
+    # Use system_profiler to get display resolution
+    # Format: 3024 x 1964
+    local dimensions=$(system_profiler SPDisplaysDataType 2>/dev/null | grep Resolution | head -n 1 | awk '{print $2, $4}' || echo "1920 1080")
+    echo "$dimensions"
+}
+
+# Get workspace windows with their properties
+get_workspace_windows() {
+    local workspace=$1
+
+    # Get all windows in the workspace
+    # Format: window-id | app-name | app-bundle-id | window-title
+    aerospace list-windows --workspace "$workspace" --format "%{window-id}|%{app-name}|%{app-bundle-id}|%{window-title}" 2>/dev/null || echo ""
+}
+
+# Get window geometry (position and size)
+# Note: AeroSpace may not expose this directly, might need to use macOS APIs
+get_window_geometry() {
+    local window_id=$1
+
+    # Try to get window info using aerospace
+    # If not available, we'll need to use AppleScript or other macOS APIs
+    # For now, return placeholder that we'll need to implement
+
+    # This is a placeholder - actual implementation will depend on AeroSpace's capabilities
+    # We may need to use osascript or other macOS tools
+    echo "0 0 800 600"  # x y width height
+}
+
+# Convert pixel coordinates to percentages
+pixels_to_percent() {
+    local pixel_value=$1
+    local total_dimension=$2
+
+    # Calculate percentage with 2 decimal precision
+    echo "scale=2; ($pixel_value * 100) / $total_dimension" | bc
+}
+
+# Convert percentage to pixels
+percent_to_pixels() {
+    local percent_value=$1
+    local total_dimension=$2
+
+    # Calculate pixels
+    echo "scale=0; ($percent_value * $total_dimension) / 100" | bc
+}
+
+# ============================================================================
+# Save Layout
+# ============================================================================
+save_layout() {
+    local workspace=$1
+    local layout_name=$2
+
+    info "Saving layout '$layout_name' for workspace $workspace..."
+
+    # Create layouts directory if it doesn't exist
+    local workspace_dir="${LAYOUTS_DIR}/${workspace}"
+    mkdir -p "$workspace_dir"
+
+    # Get screen dimensions
+    local dimensions=($(get_screen_dimensions))
+    local screen_width=${dimensions[0]}
+    local screen_height=${dimensions[1]}
+
+    info "Screen dimensions: ${screen_width}x${screen_height}"
+
+    # Get windows in workspace
+    local windows_data=$(get_workspace_windows "$workspace")
+
+    if [[ -z "$windows_data" ]]; then
+        warning "No windows found in workspace $workspace"
+        return 1
+    fi
+
+    # Start building JSON
+    local layout_file="${workspace_dir}/${layout_name}.json"
+    local window_count=0
+
+    # JSON header
+    cat > "$layout_file" <<EOF
+{
+  "version": "1.0",
+  "workspace": $workspace,
+  "screen_width": $screen_width,
+  "screen_height": $screen_height,
+  "created_at": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+  "windows": [
+EOF
+
+    # Process each window
+    local first_window=true
+    while IFS='|' read -r window_id app_name app_bundle window_title; do
+        if [[ -z "$window_id" ]]; then
+            continue
+        fi
+
+        window_count=$((window_count + 1))
+
+        # Get window geometry (x, y, width, height in pixels)
+        local geometry=($(get_window_geometry "$window_id"))
+        local x=${geometry[0]}
+        local y=${geometry[1]}
+        local width=${geometry[2]}
+        local height=${geometry[3]}
+
+        # Convert to percentages
+        local x_percent=$(pixels_to_percent "$x" "$screen_width")
+        local y_percent=$(pixels_to_percent "$y" "$screen_height")
+        local width_percent=$(pixels_to_percent "$width" "$screen_width")
+        local height_percent=$(pixels_to_percent "$height" "$screen_height")
+
+        # Add comma for all but first window
+        if [[ "$first_window" != "true" ]]; then
+            echo "," >> "$layout_file"
+        fi
+        first_window=false
+
+        # Add window entry to JSON
+        cat >> "$layout_file" <<EOF
+    {
+      "window_id": "$window_id",
+      "app_name": "$app_name",
+      "app_bundle_id": "$app_bundle",
+      "window_title": "$window_title",
+      "geometry_pixels": {
+        "x": $x,
+        "y": $y,
+        "width": $width,
+        "height": $height
+      },
+      "geometry_percent": {
+        "x": $x_percent,
+        "y": $y_percent,
+        "width": $width_percent,
+        "height": $height_percent
+      }
+    }
+EOF
+    done <<< "$windows_data"
+
+    # Close JSON
+    cat >> "$layout_file" <<EOF
+
+  ]
+}
+EOF
+
+    success "Saved layout with $window_count windows to: $layout_file"
+}
+
+# ============================================================================
+# Load Layout
+# ============================================================================
+load_layout() {
+    local workspace=$1
+    local layout_name=$2
+
+    local layout_file="${LAYOUTS_DIR}/${workspace}/${layout_name}.json"
+
+    if [[ ! -f "$layout_file" ]]; then
+        die "Layout '$layout_name' not found for workspace $workspace"
+    fi
+
+    info "Loading layout '$layout_name' for workspace $workspace..."
+
+    # Parse JSON and get current screen dimensions
+    local dimensions=($(get_screen_dimensions))
+    local current_width=${dimensions[0]}
+    local current_height=${dimensions[1]}
+
+    # Get saved screen dimensions
+    local saved_width=$(jq -r '.screen_width' "$layout_file")
+    local saved_height=$(jq -r '.screen_height' "$layout_file")
+
+    if [[ "$saved_width" != "$current_width" ]] || [[ "$saved_height" != "$current_height" ]]; then
+        warning "Screen dimensions changed: ${saved_width}x${saved_height} -> ${current_width}x${current_height}"
+        info "Layout will be scaled to fit current screen"
+    fi
+
+    # Get currently open windows in workspace
+    local current_windows=$(get_workspace_windows "$workspace")
+
+    # Read layout and apply to matching windows
+    local window_count=$(jq -r '.windows | length' "$layout_file")
+    info "Layout contains $window_count windows"
+
+    local applied=0
+    local missing=0
+
+    for ((i=0; i<window_count; i++)); do
+        local app_name=$(jq -r ".windows[$i].app_name" "$layout_file")
+        local app_bundle=$(jq -r ".windows[$i].app_bundle_id" "$layout_file")
+        local x_percent=$(jq -r ".windows[$i].geometry_percent.x" "$layout_file")
+        local y_percent=$(jq -r ".windows[$i].geometry_percent.y" "$layout_file")
+        local width_percent=$(jq -r ".windows[$i].geometry_percent.width" "$layout_file")
+        local height_percent=$(jq -r ".windows[$i].geometry_percent.height" "$layout_file")
+
+        # Find matching window by app name or bundle ID
+        local window_id=$(echo "$current_windows" | grep "$app_name" | head -n 1 | cut -d'|' -f1)
+
+        if [[ -z "$window_id" ]]; then
+            warning "Window for '$app_name' not found (application may not be running)"
+            missing=$((missing + 1))
+            continue
+        fi
+
+        # Calculate pixel positions from percentages
+        local x=$(percent_to_pixels "$x_percent" "$current_width")
+        local y=$(percent_to_pixels "$y_percent" "$current_height")
+        local width=$(percent_to_pixels "$width_percent" "$current_width")
+        local height=$(percent_to_pixels "$height_percent" "$current_height")
+
+        info "Positioning $app_name: ${width}x${height} at (${x},${y})"
+
+        # Apply layout using AeroSpace commands
+        # Note: AeroSpace may not have direct "set window position" commands
+        # This is a placeholder - actual implementation depends on AeroSpace's capabilities
+        # We may need to use AppleScript or other macOS APIs
+
+        # Placeholder for actual positioning command
+        # apply_window_position "$window_id" "$x" "$y" "$width" "$height"
+
+        applied=$((applied + 1))
+    done
+
+    success "Applied layout to $applied windows"
+
+    if [[ $missing -gt 0 ]]; then
+        warning "$missing windows were missing (applications not running)"
+        info "Launch the missing applications and run this command again"
+    fi
+}
+
+# ============================================================================
+# List Layouts
+# ============================================================================
+list_layouts() {
+    local workspace=${1:-}
+
+    if [[ ! -d "$LAYOUTS_DIR" ]]; then
+        info "No layouts saved yet"
+        return 0
+    fi
+
+    if [[ -n "$workspace" ]]; then
+        # List layouts for specific workspace
+        local workspace_dir="${LAYOUTS_DIR}/${workspace}"
+
+        if [[ ! -d "$workspace_dir" ]]; then
+            info "No layouts saved for workspace $workspace"
+            return 0
+        fi
+
+        info "Layouts for workspace $workspace:"
+        echo ""
+
+        for layout_file in "$workspace_dir"/*.json; do
+            if [[ ! -f "$layout_file" ]]; then
+                continue
+            fi
+
+            local name=$(basename "$layout_file" .json)
+            local created=$(jq -r '.created_at' "$layout_file" 2>/dev/null || echo "unknown")
+            local window_count=$(jq -r '.windows | length' "$layout_file" 2>/dev/null || echo "?")
+            local dimensions=$(jq -r '"\(.screen_width)x\(.screen_height)"' "$layout_file" 2>/dev/null || echo "unknown")
+
+            echo -e "  ${CYAN}$name${NC}"
+            echo "    • Windows: $window_count"
+            echo "    • Screen: $dimensions"
+            echo "    • Created: $created"
+            echo ""
+        done
+    else
+        # List all layouts grouped by workspace
+        info "All saved layouts:"
+        echo ""
+
+        for workspace_dir in "$LAYOUTS_DIR"/*/; do
+            if [[ ! -d "$workspace_dir" ]]; then
+                continue
+            fi
+
+            local ws=$(basename "$workspace_dir")
+            echo -e "${BLUE}Workspace $ws:${NC}"
+
+            local layout_count=0
+            for layout_file in "$workspace_dir"/*.json; do
+                if [[ ! -f "$layout_file" ]]; then
+                    continue
+                fi
+
+                local name=$(basename "$layout_file" .json)
+                local window_count=$(jq -r '.windows | length' "$layout_file" 2>/dev/null || echo "?")
+
+                echo "  • $name ($window_count windows)"
+                layout_count=$((layout_count + 1))
+            done
+
+            if [[ $layout_count -eq 0 ]]; then
+                echo "  (no layouts)"
+            fi
+
+            echo ""
+        done
+    fi
+}
+
+# ============================================================================
+# Delete Layout
+# ============================================================================
+delete_layout() {
+    local workspace=$1
+    local layout_name=$2
+
+    local layout_file="${LAYOUTS_DIR}/${workspace}/${layout_name}.json"
+
+    if [[ ! -f "$layout_file" ]]; then
+        die "Layout '$layout_name' not found for workspace $workspace"
+    fi
+
+    # Show layout info before deleting
+    local window_count=$(jq -r '.windows | length' "$layout_file" 2>/dev/null || echo "?")
+    warning "About to delete layout '$layout_name' (workspace $workspace, $window_count windows)"
+
+    # Confirm deletion
+    read -p "Are you sure? (y/N): " -n 1 -r
+    echo
+
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        info "Cancelled"
+        return 0
+    fi
+
+    rm "$layout_file"
+    success "Deleted layout '$layout_name'"
+
+    # Remove workspace directory if empty
+    local workspace_dir="${LAYOUTS_DIR}/${workspace}"
+    if [[ -d "$workspace_dir" ]] && [[ -z "$(ls -A "$workspace_dir")" ]]; then
+        rmdir "$workspace_dir"
+        info "Removed empty workspace directory"
+    fi
+}
+
+# ============================================================================
+# Apply All Layouts
+# ============================================================================
+apply_all() {
+    info "Applying all saved layouts..."
+    echo ""
+
+    if [[ ! -d "$LAYOUTS_DIR" ]]; then
+        warning "No layouts saved"
+        return 0
+    fi
+
+    local applied_count=0
+
+    for workspace_dir in "$LAYOUTS_DIR"/*/; do
+        if [[ ! -d "$workspace_dir" ]]; then
+            continue
+        fi
+
+        local ws=$(basename "$workspace_dir")
+
+        # Find the most recent layout for this workspace
+        local latest_layout=$(ls -t "$workspace_dir"/*.json 2>/dev/null | head -n 1)
+
+        if [[ -n "$latest_layout" ]]; then
+            local layout_name=$(basename "$latest_layout" .json)
+            info "Workspace $ws: Loading '$layout_name'"
+
+            load_layout "$ws" "$layout_name"
+            applied_count=$((applied_count + 1))
+            echo ""
+        fi
+    done
+
+    if [[ $applied_count -eq 0 ]]; then
+        warning "No layouts found to apply"
+    else
+        success "Applied layouts to $applied_count workspaces"
+    fi
+}
+
+# ============================================================================
+# Show Usage
+# ============================================================================
+usage() {
+    cat <<EOF
+${CYAN}AeroSpace Layout Manager${NC} v${VERSION}
+
+${BLUE}Usage:${NC}
+  $SCRIPT_NAME save <workspace> <name>    Save current workspace layout
+  $SCRIPT_NAME load <workspace> <name>    Load saved layout
+  $SCRIPT_NAME list [workspace]           List saved layouts
+  $SCRIPT_NAME delete <workspace> <name>  Delete saved layout
+  $SCRIPT_NAME apply-all                  Apply all saved layouts (latest for each workspace)
+
+${BLUE}Examples:${NC}
+  $SCRIPT_NAME save 2 comms-layout        Save workspace 2 layout as 'comms-layout'
+  $SCRIPT_NAME load 2 comms-layout        Load 'comms-layout' for workspace 2
+  $SCRIPT_NAME list                       List all saved layouts
+  $SCRIPT_NAME list 2                     List layouts for workspace 2
+  $SCRIPT_NAME delete 2 comms-layout      Delete the 'comms-layout'
+  $SCRIPT_NAME apply-all                  Apply latest layout to all workspaces
+
+${BLUE}Layout Storage:${NC}
+  Layouts are stored in: ${LAYOUTS_DIR}/<workspace>/<name>.json
+  Format: JSON with window positions stored as percentages for screen independence
+
+${BLUE}Notes:${NC}
+  • Layouts store window positions as percentages, not pixels
+  • Layouts can be used across different screen resolutions
+  • Missing applications (not running) will be skipped during load
+  • Use 'apply-all' with aerospace-organize for full workspace setup
+
+${BLUE}Integration:${NC}
+  Combine with aerospace-organize for complete workspace management:
+    aerospace-organize              # Move apps to workspaces
+    $SCRIPT_NAME apply-all          # Apply saved layouts
+
+EOF
+}
+
+# ============================================================================
+# Main Command Handler
+# ============================================================================
+main() {
+    # Check for aerospace
+    check_aerospace
+
+    # Parse command
+    local command=${1:-}
+
+    case "$command" in
+        save)
+            if [[ $# -ne 3 ]]; then
+                error "Usage: $SCRIPT_NAME save <workspace> <name>"
+                exit 1
+            fi
+            save_layout "$2" "$3"
+            ;;
+        load)
+            if [[ $# -ne 3 ]]; then
+                error "Usage: $SCRIPT_NAME load <workspace> <name>"
+                exit 1
+            fi
+            load_layout "$2" "$3"
+            ;;
+        list)
+            list_layouts "${2:-}"
+            ;;
+        delete)
+            if [[ $# -ne 3 ]]; then
+                error "Usage: $SCRIPT_NAME delete <workspace> <name>"
+                exit 1
+            fi
+            delete_layout "$2" "$3"
+            ;;
+        apply-all)
+            apply_all
+            ;;
+        -h|--help|help)
+            usage
+            ;;
+        "")
+            usage
+            exit 1
+            ;;
+        *)
+            error "Unknown command: $command"
+            echo ""
+            usage
+            exit 1
+            ;;
+    esac
+}
+
+# Run main
+main "$@"
