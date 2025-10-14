@@ -5,6 +5,9 @@ export ZSH="$HOME/.oh-my-zsh"
 export ZSH_CUSTOM="$ZSH/custom"
 export GPG_TTY=$(tty)
 
+# Disable oh-my-zsh theme - we use custom prompt below
+ZSH_THEME=""
+
 DISABLE_UPDATE_PROMPT="true"
 # Uncomment the following line if pasting URLs and other text is messed up.
 DISABLE_MAGIC_FUNCTIONS="true"
@@ -132,13 +135,61 @@ bindkey '^[f' vi-forward-word                     # Alt+F
 setopt PROMPT_SUBST
 autoload -Uz vcs_info
 
-# Configure vcs_info for git
+# Configure vcs_info for git with detailed status
 zstyle ':vcs_info:*' enable git
-zstyle ':vcs_info:git:*' formats ' %F{blue}git%f:%F{red}%b%f%F{yellow}%u%c%f'
-zstyle ':vcs_info:git:*' actionformats ' %F{blue}git%f:%F{red}%b%f|%F{yellow}%a%f'
-zstyle ':vcs_info:git:*' check-for-changes true
-zstyle ':vcs_info:git:*' unstagedstr '…'
-zstyle ':vcs_info:git:*' stagedstr '+'
+zstyle ':vcs_info:*' check-for-changes true
+zstyle ':vcs_info:*' unstagedstr '%F{yellow}●%f'     # Yellow dot for unstaged changes
+zstyle ':vcs_info:*' stagedstr '%F{green}●%f'        # Green dot for staged changes
+
+# Format strings - basic and during actions (merge, rebase, etc.)
+zstyle ':vcs_info:git:*' formats ' %F{blue}git%f:%F{red}%b%f%u%c%m'
+zstyle ':vcs_info:git:*' actionformats ' %F{blue}git%f:%F{red}%b%f|%F{yellow}%a%f%u%c%m'
+
+# Enable custom git status hooks
+zstyle ':vcs_info:git*+set-message:*' hooks git-untracked git-stash git-remotebranch
+
+# Hook: Show indicator for untracked files
++vi-git-untracked() {
+    if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' ]] && \
+       git status --porcelain | grep -q '^?? ' 2> /dev/null ; then
+        hook_com[staged]+="%F{red}●%f"  # Red dot for untracked files
+    fi
+}
+
+# Hook: Show stash indicator
++vi-git-stash() {
+    local -a stashes
+    if [[ -s ${hook_com[base]}/.git/refs/stash ]] ; then
+        stashes=$(git stash list 2>/dev/null | wc -l | tr -d ' ')
+        hook_com[misc]+="%F{cyan}⚑${stashes}%f"  # Cyan flag with count
+    fi
+}
+
+# Hook: Show remote tracking branch status (ahead/behind)
++vi-git-remotebranch() {
+    local ahead behind
+    local -a gitstatus
+
+    # Check if we're in a git repo
+    [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) != 'true' ]] && return
+
+    # Get ahead/behind counts
+    local remote_branch=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null)
+
+    if [[ -n ${remote_branch} ]] ; then
+        ahead=$(git rev-list ${remote_branch}..HEAD 2>/dev/null | wc -l | tr -d ' ')
+        behind=$(git rev-list HEAD..${remote_branch} 2>/dev/null | wc -l | tr -d ' ')
+
+        if [[ $ahead -gt 0 ]] ; then
+            gitstatus+="%F{green}↑${ahead}%f"
+        fi
+        if [[ $behind -gt 0 ]] ; then
+            gitstatus+="%F{red}↓${behind}%f"
+        fi
+
+        hook_com[misc]+="${(j::)gitstatus}"
+    fi
+}
 
 # Hook to run vcs_info before each prompt
 precmd() {
