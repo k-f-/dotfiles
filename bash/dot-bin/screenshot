@@ -1,8 +1,210 @@
-#!/bin/sh
+#!/usr/bin/env bash
+#
+# Cross-platform screenshot tool
+# Takes a screenshot and copies the path to clipboard
+#
+# Usage: screenshot [OPTIONS]
+#   --help      Show this help message
+#   --select    Select area (default)
+#   --window    Capture active window
+#   --full      Capture full screen
 
-# Trigger `scrot`, which takes the screenshot, then move the screenshot to the
-# appropriate directory.
-scrot --select --exec 'mv $f ~/Dropbox/screenshots/.'
+set -euo pipefail
 
-# Copy the path to the newest screenshot into my clipboard for pasting.
-find ~/Dropbox/screenshots/* | tail -1 | xsel --clipboard --input
+# Detect OS
+detect_os() {
+    case "$(uname -s)" in
+        Darwin*)    echo "macos" ;;
+        Linux*)     echo "linux" ;;
+        MINGW*|MSYS*|CYGWIN*) echo "windows" ;;
+        *)          echo "unknown" ;;
+    esac
+}
+
+# Get screenshot directory
+get_screenshot_dir() {
+    local os="$1"
+    
+    # Check for iCloud Drive first (macOS)
+    if [[ "$os" == "macos" ]] && [[ -d "$HOME/Library/Mobile Documents/com~apple~CloudDocs/Screenshots" ]]; then
+        echo "$HOME/Library/Mobile Documents/com~apple~CloudDocs/Screenshots"
+    # Check for Dropbox
+    elif [[ -d "$HOME/Dropbox/screenshots" ]]; then
+        echo "$HOME/Dropbox/screenshots"
+    # Fallback to standard locations
+    elif [[ "$os" == "macos" ]]; then
+        echo "$HOME/Desktop"
+    elif [[ "$os" == "linux" ]]; then
+        echo "$HOME/Pictures/Screenshots"
+    elif [[ "$os" == "windows" ]]; then
+        echo "$HOME/Pictures/Screenshots"
+    else
+        echo "$HOME/Pictures"
+    fi
+}
+
+# Copy to clipboard
+copy_to_clipboard() {
+    local file="$1"
+    local os="$2"
+    
+    case "$os" in
+        macos)
+            echo -n "$file" | pbcopy
+            ;;
+        linux)
+            if command -v xsel &> /dev/null; then
+                echo -n "$file" | xsel --clipboard --input
+            elif command -v xclip &> /dev/null; then
+                echo -n "$file" | xclip -selection clipboard
+            else
+                echo "Warning: No clipboard tool found (install xsel or xclip)" >&2
+            fi
+            ;;
+        windows)
+            echo -n "$file" | clip.exe
+            ;;
+    esac
+}
+
+# Take screenshot
+take_screenshot() {
+    local mode="$1"
+    local output_file="$2"
+    local os="$3"
+    
+    case "$os" in
+        macos)
+            case "$mode" in
+                select)
+                    screencapture -i "$output_file"
+                    ;;
+                window)
+                    screencapture -iw "$output_file"
+                    ;;
+                full)
+                    screencapture "$output_file"
+                    ;;
+            esac
+            ;;
+        linux)
+            if command -v scrot &> /dev/null; then
+                case "$mode" in
+                    select)
+                        scrot --select "$output_file"
+                        ;;
+                    window)
+                        scrot --focused "$output_file"
+                        ;;
+                    full)
+                        scrot "$output_file"
+                        ;;
+                esac
+            elif command -v gnome-screenshot &> /dev/null; then
+                case "$mode" in
+                    select)
+                        gnome-screenshot -a -f "$output_file"
+                        ;;
+                    window)
+                        gnome-screenshot -w -f "$output_file"
+                        ;;
+                    full)
+                        gnome-screenshot -f "$output_file"
+                        ;;
+                esac
+            else
+                echo "Error: No screenshot tool found (install scrot or gnome-screenshot)" >&2
+                exit 1
+            fi
+            ;;
+        windows)
+            # Windows Snipping Tool or PowerShell
+            echo "Error: Windows screenshot not yet implemented" >&2
+            echo "Use Windows Snipping Tool (Win+Shift+S) or PowerShell screenshot module" >&2
+            exit 1
+            ;;
+        *)
+            echo "Error: Unsupported OS" >&2
+            exit 1
+            ;;
+    esac
+}
+
+# Show help
+show_help() {
+    cat << EOF
+Cross-platform screenshot tool
+
+Usage: screenshot [OPTIONS]
+
+OPTIONS:
+    --help      Show this help message
+    --select    Select area (default)
+    --window    Capture active window
+    --full      Capture full screen
+
+The screenshot is saved to:
+  - iCloud Screenshots (macOS with iCloud)
+  - ~/Dropbox/screenshots (if Dropbox exists)
+  - OS-specific defaults (Desktop/Pictures)
+
+The file path is automatically copied to clipboard.
+EOF
+}
+
+# Main
+main() {
+    local mode="select"
+    
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --help|-h)
+                show_help
+                exit 0
+                ;;
+            --select|-s)
+                mode="select"
+                shift
+                ;;
+            --window|-w)
+                mode="window"
+                shift
+                ;;
+            --full|-f)
+                mode="full"
+                shift
+                ;;
+            *)
+                echo "Unknown option: $1" >&2
+                echo "Run 'screenshot --help' for usage" >&2
+                exit 1
+                ;;
+        esac
+    done
+    
+    local os=$(detect_os)
+    local screenshot_dir=$(get_screenshot_dir "$os")
+    
+    # Create directory if it doesn't exist
+    mkdir -p "$screenshot_dir"
+    
+    # Generate filename with timestamp
+    local timestamp=$(date +%Y%m%d_%H%M%S)
+    local output_file="${screenshot_dir}/screenshot_${timestamp}.png"
+    
+    # Take screenshot
+    take_screenshot "$mode" "$output_file" "$os"
+    
+    # Check if screenshot was created
+    if [[ -f "$output_file" ]]; then
+        echo "Screenshot saved: $output_file"
+        copy_to_clipboard "$output_file" "$os"
+        echo "Path copied to clipboard"
+    else
+        echo "Error: Screenshot was not created" >&2
+        exit 1
+    fi
+}
+
+main "$@"
