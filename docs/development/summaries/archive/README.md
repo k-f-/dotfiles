@@ -14,7 +14,9 @@ Documents are moved here when:
 <!-- Add entries when archiving, most recent first -->
 <!-- Format: - `ARCHIVED-YYYY-MM-DD-filename.md` - Brief reason for archiving -->
 
-*No archived documents yet.*
+- `ARCHIVED-2025-10-14-before-after.md` - Refactor before/after comparison (work complete, references old filenames)
+- `ARCHIVED-2025-10-14-summary.md` - Refactor summary (references REFACTOR_PLAN.md and install.new - now obsolete)
+- `ARCHIVED-2025-10-14-issues-detail.md` - Detailed GitHub issues analysis (all issues now resolved)
 
 ---
 
