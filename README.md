@@ -10,13 +10,16 @@ This repository contains my personal configuration files (dotfiles) for various 
 
 ### What's Included
 
-- **Shell**: Bash and Zsh configurations
+- **Shell**: Bash and Zsh configurations with enhanced prompts
+- **Window Management**: AeroSpace (i3-like tiling WM for macOS)
 - **Editor**: Vim, Emacs, and Doom Emacs
 - **Development**: Git, SSH, GPG
 - **Terminal**: Kitty terminal emulator
-- **macOS**: Yabai (tiling WM), skhd (hotkey daemon), Sketchybar
+- **macOS**: Yabai, skhd, Sketchybar
 - **Email**: mbsync, msmtp, mu (email workflow)
 - **Other**: X11 configs, YouTube downloader settings
+
+**📖 See [KEYBINDINGS.md](KEYBINDINGS.md) for complete keyboard shortcuts reference**
 
 ## 🚀 Quick Start
 
@@ -77,7 +80,37 @@ OPTIONS:
   --no-packages   Skip package manager installations
   --minimal       Install only core packages (bash, git, vim, zsh)
   --verbose       Show detailed output
+  --force         Skip backups and overwrite existing files
 ```
+
+## ⌨️ Quick Reference
+
+After installation, these shortcuts and commands are immediately available:
+
+### Keyboard Shortcuts (macOS + AeroSpace)
+- **`Alt + h/j/k/l`** - Navigate windows (Vim-style)
+- **`Alt + Tab`** - Switch between workspaces 
+- **`Alt + \``** - Cycle windows within same app (native macOS)
+- **`Alt + 1-6`** - Jump to workspace 1-6
+- **`Alt + Shift + o`** - Auto-organize windows into workspaces
+- **`Alt + Shift + d`** - Open dotfiles in editor
+- **`Cmd + Enter`** - Open terminal
+
+### Terminal Commands & Aliases
+```bash
+dotfiles      # Open dotfiles directory in editor
+dots          # Short alias
+gs            # git status -s
+gg            # git grep -n  
+em            # Smart editor (VS Code → neovim → vim)
+```
+
+### Terminal Shortcuts
+- **`Ctrl + r`** - Fuzzy search command history
+- **`Up/Down`** - Search history by prefix
+- **`Ctrl + Space`** - Accept autosuggestion
+
+📖 **See [KEYBINDINGS.md](KEYBINDINGS.md) for complete reference**
 
 ## 📦 Package Structure
 
