@@ -1,17 +1,113 @@
 #!/usr/bin/env bash
+#
+# Cross-platform screen lock utility
+# Locks the screen using native OS tools
+#
+# Usage: lock [OPTIONS]
+#   --help      Show this help message
+#
+# Works on: macOS, Linux, Windows
 
-# set the icon and a temporary location for the screenshot to be stored
-icon="$HOME/.wallpaper/lock-icon.png"
-tmpbg='/tmp/screen.png'
+set -euo pipefail
 
-# take a screenshot
-scrot "$tmpbg"
+# Detect OS
+detect_os() {
+    case "$(uname -s)" in
+        Darwin*)    echo "macos" ;;
+        Linux*)     echo "linux" ;;
+        MINGW*|MSYS*|CYGWIN*) echo "windows" ;;
+        *)          echo "unknown" ;;
+    esac
+}
 
-# blur the screenshot by resizing and scaling back up
-convert "$tmpbg" -filter Gaussian -thumbnail 20% -sample 500% "$tmpbg"
+# Lock screen using OS-native tools
+lock_screen() {
+    local os="$1"
 
-# overlay the icon onto the screebnshot
-# convert "$tmpbg" "$icon" -gravity center -composite "$tmpbg"
+    case "$os" in
+        macos)
+            # macOS: Use pmset to sleep display (faster) or osascript for full lock
+            if command -v pmset &> /dev/null; then
+                # Sleep display immediately (requires password on wake if enabled in settings)
+                pmset displaysleepnow
+            else
+                # Alternative: Use osascript to trigger screensaver/lock
+                osascript -e 'tell application "System Events" to keystroke "q" using {control down, command down}'
+            fi
+            ;;
+        linux)
+            # Linux: Try multiple lock methods in order of preference
+            if command -v loginctl &> /dev/null; then
+                # Modern systemd-based systems
+                loginctl lock-session
+            elif command -v xdg-screensaver &> /dev/null; then
+                # Standard X11 screensaver interface
+                xdg-screensaver lock
+            elif command -v gnome-screensaver-command &> /dev/null; then
+                # GNOME-specific
+                gnome-screensaver-command --lock
+            elif command -v dm-tool &> /dev/null; then
+                # LightDM display manager
+                dm-tool lock
+            elif command -v i3lock &> /dev/null; then
+                # i3 window manager (simple lock without blur effects)
+                i3lock -c 000000
+            else
+                echo "Error: No screen lock tool found" >&2
+                echo "Install one of: systemd (loginctl), xdg-screensaver, gnome-screensaver, lightdm, i3lock" >&2
+                exit 1
+            fi
+            ;;
+        windows)
+            # Windows: Use rundll32 to lock workstation
+            rundll32.exe user32.dll,LockWorkStation
+            ;;
+        *)
+            echo "Error: Unsupported OS" >&2
+            exit 1
+            ;;
+    esac
+}
 
-# lock the screen with the blurred screenshot
-i3lock -i "$tmpbg" -e -c 000000
+# Show help
+show_help() {
+    cat << EOF
+Cross-platform screen lock utility
+
+Usage: lock [OPTIONS]
+
+OPTIONS:
+    --help, -h    Show this help message
+
+Locks the screen immediately using native OS tools:
+  - macOS: pmset displaysleepnow (sleeps display)
+  - Linux: loginctl lock-session, xdg-screensaver, or i3lock
+  - Windows: rundll32.exe user32.dll,LockWorkStation
+
+Note: On macOS, ensure "Require password immediately after sleep or screen saver begins"
+is enabled in System Settings → Lock Screen for security.
+EOF
+}
+
+# Main
+main() {
+    # Parse arguments
+    if [[ $# -gt 0 ]]; then
+        case "$1" in
+            --help|-h)
+                show_help
+                exit 0
+                ;;
+            *)
+                echo "Unknown option: $1" >&2
+                echo "Run 'lock --help' for usage" >&2
+                exit 1
+                ;;
+        esac
+    fi
+
+    local os=$(detect_os)
+    lock_screen "$os"
+}
+
+main "$@"
