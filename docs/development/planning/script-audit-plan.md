@@ -191,17 +191,23 @@ main() {
 ---
 
 #### 🎨 diff-so-fancy
-**Semantic Goal**: N/A (Binary tool, not a script)
+**Status**: **ARCHIVE** (Use package manager instead)
+**Semantic Goal**: Enhanced git diff formatter
 
-**Current**: Git diff formatter (likely the actual binary)
-**Dependencies**: None (self-contained)
+**Current**: Fatpacked Perl script (1059 lines, self-contained)
+**Dependencies**: Perl (built-in on macOS/Linux)
+**Platform**: Cross-platform
 
-**Questions**:
-- Is this a symlink or actual binary?
-- Still using for git diffs?
-- Better to install via package manager? (brew, apt, choco)
+**Evaluation**:
+- Large fatpacked Perl script (hard to maintain in dotfiles)
+- Available via package managers:
+  - macOS: `brew install diff-so-fancy`
+  - Linux: `apt install diff-so-fancy` or `dnf install diff-so-fancy`
+  - Windows: `scoop install diff-so-fancy` or `choco install diff-so-fancy`
+- Better to install via package manager (gets updates, easier to manage)
+- Can still be configured in git config
 
-**Proposed Action**: TBD - Likely ARCHIVE (use package manager instead)
+**Action**: **ARCHIVE** - Document installation via package manager, remove from dot-bin
 
 ---
 
@@ -299,16 +305,23 @@ main() {
 ---
 
 #### 📊 gotop
-**Semantic Goal**: N/A (Binary tool, not a script)
+**Status**: **ARCHIVE** (Use package manager instead)
+**Semantic Goal**: System monitor/resource viewer
 
-**Current**: System monitor (likely the binary)
-**Dependencies**: None (self-contained)
+**Current**: Binary executable (not a script)
+**Dependencies**: None (self-contained binary)
+**Platform**: Platform-specific binaries needed
 
-**Questions**:
-- Is this a binary? (`file bash/dot-bin/gotop`)
-- Better to install via package manager? (brew, apt, choco)
+**Evaluation**:
+- This is a compiled binary, not a script
+- Binaries don't belong in dotfiles (platform-specific, large, no source)
+- Available via package managers:
+  - macOS: `brew install gotop`
+  - Linux: `snap install gotop` or download from GitHub releases
+  - Windows: `scoop install gotop`
+- Better to install via package manager (gets updates, correct architecture)
 
-**Proposed Action**: TBD - Likely ARCHIVE (use package manager instead)
+**Action**: **ARCHIVE** - Document installation via package manager, remove binary from dot-bin
 
 ---
 
@@ -319,7 +332,7 @@ main() {
 **Current**: Image compression script using ImageMagick
 **Dependencies**: ImageMagick (`magick` command)
 **Platform**: Cross-platform (ImageMagick available on all platforms)
-**Current Issues**: 
+**Current Issues**:
 - Bug: Uses undefined variable `$FILE` instead of `$FILE1`
 - No help text or error handling
 - Hardcoded output suffix and quality
