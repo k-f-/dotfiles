@@ -7,13 +7,30 @@
 
 set -euo pipefail
 
+# Log file for debugging
+LOG_FILE="/tmp/aerospace-organize.log"
+
+# Log start time
+echo "=== $(date) ===" >> "$LOG_FILE"
+
 # Get all available layouts
-layouts=$(aerospace-layout-manager --listLayouts)
+if ! layouts=$(aerospace-layout-manager --listLayouts 2>&1); then
+    echo "ERROR: Failed to list layouts: $layouts" >> "$LOG_FILE"
+    osascript -e 'display notification "Failed to list layouts" with title "Aerospace Organize"'
+    exit 1
+fi
+
+echo "Found layouts: $layouts" >> "$LOG_FILE"
 
 # Apply each layout
 for layout in $layouts; do
-    echo "Applying layout: $layout"
-    aerospace-layout-manager "$layout" 2>/dev/null || true
+    echo "Applying layout: $layout" >> "$LOG_FILE"
+    if aerospace-layout-manager "$layout" 2>>"$LOG_FILE"; then
+        echo "  ✓ Applied: $layout" >> "$LOG_FILE"
+    else
+        echo "  ✗ Failed: $layout" >> "$LOG_FILE"
+    fi
 done
 
-echo "✓ All layouts applied"
+echo "✓ All layouts applied" >> "$LOG_FILE"
+osascript -e 'display notification "All layouts applied" with title "Aerospace Organize"'
