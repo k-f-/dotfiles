@@ -212,22 +212,24 @@ main() {
 ---
 
 #### 🖥️ disp-external-and-laptop.sh / disp-laptop-only.sh
+**Status**: **ARCHIVED** (Moved to scripts/archive/)
 **Semantic Goal**: Configure display layout (multiple displays vs laptop only)
 
-**Current**: Display configuration scripts
-**Platform**: Linux-only (xrandr)
+**Current**: Hardcoded xrandr configuration scripts (Linux-only)
+**Platform**: Linux-only (xrandr, X11)
+**Issues**: Hardcoded to specific hardware (eDP1, HDMI1)
 
-**Cross-Platform Potential**:
-- macOS: `displayplacer` or native System APIs
-- Linux: `xrandr`, `wlr-randr` (Wayland)
-- Windows: `DisplaySwitch.exe`, PowerShell `Set-DisplayResolution`
+**Evaluation**:
+- Very specific to old laptop hardware configuration
+- Hardcoded monitor identifiers and resolutions
+- X11-specific (xrandr)
+- Not portable or reusable
+- Modern alternatives better:
+  - Linux: GNOME/KDE display settings, `autorandr` (saves/loads profiles)
+  - macOS: System Settings → Displays
+  - Windows: Display settings, `DisplaySwitch.exe`
 
-**Questions**:
-- Still using this setup?
-- Generic display switching or specific to old hardware config?
-- Worth consolidating into single `display-mode` script?
-
-**Proposed Action**: TBD - High value if made generic
+**Action**: **ARCHIVED** - Moved to scripts/archive/, not maintained
 
 ---
 
@@ -286,21 +288,22 @@ main() {
 ---
 
 #### 🖥️ gnome-terminal.sh
+**Status**: **ARCHIVED** (Moved to scripts/archive/)
 **Semantic Goal**: Configure terminal emulator settings
 
-**Current**: GNOME terminal configuration
-**Platform**: Linux-only (GNOME)
+**Current**: Debian alternatives wrapper (Linux-only)
+**Platform**: Debian/Ubuntu-only (`update-alternatives`)
 
-**Cross-Platform Potential**:
-- macOS: Terminal.app/iTerm2 settings, Kitty config
-- Linux: gnome-terminal, konsole, Kitty
-- Windows: Windows Terminal settings, Alacritty
+**Evaluation**:
+- Just runs: `sudo update-alternatives --config x-terminal-emulator`
+- No value over running command directly
+- Debian-specific (update-alternatives)
+- Modern alternatives better:
+  - Configure terminal in dotfiles (kitty/, alacritty config)
+  - Use desktop environment settings
+  - Run command directly when needed
 
-**Questions**:
-- Still using GNOME?
-- Could be generalized to "terminal-setup" script?
-
-**Proposed Action**: TBD - Likely ARCHIVE (terminal-specific configs better in dotfiles)
+**Action**: **ARCHIVED** - Moved to scripts/archive/, superseded by direct config
 
 ---
 
