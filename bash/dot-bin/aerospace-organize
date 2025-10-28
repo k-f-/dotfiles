@@ -4,17 +4,47 @@
 #
 # This script applies all defined layouts from the aerospace-layout-manager
 # to organize windows into their designated workspaces.
+#
+# Usage:
+#   aerospace-organize           # Launch apps and organize
+#   aerospace-organize --no-launch   # Only organize existing windows
 
 set -euo pipefail
+
+# Parse arguments
+NO_LAUNCH_FLAG=""
+if [[ "${1:-}" == "--no-launch" ]]; then
+    NO_LAUNCH_FLAG="--noLaunch"
+fi
+
+# Find dotfiles directory (this script is in dotfiles/bash/dot-bin/)
+# Resolve symlink to get the actual script location
+SCRIPT_PATH="${BASH_SOURCE[0]}"
+# If it's a symlink, resolve it (macOS readlink doesn't have -f, so we use a different approach)
+while [ -L "$SCRIPT_PATH" ]; do
+    SCRIPT_DIR="$(cd -P "$(dirname "$SCRIPT_PATH")" && pwd)"
+    SCRIPT_PATH="$(readlink "$SCRIPT_PATH")"
+    # If readlink gives relative path, make it absolute
+    [[ "$SCRIPT_PATH" != /* ]] && SCRIPT_PATH="$SCRIPT_DIR/$SCRIPT_PATH"
+done
+SCRIPT_DIR="$(cd -P "$(dirname "$SCRIPT_PATH")" && pwd)"
+DOTFILES_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+LAYOUT_MANAGER="$DOTFILES_DIR/aerospace-layout-manager/index.ts"
+
+# Use full path to bun
+BUN="$HOME/.bun/bin/bun"
 
 # Log file for debugging
 LOG_FILE="/tmp/aerospace-organize.log"
 
 # Log start time
 echo "=== $(date) ===" >> "$LOG_FILE"
+echo "Using layout manager: $LAYOUT_MANAGER" >> "$LOG_FILE"
+echo "Using bun: $BUN" >> "$LOG_FILE"
+echo "No-launch flag: $NO_LAUNCH_FLAG" >> "$LOG_FILE"
 
 # Get all available layouts
-if ! layouts=$(aerospace-layout-manager --listLayouts 2>&1); then
+if ! layouts=$("$BUN" "$LAYOUT_MANAGER" --listLayouts 2>&1); then
     echo "ERROR: Failed to list layouts: $layouts" >> "$LOG_FILE"
     osascript -e 'display notification "Failed to list layouts" with title "Aerospace Organize"'
     exit 1
@@ -25,12 +55,17 @@ echo "Found layouts: $layouts" >> "$LOG_FILE"
 # Apply each layout
 for layout in $layouts; do
     echo "Applying layout: $layout" >> "$LOG_FILE"
-    if aerospace-layout-manager "$layout" 2>>"$LOG_FILE"; then
+    if "$BUN" "$LAYOUT_MANAGER" $NO_LAUNCH_FLAG "$layout" 2>>"$LOG_FILE"; then
         echo "  ✓ Applied: $layout" >> "$LOG_FILE"
     else
         echo "  ✗ Failed: $layout" >> "$LOG_FILE"
     fi
 done
 
-echo "✓ All layouts applied" >> "$LOG_FILE"
-osascript -e 'display notification "All layouts applied" with title "Aerospace Organize"'
+if [[ -n "$NO_LAUNCH_FLAG" ]]; then
+    echo "✓ All layouts organized" >> "$LOG_FILE"
+    osascript -e 'display notification "All layouts organized" with title "Aerospace Organize"'
+else
+    echo "✓ All layouts applied" >> "$LOG_FILE"
+    osascript -e 'display notification "All layouts applied" with title "Aerospace Organize"'
+fi

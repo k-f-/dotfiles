@@ -240,8 +240,8 @@ success "Automatic period substitution: disabled"
 defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 success "Finder: show all file extensions"
 
-# Global - Auto-hide menu bar
-defaults write NSGlobalDomain _HIHideMenuBar -bool true
+# Global - Do NOT Auto-hide menu bar
+defaults write NSGlobalDomain _HIHideMenuBar -bool false
 success "Menu bar: auto-hide enabled"
 
 # Global - Set highlight color to green (0.65098 0.85490 0.58431 = green)
