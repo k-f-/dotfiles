@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Quick test - organize just the comms layout
+
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+cd "$DOTFILES_DIR/aerospace-layout-manager"
+
+# Just apply comms layout
+bun run index.ts comms 2>&1 | head -5
+osascript -e 'display notification "Comms organized" with title "AeroSpace"'

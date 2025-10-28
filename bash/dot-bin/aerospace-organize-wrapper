@@ -1,0 +1,5 @@
+#!/bin/bash
+# Wrapper to call aerospace-organize from AeroSpace keybindings
+# Runs in background and suppresses output
+
+exec "$HOME/.bin/aerospace-organize" "$@" >/dev/null 2>&1 &

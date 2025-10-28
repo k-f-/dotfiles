@@ -152,25 +152,29 @@ alt-shift-w = 'move-workspace-to-monitor --wrap-around next'
 # ============================================================================
 # Utility Commands
 # ============================================================================
-# Organize windows into their designated workspaces
-alt-shift-o = 'exec-and-forget ~/.bin/aerospace-organize'
-
-# Open dotfiles in editor
+# Open dotfiles in editor (Option+Shift+D)
 alt-shift-d = 'exec-and-forget open -a "Visual Studio Code" ~/Documents/Code/dotfiles'
 
 # ============================================================================
 # Service Mode (advanced operations)
+# Press Option+Shift+; to enter service mode, then:
+#   s = startup (launch all apps and organize into workspaces)
+#   o = organize existing windows only (no launching)
+#   r = reset layout, f = toggle floating, esc = reload config & exit
 # ============================================================================
 alt-shift-semicolon = 'mode service'
 
 # ============================================================================
-# Service Mode - Advanced Operations (alt+shift+;)
+# Service Mode - Advanced Operations (Option+Shift+;)
+# Press: s=startup (launch & organize), o=organize only, r=reset, f=float, esc=exit
 # ============================================================================
 [mode.service.binding]
 esc = ['reload-config', 'mode main']
 r = ['flatten-workspace-tree', 'mode main']  # Reset layout
 f = ['layout floating tiling', 'mode main']  # Toggle floating
 backspace = ['close-all-windows-but-current', 'mode main']
+s = ['exec-and-forget ~/.bin/aerospace-organize-wrapper', 'mode main']  # Startup: launch & organize all workspaces
+o = ['exec-and-forget ~/.bin/aerospace-organize-wrapper --no-launch', 'mode main']  # Organize existing windows only
 
 # Join windows (like i3 tabbed/stacked)
 alt-shift-h = ['join-with left', 'mode main']
