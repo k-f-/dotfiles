@@ -1,5 +1,25 @@
 # AI Assistant Rules for Dotfiles Repository
 
+**⚠️ CRITICAL**: Universal best practices are in `agentic-dev-standards/copilot-best-practices.md`.
+**READ THAT FILE FIRST** before reading project-specific instructions below.
+
+The submodule contains:
+
+- **Meta-Rule** - How to capture new instructions
+- **Terminal Usage Rules** - Clean bash wrapper requirements  
+- **Commit Conventions** - Conventional commits for changelog generation
+- **Documentation Organization** - Where to place different types of docs
+- **Branch Strategy** - Naming conventions and workflows
+- **Session Management** - End-of-session summary requirements
+- **Testing Best Practices** - General testing guidelines
+- **Code Quality Standards** - Universal coding principles
+- **File Naming Conventions** - Lowercase-with-hyphens standard
+- **External Resources** - 50+ links to style guides, standards, etc.
+
+---
+
+## Project-Specific Instructions
+
 This file contains guidelines for AI assistants working on this dotfiles repository.
 
 ## Documentation Organization Rules
