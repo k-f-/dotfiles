@@ -1,0 +1,37 @@
+{
+  "terminal.integrated.profiles.osx": {
+    "Copilot-Clean-Bash": {
+      "path": "/bin/bash",
+      "args": ["--noprofile", "--norc"],
+      "icon": "robot",
+      "overrideName": true,
+      "env": {
+        "PS1": "$ ",
+        "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+      }
+    }
+  },
+  "terminal.integrated.profiles.linux": {
+    "Copilot-Clean-Bash": {
+      "path": "/bin/bash",
+      "args": ["--noprofile", "--norc"],
+      "icon": "robot",
+      "overrideName": true,
+      "env": {
+        "PS1": "$ ",
+        "PATH": "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+      }
+    }
+  },
+  "terminal.integrated.profiles.windows": {
+    "Copilot-Clean-Cmd": {
+      "path": "${env:SystemRoot}\\System32\\cmd.exe",
+      "args": ["/K", "prompt $G$S"],
+      "icon": "robot",
+      "overrideName": true
+    }
+  },
+  "github.copilot.chat.terminalProfile.osx": "Copilot-Clean-Bash",
+  "github.copilot.chat.terminalProfile.linux": "Copilot-Clean-Bash",
+  "github.copilot.chat.terminalProfile.windows": "Copilot-Clean-Cmd"
+}
