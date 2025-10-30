@@ -294,6 +294,54 @@ backup_conflicts() {
     done < <(find "${package_dir}" -type f -print0)
 }
 
+# Initialize git submodules
+init_submodules() {
+    print_header "Initializing git submodules..."
+    
+    # Check if .gitmodules exists
+    if [[ ! -f "${DOTFILES_DIR}/.gitmodules" ]]; then
+        print_verbose "No submodules found"
+        return 0
+    fi
+    
+    if [[ "${DRY_RUN}" == "true" ]]; then
+        print_verbose "Would initialize submodules"
+        return 0
+    fi
+    
+    # Initialize and update all submodules
+    if git -C "${DOTFILES_DIR}" submodule init && \
+       git -C "${DOTFILES_DIR}" submodule update --init --recursive; then
+        print_success "Submodules initialized"
+    else
+        print_warning "Failed to initialize some submodules (may need manual setup)"
+    fi
+    
+    # Check if aesthetics submodule exists and offer to run its installer
+    if [[ -d "${DOTFILES_DIR}/aesthetics" ]] && [[ -f "${DOTFILES_DIR}/aesthetics/scripts/install-theme.sh" ]]; then
+        echo ""
+        print_header "Aesthetics Theme Manager Detected"
+        echo "The aesthetics submodule provides theme management for your terminal and apps."
+        echo ""
+        
+        if [[ "${FORCE}" == "true" ]]; then
+            # In force mode, auto-install
+            print_success "Auto-installing aesthetics themes..."
+            bash "${DOTFILES_DIR}/aesthetics/scripts/install-theme.sh" || print_warning "Aesthetics install failed"
+        else
+            # Ask user
+            read -p "Would you like to install themes from aesthetics? (y/N) " -n 1 -r
+            echo
+            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                bash "${DOTFILES_DIR}/aesthetics/scripts/install-theme.sh"
+            else
+                print_verbose "Skipping aesthetics theme installation"
+                echo "You can run it later with: bash ${DOTFILES_DIR}/aesthetics/scripts/install-theme.sh"
+            fi
+        fi
+    fi
+}
+
 # Install dotfiles using stow
 install_dotfiles() {
     local os="$1"
@@ -492,6 +540,9 @@ EOF
 
     # Install packages from package managers
     install_packages "${os}"
+
+    # Initialize git submodules (including aesthetics)
+    init_submodules
 
     # Install dotfiles
     install_dotfiles "${os}"
