@@ -160,18 +160,20 @@ alt-shift-d = 'exec-and-forget open -a "Visual Studio Code" ~/Documents/Code/dot
 # Press Option+Shift+; to enter service mode, then:
 #   s = startup (launch all apps and organize into workspaces)
 #   o = organize existing windows only (no launching)
+#   t = toggle theme (Dracula Pro default ↔ alucard)
 #   r = reset layout, f = toggle floating, esc = reload config & exit
 # ============================================================================
 alt-shift-semicolon = 'mode service'
 
 # ============================================================================
 # Service Mode - Advanced Operations (Option+Shift+;)
-# Press: s=startup (launch & organize), o=organize only, r=reset, f=float, esc=exit
+# Press: s=startup (launch & organize), o=organize only, t=toggle theme, r=reset, f=float, esc=exit
 # ============================================================================
 [mode.service.binding]
 esc = ['reload-config', 'mode main']
 r = ['flatten-workspace-tree', 'mode main']  # Reset layout
 f = ['layout floating tiling', 'mode main']  # Toggle floating
+t = ['exec-and-forget bash -c "$HOME/Documents/Code/dotfiles/aesthetics/scripts/toggle-theme.sh"', 'mode main']  # Toggle theme
 backspace = ['close-all-windows-but-current', 'mode main']
 s = ['exec-and-forget ~/.bin/aerospace-organize-wrapper', 'mode main']  # Startup: launch & organize all workspaces
 o = ['exec-and-forget ~/.bin/aerospace-organize-wrapper --no-launch', 'mode main']  # Organize existing windows only
