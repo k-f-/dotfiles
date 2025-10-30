@@ -404,6 +404,18 @@ stow_package() {
         return 1
     fi
 
+    # Safety check: Ensure we're in the dotfiles directory
+    if [[ "$(pwd)" != "${DOTFILES_DIR}" ]]; then
+        print_error "Internal error: not in dotfiles directory"
+        return 1
+    fi
+
+    # Safety check: Ensure target is HOME
+    if [[ "${STOW_TARGET}" != "${HOME}" ]]; then
+        print_error "Internal error: STOW_TARGET must be HOME directory"
+        return 1
+    fi
+
     print_verbose "Stowing ${package}..."
 
     # Backup any conflicts first (unless --force is used)
@@ -413,6 +425,8 @@ stow_package() {
 
     # Run stow with --restow to handle existing symlinks gracefully
     # --restow first unstows then restows, handling changes better
+    # CRITICAL: Always run from DOTFILES_DIR with target set to HOME
+    # This prevents stow from creating symlinks in the wrong location
     local stow_cmd="stow --restow --target=\"${STOW_TARGET}\" --ignore='^README.*' --dotfiles"
     if [[ "${VERBOSE}" == "true" ]]; then
         stow_cmd="${stow_cmd} --verbose=4"
@@ -546,6 +560,17 @@ EOF
 
     # Install dotfiles
     install_dotfiles "${os}"
+
+    # Validate stow configuration
+    if [[ "${DRY_RUN}" != "true" ]] && [[ -x "${DOTFILES_DIR}/scripts/validate-stow.sh" ]]; then
+        echo ""
+        print_info "Validating stow configuration..."
+        if bash "${DOTFILES_DIR}/scripts/validate-stow.sh"; then
+            print_success "Stow validation passed"
+        else
+            print_warning "Stow validation found issues (see above)"
+        fi
+    fi
 
     # Final message
     if [[ "${DRY_RUN}" != "true" ]]; then

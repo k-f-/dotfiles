@@ -1,8 +1,61 @@
-# Editor Launcher Scripts
+# User Scripts
 
-This directory contains smart editor launcher scripts that work across macOS, Linux, and other Unix-like systems.
+This directory contains utility scripts for dotfiles management, window organization, theme switching, and editor launching.
 
-## Scripts
+## Window Management
+
+### `aerospace-organize` - AeroSpace Layout Manager
+
+Organize windows into predefined layouts using AeroSpace window manager.
+
+**Usage:**
+```bash
+aerospace-organize                    # Interactive layout selection
+aerospace-organize --layout comms     # Apply specific layout
+aerospace-organize --no-launch        # Organize only, don't launch apps
+```
+
+**Features:**
+- Predefined layouts for different workflows (comms, dev, etc.)
+- Automatic app launching and workspace assignment
+- Integration with AeroSpace layout manager submodule
+
+**Configuration:**
+- Layouts defined in `~/.config/aerospace/layouts.json`
+- See `aerospace-layout-manager` submodule for details
+
+### `aerospace-organize-wrapper` - AeroSpace Wrapper
+
+Thin wrapper that passes arguments to `aerospace-organize`. Used for keybindings.
+
+### `aerospace-organize-comms` - Communications Layout
+
+Pre-configured script to apply the communications layout (Slack, email, etc.).
+
+## Theme Management
+
+### `toggle-theme` - Theme Switcher
+
+Toggle between light and dark themes across all configured applications.
+
+**Usage:**
+```bash
+toggle-theme        # Toggle between light/dark
+```
+
+**Supported applications:**
+- Kitty terminal
+- Additional apps via aesthetics submodule
+
+**Implementation:**
+- Wrapper for `aesthetics/scripts/toggle-theme.sh`
+- Automatically resolves symlinks to find aesthetics submodule
+- Sends macOS notification on theme change
+
+**Keybinding:**
+- AeroSpace: `Option+Shift+;` then `t`
+
+## Editor Scripts
 
 ### `em` - Universal Editor Launcher
 
@@ -114,7 +167,71 @@ Or start manually:
 emacs --daemon
 ```
 
+## System Utilities
+
+### `extract` - Universal Archive Extractor
+
+Extract any archive format with automatic detection.
+
+**Usage:**
+```bash
+extract archive.tar.gz
+extract file.zip
+extract package.deb
+```
+
+**Supported formats:**
+- tar (`.tar`, `.tar.gz`, `.tgz`, `.tar.bz2`, `.tbz2`, `.tar.xz`, `.txz`)
+- zip (`.zip`)
+- rar (`.rar`)
+- 7z (`.7z`)
+- deb/rpm packages
+- And more...
+
+### `lock` - Screen Locker
+
+Lock the screen using native OS tools.
+
+**Usage:**
+```bash
+lock
+```
+
+**Platform support:**
+- macOS: Uses `pmset displaysleepnow`
+- Linux: Uses `loginctl lock-session` or `xdg-screensaver lock`
+- Windows (Git Bash/WSL): Uses `rundll32.exe`
+
+### `screenshot` - Screenshot Tool
+
+Cross-platform screenshot capture.
+
+### `checkmail` - Mail Checker
+
+Check for new mail (requires mail configuration).
+
+### `set-wallpaper` - Wallpaper Setter
+
+Set desktop wallpaper from aesthetics/wallpapers.
+
+### `set-capslock` - Caps Lock Manager
+
+Enable/disable Caps Lock programmatically.
+
+### `wake-set-capslock` - Wake Handler
+
+Re-enable Caps Lock after system wake (for macOS sleep/wake cycle).
+
+## Removed Scripts
+
+See `REMOVED_BINARIES.md` for documentation of scripts that were archived or replaced:
+- `diff-so-fancy` - Now installed via package manager
+- `gotop` - Now installed via package manager
+- Display management scripts - Archived (use built-in display settings)
+
 ## See Also
 
-- Other scripts in this directory: `checkmail`, `extract`, `screenshot`, etc.
 - Main dotfiles README: `../../README.md`
+- AeroSpace setup guide: `../../docs/setup/aerospace-layout-manager.md`
+- AeroSpace quick reference: `../../docs/setup/aerospace-quick-reference.md`
+- Keybindings reference: `../../docs/setup/keybindings.md`

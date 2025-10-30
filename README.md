@@ -286,8 +286,28 @@ The installer should automatically backup conflicting files, but if you run stow
 # Move the conflicting file
 mv ~/.zshrc ~/.zshrc.backup
 
-# Then try stowing again
+# Then try stowing again (MUST run from dotfiles directory)
+cd ~/dotfiles  # or wherever you cloned the repo
 stow --target="$HOME" --dotfiles zsh
+```
+
+**⚠️ IMPORTANT**: Always run stow from the dotfiles directory root:
+```bash
+# ✅ CORRECT: Run from dotfiles directory with HOME as target
+cd ~/dotfiles
+stow --target="$HOME" --dotfiles bash
+
+# ❌ WRONG: Running from parent directory creates symlinks in wrong location
+cd ~
+stow --target="$HOME" --dotfiles dotfiles/bash  # Don't do this!
+```
+
+If you accidentally created symlinks in the wrong location (e.g., `.bashrc` appears in `~/Documents/Code/` instead of just `~`), remove them and re-run the installer:
+```bash
+cd ~/Documents/Code
+rm -f .bashrc .bashrc.d .bin .profile  # Remove incorrect symlinks
+cd ~/dotfiles
+./install  # Re-run installer to create correct symlinks
 ```
 
 ### Permission Denied
