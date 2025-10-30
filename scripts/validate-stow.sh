@@ -54,7 +54,7 @@ if [[ -n "${home_symlinks}" ]]; then
     while IFS= read -r line; do
         symlink=$(echo "${line}" | awk '{print $9}')
         target=$(readlink "${symlink}")
-        
+
         # Check if target starts with absolute path (should be relative)
         if [[ "${target}" == /* ]]; then
             echo -e "${YELLOW}⚠ WARNING: ${symlink} uses absolute path: ${target}${NC}"
@@ -62,7 +62,7 @@ if [[ -n "${home_symlinks}" ]]; then
             ((warnings++))
         fi
     done <<< "${home_symlinks}"
-    
+
     echo -e "${GREEN}✓ Found $(echo "${home_symlinks}" | wc -l | tr -d ' ') dotfile symlinks in HOME${NC}"
 else
     echo -e "${YELLOW}⚠ WARNING: No dotfile symlinks found in HOME${NC}"
