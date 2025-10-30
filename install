@@ -297,18 +297,18 @@ backup_conflicts() {
 # Initialize git submodules
 init_submodules() {
     print_header "Initializing git submodules..."
-    
+
     # Check if .gitmodules exists
     if [[ ! -f "${DOTFILES_DIR}/.gitmodules" ]]; then
         print_verbose "No submodules found"
         return 0
     fi
-    
+
     if [[ "${DRY_RUN}" == "true" ]]; then
         print_verbose "Would initialize submodules"
         return 0
     fi
-    
+
     # Initialize and update all submodules
     if git -C "${DOTFILES_DIR}" submodule init && \
        git -C "${DOTFILES_DIR}" submodule update --init --recursive; then
@@ -316,14 +316,14 @@ init_submodules() {
     else
         print_warning "Failed to initialize some submodules (may need manual setup)"
     fi
-    
+
     # Check if aesthetics submodule exists and offer to run its installer
     if [[ -d "${DOTFILES_DIR}/aesthetics" ]] && [[ -f "${DOTFILES_DIR}/aesthetics/scripts/install-theme.sh" ]]; then
         echo ""
         print_header "Aesthetics Theme Manager Detected"
         echo "The aesthetics submodule provides theme management for your terminal and apps."
         echo ""
-        
+
         if [[ "${FORCE}" == "true" ]]; then
             # In force mode, auto-install
             print_success "Auto-installing aesthetics themes..."

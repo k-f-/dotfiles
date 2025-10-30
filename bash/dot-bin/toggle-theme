@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+#
+# toggle-theme - Toggle between themes using the aesthetics submodule
+#
+# This script wraps the aesthetics/scripts/toggle-theme.sh and resolves
+# the correct path even when called from symlinks.
+
+set -euo pipefail
+
+# Find dotfiles directory (this script is in dotfiles/bash/dot-bin/)
+# Resolve symlink to get the actual script location
+SCRIPT_PATH="${BASH_SOURCE[0]}"
+# If it's a symlink, resolve it (macOS readlink doesn't have -f, so we use a different approach)
+while [ -L "$SCRIPT_PATH" ]; do
+    SCRIPT_DIR="$(cd -P "$(dirname "$SCRIPT_PATH")" && pwd)"
+    SCRIPT_PATH="$(readlink "$SCRIPT_PATH")"
+    # If readlink gives relative path, make it absolute
+    [[ "$SCRIPT_PATH" != /* ]] && SCRIPT_PATH="$SCRIPT_DIR/$SCRIPT_PATH"
+done
+SCRIPT_DIR="$(cd -P "$(dirname "$SCRIPT_PATH")" && pwd)"
+DOTFILES_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+THEME_SCRIPT="$DOTFILES_DIR/aesthetics/scripts/toggle-theme.sh"
+
+# Check if the theme script exists
+if [[ ! -f "$THEME_SCRIPT" ]]; then
+    echo "Error: aesthetics theme script not found at: $THEME_SCRIPT" >&2
+    echo "Make sure the aesthetics submodule is initialized:" >&2
+    echo "  cd $DOTFILES_DIR && git submodule update --init" >&2
+    exit 1
+fi
+
+# Execute the theme toggle script
+exec bash "$THEME_SCRIPT" "$@"
