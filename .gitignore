@@ -24,3 +24,6 @@ mpd/.config/mpd/state
 mpd/.config/mpd/sticker.sql
 .zcompdump-*
 .DS_Store
+
+# Dynamic theme symlinks (updated by toggle-theme)
+kitty/.config/kitty/theme.conf

@@ -4,6 +4,10 @@
 #
 # This script wraps the aesthetics/scripts/toggle-theme.sh and resolves
 # the correct path even when called from symlinks.
+#
+# Usage:
+#   toggle-theme         # Toggle between primary and configured variant
+#   toggle-theme --cycle # Cycle through all available variants
 
 set -euo pipefail
 
@@ -29,5 +33,5 @@ if [[ ! -f "$THEME_SCRIPT" ]]; then
     exit 1
 fi
 
-# Execute the theme toggle script
+# Execute the theme toggle script with all arguments passed through
 exec bash "$THEME_SCRIPT" "$@"
