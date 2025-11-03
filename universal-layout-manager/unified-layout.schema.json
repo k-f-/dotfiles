@@ -1,0 +1,198 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/yourusername/universal-layout-manager/unified-layout.schema.json",
+  "title": "Universal Window Manager Layout Configuration",
+  "description": "A unified configuration format for window layouts that works across Aerospace (macOS), i3/Sway (Linux), komorebi, and GlazeWM (Windows)",
+  "type": "object",
+  "required": ["layouts"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version",
+      "default": "1.0.0"
+    },
+    "stashWorkspace": {
+      "type": "string",
+      "description": "Workspace used for temporarily stashing windows during layout operations",
+      "default": "S"
+    },
+    "appMappings": {
+      "type": "object",
+      "description": "Maps universal app identifiers to platform-specific identifiers",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "macOS": {
+            "type": "string",
+            "description": "macOS bundle ID (e.g., 'com.google.Chrome')"
+          },
+          "linux_x11": {
+            "type": "string",
+            "description": "X11 window class (e.g., 'Google-chrome')"
+          },
+          "linux_wayland": {
+            "type": "string",
+            "description": "Wayland app_id (e.g., 'org.mozilla.firefox')"
+          },
+          "windows": {
+            "type": "string",
+            "description": "Windows process name (e.g., 'chrome.exe')"
+          }
+        }
+      }
+    },
+    "layouts": {
+      "type": "object",
+      "description": "Named layout configurations",
+      "additionalProperties": {
+        "$ref": "#/definitions/Layout"
+      }
+    }
+  },
+  "definitions": {
+    "Layout": {
+      "type": "object",
+      "required": ["workspace", "layout", "orientation", "windows"],
+      "properties": {
+        "workspace": {
+          "type": ["string", "number"],
+          "description": "Workspace identifier (name or number)"
+        },
+        "layout": {
+          "type": "string",
+          "enum": [
+            "tiles",
+            "h_tiles",
+            "v_tiles",
+            "accordion",
+            "h_accordion",
+            "v_accordion",
+            "horizontal",
+            "vertical",
+            "tiling",
+            "floating",
+            "bsp",
+            "columns",
+            "rows"
+          ],
+          "description": "Layout type for the workspace"
+        },
+        "orientation": {
+          "type": "string",
+          "enum": ["horizontal", "vertical"],
+          "description": "Primary orientation for window arrangement"
+        },
+        "windows": {
+          "type": "array",
+          "description": "List of windows or window groups in the layout",
+          "items": {
+            "$ref": "#/definitions/LayoutItem"
+          }
+        },
+        "display": {
+          "oneOf": [
+            {"type": "string"},
+            {"type": "number"}
+          ],
+          "description": "Display target: 'main', 'secondary', 'internal', 'external', display name regex, or display ID"
+        },
+        "gaps": {
+          "$ref": "#/definitions/Gaps",
+          "description": "Gap configuration for this layout"
+        }
+      }
+    },
+    "LayoutItem": {
+      "oneOf": [
+        {"$ref": "#/definitions/LayoutWindow"},
+        {"$ref": "#/definitions/LayoutWindowWithSize"},
+        {"$ref": "#/definitions/LayoutGroup"},
+        {"$ref": "#/definitions/LayoutGroupWithSize"}
+      ]
+    },
+    "LayoutWindow": {
+      "type": "object",
+      "required": ["app"],
+      "properties": {
+        "app": {
+          "type": "string",
+          "description": "Universal app identifier (maps to platform-specific via appMappings)"
+        },
+        "title": {
+          "type": "string",
+          "description": "Optional window title regex for matching specific windows"
+        },
+        "instanceIndex": {
+          "type": "number",
+          "description": "If multiple instances exist, select the Nth instance (0-indexed)",
+          "default": 0
+        }
+      }
+    },
+    "LayoutWindowWithSize": {
+      "allOf": [
+        {"$ref": "#/definitions/LayoutWindow"},
+        {
+          "type": "object",
+          "required": ["size"],
+          "properties": {
+            "size": {
+              "type": "string",
+              "pattern": "^\\d+/\\d+$",
+              "description": "Fractional size (e.g., '1/3', '2/3')"
+            }
+          }
+        }
+      ]
+    },
+    "LayoutGroup": {
+      "type": "object",
+      "required": ["orientation", "windows"],
+      "properties": {
+        "orientation": {
+          "type": "string",
+          "enum": ["horizontal", "vertical"],
+          "description": "Orientation for this group of windows"
+        },
+        "windows": {
+          "type": "array",
+          "description": "Nested windows in this group",
+          "items": {
+            "$ref": "#/definitions/LayoutItem"
+          }
+        }
+      }
+    },
+    "LayoutGroupWithSize": {
+      "allOf": [
+        {"$ref": "#/definitions/LayoutGroup"},
+        {
+          "type": "object",
+          "required": ["size"],
+          "properties": {
+            "size": {
+              "type": "string",
+              "pattern": "^\\d+/\\d+$",
+              "description": "Fractional size for this group"
+            }
+          }
+        }
+      ]
+    },
+    "Gaps": {
+      "type": "object",
+      "properties": {
+        "inner": {
+          "type": "number",
+          "description": "Gap between windows (in pixels)",
+          "minimum": 0
+        },
+        "outer": {
+          "type": "number",
+          "description": "Gap between windows and screen edges (in pixels)",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

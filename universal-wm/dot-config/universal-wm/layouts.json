@@ -1,0 +1,166 @@
+{
+  "$schema": "https://raw.githubusercontent.com/yourusername/universal-layout-manager/main/unified-layout.schema.json",
+  "version": "1.0.0",
+  "stashWorkspace": "S",
+  "appMappings": {
+    "messages": {
+      "macOS": "com.apple.MobileSMS",
+      "linux_x11": "Signal",
+      "linux_wayland": "org.signal.Signal",
+      "windows": "Signal.exe"
+    },
+    "signal": {
+      "macOS": "org.whispersystems.signal-desktop",
+      "linux_x11": "Signal",
+      "linux_wayland": "org.signal.Signal",
+      "windows": "Signal.exe"
+    },
+    "music": {
+      "macOS": "com.spotify.client",
+      "linux_x11": "Spotify",
+      "linux_wayland": "spotify",
+      "windows": "Spotify.exe"
+    },
+    "vscode": {
+      "macOS": "com.microsoft.VSCode",
+      "linux_x11": "Code",
+      "linux_wayland": "code-url-handler",
+      "windows": "Code.exe"
+    },
+    "kitty": {
+      "macOS": "net.kovidgoyal.kitty",
+      "linux_x11": "kitty",
+      "linux_wayland": "kitty",
+      "windows": "WindowsTerminal.exe"
+    },
+    "iterm": {
+      "macOS": "com.googlecode.iterm2",
+      "linux_x11": "Alacritty",
+      "linux_wayland": "org.alacritty.Alacritty",
+      "windows": "alacritty.exe"
+    },
+    "browser": {
+      "macOS": "org.mozilla.firefox",
+      "linux_x11": "firefox",
+      "linux_wayland": "org.mozilla.firefox",
+      "windows": "firefox.exe"
+    },
+    "calendar": {
+      "macOS": "com.apple.iCal",
+      "linux_x11": "thunderbird",
+      "linux_wayland": "org.mozilla.Thunderbird",
+      "windows": "Outlook.exe"
+    },
+    "mail": {
+      "macOS": "com.apple.mail",
+      "linux_x11": "thunderbird",
+      "linux_wayland": "org.mozilla.Thunderbird",
+      "windows": "Outlook.exe"
+    },
+    "finder": {
+      "macOS": "com.apple.finder",
+      "linux_x11": "Thunar",
+      "linux_wayland": "org.gnome.Nautilus",
+      "windows": "explorer.exe"
+    },
+    "activity_monitor": {
+      "macOS": "com.apple.ActivityMonitor",
+      "linux_x11": "gnome-system-monitor",
+      "linux_wayland": "org.gnome.SystemMonitor",
+      "windows": "Taskmgr.exe"
+    }
+  },
+  "layouts": {
+    "comms": {
+      "workspace": "2",
+      "layout": "tiles",
+      "orientation": "horizontal",
+      "display": "main",
+      "windows": [
+        {
+          "orientation": "vertical",
+          "size": "1/3",
+          "windows": [
+            {
+              "app": "messages"
+            },
+            {
+              "app": "signal"
+            }
+          ]
+        },
+        {
+          "app": "music",
+          "size": "2/3"
+        }
+      ]
+    },
+    "code": {
+      "workspace": "4",
+      "layout": "h_tiles",
+      "orientation": "horizontal",
+      "display": "main",
+      "windows": [
+        {
+          "app": "vscode",
+          "size": "2/3"
+        },
+        {
+          "orientation": "vertical",
+          "size": "1/3",
+          "windows": [
+            {
+              "app": "kitty"
+            },
+            {
+              "app": "iterm"
+            }
+          ]
+        }
+      ]
+    },
+    "browser": {
+      "workspace": "3",
+      "layout": "tiles",
+      "orientation": "horizontal",
+      "display": "main",
+      "windows": [
+        {
+          "app": "browser"
+        }
+      ]
+    },
+    "org": {
+      "workspace": "5",
+      "layout": "v_tiles",
+      "orientation": "vertical",
+      "display": "main",
+      "windows": [
+        {
+          "app": "calendar",
+          "size": "1/2"
+        },
+        {
+          "app": "mail",
+          "size": "1/2"
+        }
+      ]
+    },
+    "start": {
+      "workspace": "1",
+      "layout": "tiles",
+      "orientation": "horizontal",
+      "display": "main",
+      "windows": [
+        {
+          "app": "finder",
+          "size": "2/3"
+        },
+        {
+          "app": "activity_monitor",
+          "size": "1/3"
+        }
+      ]
+    }
+  }
+}

@@ -11,7 +11,7 @@ This repository contains my personal configuration files (dotfiles) for various 
 ### What's Included
 
 - **Shell**: Bash and Zsh configurations with enhanced prompts
-- **Window Management**: AeroSpace (i3-like tiling WM for macOS)
+- **Window Management**: Universal WM (Aerospace/i3/Sway) - Cross-platform layout management
 - **Editor**: Vim, Emacs, and Doom Emacs
 - **Development**: Git, SSH, GPG
 - **Terminal**: Kitty terminal emulator
@@ -19,7 +19,8 @@ This repository contains my personal configuration files (dotfiles) for various 
 - **Email**: mbsync, msmtp, mu (email workflow)
 - **Other**: X11 configs, YouTube downloader settings
 
-**📖 See [keybindings.md](docs/setup/keybindings.md) for complete keyboard shortcuts reference**
+**📖 See [docs/setup/keybindings.md](docs/setup/keybindings.md) for keyboard shortcuts**
+**📖 See [universal-layout-manager/](universal-layout-manager/) for window management setup**
 
 ## 🚀 Quick Start
 
@@ -127,12 +128,38 @@ em            # Smart editor (VS Code → neovim → vim)
 - `gnupg` - GPG configuration
 - `mail` - Email client configs (mbsync, msmtp, mu)
 - `ssh` - SSH configuration
+- `universal-wm` - Universal window manager configuration (Aerospace/i3/Sway)
 - `yabai` - macOS tiling window manager
 - `skhd` - macOS hotkey daemon
 - `sketchybar` - macOS status bar
 - `x-windows` - X11 configurations
 - `secrets` - Private configurations
 - `youtube-dl` - YouTube downloader config
+
+### Window Management
+
+The repository includes a **universal window manager** that works across platforms:
+
+- **macOS**: Aerospace
+- **Linux**: i3, Sway
+- **Windows**: komorebi, GlazeWM (planned)
+
+Quick commands:
+```bash
+# Auto-detects your platform and window manager
+universal-wm detect
+
+# List available layouts
+universal-wm list
+
+# Apply a layout
+universal-wm apply code
+
+# Apply all layouts
+universal-wm apply --all
+```
+
+See [universal-layout-manager/QUICKSTART.md](universal-layout-manager/QUICKSTART.md) for full documentation.
 
 ## 🔧 Manual Configuration
 
@@ -185,34 +212,52 @@ This removes the symlinks but keeps your dotfiles repository intact.
 
 ```
 dotfiles/
-├── bash/              # Bash configuration
-│   ├── .bashrc
-│   ├── .bashrc.d/     # Modular bash configs
-│   └── .profile
-├── zsh/               # Zsh configuration
-│   ├── .zshrc
-│   └── .zshrc.d/      # Modular zsh configs
-├── git/               # Git configuration
-├── vim/               # Vim/Neovim config
-├── emacs/             # Emacs configuration
-├── doom/              # Doom Emacs config
-├── kitty/             # Kitty terminal
-├── yabai/             # macOS window manager
-├── skhd/              # macOS hotkey daemon
-├── sketchybar/        # macOS status bar
-├── gnupg/             # GPG configuration
-├── ssh/               # SSH configuration
-├── mail/              # Email configs
-├── secrets/           # Private configurations
-├── homebrew/          # Homebrew bundle
-│   └── Brewfile       # macOS packages
-├── scripts/           # Installation scripts
-│   ├── install.sh           # Legacy installer
-│   ├── install-mac.sh       # macOS preferences
-│   └── install-debian-packages.sh
-├── install            # New unified installer
-├── uninstall          # Uninstaller
-└── README.md          # This file
+├── bash/                       # Bash configuration
+│   ├── dot-bashrc
+│   ├── dot-bashrc.d/           # Modular bash configs
+│   ├── dot-profile
+│   └── dot-bin/                # User scripts (→ ~/.bin/)
+│       └── universal-wm        # Universal WM CLI
+├── zsh/                        # Zsh configuration
+│   ├── dot-zshrc
+│   └── dot-zshrc.d/            # Modular zsh configs
+├── git/                        # Git configuration
+├── vim/                        # Vim/Neovim config
+├── emacs/                      # Emacs configuration
+├── doom/                       # Doom Emacs config
+├── kitty/                      # Kitty terminal
+├── aerospace/                  # Aerospace config (macOS)
+│   └── dot-aerospace.toml      # → ~/.aerospace.toml
+├── universal-wm/               # Universal WM config (stow package)
+│   └── dot-config/
+│       └── universal-wm/
+│           └── layouts.json    # → ~/.config/universal-wm/layouts.json
+├── universal-layout-manager/   # Universal WM code (not stowed)
+│   ├── cli.ts                  # Universal CLI
+│   ├── migrate-config.ts       # Migration tool
+│   ├── adapters/
+│   │   ├── aerospace.ts        # macOS adapter
+│   │   ├── i3-sway.ts          # Linux adapter
+│   │   ├── komorebi.ts         # Windows (planned)
+│   │   └── glazewm.ts          # Windows (planned)
+│   └── docs/                   # Full documentation
+├── aerospace-layout-manager/   # Legacy (deprecated)
+├── yabai/                      # macOS window manager
+├── skhd/                       # macOS hotkey daemon
+├── sketchybar/                 # macOS status bar
+├── gnupg/                      # GPG configuration
+├── ssh/                        # SSH configuration
+├── mail/                       # Email configs
+├── secrets/                    # Private configurations
+├── homebrew/                   # Homebrew bundle
+│   └── Brewfile                # macOS packages
+├── scripts/                    # Installation scripts
+├── docs/                       # Documentation
+│   ├── setup/                  # User guides
+│   └── development/            # Development docs
+├── install                     # Unified installer
+├── uninstall                   # Uninstaller
+└── README.md                   # This file
 ```
 
 ## 🛠️ Customization

@@ -4,23 +4,27 @@ User-facing guides for configuring and using dotfiles features.
 
 ## Available Guides
 
-### AeroSpace Window Manager
+### Window Management
 
-- **[aerospace-layout-manager.md](./aerospace-layout-manager.md)** - Complete setup guide for AeroSpace layout management
-  - Git submodule vs global installation
+- **[universal-wm.md](./universal-wm.md)** - ✨ **NEW**: Universal window manager setup
+  - Cross-platform support (macOS/Linux/Windows)
+  - Auto-detection and unified CLI
   - Layout configuration with JSON
   - Keyboard shortcuts
-  - Troubleshooting
+  - Migration from old setup
+  - **👉 START HERE for window management**
 
-- **[aerospace-quick-reference.md](./aerospace-quick-reference.md)** - Quick command reference
-  - Common commands
-  - Layout examples
-  - Bundle ID lookup
+- **[aerospace-layout-manager.md](./aerospace-layout-manager.md)** - ⚠️ DEPRECATED: Legacy Aerospace-only setup
+  - Use [universal-wm.md](./universal-wm.md) instead
+  - Migration guide included
+
+- **[aerospace-quick-reference.md](./aerospace-quick-reference.md)** - ⚠️ DEPRECATED: Legacy quick reference
+  - Use [universal-wm.md](./universal-wm.md) instead
 
 ### General Configuration
 
 - **[keybindings.md](./keybindings.md)** - Comprehensive keybinding reference
-  - AeroSpace keybindings
+  - Window manager keybindings
   - Shell keybindings
   - Editor keybindings
 
