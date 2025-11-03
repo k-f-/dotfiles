@@ -79,6 +79,12 @@ shift + alt - 5 : yabai -m window --space 5;
 shift + alt - 6 : yabai -m window --space 6;
 shift + alt - 7 : yabai -m window --space 7;
 
+# -- Theme Management --
+
+# Note: skhd doesn't have mode support like aerospace, so using direct keybindings
+# Cycle through all theme variants (Shift+Alt+C for "cycle")
+shift + alt - c : ~/.bin/toggle-theme --cycle
+
 # -- Starting/Stopping/Restarting Yabai --
 
 # stop/start/restart yabai
