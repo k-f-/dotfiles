@@ -1,5 +1,13 @@
 # AeroSpace Layout Manager Setup
 
+> **⚠️ DEPRECATED**: This document describes the legacy `aerospace-layout-manager` submodule approach.
+>
+> **✨ NEW**: Use the [Universal Window Manager](./universal-wm.md) instead, which supports macOS (Aerospace), Linux (i3/Sway), and Windows (komorebi/GlazeWM planned).
+>
+> **Migration**: Run `universal-wm migrate` to convert your config automatically.
+
+---
+
 This directory can contain the `aerospace-layout-manager` as a git submodule.
 
 ## Quick Setup

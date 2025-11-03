@@ -1,0 +1,212 @@
+{
+  "$schema": "./unified-layout.schema.json",
+  "version": "1.0.0",
+  "stashWorkspace": "S",
+  "appMappings": {
+    "browser": {
+      "macOS": "org.mozilla.firefox",
+      "linux_x11": "firefox",
+      "linux_wayland": "org.mozilla.firefox",
+      "windows": "firefox.exe"
+    },
+    "chrome": {
+      "macOS": "com.google.Chrome",
+      "linux_x11": "Google-chrome",
+      "linux_wayland": "chromium",
+      "windows": "chrome.exe"
+    },
+    "vscode": {
+      "macOS": "com.microsoft.VSCode",
+      "linux_x11": "Code",
+      "linux_wayland": "code-url-handler",
+      "windows": "Code.exe"
+    },
+    "terminal": {
+      "macOS": "net.kovidgoyal.kitty",
+      "linux_x11": "kitty",
+      "linux_wayland": "kitty",
+      "windows": "WindowsTerminal.exe"
+    },
+    "terminal_alt": {
+      "macOS": "com.googlecode.iterm2",
+      "linux_x11": "Alacritty",
+      "linux_wayland": "org.alacritty.Alacritty",
+      "windows": "alacritty.exe"
+    },
+    "messages": {
+      "macOS": "com.apple.MobileSMS",
+      "linux_x11": "Signal",
+      "linux_wayland": "org.signal.Signal",
+      "windows": "Signal.exe"
+    },
+    "signal": {
+      "macOS": "org.whispersystems.signal-desktop",
+      "linux_x11": "Signal",
+      "linux_wayland": "org.signal.Signal",
+      "windows": "Signal.exe"
+    },
+    "music": {
+      "macOS": "com.spotify.client",
+      "linux_x11": "Spotify",
+      "linux_wayland": "spotify",
+      "windows": "Spotify.exe"
+    },
+    "calendar": {
+      "macOS": "com.apple.iCal",
+      "linux_x11": "thunderbird",
+      "linux_wayland": "org.mozilla.Thunderbird",
+      "windows": "Outlook.exe"
+    },
+    "mail": {
+      "macOS": "com.apple.mail",
+      "linux_x11": "thunderbird",
+      "linux_wayland": "org.mozilla.Thunderbird",
+      "windows": "Outlook.exe"
+    },
+    "finder": {
+      "macOS": "com.apple.finder",
+      "linux_x11": "Thunar",
+      "linux_wayland": "org.gnome.Nautilus",
+      "windows": "explorer.exe"
+    },
+    "activity_monitor": {
+      "macOS": "com.apple.ActivityMonitor",
+      "linux_x11": "gnome-system-monitor",
+      "linux_wayland": "org.gnome.SystemMonitor",
+      "windows": "Taskmgr.exe"
+    }
+  },
+  "layouts": {
+    "comms": {
+      "workspace": "2",
+      "layout": "tiles",
+      "orientation": "horizontal",
+      "display": "main",
+      "windows": [
+        {
+          "orientation": "vertical",
+          "size": "1/3",
+          "windows": [
+            {
+              "app": "messages"
+            },
+            {
+              "app": "signal"
+            }
+          ]
+        },
+        {
+          "app": "music",
+          "size": "2/3"
+        }
+      ]
+    },
+    "code": {
+      "workspace": "4",
+      "layout": "h_tiles",
+      "orientation": "horizontal",
+      "display": "main",
+      "gaps": {
+        "inner": 10,
+        "outer": 20
+      },
+      "windows": [
+        {
+          "app": "vscode",
+          "size": "2/3"
+        },
+        {
+          "orientation": "vertical",
+          "size": "1/3",
+          "windows": [
+            {
+              "app": "terminal"
+            },
+            {
+              "app": "terminal_alt"
+            }
+          ]
+        }
+      ]
+    },
+    "browser": {
+      "workspace": "3",
+      "layout": "tiles",
+      "orientation": "horizontal",
+      "display": "main",
+      "windows": [
+        {
+          "app": "browser"
+        }
+      ]
+    },
+    "org": {
+      "workspace": "5",
+      "layout": "v_tiles",
+      "orientation": "vertical",
+      "display": "main",
+      "windows": [
+        {
+          "app": "calendar",
+          "size": "1/2"
+        },
+        {
+          "app": "mail",
+          "size": "1/2"
+        }
+      ]
+    },
+    "start": {
+      "workspace": "1",
+      "layout": "tiles",
+      "orientation": "horizontal",
+      "display": "main",
+      "windows": [
+        {
+          "app": "finder",
+          "size": "2/3"
+        },
+        {
+          "app": "activity_monitor",
+          "size": "1/3"
+        }
+      ]
+    },
+    "dual_monitor_dev": {
+      "workspace": "4",
+      "layout": "h_tiles",
+      "orientation": "horizontal",
+      "display": "external",
+      "windows": [
+        {
+          "app": "vscode",
+          "size": "3/4"
+        },
+        {
+          "app": "terminal",
+          "size": "1/4"
+        }
+      ]
+    },
+    "triple_split": {
+      "workspace": "6",
+      "layout": "columns",
+      "orientation": "horizontal",
+      "display": "main",
+      "windows": [
+        {
+          "app": "browser",
+          "size": "1/3"
+        },
+        {
+          "app": "vscode",
+          "size": "1/3"
+        },
+        {
+          "app": "terminal",
+          "size": "1/3"
+        }
+      ]
+    }
+  }
+}
