@@ -162,13 +162,14 @@ alt-shift-d = 'exec-and-forget open -a "Visual Studio Code" ~/Documents/Code/dot
 #   o = organize existing windows only (no launching)
 #   t = toggle theme (Dracula Pro default ↔ alucard) - exits service mode
 #   c = cycle theme (through all variants) - stays in service mode for rapid cycling
+#   / = show keybindings reference (? key)
 #   r = reset layout, f = toggle floating, esc = reload config & exit
 # ============================================================================
 alt-shift-semicolon = 'mode service'
 
 # ============================================================================
 # Service Mode - Advanced Operations (Option+Shift+;)
-# Press: s=startup, o=organize, t=toggle theme & exit, c=cycle theme (repeat!), r=reset, f=float, esc=exit
+# Press: s=startup, o=organize, t=toggle theme & exit, c=cycle theme (repeat!), r=reset, f=float, ?=help, esc=exit
 # ============================================================================
 [mode.service.binding]
 esc = ['reload-config', 'mode main']
@@ -179,6 +180,7 @@ c = 'exec-and-forget ~/.bin/toggle-theme --cycle'  # Cycle theme (stays in servi
 backspace = ['close-all-windows-but-current', 'mode main']
 s = ['exec-and-forget ~/.bin/aerospace-organize-wrapper', 'mode main']  # Startup: launch & organize all workspaces
 o = ['exec-and-forget ~/.bin/aerospace-organize-wrapper --no-launch', 'mode main']  # Organize existing windows only
+slash = ['exec-and-forget ~/.bin/show-keybindings', 'mode main']  # Show keybindings reference (?)
 
 # Join windows (like i3 tabbed/stacked)
 alt-shift-h = ['join-with left', 'mode main']
@@ -355,4 +357,9 @@ run = 'layout floating'
 
 [[on-window-detected]]
 if.app-id = 'com.valvesoftware.steam'
+run = 'layout floating'
+
+# Keybindings overlay window (show-keybindings script)
+[[on-window-detected]]
+if.window-title-regex-substring = 'Keybindings Reference'
 run = 'layout floating'

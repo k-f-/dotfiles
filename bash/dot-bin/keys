@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+# keys - Display keybindings reference
+# Usage: keys [section]
+
+DOTFILES="${HOME}/.dotfiles"
+if [[ ! -d "$DOTFILES" ]]; then
+    DOTFILES="${HOME}/Documents/Code/dotfiles"
+fi
+
+KEYBINDINGS_FILE="${DOTFILES}/docs/KEYBINDINGS.md"
+
+if [[ ! -f "$KEYBINDINGS_FILE" ]]; then
+    echo "Error: Keybindings file not found at $KEYBINDINGS_FILE"
+    exit 1
+fi
+
+# Check if bat is available, otherwise fall back to less
+if command -v bat &> /dev/null; then
+    bat --style=auto --paging=always --language=markdown "$KEYBINDINGS_FILE"
+else
+    less -R "$KEYBINDINGS_FILE"
+fi

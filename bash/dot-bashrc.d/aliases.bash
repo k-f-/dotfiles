@@ -19,6 +19,12 @@ alias vim="nvim"
 alias dotfiles="cd ~/Documents/Code/dotfiles && \$EDITOR ."
 alias dots="dotfiles"  # shorter alias
 
+### Keybindings - display keybindings reference
+# Use: keys (or keys?) - terminal view
+# Use: help-keys - popup modal view (browser-based, Kitty has GPU crash)
+alias 'keys?'='keys'
+alias help-keys='show-keybindings-html'
+
 ### Spotify was broken forever. Pop-OS fixes this. For posterity.
 alias spotify-hdpi="spotify --force-device-scale-factor=2 &" # HiDPI flags.
 
