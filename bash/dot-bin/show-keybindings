@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+# show-keybindings - Display keybindings in a floating, transparent overlay
+
+DOTFILES="${HOME}/.dotfiles"
+if [[ ! -d "$DOTFILES" ]]; then
+    DOTFILES="${HOME}/Documents/Code/dotfiles"
+fi
+
+KEYBINDINGS_FILE="${DOTFILES}/docs/KEYBINDINGS.md"
+
+if [[ ! -f "$KEYBINDINGS_FILE" ]]; then
+    echo "Error: Keybindings file not found at $KEYBINDINGS_FILE" >&2
+    exit 1
+fi
+
+# Launch kitty with the keybindings in a new OS window
+# The window will be floated by aerospace's on-window-detected rule
+/opt/homebrew/bin/kitty \
+    --title "Keybindings Reference" \
+    --override background_opacity=0.92 \
+    --override remember_window_size=no \
+    --override initial_window_width=120c \
+    --override initial_window_height=45c \
+    --override window_padding_width=20 \
+    --override hide_window_decorations=yes \
+    --override confirm_os_window_close=0 \
+    --detach \
+    bash -c "bat --style=auto --paging=always --language=markdown '${KEYBINDINGS_FILE}'"

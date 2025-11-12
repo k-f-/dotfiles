@@ -38,6 +38,8 @@ brew "isync"
 brew "jq"
 # Mac App Store command-line interface
 brew "mas"
+# Keep your application settings in sync
+brew "mackup"
 # SMTP client that can be used as an SMTP plugin for Mutt
 brew "msmtp"
 # Ambitious Vim-fork focused on extensibility and agility
