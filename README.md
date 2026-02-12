@@ -19,7 +19,7 @@ This repository contains my personal configuration files (dotfiles) for various 
 - **Email**: mbsync, msmtp, mu (email workflow)
 - **Other**: X11 configs, YouTube downloader settings
 
-**📖 See [docs/setup/keybindings.md](docs/setup/keybindings.md) for keyboard shortcuts**
+**📖 See [keybindings.md](keybindings.md) for keyboard shortcuts**
 **📖 See [universal-layout-manager/](universal-layout-manager/) for window management setup**
 
 ## 🚀 Quick Start
@@ -111,7 +111,7 @@ em            # Smart editor (VS Code → neovim → vim)
 - **`Up/Down`** - Search history by prefix
 - **`Ctrl + Space`** - Accept autosuggestion
 
-📖 **See [KEYBINDINGS.md](KEYBINDINGS.md) for complete reference**
+📖 **See [keybindings.md](keybindings.md) for complete reference**
 
 ## 📦 Package Structure
 
