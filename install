@@ -42,7 +42,6 @@ OPTIONAL_PACKAGES=(
     sketchybar
     skhd
     ssh
-    x-windows
     yabai
     youtube-dl
 )
