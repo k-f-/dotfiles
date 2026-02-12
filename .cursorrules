@@ -6,11 +6,13 @@ This is a personal dotfiles repository managed with GNU Stow for symlink managem
 ## Core Principles
 
 ### 1. GNU Stow Conventions
-- **ALWAYS use `dot-` prefix** for files that should become dotfiles in home directory
+- **ALWAYS use `dot-` prefix** for files/directories that should become dotfiles in home directory
   - Example: `bash/dot-bashrc` → `~/.bashrc`
   - Example: `git/dot-gitconfig` → `~/.gitconfig`
-- **Use `.config` subdirectories** for XDG-compliant configs
-  - Example: `kitty/.config/kitty/kitty.conf` → `~/.config/kitty/kitty.conf`
+  - Example: `ssh/dot-ssh/config` → `~/.ssh/config`
+- **Use `dot-config` for XDG-compliant configs** (consistent `dot-` prefix, not literal `.config`)
+  - Example: `kitty/dot-config/kitty/kitty.conf` → `~/.config/kitty/kitty.conf`
+  - Example: `opencode/dot-config/opencode/opencode.json` → `~/.config/opencode/opencode.json`
 - **Stow command pattern**: `stow --target="$HOME" --dotfiles PACKAGE`
 - The `--dotfiles` flag converts `dot-` prefix to actual `.` in target
 

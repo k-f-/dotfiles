@@ -1,10 +1,12 @@
 zsh/.zshrc.d/plugins/
-.ssh/
+# SSH and GPG sensitive files (private keys, known_hosts)
+ssh/dot-ssh/id_*
+ssh/dot-ssh/known_hosts*
 .gnupg/
 undo-tree/
 backup/
 elpa/
-emacs/.emacs.d/url/
+emacs/dot-emacs.d/url/
 auto-save-list
 ido.last
 smex-items
@@ -15,15 +17,11 @@ history
 *.log
 *.wants
 __pycache__
-ranger/.config/ranger/plugins/
-mpd/.config/mpd/database
-mpd/.config/mpd/mpd.log
-mpd/.config/mpd/pid
-mpd/.config/mpd/playlists
-mpd/.config/mpd/state
-mpd/.config/mpd/sticker.sql
 .zcompdump-*
 .DS_Store
 
 # Dynamic theme symlinks (updated by toggle-theme)
-kitty/.config/kitty/theme.conf
+kitty/dot-config/kitty/theme.conf
+
+# Runtime dependencies (installed post-stow, not tracked)
+opencode/dot-config/opencode/node_modules/

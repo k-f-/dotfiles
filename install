@@ -37,6 +37,7 @@ OPTIONAL_PACKAGES=(
     gnupg
     kitty
     mail
+    opencode
     secrets
     sketchybar
     skhd
@@ -465,6 +466,31 @@ create_additional_symlinks() {
     fi
 }
 
+# Install dependencies for packages that need them
+install_package_dependencies() {
+    print_header "Installing package dependencies..."
+
+    # opencode: install Node.js/Bun dependencies for MCP plugins
+    local opencode_dir="${HOME}/.config/opencode"
+    if [[ -f "${opencode_dir}/package.json" ]]; then
+        if command -v bun &>/dev/null; then
+            print_verbose "Installing opencode dependencies with bun..."
+            if [[ "${DRY_RUN}" == "true" ]]; then
+                print_info "Would run: bun install in ${opencode_dir}"
+            else
+                if (cd "${opencode_dir}" && bun install --frozen-lockfile 2>/dev/null || bun install); then
+                    print_success "Installed opencode dependencies"
+                else
+                    print_warning "Failed to install opencode dependencies (run manually: cd ${opencode_dir} && bun install)"
+                fi
+            fi
+        else
+            print_warning "bun not found - skipping opencode dependency install"
+            print_warning "Install bun (https://bun.sh) then run: cd ${opencode_dir} && bun install"
+        fi
+    fi
+}
+
 # macOS specific setup
 setup_macos() {
     print_header "Setting up macOS-specific configurations..."
@@ -560,6 +586,9 @@ EOF
 
     # Install dotfiles
     install_dotfiles "${os}"
+
+    # Install dependencies for packages that need post-stow setup
+    install_package_dependencies
 
     # Validate stow configuration
     if [[ "${DRY_RUN}" != "true" ]] && [[ -x "${DOTFILES_DIR}/scripts/validate-stow.sh" ]]; then

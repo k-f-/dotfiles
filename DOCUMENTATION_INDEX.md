@@ -61,7 +61,7 @@ Complete index of all documentation in this repository.
 - **[bash/dot-bin/README.md](./bash/dot-bin/README.md)** - User scripts
 - **[aerospace/README.md](./aerospace/README.md)** - Aerospace config
 - **[emacs/README.md](./emacs/README.md)** - Emacs configuration
-- **[kitty/.config/kitty/README.md](./kitty/.config/kitty/)** - Kitty terminal config
+- **[kitty/dot-config/kitty/README.md](./kitty/dot-config/kitty/)** - Kitty terminal config
 
 ## 👨‍💻 Development Documentation
 
