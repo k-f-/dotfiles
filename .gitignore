@@ -23,5 +23,27 @@ __pycache__
 # Dynamic theme symlinks (updated by toggle-theme)
 kitty/dot-config/kitty/theme.conf
 
+# AWS credentials (config is safe, credentials are NOT)
+aws/dot-aws/credentials
+
+# Claude Code runtime/transient data (only settings.json is tracked)
+claude-code/dot-claude/archive/
+claude-code/dot-claude/cache/
+claude-code/dot-claude/debug/
+claude-code/dot-claude/file-history/
+claude-code/dot-claude/history.jsonl
+claude-code/dot-claude/ide/
+claude-code/dot-claude/plans/
+claude-code/dot-claude/plugins/
+claude-code/dot-claude/projects/
+claude-code/dot-claude/session-env/
+claude-code/dot-claude/settings.local.json
+claude-code/dot-claude/shell-snapshots/
+claude-code/dot-claude/stats-cache.json
+claude-code/dot-claude/statsig/
+claude-code/dot-claude/statusline-command.sh
+claude-code/dot-claude/tasks/
+claude-code/dot-claude/todos/
+
 # Runtime dependencies (installed post-stow, not tracked)
 opencode/dot-config/opencode/node_modules/

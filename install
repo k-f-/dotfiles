@@ -32,16 +32,22 @@ CORE_PACKAGES=(
 # Optional packages - can be skipped with --minimal (alphabetically sorted)
 OPTIONAL_PACKAGES=(
     aerospace
+    aws
+    claude-code
     doom
     emacs
+    gh
     gnupg
+    homebrew
     kitty
+    mackup
     mail
     opencode
     secrets
     sketchybar
     skhd
     ssh
+    universal-wm
     yabai
     youtube-dl
 )
