@@ -170,8 +170,7 @@ success "GNU utilities configured"
 # macOS System Defaults
 #==============================================================================
 # NOTE: Some of these settings may require logging out and back in to take effect.
-# NOTE: These settings were last verified on macOS Sonoma (14.x).
-#       TODO: Verify compatibility with macOS Sequoia (15.x) when available for testing.
+# NOTE: These settings were last verified on macOS Sequoia (15.x), February 2026.
 
 info "Configuring macOS system defaults..."
 
@@ -240,17 +239,17 @@ success "Automatic period substitution: disabled"
 defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 success "Finder: show all file extensions"
 
-# Global - Do NOT Auto-hide menu bar
+# Global - Do NOT auto-hide menu bar (always visible)
 defaults write NSGlobalDomain _HIHideMenuBar -bool false
-success "Menu bar: auto-hide enabled"
+success "Menu bar: always visible"
 
 # Global - Set highlight color to green (0.65098 0.85490 0.58431 = green)
 defaults write NSGlobalDomain AppleHighlightColor -string "0.65098 0.85490 0.58431"
 success "Highlight color: green"
 
-# Global - Set accent color to graphite (1 = graphite)
-defaults write NSGlobalDomain AppleAccentColor -int 1
-success "Accent color: graphite"
+# Global - Set accent color to purple (6 = purple)
+defaults write NSGlobalDomain AppleAccentColor -int 6
+success "Accent color: purple"
 
 # Global - Enable drag-on-gesture (allows dragging windows by clicking anywhere while holding modifier)
 defaults write -g NSWindowShouldDragOnGesture YES
@@ -322,6 +321,69 @@ success "Safari: enable Web Inspector"
 defaults write com.apple.mail AddressesIncludeNameOnPasteboard -bool false
 success "Mail: paste email addresses only (no names)"
 
+# Global - Set initial key repeat delay (lower = faster; default is 25, 15 is fast)
+defaults write NSGlobalDomain InitialKeyRepeat -int 15
+success "Initial key repeat delay: 15 (fast)"
+
+# Global - Enable automatic dark/light mode switching
+defaults write NSGlobalDomain AppleInterfaceStyleSwitchesAutomatically -bool true
+success "Appearance: auto dark/light mode"
+
+# Global - Small sidebar icon size (1 = small, 2 = medium, 3 = large)
+defaults write NSGlobalDomain NSTableViewDefaultSizeMode -int 1
+success "Sidebar icon size: small"
+
+# Dock - Set icon size
+defaults write com.apple.dock tilesize -int 70
+success "Dock icon size: 70"
+
+# Dock - Enable magnification
+defaults write com.apple.dock magnification -bool true
+success "Dock magnification: enabled"
+
+# Dock - Remove autohide delay (instant show)
+defaults write com.apple.dock autohide-delay -float 0
+success "Dock autohide delay: instant"
+
+# Dock - Disable launch bounce animation
+defaults write com.apple.dock launchanim -bool false
+success "Dock launch animation: disabled"
+
+# Dock - Minimize windows into their application icon
+defaults write com.apple.dock minimize-to-application -bool true
+success "Dock: minimize to application icon"
+
+# Dock - Don't show recent applications
+defaults write com.apple.dock show-recents -bool false
+success "Dock: hide recent applications"
+
+# Hot Corners
+# Possible values:
+#  0: no-op    2: Mission Control    3: Show application windows
+#  4: Desktop  5: Start screen saver 6: Disable screen saver
+#  7: Dashboard (deprecated)         10: Put display to sleep
+#  11: Launchpad                     12: Notification Center
+#  13: Lock Screen                   14: Quick Note
+
+# Top-right corner: disabled
+defaults write com.apple.dock wvous-tr-corner -int 1
+defaults write com.apple.dock wvous-tr-modifier -int 0
+success "Hot corner (top-right): disabled"
+
+# Bottom-left corner: Start screen saver
+defaults write com.apple.dock wvous-bl-corner -int 5
+defaults write com.apple.dock wvous-bl-modifier -int 0
+success "Hot corner (bottom-left): start screen saver"
+
+# Bottom-right corner: Disable screen saver
+defaults write com.apple.dock wvous-br-corner -int 6
+defaults write com.apple.dock wvous-br-modifier -int 0
+success "Hot corner (bottom-right): disable screen saver"
+
+# Restart Dock to apply dock/hot-corner changes
+killall Dock 2>/dev/null || true
+success "Dock restarted to apply changes"
+
 success "All macOS defaults configured!"
 warning "Some changes may require logging out and back in to take effect."
 
@@ -362,130 +424,15 @@ else
 fi
 
 #==============================================================================
-# AeroSpace Layout Manager
+# Window Management (universal-wm)
 #==============================================================================
-info "Setting up AeroSpace layout manager..."
-
-# Check if AeroSpace is installed
-if command -v aerospace &> /dev/null; then
-    success "AeroSpace is installed"
-
-    # Check if Bun is installed (required for aerospace-layout-manager)
-    if command -v bun &> /dev/null; then
-        success "Bun runtime is installed"
-    else
-        warning "Bun is not installed (required for aerospace-layout-manager)"
-        ask "Install Bun runtime now? (y/n)"
-        read -r response
-        if [[ "$response" =~ ^[Yy]$ ]]; then
-            info "Installing Bun..."
-            if curl -fsSL https://bun.sh/install | bash; then
-                # Add Bun to PATH for current session
-                export BUN_INSTALL="$HOME/.bun"
-                export PATH="$BUN_INSTALL/bin:$PATH"
-                success "Bun installed successfully"
-            else
-                error "Failed to install Bun"
-                info "You can install it manually later with: curl -fsSL https://bun.sh/install | bash"
-                return
-            fi
-        else
-            warning "Skipping Bun installation"
-            info "aerospace-layout-manager requires Bun. Install it later with:"
-            echo "  curl -fsSL https://bun.sh/install | bash"
-            return
-        fi
-    fi
-
-    if command -v bun &> /dev/null; then
-        success "Bun runtime is available"
-
-        # Check if aerospace-layout-manager is already installed globally
-        if command -v aerospace-layout-manager &> /dev/null; then
-            success "aerospace-layout-manager is already installed globally"
-        else
-            info "Installing aerospace-layout-manager..."
-
-            # Get the dotfiles directory
-            SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-            DOTFILES_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-
-            # Check if submodule exists
-            if [ -d "$DOTFILES_DIR/aerospace-layout-manager" ]; then
-                info "Using aerospace-layout-manager from submodule..."
-                cd "$DOTFILES_DIR/aerospace-layout-manager"
-
-                # Make sure submodule is initialized and updated
-                git submodule update --init --recursive 2>/dev/null || true
-
-                # Install dependencies and link globally
-                bun install
-                bun link
-
-                success "aerospace-layout-manager installed from submodule"
-            else
-                warning "Submodule not found at $DOTFILES_DIR/aerospace-layout-manager"
-                ask "Add aerospace-layout-manager as a git submodule? (recommended) (y/n)"
-                read -r response
-                if [[ "$response" =~ ^[Yy]$ ]]; then
-                    info "Adding submodule..."
-                    cd "$DOTFILES_DIR"
-                    if git submodule add https://github.com/CarterMcAlister/aerospace-layout-manager.git 2>/dev/null; then
-                        success "Submodule added"
-                        cd aerospace-layout-manager
-                        bun install
-                        bun link
-                        success "aerospace-layout-manager installed from submodule"
-                        info "Don't forget to commit the submodule:"
-                        echo "  cd $DOTFILES_DIR"
-                        echo "  git add .gitmodules aerospace-layout-manager"
-                        echo "  git commit -m 'Add aerospace-layout-manager submodule'"
-                    else
-                        error "Failed to add submodule"
-                        info "Falling back to global installation..."
-                        if curl -fsSL https://raw.githubusercontent.com/CarterMcAlister/aerospace-layout-manager/main/install.sh | bash; then
-                            success "aerospace-layout-manager installed globally"
-                        else
-                            error "Installation failed"
-                        fi
-                    fi
-                else
-                    info "Installing via curl instead..."
-                    if curl -fsSL https://raw.githubusercontent.com/CarterMcAlister/aerospace-layout-manager/main/install.sh | bash; then
-                        success "aerospace-layout-manager installed globally"
-                    else
-                        error "Installation failed"
-                    fi
-                fi
-            fi
-        fi
-
-        # Copy layouts.json if it exists
-        if [ -f "$DOTFILES_DIR/aerospace/layouts.json" ]; then
-            mkdir -p "$HOME/.config/aerospace"
-            cp "$DOTFILES_DIR/aerospace/layouts.json" "$HOME/.config/aerospace/layouts.json"
-            success "AeroSpace layouts.json copied to ~/.config/aerospace/"
-        else
-            warning "layouts.json not found in dotfiles/aerospace/"
-        fi
-
-        # Verify installation
-        if command -v aerospace-layout-manager &> /dev/null; then
-            success "✓ aerospace-layout-manager is ready to use"
-            info "Try: aerospace-layout-manager --help"
-        else
-            warning "aerospace-layout-manager installation could not be verified"
-        fi
-
-    else
-        warning "Bun is not installed (required for aerospace-layout-manager)"
-        info "Install Bun with: curl -fsSL https://bun.sh/install | bash"
-        info "Then run this script again to install aerospace-layout-manager"
-    fi
-else
-    warning "AeroSpace is not installed, skipping layout manager setup"
-    info "Install AeroSpace with: brew install --cask nikitabobko/tap/aerospace"
-fi
+# The universal-wm stow package manages AeroSpace layout configuration.
+# Layouts are defined in universal-wm/dot-config/universal-wm/layouts.json
+# and stowed to ~/.config/universal-wm/layouts.json.
+#
+# See universal-layout-manager/ for the CLI tool that applies layouts.
+info "Window management is configured via the 'universal-wm' stow package."
+info "Run: stow --restow --target=\"\$HOME\" --dotfiles universal-wm"
 
 #==============================================================================
 # Application Cleanup Utilities
