@@ -231,6 +231,28 @@ backup_conflicts() {
         # Skip if target doesn't exist
         [[ ! -e "${target_file}" ]] && [[ ! -L "${target_file}" ]] && continue
 
+        # Skip if target is inside a tree-folded stow directory
+        # (a parent dir is a symlink pointing into our dotfiles repo).
+        # Without this check, backup_conflicts will mv files OUT of the repo
+        # when stow has tree-folded a directory (e.g. ~/.bashrc.d -> dotfiles/bash/dot-bashrc.d)
+        local _check_path="${target_file}"
+        local _is_tree_folded=false
+        while [[ "${_check_path}" != "${STOW_TARGET}" && "${_check_path}" != "/" ]]; do
+            _check_path="$(dirname "${_check_path}")"
+            if [[ -L "${_check_path}" ]]; then
+                local _resolved
+                _resolved="$(readlink -f "${_check_path}" 2>/dev/null)" || true
+                if [[ "${_resolved}" == "${DOTFILES_DIR}"* ]]; then
+                    _is_tree_folded=true
+                    break
+                fi
+            fi
+        done
+        if [[ "${_is_tree_folded}" == "true" ]]; then
+            print_verbose "Skipping tree-folded stow path: ${target_file}"
+            continue
+        fi
+
         # If target is a symlink
         if [[ -L "${target_file}" ]]; then
             local link_target=$(readlink "${target_file}")
