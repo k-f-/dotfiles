@@ -6,13 +6,13 @@
 ## What Happened
 
 When running `./install --relink`, the following files were deleted from the repository:
-- `doom/.config/doom/{config.el, init.el, packages.el}`
-- `kitty/.config/kitty/kitty.conf`
-- `sketchybar/.config/sketchybar/sketchybarrc`
-- `skhd/.config/skhd/skhdrc`
-- `ssh/.ssh/config`
-- `yabai/.config/yabai/yabairc`
-- `youtube-dl/.config/youtube-dl/config`
+- `doom/dot-config/doom/{config.el, init.el, packages.el}`
+- `kitty/dot-config/kitty/kitty.conf`
+- `sketchybar/dot-config/sketchybar/sketchybarrc`
+- `skhd/dot-config/skhd/skhdrc`
+- `ssh/dot-ssh/config`
+- `yabai/dot-config/yabai/yabairc`
+- `youtube-dl/dot-config/youtube-dl/config`
 - Various bash scripts (checkmail, diff-so-fancy, eem, etc.)
 
 ## Recovery
@@ -37,7 +37,7 @@ The function (lines 210-289 in `install` script) handles conflicts when stowing:
 
 **Likely Scenario**:
 The files in the dotfiles repository were **themselves symlinks** pointing to other locations, or there was a circular reference issue where:
-- `$HOME/.config/doom/config.el` → symlink to `~/Documents/Code/dotfiles/doom/.config/doom/config.el`
+- `$HOME/.config/doom/config.el` → symlink to `~/Documents/Code/dotfiles/doom/dot-config/doom/config.el`
 - But the source file was also somehow affected
 
 **Alternative Scenario**:
