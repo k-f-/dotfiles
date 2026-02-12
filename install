@@ -226,7 +226,7 @@ backup_conflicts() {
         local target_file="${STOW_TARGET}/${stowed_path}"
 
         # Skip if target doesn't exist
-        [[∑ ! -e "${target_file}" ]] && [[ ! -L "${target_file}" ]] && continue
+        [[ ! -e "${target_file}" ]] && [[ ! -L "${target_file}" ]] && continue
 
         # If target is a symlink
         if [[ -L "${target_file}" ]]; then
