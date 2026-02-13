@@ -60,9 +60,18 @@
         "agentrepo"
       ],
       "enabled": true
+    },
+    "splitrail": {
+      "type": "local",
+      "command": [
+        "splitrail",
+        "mcp"
+      ],
+      "enabled": true
     }
   },
   "plugin": [
-    "oh-my-opencode@latest"
+    "oh-my-opencode@latest",
+    "opencode-token-monitor@latest"
   ]
 }
