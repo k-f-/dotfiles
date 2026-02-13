@@ -3,28 +3,52 @@
   "mcp": {
     "github": {
       "type": "local",
-      "command": ["npx", "-y", "@modelcontextprotocol/server-github"],
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
       "enabled": true
     },
     "sequential-thinking": {
       "type": "local",
-      "command": ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
       "enabled": true
     },
     "filesystem": {
       "type": "local",
-      "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "/Users/kef/Documents", "/Users/kef/Desktop", "/Users/kef/Downloads"],
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/kef/Documents",
+        "/Users/kef/Desktop",
+        "/Users/kef/Downloads"
+      ],
       "enabled": true
     },
     "fetch": {
       "type": "local",
-      "command": ["uvx", "mcp-server-fetch"],
+      "command": [
+        "uvx",
+        "mcp-server-fetch"
+      ],
       "enabled": true
     },
     "agentic-dev-standards": {
       "type": "local",
-      "command": ["node", "/Users/kef/Documents/Code/agentic-dev-standards/mcp-server.js"],
+      "command": [
+        "node",
+        "/Users/kef/Documents/Code/agentic-dev-standards/mcp-server.js"
+      ],
       "enabled": true
     }
-  }
+  },
+  "plugin": [
+    "oh-my-opencode@latest"
+  ]
 }
