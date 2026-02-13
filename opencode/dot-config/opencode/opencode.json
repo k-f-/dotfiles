@@ -8,6 +8,9 @@
         "-y",
         "@modelcontextprotocol/server-github"
       ],
+      "environment": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "{env:GITHUB_PERSONAL_ACCESS_TOKEN}"
+      },
       "enabled": true
     },
     "sequential-thinking": {
@@ -44,6 +47,17 @@
       "command": [
         "node",
         "/Users/kef/Documents/Code/agentic-dev-standards/mcp-server.js"
+      ],
+      "enabled": true
+    },
+    "basic-memory": {
+      "type": "local",
+      "command": [
+        "uvx",
+        "basic-memory",
+        "mcp",
+        "--project",
+        "agentrepo"
       ],
       "enabled": true
     }

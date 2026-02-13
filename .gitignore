@@ -23,6 +23,9 @@ __pycache__
 # Dynamic theme symlinks (updated by toggle-theme)
 kitty/dot-config/kitty/theme.conf
 
+# Secrets — only .gpg files are committed; plaintext NEVER tracked
+secrets/dot-secrets-env
+
 # AWS credentials (config is safe, credentials are NOT)
 aws/dot-aws/credentials
 

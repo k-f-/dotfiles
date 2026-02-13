@@ -1,4 +1,5 @@
 # Load supplementary scripts
+source ~/.bashrc.d/secrets.bash
 source ~/.bashrc.d/aliases.bash
 source ~/.bashrc.d/prompt.bash
 source ~/.bashrc.d/path.bash
