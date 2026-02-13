@@ -1,4 +1,6 @@
-Host github.com 
+Host github.com
+  Hostname ssh.github.com
+  Port 443
   AddKeysToAgent yes
   UseKeychain yes
   IdentityFile ~/.ssh/id_ed25519

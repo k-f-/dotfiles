@@ -215,6 +215,7 @@ RPROMPT='${prompt_return_status}%*'
 fpath=($ZSH_HOME/zsh-completions/src $fpath)
 
 # Load supplementary scripts
+source ~/.bashrc.d/secrets.bash
 source ~/.bashrc.d/aliases.bash
 source ~/.bashrc.d/exports.bash
 source ~/.bashrc.d/variables.bash
