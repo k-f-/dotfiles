@@ -143,10 +143,10 @@ agr_browse() {
                 elif [[ {} == ".." ]]; then
                     echo "← Back to root";
                 else
-                    file="$AGR_DIR/{}";
+                    entry={}; file="$AGR_DIR/$entry";
                     date=$(awk "/^date:/{gsub(/\047/,\"\"); print \$2; exit}" "$file" 2>/dev/null);
                     type=$(awk "/^type:/{print \$2; exit}" "$file" 2>/dev/null);
-                    folder=$(dirname {} | sed "s|^[^/]*/||");
+                    folder=$(dirname "$entry" | sed "s|^[^/]*/||");
                     tags=$(awk "/^tags:/{found=1;next} found && /^- /{gsub(/^- /,\"\"); printf \"%s, \",\$0} found && !/^- /{exit}" "$file" 2>/dev/null | sed "s/, $//");
                     printf "\033[38;2;128;255;234m󰃭 %s\033[0m \033[38;2;121;112;169m│\033[0m " "${date:-—}";
                     if [ "${type:-chat}" = "code" ]; then
@@ -174,10 +174,10 @@ agr_browse() {
                 elif [[ {} == ".." ]]; then
                     echo "← Back to root";
                 else
-                    file="$AGR_DIR/{}";
+                    entry={}; file="$AGR_DIR/$entry";
                     date=$(awk "/^date:/{gsub(/\047/,\"\"); print \$2; exit}" "$file" 2>/dev/null);
                     type=$(awk "/^type:/{print \$2; exit}" "$file" 2>/dev/null);
-                    folder=$(dirname {} | sed "s|^[^/]*/||");
+                    folder=$(dirname "$entry" | sed "s|^[^/]*/||");
                     tags=$(awk "/^tags:/{found=1;next} found && /^- /{gsub(/^- /,\"\"); printf \"%s, \",\$0} found && !/^- /{exit}" "$file" 2>/dev/null | sed "s/, $//");
                     printf "\033[38;2;128;255;234m󰃭 %s\033[0m \033[38;2;121;112;169m│\033[0m " "${date:-—}";
                     if [ "${type:-chat}" = "code" ]; then
