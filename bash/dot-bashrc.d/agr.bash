@@ -114,13 +114,15 @@ agr_browse() {
         # Content search mode: rg finds matches, fzf fuzzy filters
         file_list=$(rg -i --files-with-matches --glob "*.md" "$query" "$target" 2>/dev/null |
             grep -v '_templates\|_scripts\|README' |
-            sed "s|^${AGR_DIR}/||")
+            sed "s|^${AGR_DIR}/||" |
+            sed 's|^\([^/]*\)/\([^/]*\)/\(.*\)|\2 │ \3|')
     else
         # Browse mode: list all markdown files
         file_list=$(rg --files --glob "*.md" "$target" 2>/dev/null |
             grep -v '_templates\|_scripts\|README' |
             sort -r |
-            sed "s|^${AGR_DIR}/||")
+            sed "s|^${AGR_DIR}/||" |
+            sed 's|^\([^/]*\)/\([^/]*\)/\(.*\)|\2 │ \3|')
     fi
 
     local combined_list
@@ -163,27 +165,61 @@ agr_browse() {
                 if [ "$i" -eq "$total" ]; then branch="└── "; else branch="├── "; fi;
                 printf "\033[38;2;121;112;169m%s\033[0m" "$branch";
                 printf "\033[38;2;128;255;234m%s\033[0m " "${fdate:-————}";
-                if [ "${ftype:-chat}" = "code" ]; then
-                    printf "\033[38;2;149;128;255m󰅩\033[0m ";
-                else
-                    printf "\033[38;2;255;128;191m󰍩\033[0m ";
-                fi;
+                case "${ftype:-chat}" in
+                    code)
+                        printf "\033[38;2;149;128;255m󰅩\033[0m "
+                        ;;
+                    chat)
+                        printf "\033[38;2;255;128;191m󰍩\033[0m "
+                        ;;
+                    research)
+                        printf "\033[38;2;128;255;234m󰍉\033[0m "
+                        ;;
+                    planning)
+                        printf "\033[38;2;255;202;128m󰸕\033[0m "
+                        ;;
+                    *)
+                        printf "\033[38;2;255;128;191m󰍩\033[0m "
+                        ;;
+                esac
                 printf "\033[38;2;248;248;242m%s\033[0m\n" "$fname";
             done;
         elif [[ {} == ".." ]]; then
             echo "← Back to root";
         else
-            entry={}; file="$AGR_DIR/$entry";
+            entry={};
+            if [[ "$entry" == *"│"* ]]; then
+                folder=$(echo "$entry" | cut -d"│" -f1 | sed "s/ *$//");
+                filename=$(echo "$entry" | cut -d"│" -f2 | sed "s/^ *//");
+                for top in chats code; do
+                    file="$AGR_DIR/$top/$folder/$filename";
+                    [[ -f "$file" ]] && break;
+                done;
+            else
+                file="$AGR_DIR/$entry";
+            fi;
             date=$(awk "/^date:/{gsub(/\047/,\"\"); print \$2; exit}" "$file" 2>/dev/null);
             type=$(awk "/^type:/{print \$2; exit}" "$file" 2>/dev/null);
             folder=$(dirname "$entry" | sed "s|^[^/]*/||");
             tags=$(awk "/^tags:/{found=1;next} found && /^- /{gsub(/^- /,\"\"); printf \"%s, \",\$0} found && !/^- /{exit}" "$file" 2>/dev/null | sed "s/, $//");
             printf "\033[38;2;128;255;234m󰃭 %s\033[0m \033[38;2;121;112;169m│\033[0m " "${date:-—}";
-            if [ "${type:-chat}" = "code" ]; then
-              printf "\033[38;2;149;128;255m󰅩 %s\033[0m" "${type}";
-            else
-              printf "\033[38;2;255;128;191m󰍩 %s\033[0m" "${type:-chat}";
-            fi;
+            case "${type:-chat}" in
+                code)
+                    printf "\033[38;2;149;128;255m󰅩 %s\033[0m" "${type}"
+                    ;;
+                chat)
+                    printf "\033[38;2;255;128;191m󰍩 %s\033[0m" "${type:-chat}"
+                    ;;
+                research)
+                    printf "\033[38;2;128;255;234m󰍉 %s\033[0m" "${type}"
+                    ;;
+                planning)
+                    printf "\033[38;2;255;202;128m󰸕 %s\033[0m" "${type}"
+                    ;;
+                *)
+                    printf "\033[38;2;255;128;191m󰍩 %s\033[0m" "${type:-chat}"
+                    ;;
+            esac
             printf " \033[38;2;121;112;169m│\033[0m \033[38;2;255;202;128m󰉋 %s\033[0m" "${folder:-—}";
             printf " \033[38;2;121;112;169m│\033[0m \033[38;2;138;255;128m󰓹 %s\033[0m\n\n" "${tags:-—}";
             bat --color=always --style=grid "$file";
@@ -196,6 +232,9 @@ agr_browse() {
     while true; do
         if [[ -n "$query" ]]; then
             result=$(echo "$combined_list" | fzf --expect=ctrl-e,ctrl-y,ctrl-o \
+                --delimiter='│' \
+                --nth=2.. \
+                --with-nth=1,2 \
                 --color="$fzf_color" \
                 --preview "$fzf_preview" \
                 --preview-window=right:60% \
@@ -204,6 +243,9 @@ agr_browse() {
                 --query="")
         else
             result=$(echo "$combined_list" | fzf --expect=ctrl-e,ctrl-y,ctrl-o \
+                --delimiter='│' \
+                --nth=2.. \
+                --with-nth=1,2 \
                 --color="$fzf_color" \
                 --preview "$fzf_preview" \
                 --preview-window=right:60% \
@@ -248,23 +290,44 @@ ${file_list}"
             continue
         fi
 
+        # Reconstruct full path from folder │ filename format
+        if [[ "$selection" == *"│"* ]]; then
+            folder=$(echo "$selection" | cut -d'│' -f1 | sed 's/ *$//')
+            filename=$(echo "$selection" | cut -d'│' -f2 | sed 's/^ *//')
+            # Try both chats/ and code/ to find the file
+            full_path=""
+            for top in chats code; do
+                candidate="$AGR_DIR/$top/$folder/$filename"
+                if [[ -f "$candidate" ]]; then
+                    full_path="$candidate"
+                    break
+                fi
+            done
+            # Fallback: if not found, use original selection
+            [[ -z "$full_path" ]] && full_path="$AGR_DIR/$selection"
+        else
+            full_path="$AGR_DIR/$selection"
+        fi
+
         case "$key" in
             "")
-                bat --paging=always "$AGR_DIR/$selection"
+                bat --paging=always "$full_path"
                 ;;
             ctrl-e)
-                ${EDITOR:-nvim} "$AGR_DIR/$selection"
+                ${EDITOR:-nvim} "$full_path"
                 ;;
             ctrl-y)
-                echo "$AGR_DIR/$selection" | pbcopy
-                echo "Copied to clipboard: $AGR_DIR/$selection"
+                echo "$full_path" | pbcopy
+                echo "Copied to clipboard: $full_path"
                 ;;
             ctrl-o)
                 if ! command -v opencode &>/dev/null; then
                     echo "opencode not found in PATH" >&2
                     continue
                 fi
-                opencode --prompt "Read '${selection}' using agr_read and present a summary: what was discussed, key decisions made, and any open threads or next steps."
+                # Extract relative path for display
+                rel_path=$(echo "$full_path" | sed "s|^$AGR_DIR/||")
+                opencode --prompt "Read '${rel_path}' using agr_read and present a summary: what was discussed, key decisions made, and any open threads or next steps."
                 ;;
         esac
     done
