@@ -161,7 +161,7 @@ agr_browse() {
             --preview-window=right:60%:wrap \
             --header="$tree_header
 ───
-agr: $query | ⏎ read  ^e edit  ^y copy" \
+agr: $query | ⏎ read  ^e edit  ^y copy  ^o opencode" \
             --query="")
     else
         result=$(echo "$combined_list" | fzf --expect=ctrl-e,ctrl-y,ctrl-o \
@@ -193,7 +193,7 @@ agr: $query | ⏎ read  ^e edit  ^y copy" \
             --preview-window=right:60%:wrap \
             --header="$tree_header
 ───
-agr: browse | ⏎ read  ^e edit  ^y copy")
+agr: browse | ⏎ read  ^e edit  ^y copy  ^o opencode")
     fi
 
     # Extract key and selection from fzf result
@@ -229,6 +229,43 @@ agr: browse | ⏎ read  ^e edit  ^y copy")
         ctrl-y)  # Ctrl-Y - copy path to clipboard
             echo "$AGR_DIR/$selection" | pbcopy
             echo "Copied to clipboard: $AGR_DIR/$selection"
+            return 0
+            ;;
+        ctrl-o)  # Ctrl-O - launch opencode with context
+            if ! command -v opencode &>/dev/null; then
+                echo "opencode not found in PATH" >&2
+                return 1
+            fi
+            
+            if [[ "$selection" == "[DIR]"* ]]; then
+                # Extract folder path
+                folder=$(echo "$selection" | sed 's/\[DIR\] //;s/ (.*//')
+                folder_name=$(basename "$folder")
+                
+                # List files in folder
+                file_list=$(find "$AGR_DIR/$folder" -name "*.md" -type f 2>/dev/null | sed "s|^$AGR_DIR/||" | sort)
+                file_count=$(echo "$file_list" | wc -l | tr -d ' ')
+                
+                # Extract unique tags from folder files
+                unique_tags=$(find "$AGR_DIR/$folder" -name "*.md" -exec awk '/^tags:/{found=1;next} found && /^- /{gsub(/^- /,""); print} found && !/^- /{exit}' {} \; 2>/dev/null | sort -u | tr '\n' ',' | sed 's/,$//')
+                
+                # Launch opencode with folder context
+                opencode run "You have access to the agr conversation archive via MCP tools (agr_search, agr_read, agr_list).
+
+Context: The '${folder_name}' project contains ${file_count} conversations about: ${unique_tags}.
+
+Files in this project:
+${file_list}
+
+Use agr_read to access any of these files. Use agr_search to find related conversations in other projects."
+            else
+                # Single file context
+                opencode run "You have access to the agr conversation archive via MCP tools (agr_search, agr_read, agr_list).
+
+Context: File '${selection}' from the archive.
+
+Use agr_read to read this file, or agr_search to find related conversations."
+            fi
             return 0
             ;;
         *)  # Unknown key - should not happen
