@@ -142,7 +142,7 @@ agr_browse() {
             newest=$(echo "$dates" | tail -1);
             all_tags=$(echo "$files" | xargs -I{} awk "/^tags:/{found=1;next} found && /^- /{gsub(/^- /,\"\"); print} found && !/^- /{exit}" {} 2>/dev/null | sort -u | tr "\n" ", " | sed "s/, $//");
             printf "\033[38;2;255;202;128m󰉋 %s\033[0m" "$folder_name";
-            printf " \033[38;2;121;112;169m│\033[0m \033[38;2;149;128;255m %s\033[0m" "$top_name";
+            printf " \033[38;2;121;112;169m│\033[0m \033[38;2;149;128;255m󰅩 %s\033[0m" "$top_name";
             printf " \033[38;2;121;112;169m│\033[0m \033[38;2;128;255;234m󰈙 %s files\033[0m" "$file_count";
             if [ -n "$oldest" ]; then
                 printf " \033[38;2;121;112;169m│\033[0m \033[38;2;128;255;234m󰃭 %s → %s\033[0m" "$oldest" "$newest";
@@ -164,7 +164,7 @@ agr_browse() {
                 printf "\033[38;2;121;112;169m%s\033[0m" "$branch";
                 printf "\033[38;2;128;255;234m%s\033[0m " "${fdate:-————}";
                 if [ "${ftype:-chat}" = "code" ]; then
-                    printf "\033[38;2;149;128;255m \033[0m ";
+                    printf "\033[38;2;149;128;255m󰅩\033[0m ";
                 else
                     printf "\033[38;2;255;128;191m󰍩\033[0m ";
                 fi;
@@ -180,7 +180,7 @@ agr_browse() {
             tags=$(awk "/^tags:/{found=1;next} found && /^- /{gsub(/^- /,\"\"); printf \"%s, \",\$0} found && !/^- /{exit}" "$file" 2>/dev/null | sed "s/, $//");
             printf "\033[38;2;128;255;234m󰃭 %s\033[0m \033[38;2;121;112;169m│\033[0m " "${date:-—}";
             if [ "${type:-chat}" = "code" ]; then
-              printf "\033[38;2;149;128;255m %s\033[0m" "${type}";
+              printf "\033[38;2;149;128;255m󰅩 %s\033[0m" "${type}";
             else
               printf "\033[38;2;255;128;191m󰍩 %s\033[0m" "${type:-chat}";
             fi;
