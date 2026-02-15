@@ -204,14 +204,10 @@ agr_browse() {
                     file_list=$(find "$AGR_DIR/$folder" -name "*.md" -type f 2>/dev/null | sed "s|^$AGR_DIR/||" | sort)
                     file_count=$(echo "$file_list" | wc -l | tr -d ' ')
                     unique_tags=$(find "$AGR_DIR/$folder" -name "*.md" -exec awk '/^tags:/{found=1;next} found && /^- /{gsub(/^- /,""); print} found && !/^- /{exit}' {} \; 2>/dev/null | sort -u | tr '\n' ',' | sed 's/,$//')
-                    opencode --prompt "You have access to the agr conversation archive via MCP tools (agr_search, agr_read, agr_list).
+                    opencode --prompt "Read ALL ${file_count} files in the '${folder_name}' project using agr_read, then present a concise summary of the project state: key topics covered, open questions, and where things left off. Tags: ${unique_tags}.
 
-Context: The '${folder_name}' project contains ${file_count} conversations about: ${unique_tags}.
-
-Files in this project:
-${file_list}
-
-Use agr_read to access any of these files. Use agr_search to find related conversations in other projects."
+Files:
+${file_list}"
                     ;;
             esac
             continue
@@ -233,11 +229,7 @@ Use agr_read to access any of these files. Use agr_search to find related conver
                     echo "opencode not found in PATH" >&2
                     continue
                 fi
-                opencode --prompt "You have access to the agr conversation archive via MCP tools (agr_search, agr_read, agr_list).
-
-Context: File '${selection}' from the archive.
-
-Use agr_read to read this file, or agr_search to find related conversations."
+                opencode --prompt "Read '${selection}' using agr_read and present a summary: what was discussed, key decisions made, and any open threads or next steps."
                 ;;
         esac
     done
