@@ -180,14 +180,42 @@ agr_browse() {
         selection=$(tail -1 <<< "$result")
 
         [[ -z "$selection" ]] && return 0
+        [[ "$selection" == ".." ]] && return 0
 
         if [[ "$selection" == "󰉋 "* ]]; then
             folder=$(echo "$selection" | sed 's/^󰉋 //;s/ (.*//')
-            agr_browse "$folder" "" "$pipe_mode"
+            folder_name=$(basename "$folder")
+            case "$key" in
+                "")
+                    agr_browse "$folder" "" "$pipe_mode"
+                    ;;
+                ctrl-y)
+                    echo "$AGR_DIR/$folder" | pbcopy
+                    echo "Copied to clipboard: $AGR_DIR/$folder"
+                    ;;
+                ctrl-e)
+                    ${EDITOR:-nvim} "$AGR_DIR/$folder"
+                    ;;
+                ctrl-o)
+                    if ! command -v opencode &>/dev/null; then
+                        echo "opencode not found in PATH" >&2
+                        continue
+                    fi
+                    file_list=$(find "$AGR_DIR/$folder" -name "*.md" -type f 2>/dev/null | sed "s|^$AGR_DIR/||" | sort)
+                    file_count=$(echo "$file_list" | wc -l | tr -d ' ')
+                    unique_tags=$(find "$AGR_DIR/$folder" -name "*.md" -exec awk '/^tags:/{found=1;next} found && /^- /{gsub(/^- /,""); print} found && !/^- /{exit}' {} \; 2>/dev/null | sort -u | tr '\n' ',' | sed 's/,$//')
+                    opencode --prompt "You have access to the agr conversation archive via MCP tools (agr_search, agr_read, agr_list).
+
+Context: The '${folder_name}' project contains ${file_count} conversations about: ${unique_tags}.
+
+Files in this project:
+${file_list}
+
+Use agr_read to access any of these files. Use agr_search to find related conversations in other projects."
+                    ;;
+            esac
             continue
         fi
-
-        [[ "$selection" == ".." ]] && return 0
 
         case "$key" in
             "")
@@ -205,27 +233,11 @@ agr_browse() {
                     echo "opencode not found in PATH" >&2
                     continue
                 fi
-                if [[ "$selection" == "󰉋 "* ]]; then
-                    folder=$(echo "$selection" | sed 's/^󰉋 //;s/ (.*//')
-                    folder_name=$(basename "$folder")
-                    file_list=$(find "$AGR_DIR/$folder" -name "*.md" -type f 2>/dev/null | sed "s|^$AGR_DIR/||" | sort)
-                    file_count=$(echo "$file_list" | wc -l | tr -d ' ')
-                    unique_tags=$(find "$AGR_DIR/$folder" -name "*.md" -exec awk '/^tags:/{found=1;next} found && /^- /{gsub(/^- /,""); print} found && !/^- /{exit}' {} \; 2>/dev/null | sort -u | tr '\n' ',' | sed 's/,$//')
-                    opencode --prompt "You have access to the agr conversation archive via MCP tools (agr_search, agr_read, agr_list).
-
-Context: The '${folder_name}' project contains ${file_count} conversations about: ${unique_tags}.
-
-Files in this project:
-${file_list}
-
-Use agr_read to access any of these files. Use agr_search to find related conversations in other projects."
-                else
-                    opencode --prompt "You have access to the agr conversation archive via MCP tools (agr_search, agr_read, agr_list).
+                opencode --prompt "You have access to the agr conversation archive via MCP tools (agr_search, agr_read, agr_list).
 
 Context: File '${selection}' from the archive.
 
 Use agr_read to read this file, or agr_search to find related conversations."
-                fi
                 ;;
         esac
     done
