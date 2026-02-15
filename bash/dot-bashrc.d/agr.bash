@@ -9,7 +9,7 @@
 #   agr -c           # browse code sessions only
 #   agr -d           # browse discussions only
 
-AGR_DIR="${AGR_DIR:-$HOME/Documents/Code/agr}"
+export AGR_DIR="${AGR_DIR:-$HOME/Documents/Code/agr}"
 
 unalias agr 2>/dev/null
 
@@ -26,7 +26,7 @@ agr() {
     while [[ $# -gt 0 ]]; do
         case "$1" in
             -c|--code)  scope="code/"; shift ;;
-            -d|--discussions) scope="conversations/"; shift ;;
+            -d|--discussions) scope="chats/"; shift ;;
             -p|--pipe)  pipe_mode=1; shift ;;
             -h|--help)
                 echo "agr - agentrepo fuzzy finder"
@@ -35,7 +35,7 @@ agr() {
                 echo ""
                 echo "Options:"
                 echo "  -c, --code          browse code sessions only"
-                echo "  -d, --discussions   browse discussions only"
+                echo "  -d, --discussions   browse chat sessions only"
                 echo "  -p, --pipe          pipe mode (skip fzf, output path)"
                 echo "  -h, --help          show this help"
                 echo ""
@@ -59,7 +59,7 @@ agr() {
 }
 
 agr_browse() {
-    local scope="$1"      # "" for root, "conversations/fl5-civic-type-r" for drilled-down
+    local scope="$1"      # "" for root, "chats/fl5-civic-type-r" for drilled-down
     local query="$2"      # Optional search query
     local pipe_mode="$3"  # 0 or 1
 
@@ -93,11 +93,16 @@ agr_browse() {
     if [[ -z "$scope" ]]; then
         # Root view: list all top-level folders with counts
         folder_list=$(
-            for folder in "$AGR_DIR/conversations"/* "$AGR_DIR/code"/*; do
-                [[ -d "$folder" ]] || continue
-                count=$(find "$folder" -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
-                rel_path=$(echo "$folder" | sed "s|^$AGR_DIR/||")
-                echo "[DIR] $rel_path ($count files)"
+            for top in "$AGR_DIR"/*/; do
+                [[ -d "$top" ]] || continue
+                top_name=$(basename "$top")
+                [[ "$top_name" == .* || "$top_name" == _* ]] && continue
+                for folder in "$top"*/; do
+                    [[ -d "$folder" ]] || continue
+                    count=$(find "$folder" -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
+                    rel_path=$(echo "$folder" | sed "s|^$AGR_DIR/||;s|/$||")
+                    echo "󰉋 $rel_path ($count)"
+                done
             done | sort
         )
     else
@@ -125,18 +130,14 @@ agr_browse() {
         combined_list="$file_list"
     fi
 
-    local tree_header
-    tree_header=$(find "$AGR_DIR/conversations" "$AGR_DIR/code" -type d -not -path "*/.git/*" 2>/dev/null |
-        sed "s|^$AGR_DIR/||" | sort | head -20)
-
     local result key selection
     
     if [[ -n "$query" ]]; then
         result=$(echo "$combined_list" | fzf --expect=ctrl-e,ctrl-y,ctrl-o \
             --color="bg:#22212C,fg:#F8F8F2,hl:#9580FF,bg+:#454158,fg+:#F8F8F2,hl+:#9580FF,info:#80FFEA,prompt:#8AFF80,pointer:#FF80BF,marker:#FFCA80,spinner:#9580FF,header:#7970A9,border:#7970A9,gutter:#22212C" \
             --preview '
-                if [[ {} == "[DIR]"* ]]; then
-                    folder=$(echo {} | sed "s/\[DIR\] //;s/ (.*//" );
+                if [[ {} == "󰉋 "* ]]; then
+                    folder=$(echo {} | sed "s/^󰉋 //;s/ (.*//" );
                     echo "Folder: $folder";
                     find "$AGR_DIR/$folder" -name "*.md" 2>/dev/null | head -20 | sed "s|^$AGR_DIR/$folder/||";
                 elif [[ {} == ".." ]]; then
@@ -145,7 +146,7 @@ agr_browse() {
                     file="$AGR_DIR/{}";
                     date=$(awk "/^date:/{gsub(/\047/,\"\"); print \$2; exit}" "$file" 2>/dev/null);
                     type=$(awk "/^type:/{print \$2; exit}" "$file" 2>/dev/null);
-                    folder=$(dirname {} | sed "s|conversations/||;s|code/||");
+                    folder=$(dirname {} | sed "s|^[^/]*/||");
                     tags=$(awk "/^tags:/{found=1;next} found && /^- /{gsub(/^- /,\"\"); printf \"%s, \",\$0} found && !/^- /{exit}" "$file" 2>/dev/null | sed "s/, $//");
                     printf "\033[38;2;128;255;234m󰃭 %s\033[0m \033[38;2;121;112;169m│\033[0m " "${date:-—}";
                     if [ "${type:-chat}" = "code" ]; then
@@ -155,20 +156,19 @@ agr_browse() {
                     fi;
                     printf " \033[38;2;121;112;169m│\033[0m \033[38;2;255;202;128m󰉋 %s\033[0m" "${folder:-—}";
                     printf " \033[38;2;121;112;169m│\033[0m \033[38;2;138;255;128m󰓹 %s\033[0m\n\n" "${tags:-—}";
-                    bat --color=always --style=grid --line-range=:100 "$file";
+                    bat --color=always --style=grid "$file";
                 fi
             ' \
-            --preview-window=right:60%:wrap \
-            --header="$tree_header
-───
-agr: $query | ⏎ read  ^e edit  ^y copy  ^o opencode" \
+            --preview-window=right:60% \
+            --bind='shift-up:preview-up,shift-down:preview-down,shift-left:preview-page-up,shift-right:preview-page-down' \
+            --header="agr: $query | ⏎ read  ^e edit  ^y copy  ^o opencode" \
             --query="")
     else
         result=$(echo "$combined_list" | fzf --expect=ctrl-e,ctrl-y,ctrl-o \
             --color="bg:#22212C,fg:#F8F8F2,hl:#9580FF,bg+:#454158,fg+:#F8F8F2,hl+:#9580FF,info:#80FFEA,prompt:#8AFF80,pointer:#FF80BF,marker:#FFCA80,spinner:#9580FF,header:#7970A9,border:#7970A9,gutter:#22212C" \
             --preview '
-                if [[ {} == "[DIR]"* ]]; then
-                    folder=$(echo {} | sed "s/\[DIR\] //;s/ (.*//" );
+                if [[ {} == "󰉋 "* ]]; then
+                    folder=$(echo {} | sed "s/^󰉋 //;s/ (.*//" );
                     echo "Folder: $folder";
                     find "$AGR_DIR/$folder" -name "*.md" 2>/dev/null | head -20 | sed "s|^$AGR_DIR/$folder/||";
                 elif [[ {} == ".." ]]; then
@@ -177,7 +177,7 @@ agr: $query | ⏎ read  ^e edit  ^y copy  ^o opencode" \
                     file="$AGR_DIR/{}";
                     date=$(awk "/^date:/{gsub(/\047/,\"\"); print \$2; exit}" "$file" 2>/dev/null);
                     type=$(awk "/^type:/{print \$2; exit}" "$file" 2>/dev/null);
-                    folder=$(dirname {} | sed "s|conversations/||;s|code/||");
+                    folder=$(dirname {} | sed "s|^[^/]*/||");
                     tags=$(awk "/^tags:/{found=1;next} found && /^- /{gsub(/^- /,\"\"); printf \"%s, \",\$0} found && !/^- /{exit}" "$file" 2>/dev/null | sed "s/, $//");
                     printf "\033[38;2;128;255;234m󰃭 %s\033[0m \033[38;2;121;112;169m│\033[0m " "${date:-—}";
                     if [ "${type:-chat}" = "code" ]; then
@@ -187,13 +187,12 @@ agr: $query | ⏎ read  ^e edit  ^y copy  ^o opencode" \
                     fi;
                     printf " \033[38;2;121;112;169m│\033[0m \033[38;2;255;202;128m󰉋 %s\033[0m" "${folder:-—}";
                     printf " \033[38;2;121;112;169m│\033[0m \033[38;2;138;255;128m󰓹 %s\033[0m\n\n" "${tags:-—}";
-                    bat --color=always --style=grid --line-range=:100 "$file";
+                    bat --color=always --style=grid "$file";
                 fi
             ' \
-            --preview-window=right:60%:wrap \
-            --header="$tree_header
-───
-agr: browse | ⏎ read  ^e edit  ^y copy  ^o opencode")
+            --preview-window=right:60% \
+            --bind='shift-up:preview-up,shift-down:preview-down,shift-left:preview-page-up,shift-right:preview-page-down' \
+            --header="agr: browse | ⏎ read  ^e edit  ^y copy  ^o opencode")
     fi
 
     # Extract key and selection from fzf result
@@ -203,9 +202,9 @@ agr: browse | ⏎ read  ^e edit  ^y copy  ^o opencode")
     # Exit if no selection
     [[ -z "$selection" ]] && return 1
 
-    # Handle [DIR] drill-down
-    if [[ "$selection" == "[DIR]"* ]]; then
-        folder=$(echo "$selection" | sed 's/\[DIR\] //;s/ (.*//')
+    # Handle folder drill-down
+    if [[ "$selection" == "󰉋 "* ]]; then
+        folder=$(echo "$selection" | sed 's/^󰉋 //;s/ (.*//')
         agr_browse "$folder" "" "$pipe_mode"
         return $?
     fi
@@ -237,9 +236,9 @@ agr: browse | ⏎ read  ^e edit  ^y copy  ^o opencode")
                 return 1
             fi
             
-            if [[ "$selection" == "[DIR]"* ]]; then
+            if [[ "$selection" == "󰉋 "* ]]; then
                 # Extract folder path
-                folder=$(echo "$selection" | sed 's/\[DIR\] //;s/ (.*//')
+                folder=$(echo "$selection" | sed 's/^󰉋 //;s/ (.*//')
                 folder_name=$(basename "$folder")
                 
                 # List files in folder
