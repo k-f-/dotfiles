@@ -133,8 +133,43 @@ agr_browse() {
     local fzf_preview='
         if [[ {} == "󰉋 "* ]]; then
             folder=$(echo {} | sed "s/^󰉋 //;s/ (.*//" );
-            echo "Folder: $folder";
-            find "$AGR_DIR/$folder" -name "*.md" 2>/dev/null | head -20 | sed "s|^$AGR_DIR/$folder/||";
+            folder_name=$(basename "$folder");
+            top_name=$(echo "$folder" | cut -d/ -f1);
+            files=$(find "$AGR_DIR/$folder" -name "*.md" -type f 2>/dev/null | sort);
+            file_count=$(echo "$files" | grep -c . 2>/dev/null);
+            dates=$(echo "$files" | xargs -I{} awk "/^date:/{gsub(/\047/,\"\"); print \$2; exit}" {} 2>/dev/null | sort);
+            oldest=$(echo "$dates" | head -1);
+            newest=$(echo "$dates" | tail -1);
+            all_tags=$(echo "$files" | xargs -I{} awk "/^tags:/{found=1;next} found && /^- /{gsub(/^- /,\"\"); print} found && !/^- /{exit}" {} 2>/dev/null | sort -u | tr "\n" ", " | sed "s/, $//");
+            printf "\033[38;2;255;202;128m󰉋 %s\033[0m" "$folder_name";
+            printf " \033[38;2;121;112;169m│\033[0m \033[38;2;149;128;255m %s\033[0m" "$top_name";
+            printf " \033[38;2;121;112;169m│\033[0m \033[38;2;128;255;234m󰈙 %s files\033[0m" "$file_count";
+            if [ -n "$oldest" ]; then
+                printf " \033[38;2;121;112;169m│\033[0m \033[38;2;128;255;234m󰃭 %s → %s\033[0m" "$oldest" "$newest";
+            fi;
+            printf "\n";
+            if [ -n "$all_tags" ]; then
+                printf "\033[38;2;138;255;128m󰓹 %s\033[0m\n" "$all_tags";
+            fi;
+            printf "\033[38;2;121;112;169m─%.0s\033[0m" $(seq 1 50); printf "\n";
+            total=$(echo "$files" | grep -c .);
+            i=0;
+            echo "$files" | while IFS= read -r f; do
+                [ -z "$f" ] && continue;
+                i=$((i + 1));
+                fname=$(basename "$f" .md);
+                fdate=$(awk "/^date:/{gsub(/\047/,\"\"); print \$2; exit}" "$f" 2>/dev/null);
+                ftype=$(awk "/^type:/{print \$2; exit}" "$f" 2>/dev/null);
+                if [ "$i" -eq "$total" ]; then branch="└── "; else branch="├── "; fi;
+                printf "\033[38;2;121;112;169m%s\033[0m" "$branch";
+                printf "\033[38;2;128;255;234m%s\033[0m " "${fdate:-————}";
+                if [ "${ftype:-chat}" = "code" ]; then
+                    printf "\033[38;2;149;128;255m \033[0m ";
+                else
+                    printf "\033[38;2;255;128;191m󰍩\033[0m ";
+                fi;
+                printf "\033[38;2;248;248;242m%s\033[0m\n" "$fname";
+            done;
         elif [[ {} == ".." ]]; then
             echo "← Back to root";
         else
