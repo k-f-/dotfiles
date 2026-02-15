@@ -48,5 +48,12 @@ claude-code/dot-claude/statusline-command.sh
 claude-code/dot-claude/tasks/
 claude-code/dot-claude/todos/
 
+# AI tool per-project configs (machine-specific, not tracked)
+.claude/
+.sisyphus/
+
+# TPM-managed plugins (reinstall with prefix + I)
+tmux/dot-config/tmux/plugins/
+
 # Runtime dependencies (installed post-stow, not tracked)
 opencode/dot-config/opencode/node_modules/

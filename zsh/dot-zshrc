@@ -221,6 +221,7 @@ source ~/.bashrc.d/exports.bash
 source ~/.bashrc.d/variables.bash
 source ~/.bashrc.d/utils.bash
 source ~/.bashrc.d/path.bash
+source ~/.bashrc.d/agr.bash
 
 # bun completions
 [ -s "/Users/kef/.bun/_bun" ] && source "/Users/kef/.bun/_bun"

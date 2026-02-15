@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+# ---------------------------------------------------------------------------
+# tmx - Connect to remote tmux via mosh (or SSH fallback), or local
+# ---------------------------------------------------------------------------
+# Usage:
+#   tmx                 # attach to default session (mosh→ssh→local)
+#   tmx <session>       # attach to named session
+#   tmx -l              # list sessions (remote if reachable, else local)
+#   tmx --local         # force local tmux
+#   tmx --ssh           # force SSH instead of mosh for remote
+# ---------------------------------------------------------------------------
+# Requires: mosh (brew install mosh) on both client and server
+# Remote host: set TMX_REMOTE_HOST env var or defaults to "macmini"
+#              (should match an entry in ~/.ssh/config)
+# ---------------------------------------------------------------------------
+
+set -euo pipefail
+
+REMOTE_HOST="${TMX_REMOTE_HOST:-macmini}"
+SSH_TIMEOUT=3
+
+session=""
+force_local=false
+force_ssh=false
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --local)  force_local=true; shift ;;
+        --ssh)    force_ssh=true; shift ;;
+        -l|--list)
+            if ssh -o ConnectTimeout="$SSH_TIMEOUT" -o BatchMode=yes "$REMOTE_HOST" "tmux list-sessions" 2>/dev/null; then
+                exit 0
+            else
+                echo "Remote unavailable, showing local:"
+                tmux list-sessions 2>/dev/null || echo "  No local sessions"
+                exit 0
+            fi
+            ;;
+        -h|--help)
+            sed -n '2,12p' "$0" | sed 's/^# *//'
+            exit 0
+            ;;
+        *)  session="$1"; shift ;;
+    esac
+done
+
+tmux_cmd() {
+    local target="$1"
+    if [[ -n "$target" ]]; then
+        echo "tmux attach -t '$target' 2>/dev/null || tmux new-session -s '$target'"
+    else
+        echo "tmux attach 2>/dev/null || tmux new-session"
+    fi
+}
+
+attach_local() {
+    if [[ -n "$session" ]]; then
+        tmux attach -t "$session" 2>/dev/null || tmux new-session -s "$session"
+    else
+        tmux attach 2>/dev/null || tmux new-session
+    fi
+}
+
+remote_via_mosh() {
+    echo "Connecting to $REMOTE_HOST via mosh..."
+    mosh "$REMOTE_HOST" -- bash -c "$(tmux_cmd "$session")"
+}
+
+remote_via_ssh() {
+    echo "Connecting to $REMOTE_HOST via ssh..."
+    ssh -t "$REMOTE_HOST" "$(tmux_cmd "$session")"
+}
+
+if [[ "$force_local" == true ]]; then
+    attach_local
+    exit $?
+fi
+
+if ! ssh -o ConnectTimeout="$SSH_TIMEOUT" -o BatchMode=yes "$REMOTE_HOST" "true" 2>/dev/null; then
+    echo "Remote ($REMOTE_HOST) unavailable, using local tmux"
+    attach_local
+    exit $?
+fi
+
+if [[ "$force_ssh" == true ]]; then
+    remote_via_ssh
+elif command -v mosh &>/dev/null; then
+    remote_via_mosh
+else
+    echo "mosh not found, falling back to ssh"
+    remote_via_ssh
+fi

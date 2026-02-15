@@ -19,6 +19,9 @@ alias vim="nvim"
 alias dotfiles="cd ~/Documents/Code/dotfiles && \$EDITOR ."
 alias dots="dotfiles"  # shorter alias
 
+alias code="cd ~/Documents/Code"
+alias tmx="~/.config/tmux/scripts/tmx"
+
 ### Keybindings - display keybindings reference
 # Use: keys (or keys?) - terminal view
 # Use: help-keys - popup modal view (browser-based, Kitty has GPU crash)
@@ -52,7 +55,7 @@ alias ut="tar xavf"
 
 ### Package management
 alias agi="sudo apt install"
-alias agr="sudo apt remove"
+## agr alias removed — conflicts with agr() shell function (agentrepo fuzzy finder)
 alias acs="apt search"
 alias agu="sudo apt update && sudo apt full-upgrade && sudo apt autoremove && sudo apt autoclean"
 alias ali="apt-mark showmanual"

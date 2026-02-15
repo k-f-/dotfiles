@@ -132,7 +132,7 @@ agr_browse() {
     local result key selection
     
     if [[ -n "$query" ]]; then
-        result=$(echo "$combined_list" | fzf --expect=ctrl-e,ctrl-y \
+        result=$(echo "$combined_list" | fzf --expect=ctrl-e,ctrl-y,ctrl-o \
             --color="bg:#22212C,fg:#F8F8F2,hl:#9580FF,bg+:#454158,fg+:#F8F8F2,hl+:#9580FF,info:#80FFEA,prompt:#8AFF80,pointer:#FF80BF,marker:#FFCA80,spinner:#9580FF,header:#7970A9,border:#7970A9,gutter:#22212C" \
             --preview '
                 if [[ {} == "[DIR]"* ]]; then
@@ -164,7 +164,7 @@ agr_browse() {
 agr: $query | ⏎ read  ^e edit  ^y copy" \
             --query="")
     else
-        result=$(echo "$combined_list" | fzf --expect=ctrl-e,ctrl-y \
+        result=$(echo "$combined_list" | fzf --expect=ctrl-e,ctrl-y,ctrl-o \
             --color="bg:#22212C,fg:#F8F8F2,hl:#9580FF,bg+:#454158,fg+:#F8F8F2,hl+:#9580FF,info:#80FFEA,prompt:#8AFF80,pointer:#FF80BF,marker:#FFCA80,spinner:#9580FF,header:#7970A9,border:#7970A9,gutter:#22212C" \
             --preview '
                 if [[ {} == "[DIR]"* ]]; then
