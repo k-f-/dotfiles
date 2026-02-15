@@ -57,7 +57,7 @@
         "basic-memory",
         "mcp",
         "--project",
-        "agentrepo"
+        "agr"
       ],
       "enabled": true
     },
@@ -67,11 +67,26 @@
         "splitrail",
         "mcp"
       ],
+      "enabled": false
+    },
+    "agr": {
+      "type": "local",
+      "command": [
+        "uv",
+        "run",
+        "--directory",
+        "/Users/kef/Documents/Code/agr-mcp",
+        "agr-mcp"
+      ],
+      "environment": {
+        "AGENTREPO_PATH": "/Users/kef/Documents/Code/agr"
+      },
       "enabled": true
     }
   },
   "plugin": [
     "oh-my-opencode@latest",
-    "opencode-token-monitor@latest"
+    "opencode-token-monitor@latest",
+    "file:///Users/kef/Documents/Code/agr-opencode-plugin"
   ]
 }

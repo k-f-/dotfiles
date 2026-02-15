@@ -1,0 +1,177 @@
+#!/usr/bin/env bash
+# ---------------------------------------------------------
+# mdpreview - Preview rendered markdown in the browser
+#
+# Uses pandoc to convert markdown to GitHub-styled HTML and
+# opens it in the default browser. The temp file is cleaned
+# up automatically after a short delay.
+#
+# Usage:
+#   mdpreview file.md              # Opens rendered HTML in browser
+#   mdpreview file.md --keep       # Don't auto-delete the temp file
+# ---------------------------------------------------------
+
+set -euo pipefail
+
+# -----------------------------------------------------------------------------
+# Helpers
+# -----------------------------------------------------------------------------
+
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+usage() {
+    cat <<EOF
+Usage: mdpreview <input.md> [options]
+
+Preview rendered markdown in the browser.
+
+Options:
+  --keep           Don't auto-delete the temp HTML file
+  -h, --help       Show this help message
+
+Examples:
+  mdpreview README.md          # Open in browser, auto-cleanup
+  mdpreview notes.md --keep    # Open in browser, keep temp file
+EOF
+    exit "${1:-0}"
+}
+
+die() {
+    echo "Error: $1" >&2
+    exit 1
+}
+
+# GitHub-flavored markdown CSS (same as mdpdf for consistency)
+github_css() {
+    cat <<'CSS'
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Noto Sans,
+        Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    font-size: 16px;
+    line-height: 1.5;
+    color: #1f2328;
+    background-color: #ffffff;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 45px;
+}
+a { color: #0969da; text-decoration: none; }
+a:hover { text-decoration: underline; }
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 24px; margin-bottom: 16px;
+    font-weight: 600; line-height: 1.25;
+}
+h1 { font-size: 2em; padding-bottom: 0.3em; border-bottom: 1px solid #d1d9e0b3; }
+h2 { font-size: 1.5em; padding-bottom: 0.3em; border-bottom: 1px solid #d1d9e0b3; }
+h3 { font-size: 1.25em; }
+h4 { font-size: 1em; }
+code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+        "Liberation Mono", monospace;
+    font-size: 85%; padding: 0.2em 0.4em;
+    background-color: #eff1f3; border-radius: 6px;
+}
+pre {
+    font-size: 85%; line-height: 1.45;
+    background-color: #f6f8fa; border-radius: 6px;
+    padding: 16px; overflow: auto;
+}
+pre code { background: transparent; padding: 0; font-size: 100%; }
+blockquote {
+    margin: 0; padding: 0 1em;
+    color: #656d76; border-left: 0.25em solid #d1d9e0;
+}
+table { border-spacing: 0; border-collapse: collapse; width: 100%; margin-bottom: 16px; }
+table th, table td {
+    padding: 6px 13px;
+    border: 1px solid #d1d9e0;
+}
+table th { font-weight: 600; background-color: #f6f8fa; }
+table tr:nth-child(2n) { background-color: #f6f8fa; }
+hr { height: 0.25em; padding: 0; margin: 24px 0; background-color: #d1d9e0; border: 0; }
+img { max-width: 100%; }
+ul, ol { padding-left: 2em; }
+li + li { margin-top: 0.25em; }
+kbd {
+    display: inline-block; padding: 3px 5px;
+    font: 11px ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+    line-height: 10px; color: #1f2328; vertical-align: middle;
+    background-color: #f6f8fa; border: solid 1px #d1d9e0b3;
+    border-bottom-color: #d1d9e0; border-radius: 6px;
+    box-shadow: inset 0 -1px 0 #d1d9e0;
+}
+CSS
+}
+
+# -----------------------------------------------------------------------------
+# Main
+# -----------------------------------------------------------------------------
+
+main() {
+    local input="" keep=false
+
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -h|--help) usage 0 ;;
+            --keep) keep=true; shift ;;
+            -*)  die "Unknown option: $1" ;;
+            *)
+                if [[ -z "$input" ]]; then
+                    input="$1"
+                else
+                    die "Unexpected argument: $1"
+                fi
+                shift
+                ;;
+        esac
+    done
+
+    # Validate input
+    [[ -n "$input" ]] || usage 1
+    [[ -f "$input" ]] || die "File not found: $input"
+
+    # Check dependencies
+    command_exists pandoc || die "pandoc not found. Install with: brew install pandoc"
+
+    # Generate styled HTML
+    local basename
+    basename="$(basename "${input}" .md)"
+    local tmpdir
+    tmpdir=$(mktemp -d /tmp/mdpreview.XXXXXX)
+
+    local css_file="${tmpdir}/github.css"
+    local html_file="${tmpdir}/${basename}.html"
+
+    github_css > "$css_file"
+
+    pandoc "$input" \
+        --standalone \
+        --css="$css_file" \
+        --embed-resources \
+        --metadata title="$basename" \
+        -f gfm \
+        -o "$html_file"
+
+    # Open in browser
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        open "$html_file"
+    elif command_exists xdg-open; then
+        xdg-open "$html_file"
+    else
+        die "No browser opener found (expected 'open' on macOS or 'xdg-open' on Linux)"
+    fi
+
+    echo "Previewing: $input"
+
+    # Auto-cleanup after delay (browser will have loaded it)
+    if [[ "$keep" == false ]]; then
+        (sleep 10 && rm -rf "$tmpdir") &
+    else
+        echo "Temp file: $html_file"
+    fi
+}
+
+main "$@"

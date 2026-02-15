@@ -1,0 +1,228 @@
+#!/usr/bin/env bash
+# ---------------------------------------------------------
+# mdpdf - Convert markdown to styled PDF
+#
+# Uses pandoc to render GitHub-styled HTML, then Chrome
+# headless to print it to PDF. Opens in Preview by default.
+#
+# Usage:
+#   mdpdf file.md                  # → file.pdf, opens in Preview
+#   mdpdf file.md output.pdf       # → output.pdf, opens in Preview
+#   mdpdf file.md ~/Desktop/       # → ~/Desktop/file.pdf
+#   mdpdf file.md --no-open        # generate only, don't open
+#   mdpdf file.md -o out.pdf       # explicit output flag
+# ---------------------------------------------------------
+
+set -euo pipefail
+
+# -----------------------------------------------------------------------------
+# Configuration
+# -----------------------------------------------------------------------------
+
+TMPDIR_CLEANUP=""
+
+CHROME_PATHS=(
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+    "/Applications/Chromium.app/Contents/MacOS/Chromium"
+    "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser"
+    "google-chrome"
+    "chromium"
+    "chromium-browser"
+)
+
+# -----------------------------------------------------------------------------
+# Helpers
+# -----------------------------------------------------------------------------
+
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+find_chrome() {
+    for path in "${CHROME_PATHS[@]}"; do
+        if [[ -x "$path" ]] || command_exists "$path"; then
+            echo "$path"
+            return 0
+        fi
+    done
+    return 1
+}
+
+usage() {
+    cat <<EOF
+Usage: mdpdf <input.md> [output.pdf | directory/] [options]
+
+Convert markdown to a GitHub-styled PDF.
+
+Options:
+  -o, --output FILE    Specify output file path
+  --no-open            Don't open the PDF after generating
+  -h, --help           Show this help message
+
+Examples:
+  mdpdf README.md                  # → README.pdf in same directory
+  mdpdf README.md ~/Desktop/       # → ~/Desktop/README.pdf
+  mdpdf README.md -o report.pdf    # → report.pdf
+  mdpdf notes.md --no-open         # Generate only
+EOF
+    exit "${1:-0}"
+}
+
+die() {
+    echo "Error: $1" >&2
+    exit 1
+}
+
+# GitHub-flavored markdown CSS (embedded for offline use)
+github_css() {
+    cat <<'CSS'
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Noto Sans,
+        Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    font-size: 16px;
+    line-height: 1.5;
+    color: #1f2328;
+    background-color: #ffffff;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 45px;
+}
+a { color: #0969da; text-decoration: none; }
+a:hover { text-decoration: underline; }
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 24px; margin-bottom: 16px;
+    font-weight: 600; line-height: 1.25;
+}
+h1 { font-size: 2em; padding-bottom: 0.3em; border-bottom: 1px solid #d1d9e0b3; }
+h2 { font-size: 1.5em; padding-bottom: 0.3em; border-bottom: 1px solid #d1d9e0b3; }
+h3 { font-size: 1.25em; }
+h4 { font-size: 1em; }
+code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+        "Liberation Mono", monospace;
+    font-size: 85%; padding: 0.2em 0.4em;
+    background-color: #eff1f3; border-radius: 6px;
+}
+pre {
+    font-size: 85%; line-height: 1.45;
+    background-color: #f6f8fa; border-radius: 6px;
+    padding: 16px; overflow: auto;
+}
+pre code { background: transparent; padding: 0; font-size: 100%; }
+blockquote {
+    margin: 0; padding: 0 1em;
+    color: #656d76; border-left: 0.25em solid #d1d9e0;
+}
+table { border-spacing: 0; border-collapse: collapse; width: 100%; margin-bottom: 16px; }
+table th, table td {
+    padding: 6px 13px;
+    border: 1px solid #d1d9e0;
+}
+table th { font-weight: 600; background-color: #f6f8fa; }
+table tr:nth-child(2n) { background-color: #f6f8fa; }
+hr { height: 0.25em; padding: 0; margin: 24px 0; background-color: #d1d9e0; border: 0; }
+img { max-width: 100%; }
+ul, ol { padding-left: 2em; }
+li + li { margin-top: 0.25em; }
+kbd {
+    display: inline-block; padding: 3px 5px;
+    font: 11px ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+    line-height: 10px; color: #1f2328; vertical-align: middle;
+    background-color: #f6f8fa; border: solid 1px #d1d9e0b3;
+    border-bottom-color: #d1d9e0; border-radius: 6px;
+    box-shadow: inset 0 -1px 0 #d1d9e0;
+}
+
+/* Print-specific: avoid orphan headers, clean margins */
+@media print {
+    body { padding: 20px; }
+    h1, h2, h3, h4 { break-after: avoid; }
+    pre, table, blockquote { break-inside: avoid; }
+}
+CSS
+}
+
+# -----------------------------------------------------------------------------
+# Main
+# -----------------------------------------------------------------------------
+
+main() {
+    local input="" output="" open_after=true
+
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -h|--help) usage 0 ;;
+            --no-open) open_after=false; shift ;;
+            -o|--output) output="$2"; shift 2 ;;
+            -*)  die "Unknown option: $1" ;;
+            *)
+                if [[ -z "$input" ]]; then
+                    input="$1"
+                elif [[ -z "$output" ]]; then
+                    output="$1"
+                else
+                    die "Unexpected argument: $1"
+                fi
+                shift
+                ;;
+        esac
+    done
+
+    # Validate input
+    [[ -n "$input" ]] || usage 1
+    [[ -f "$input" ]] || die "File not found: $input"
+
+    # Check dependencies
+    command_exists pandoc || die "pandoc not found. Install with: brew install pandoc"
+    local chrome
+    chrome=$(find_chrome) || die "Chrome/Chromium not found. Install Google Chrome or Chromium."
+
+    # Determine output path
+    local basename
+    basename="$(basename "${input}" .md)"
+    if [[ -z "$output" ]]; then
+        output="$(dirname "$input")/${basename}.pdf"
+    elif [[ -d "$output" ]]; then
+        output="${output%/}/${basename}.pdf"
+    fi
+
+    # Generate styled HTML via pandoc
+    TMPDIR_CLEANUP=$(mktemp -d /tmp/mdpdf.XXXXXX)
+    trap 'rm -rf "$TMPDIR_CLEANUP"' EXIT
+
+    local css_file="${TMPDIR_CLEANUP}/github.css"
+    local html_file="${TMPDIR_CLEANUP}/${basename}.html"
+
+    github_css > "$css_file"
+
+    pandoc "$input" \
+        --standalone \
+        --css="$css_file" \
+        --embed-resources \
+        --metadata title=" " \
+        -f gfm \
+        -o "$html_file"
+
+    # Convert HTML to PDF via Chrome headless
+    "$chrome" \
+        --headless \
+        --disable-gpu \
+        --no-pdf-header-footer \
+        --print-to-pdf="$output" \
+        "file://${html_file}" \
+        2>/dev/null
+
+    echo "Created: $output"
+
+    # Open in Preview (macOS) or default PDF viewer
+    if [[ "$open_after" == true ]]; then
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            open "$output"
+        elif command_exists xdg-open; then
+            xdg-open "$output"
+        fi
+    fi
+}
+
+main "$@"

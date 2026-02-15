@@ -47,6 +47,7 @@ OPTIONAL_PACKAGES=(
     sketchybar
     skhd
     ssh
+    tmux
     universal-wm
     yabai
     youtube-dl

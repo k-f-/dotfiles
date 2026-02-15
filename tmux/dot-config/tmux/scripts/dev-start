@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# =============================================================================
+# dev-start — Bootstrap persistent tmux sessions on Mac Mini
+# =============================================================================
+# Run once after reboot (or add to LaunchAgent for auto-start).
+# Creates named sessions so you can attach from any device with:
+#   ssh macmini -t "tmux attach -t <session-name>"
+#
+# Sessions are auto-saved by tmux-continuum every 15 min and auto-restored
+# on tmux start, so after the first run you mostly don't need this script.
+# =============================================================================
+
+set -euo pipefail
+
+# --- Define your sessions here ---
+# Format: "session-name:working-directory"
+SESSIONS=(
+    "main:$HOME"
+    "opencode-dotfiles:$HOME/Documents/Code/dotfiles"
+    # Add more as needed:
+    # "opencode-myproject:$HOME/Documents/Code/myproject"
+    # "scratch:$HOME"
+)
+
+for entry in "${SESSIONS[@]}"; do
+    name="${entry%%:*}"
+    dir="${entry##*:}"
+
+    if tmux has-session -t "$name" 2>/dev/null; then
+        echo "Session '$name' already exists, skipping"
+    else
+        if [[ -d "$dir" ]]; then
+            tmux new-session -d -s "$name" -c "$dir"
+            echo "Created session '$name' -> $dir"
+        else
+            echo "Warning: Directory $dir does not exist, skipping '$name'"
+        fi
+    fi
+done
+
+echo ""
+echo "Active sessions:"
+tmux list-sessions 2>/dev/null || echo "  (none — tmux server not running)"
+echo ""
+echo "Attach with:  tmux attach -t <session-name>"
+echo "Or just:      tmux attach  (picks last used)"

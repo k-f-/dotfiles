@@ -24,6 +24,7 @@ brew "zsh-syntax-highlighting"
 
 # Core utilities
 brew "bat"                  # cat replacement with syntax highlighting
+brew "pandoc"               # Universal document converter (md → pdf/html)
 brew "fzf"                  # Fuzzy finder
 brew "htop"                 # Interactive process viewer
 brew "jq"                   # JSON processor
@@ -109,6 +110,9 @@ cask "vlc"
 # Productivity
 cask "1password"
 cask "alfred"               # App launcher
+
+# Quick Look
+cask "qlmarkdown"           # Preview markdown in Finder (spacebar)
 
 # Display & system
 cask "betterdisplay"        # Display management
