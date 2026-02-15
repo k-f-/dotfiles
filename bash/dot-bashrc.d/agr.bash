@@ -130,126 +130,88 @@ agr_browse() {
         combined_list="$file_list"
     fi
 
+    local fzf_preview='
+        if [[ {} == "󰉋 "* ]]; then
+            folder=$(echo {} | sed "s/^󰉋 //;s/ (.*//" );
+            echo "Folder: $folder";
+            find "$AGR_DIR/$folder" -name "*.md" 2>/dev/null | head -20 | sed "s|^$AGR_DIR/$folder/||";
+        elif [[ {} == ".." ]]; then
+            echo "← Back to root";
+        else
+            entry={}; file="$AGR_DIR/$entry";
+            date=$(awk "/^date:/{gsub(/\047/,\"\"); print \$2; exit}" "$file" 2>/dev/null);
+            type=$(awk "/^type:/{print \$2; exit}" "$file" 2>/dev/null);
+            folder=$(dirname "$entry" | sed "s|^[^/]*/||");
+            tags=$(awk "/^tags:/{found=1;next} found && /^- /{gsub(/^- /,\"\"); printf \"%s, \",\$0} found && !/^- /{exit}" "$file" 2>/dev/null | sed "s/, $//");
+            printf "\033[38;2;128;255;234m󰃭 %s\033[0m \033[38;2;121;112;169m│\033[0m " "${date:-—}";
+            if [ "${type:-chat}" = "code" ]; then
+              printf "\033[38;2;149;128;255m %s\033[0m" "${type}";
+            else
+              printf "\033[38;2;255;128;191m󰍩 %s\033[0m" "${type:-chat}";
+            fi;
+            printf " \033[38;2;121;112;169m│\033[0m \033[38;2;255;202;128m󰉋 %s\033[0m" "${folder:-—}";
+            printf " \033[38;2;121;112;169m│\033[0m \033[38;2;138;255;128m󰓹 %s\033[0m\n\n" "${tags:-—}";
+            bat --color=always --style=grid "$file";
+        fi
+    '
+    local fzf_color="bg:#22212C,fg:#F8F8F2,hl:#9580FF,bg+:#454158,fg+:#F8F8F2,hl+:#9580FF,info:#80FFEA,prompt:#8AFF80,pointer:#FF80BF,marker:#FFCA80,spinner:#9580FF,header:#7970A9,border:#7970A9,gutter:#22212C"
+    local fzf_binds='shift-up:preview-up,shift-down:preview-down,shift-left:preview-page-up,shift-right:preview-page-down'
+
     local result key selection
-    
-    if [[ -n "$query" ]]; then
-        result=$(echo "$combined_list" | fzf --expect=ctrl-e,ctrl-y,ctrl-o \
-            --color="bg:#22212C,fg:#F8F8F2,hl:#9580FF,bg+:#454158,fg+:#F8F8F2,hl+:#9580FF,info:#80FFEA,prompt:#8AFF80,pointer:#FF80BF,marker:#FFCA80,spinner:#9580FF,header:#7970A9,border:#7970A9,gutter:#22212C" \
-            --preview '
-                if [[ {} == "󰉋 "* ]]; then
-                    folder=$(echo {} | sed "s/^󰉋 //;s/ (.*//" );
-                    echo "Folder: $folder";
-                    find "$AGR_DIR/$folder" -name "*.md" 2>/dev/null | head -20 | sed "s|^$AGR_DIR/$folder/||";
-                elif [[ {} == ".." ]]; then
-                    echo "← Back to root";
-                else
-                    entry={}; file="$AGR_DIR/$entry";
-                    date=$(awk "/^date:/{gsub(/\047/,\"\"); print \$2; exit}" "$file" 2>/dev/null);
-                    type=$(awk "/^type:/{print \$2; exit}" "$file" 2>/dev/null);
-                    folder=$(dirname "$entry" | sed "s|^[^/]*/||");
-                    tags=$(awk "/^tags:/{found=1;next} found && /^- /{gsub(/^- /,\"\"); printf \"%s, \",\$0} found && !/^- /{exit}" "$file" 2>/dev/null | sed "s/, $//");
-                    printf "\033[38;2;128;255;234m󰃭 %s\033[0m \033[38;2;121;112;169m│\033[0m " "${date:-—}";
-                    if [ "${type:-chat}" = "code" ]; then
-                      printf "\033[38;2;149;128;255m %s\033[0m" "${type}";
-                    else
-                      printf "\033[38;2;255;128;191m󰍩 %s\033[0m" "${type:-chat}";
-                    fi;
-                    printf " \033[38;2;121;112;169m│\033[0m \033[38;2;255;202;128m󰉋 %s\033[0m" "${folder:-—}";
-                    printf " \033[38;2;121;112;169m│\033[0m \033[38;2;138;255;128m󰓹 %s\033[0m\n\n" "${tags:-—}";
-                    bat --color=always --style=grid "$file";
+    while true; do
+        if [[ -n "$query" ]]; then
+            result=$(echo "$combined_list" | fzf --expect=ctrl-e,ctrl-y,ctrl-o \
+                --color="$fzf_color" \
+                --preview "$fzf_preview" \
+                --preview-window=right:60% \
+                --bind="$fzf_binds" \
+                --header="agr: $query | ⏎ read  ^e edit  ^y copy  ^o opencode" \
+                --query="")
+        else
+            result=$(echo "$combined_list" | fzf --expect=ctrl-e,ctrl-y,ctrl-o \
+                --color="$fzf_color" \
+                --preview "$fzf_preview" \
+                --preview-window=right:60% \
+                --bind="$fzf_binds" \
+                --header="agr: browse | ⏎ read  ^e edit  ^y copy  ^o opencode")
+        fi
+
+        key=$(head -1 <<< "$result")
+        selection=$(tail -1 <<< "$result")
+
+        [[ -z "$selection" ]] && return 0
+
+        if [[ "$selection" == "󰉋 "* ]]; then
+            folder=$(echo "$selection" | sed 's/^󰉋 //;s/ (.*//')
+            agr_browse "$folder" "" "$pipe_mode"
+            continue
+        fi
+
+        [[ "$selection" == ".." ]] && return 0
+
+        case "$key" in
+            "")
+                bat --paging=always "$AGR_DIR/$selection"
+                ;;
+            ctrl-e)
+                ${EDITOR:-nvim} "$AGR_DIR/$selection"
+                ;;
+            ctrl-y)
+                echo "$AGR_DIR/$selection" | pbcopy
+                echo "Copied to clipboard: $AGR_DIR/$selection"
+                ;;
+            ctrl-o)
+                if ! command -v opencode &>/dev/null; then
+                    echo "opencode not found in PATH" >&2
+                    continue
                 fi
-            ' \
-            --preview-window=right:60% \
-            --bind='shift-up:preview-up,shift-down:preview-down,shift-left:preview-page-up,shift-right:preview-page-down' \
-            --header="agr: $query | ⏎ read  ^e edit  ^y copy  ^o opencode" \
-            --query="")
-    else
-        result=$(echo "$combined_list" | fzf --expect=ctrl-e,ctrl-y,ctrl-o \
-            --color="bg:#22212C,fg:#F8F8F2,hl:#9580FF,bg+:#454158,fg+:#F8F8F2,hl+:#9580FF,info:#80FFEA,prompt:#8AFF80,pointer:#FF80BF,marker:#FFCA80,spinner:#9580FF,header:#7970A9,border:#7970A9,gutter:#22212C" \
-            --preview '
-                if [[ {} == "󰉋 "* ]]; then
-                    folder=$(echo {} | sed "s/^󰉋 //;s/ (.*//" );
-                    echo "Folder: $folder";
-                    find "$AGR_DIR/$folder" -name "*.md" 2>/dev/null | head -20 | sed "s|^$AGR_DIR/$folder/||";
-                elif [[ {} == ".." ]]; then
-                    echo "← Back to root";
-                else
-                    entry={}; file="$AGR_DIR/$entry";
-                    date=$(awk "/^date:/{gsub(/\047/,\"\"); print \$2; exit}" "$file" 2>/dev/null);
-                    type=$(awk "/^type:/{print \$2; exit}" "$file" 2>/dev/null);
-                    folder=$(dirname "$entry" | sed "s|^[^/]*/||");
-                    tags=$(awk "/^tags:/{found=1;next} found && /^- /{gsub(/^- /,\"\"); printf \"%s, \",\$0} found && !/^- /{exit}" "$file" 2>/dev/null | sed "s/, $//");
-                    printf "\033[38;2;128;255;234m󰃭 %s\033[0m \033[38;2;121;112;169m│\033[0m " "${date:-—}";
-                    if [ "${type:-chat}" = "code" ]; then
-                      printf "\033[38;2;149;128;255m %s\033[0m" "${type}";
-                    else
-                      printf "\033[38;2;255;128;191m󰍩 %s\033[0m" "${type:-chat}";
-                    fi;
-                    printf " \033[38;2;121;112;169m│\033[0m \033[38;2;255;202;128m󰉋 %s\033[0m" "${folder:-—}";
-                    printf " \033[38;2;121;112;169m│\033[0m \033[38;2;138;255;128m󰓹 %s\033[0m\n\n" "${tags:-—}";
-                    bat --color=always --style=grid "$file";
-                fi
-            ' \
-            --preview-window=right:60% \
-            --bind='shift-up:preview-up,shift-down:preview-down,shift-left:preview-page-up,shift-right:preview-page-down' \
-            --header="agr: browse | ⏎ read  ^e edit  ^y copy  ^o opencode")
-    fi
-
-    # Extract key and selection from fzf result
-    key=$(head -1 <<< "$result")
-    selection=$(tail -1 <<< "$result")
-
-    # Exit if no selection
-    [[ -z "$selection" ]] && return 1
-
-    # Handle folder drill-down
-    if [[ "$selection" == "󰉋 "* ]]; then
-        folder=$(echo "$selection" | sed 's/^󰉋 //;s/ (.*//')
-        agr_browse "$folder" "" "$pipe_mode"
-        return $?
-    fi
-
-    # Handle .. (go back to root)
-    if [[ "$selection" == ".." ]]; then
-        agr_browse "" "" "$pipe_mode"
-        return $?
-    fi
-
-    # Dispatch action based on key pressed
-    case "$key" in
-        "")  # Enter pressed - open in bat pager
-            bat --paging=always "$AGR_DIR/$selection"
-            return 0
-            ;;
-        ctrl-e)  # Ctrl-E - open in editor
-            ${EDITOR:-nvim} "$AGR_DIR/$selection"
-            return 0
-            ;;
-        ctrl-y)  # Ctrl-Y - copy path to clipboard
-            echo "$AGR_DIR/$selection" | pbcopy
-            echo "Copied to clipboard: $AGR_DIR/$selection"
-            return 0
-            ;;
-        ctrl-o)  # Ctrl-O - launch opencode with context
-            if ! command -v opencode &>/dev/null; then
-                echo "opencode not found in PATH" >&2
-                return 1
-            fi
-            
-            if [[ "$selection" == "󰉋 "* ]]; then
-                # Extract folder path
-                folder=$(echo "$selection" | sed 's/^󰉋 //;s/ (.*//')
-                folder_name=$(basename "$folder")
-                
-                # List files in folder
-                file_list=$(find "$AGR_DIR/$folder" -name "*.md" -type f 2>/dev/null | sed "s|^$AGR_DIR/||" | sort)
-                file_count=$(echo "$file_list" | wc -l | tr -d ' ')
-                
-                # Extract unique tags from folder files
-                unique_tags=$(find "$AGR_DIR/$folder" -name "*.md" -exec awk '/^tags:/{found=1;next} found && /^- /{gsub(/^- /,""); print} found && !/^- /{exit}' {} \; 2>/dev/null | sort -u | tr '\n' ',' | sed 's/,$//')
-                
-                # Launch opencode with folder context
-                opencode run "You have access to the agr conversation archive via MCP tools (agr_search, agr_read, agr_list).
+                if [[ "$selection" == "󰉋 "* ]]; then
+                    folder=$(echo "$selection" | sed 's/^󰉋 //;s/ (.*//')
+                    folder_name=$(basename "$folder")
+                    file_list=$(find "$AGR_DIR/$folder" -name "*.md" -type f 2>/dev/null | sed "s|^$AGR_DIR/||" | sort)
+                    file_count=$(echo "$file_list" | wc -l | tr -d ' ')
+                    unique_tags=$(find "$AGR_DIR/$folder" -name "*.md" -exec awk '/^tags:/{found=1;next} found && /^- /{gsub(/^- /,""); print} found && !/^- /{exit}' {} \; 2>/dev/null | sort -u | tr '\n' ',' | sed 's/,$//')
+                    opencode --prompt "You have access to the agr conversation archive via MCP tools (agr_search, agr_read, agr_list).
 
 Context: The '${folder_name}' project contains ${file_count} conversations about: ${unique_tags}.
 
@@ -257,18 +219,14 @@ Files in this project:
 ${file_list}
 
 Use agr_read to access any of these files. Use agr_search to find related conversations in other projects."
-            else
-                # Single file context
-                opencode run "You have access to the agr conversation archive via MCP tools (agr_search, agr_read, agr_list).
+                else
+                    opencode --prompt "You have access to the agr conversation archive via MCP tools (agr_search, agr_read, agr_list).
 
 Context: File '${selection}' from the archive.
 
 Use agr_read to read this file, or agr_search to find related conversations."
-            fi
-            return 0
-            ;;
-        *)  # Unknown key - should not happen
-            return 1
-            ;;
-    esac
+                fi
+                ;;
+        esac
+    done
 }
