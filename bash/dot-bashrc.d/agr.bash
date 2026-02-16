@@ -17,10 +17,13 @@ agr_tree() {
     local query="$1"
     local root="$AGR_DIR"
     local meta_delim=$'\x1f'
-    local tmp_files tmp_counts
+    local tmp_files tmp_counts tmp_tops
+    local t top_icon nfolders tmp_flist idx key cnt folder_name branch
+    local indent nfiles fidx file_path file_name file_type file_icon file_branch
 
     tmp_files=$(mktemp) || return 1
     tmp_counts=$(mktemp) || return 1
+    tmp_tops=$(mktemp) || return 1
 
     if [[ -n "$query" ]]; then
         rg -i --files-with-matches --glob "*.md" "$query" "$root" 2>/dev/null | grep -v '_templates\|_scripts\|README' > "$tmp_files"
@@ -29,7 +32,7 @@ agr_tree() {
     fi
 
     if [[ ! -s "$tmp_files" ]]; then
-        rm -f "$tmp_files" "$tmp_counts"
+        rm -f "$tmp_files" "$tmp_counts" "$tmp_tops"
         return 0
     fi
 
@@ -45,16 +48,15 @@ agr_tree() {
         for (k in count) print k "\t" count[k]
     }' "$tmp_files" | sort > "$tmp_counts"
 
-    local top_list t
-    top_list=$(awk -v root="$root" '{
+    awk -v root="$root" '{
         path=$0
         sub("^" root "/", "", path)
         split(path, parts, "/")
         if (parts[1] != "") print parts[1]
-    }' "$tmp_files" | sort -u)
+    }' "$tmp_files" | sort -u > "$tmp_tops"
 
-    for t in $top_list; do
-        local top_icon
+    while IFS= read -r t; do
+        [[ -z "$t" ]] && continue
         case "$t" in
             code) top_icon="󰈮" ;;
             chats) top_icon="󰍩" ;;
@@ -62,68 +64,57 @@ agr_tree() {
         esac
         printf "%s  %s/%s%s\n" "$top_icon" "$t" "$meta_delim" "$root/$t"
 
-        local folders=()
-        local counts=()
-        while IFS=$'\t' read -r key count; do
-            local folder_name
-            folder_name="${key#*/}"
-            folders+=("$folder_name")
-            counts+=("$count")
-        done < <(awk -F'\t' -v top="$t" '$1 ~ "^" top "/" {print $0}' "$tmp_counts")
+        tmp_flist=$(mktemp)
+        awk -F'\t' -v top="$t" '$1 ~ "^" top "/" {print $0}' "$tmp_counts" > "$tmp_flist"
+        nfolders=$(wc -l < "$tmp_flist" | tr -d ' ')
 
-        local total_folders=${#folders[@]}
-        local i
-        for i in "${!folders[@]}"; do
-            local folder_name folder_count branch
-            folder_name="${folders[$i]}"
-            folder_count="${counts[$i]}"
-            if [[ $i -eq $((total_folders - 1)) ]]; then
+        idx=0
+        while IFS=$'\t' read -r key cnt; do
+            folder_name="${key#*/}"
+            if [[ $idx -eq $((nfolders - 1)) ]]; then
                 branch="└──"
             else
                 branch="├──"
             fi
-            printf "%s %s (%s)%s%s\n" "$branch" "$folder_name" "$folder_count" "$meta_delim" "$root/$t/$folder_name"
+            printf "%s %s (%s)%s%s\n" "$branch" "$folder_name" "$cnt" "$meta_delim" "$root/$t/$folder_name"
 
             if [[ -n "$query" ]]; then
-                local indent
-                if [[ $i -eq $((total_folders - 1)) ]]; then
+                if [[ $idx -eq $((nfolders - 1)) ]]; then
                     indent="    "
                 else
                     indent="│   "
                 fi
 
-                local file_list=()
-                while IFS= read -r file_path; do
-                    [[ -z "$file_path" ]] && continue
-                    file_list+=("$file_path")
-                done < <(grep "^$root/$t/$folder_name/" "$tmp_files" | sort)
-
-                local total_files=${#file_list[@]}
-                local f
-                for f in "${!file_list[@]}"; do
-                    local file_path file_name file_type file_icon file_branch
-                    file_path="${file_list[$f]}"
-                    file_name=$(basename "$file_path")
-                    file_type=$(awk '/^type:/{print $2; exit}' "$file_path" 2>/dev/null)
-                    case "$file_type" in
-                        code) file_icon="󰅩" ;;
-                        chat) file_icon="󰍩" ;;
-                        research) file_icon="󰍉" ;;
-                        planning) file_icon="󰸕" ;;
-                        *) file_icon="󰈙" ;;
-                    esac
-                    if [[ $f -eq $((total_files - 1)) ]]; then
-                        file_branch="└──"
-                    else
-                        file_branch="├──"
-                    fi
-                    printf "%s%s %s %s%s%s\n" "$indent" "$file_branch" "$file_icon" "$file_name" "$meta_delim" "$file_path"
-                done
+                nfiles=$(grep -c "^$root/$t/$folder_name/" "$tmp_files" 2>/dev/null || true)
+                if [[ "$nfiles" -gt 0 ]]; then
+                    fidx=0
+                    grep "^$root/$t/$folder_name/" "$tmp_files" 2>/dev/null | sort | while IFS= read -r file_path; do
+                        [[ -z "$file_path" ]] && continue
+                        file_name="${file_path##*/}"
+                        file_type=$(awk '/^type:/{print $2; exit}' "$file_path" 2>/dev/null)
+                        case "$file_type" in
+                            code) file_icon="󰅩" ;;
+                            chat) file_icon="󰍩" ;;
+                            research) file_icon="󰍉" ;;
+                            planning) file_icon="󰸕" ;;
+                            *) file_icon="󰈙" ;;
+                        esac
+                        if [[ $fidx -eq $((nfiles - 1)) ]]; then
+                            file_branch="└──"
+                        else
+                            file_branch="├──"
+                        fi
+                        printf "%s%s %s %s%s%s\n" "$indent" "$file_branch" "$file_icon" "$file_name" "$meta_delim" "$file_path"
+                        fidx=$((fidx + 1))
+                    done
+                fi
             fi
-        done
-    done
+            idx=$((idx + 1))
+        done < "$tmp_flist"
+        rm -f "$tmp_flist"
+    done < "$tmp_tops"
 
-    rm -f "$tmp_files" "$tmp_counts"
+    rm -f "$tmp_files" "$tmp_counts" "$tmp_tops"
 }
 
 agr() {
