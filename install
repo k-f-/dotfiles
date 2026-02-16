@@ -528,17 +528,22 @@ init_submodules() {
             fail "private submodules (SSH)"
         fi
     elif command -v gh >/dev/null 2>&1 && gh auth status 2>&1 | grep -q "Logged in"; then
-        # Use gh CLI credential helper
         out_verbose "Using GitHub CLI authentication..."
-        gh auth setup-git 2>/dev/null || true
 
         # Temporarily override SSH URLs to HTTPS
         git -C "${DOTFILES_DIR}" config submodule.aesthetics.url "https://github.com/k-f-/aesthetics.git" || true
         git -C "${DOTFILES_DIR}" config submodule.agr-cli.url "https://github.com/k-f-/agr-cli.git" || true
 
-        # Init private submodules
+        # Init private submodules with gh CLI as credential helper.
+        # Uses git -c to avoid writing to the global gitconfig (which is
+        # symlinked into the repo via stow and would dirty the working tree).
+        local gh_path
+        gh_path="$(command -v gh)"
         local init_result=0
-        git -C "${DOTFILES_DIR}" submodule update --init "${private_submodules[@]}" 2>/dev/null || init_result=$?
+        git -C "${DOTFILES_DIR}" \
+            -c "credential.https://github.com.helper=" \
+            -c "credential.https://github.com.helper=!${gh_path} auth git-credential" \
+            submodule update --init "${private_submodules[@]}" 2>/dev/null || init_result=$?
 
         # Restore SSH URLs
         git -C "${DOTFILES_DIR}" config submodule.aesthetics.url "git@github.com:k-f-/aesthetics.git" || true
