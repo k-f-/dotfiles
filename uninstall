@@ -22,17 +22,25 @@ STOW_TARGET="${HOME}"
 # All packages that might be installed (alphabetically sorted)
 ALL_PACKAGES=(
     aerospace
+    aws
     bash
+    claude-code
     doom
     emacs
+    gh
     git
     gnupg
+    homebrew
     kitty
+    mackup
     mail
+    opencode
     secrets
     sketchybar
     skhd
     ssh
+    tmux
+    universal-wm
     vim
     x-windows
     yabai
@@ -82,6 +90,10 @@ print_verbose() {
 find_dotfiles_symlinks() {
     local symlinks=()
 
+    # Resolve physical path for comparison (handles iCloud symlinks)
+    local dotfiles_physical
+    dotfiles_physical="$(cd "${DOTFILES_DIR}" && pwd -P)"
+
     # Search common locations where stow creates symlinks
     local search_paths=(
         "${HOME}/."*
@@ -97,8 +109,21 @@ find_dotfiles_symlinks() {
         local target
         target=$(readlink "$path" 2>/dev/null || true)
 
-        # Check if it points to our dotfiles directory
-        if [[ "$target" == *"${DOTFILES_DIR}"* ]]; then
+        # Check multiple ways a symlink might point to our dotfiles:
+        # 1. Contains logical DOTFILES_DIR path
+        # 2. Contains physical path (iCloud resolved)
+        # 3. Relative path containing "dotfiles/" pointing to our repo
+        if [[ "$target" == *"${DOTFILES_DIR}"* ]] || \
+           [[ "$target" == *"${dotfiles_physical}"* ]] || \
+           [[ "$target" == *"/dotfiles/"* ]]; then
+            # For paths containing generic "/dotfiles/", verify they resolve to our repo
+            if [[ "$target" != *"${DOTFILES_DIR}"* ]] && [[ "$target" != *"${dotfiles_physical}"* ]]; then
+                local resolved
+                resolved="$(readlink -f "$path" 2>/dev/null || true)"
+                if [[ "$resolved" != "${dotfiles_physical}"* ]] && [[ "$resolved" != "${DOTFILES_DIR}"* ]]; then
+                    continue  # Points to a different dotfiles repo
+                fi
+            fi
             symlinks+=("$path")
         fi
     done
@@ -182,10 +207,55 @@ unstow_package() {
         stow_cmd="stow --no --delete --target=\"${STOW_TARGET}\" --ignore='^README.*' --dotfiles \"${package}\""
     fi
 
-    if eval "cd '${DOTFILES_DIR}' && ${stow_cmd} 2>&1"; then
+    if eval "cd '${DOTFILES_DIR}' && ${stow_cmd}" 2>/dev/null; then
         print_success "Removed ${package}"
         return 0
     else
+        # Stow failed (likely path mismatch from iCloud symlinks)
+        # Fall back to manually removing symlinks that point to this package
+        if [[ "${DRY_RUN}" == "false" ]]; then
+            local removed=false
+            local dotfiles_physical
+            dotfiles_physical="$(cd "${DOTFILES_DIR}" && pwd -P)"
+
+            while IFS= read -r -d '' file; do
+                local rel_path="${file#$package_dir/}"
+                local stowed_path="${rel_path//dot-/.}"
+                local target_file="${STOW_TARGET}/${stowed_path}"
+
+                if [[ -L "${target_file}" ]]; then
+                    local resolved
+                    resolved="$(readlink -f "${target_file}" 2>/dev/null || true)"
+                    if [[ "${resolved}" == "${dotfiles_physical}/${package}/"* ]] || \
+                       [[ "${resolved}" == "${DOTFILES_DIR}/${package}/"* ]]; then
+                        rm -f "${target_file}"
+                        removed=true
+                    fi
+                fi
+            done < <(find "${package_dir}" -type f -print0)
+
+            # Also check for directory symlinks (tree-folded)
+            while IFS= read -r -d '' dir; do
+                local rel_path="${dir#$package_dir/}"
+                local stowed_path="${rel_path//dot-/.}"
+                local target_dir="${STOW_TARGET}/${stowed_path}"
+
+                if [[ -L "${target_dir}" ]]; then
+                    local resolved
+                    resolved="$(readlink -f "${target_dir}" 2>/dev/null || true)"
+                    if [[ "${resolved}" == "${dotfiles_physical}/${package}/"* ]] || \
+                       [[ "${resolved}" == "${DOTFILES_DIR}/${package}/"* ]]; then
+                        rm -f "${target_dir}"
+                        removed=true
+                    fi
+                fi
+            done < <(find "${package_dir}" -mindepth 1 -type d -print0)
+
+            if [[ "${removed}" == "true" ]]; then
+                print_success "Removed ${package} (manual cleanup)"
+                return 0
+            fi
+        fi
         print_warning "Could not remove ${package} (may not be installed)"
         return 1
     fi
