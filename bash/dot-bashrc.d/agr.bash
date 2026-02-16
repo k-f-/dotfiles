@@ -13,6 +13,119 @@ export AGR_DIR="${AGR_DIR:-$HOME/Documents/Code/agr}"
 
 unalias agr 2>/dev/null
 
+agr_tree() {
+    local query="$1"
+    local root="$AGR_DIR"
+    local meta_delim=$'\x1f'
+    local tmp_files tmp_counts
+
+    tmp_files=$(mktemp) || return 1
+    tmp_counts=$(mktemp) || return 1
+
+    if [[ -n "$query" ]]; then
+        rg -i --files-with-matches --glob "*.md" "$query" "$root" 2>/dev/null | grep -v '_templates\|_scripts\|README' > "$tmp_files"
+    else
+        rg --files --glob "*.md" "$root" 2>/dev/null | grep -v '_templates\|_scripts\|README' > "$tmp_files"
+    fi
+
+    if [[ ! -s "$tmp_files" ]]; then
+        rm -f "$tmp_files" "$tmp_counts"
+        return 0
+    fi
+
+    awk -v root="$root" '{
+        path=$0
+        sub("^" root "/", "", path)
+        n=split(path, parts, "/")
+        if (n < 3) next
+        key=parts[1] "/" parts[2]
+        count[key]++
+    }
+    END {
+        for (k in count) print k "\t" count[k]
+    }' "$tmp_files" | sort > "$tmp_counts"
+
+    local top_list t
+    top_list=$(awk -v root="$root" '{
+        path=$0
+        sub("^" root "/", "", path)
+        split(path, parts, "/")
+        if (parts[1] != "") print parts[1]
+    }' "$tmp_files" | sort -u)
+
+    for t in $top_list; do
+        local top_icon
+        case "$t" in
+            code) top_icon="󰈮" ;;
+            chats) top_icon="󰍩" ;;
+            *) top_icon="󰉋" ;;
+        esac
+        printf "%s  %s/%s%s\n" "$top_icon" "$t" "$meta_delim" "$root/$t"
+
+        local folders=()
+        local counts=()
+        while IFS=$'\t' read -r key count; do
+            local folder_name
+            folder_name="${key#*/}"
+            folders+=("$folder_name")
+            counts+=("$count")
+        done < <(awk -F'\t' -v top="$t" '$1 ~ "^" top "/" {print $0}' "$tmp_counts")
+
+        local total_folders=${#folders[@]}
+        local i
+        for i in "${!folders[@]}"; do
+            local folder_name folder_count branch
+            folder_name="${folders[$i]}"
+            folder_count="${counts[$i]}"
+            if [[ $i -eq $((total_folders - 1)) ]]; then
+                branch="└──"
+            else
+                branch="├──"
+            fi
+            printf "%s %s (%s)%s%s\n" "$branch" "$folder_name" "$folder_count" "$meta_delim" "$root/$t/$folder_name"
+
+            if [[ -n "$query" ]]; then
+                local indent
+                if [[ $i -eq $((total_folders - 1)) ]]; then
+                    indent="    "
+                else
+                    indent="│   "
+                fi
+
+                local file_list=()
+                while IFS= read -r file_path; do
+                    [[ -z "$file_path" ]] && continue
+                    file_list+=("$file_path")
+                done < <(grep "^$root/$t/$folder_name/" "$tmp_files" | sort)
+
+                local total_files=${#file_list[@]}
+                local f
+                for f in "${!file_list[@]}"; do
+                    local file_path file_name file_type file_icon file_branch
+                    file_path="${file_list[$f]}"
+                    file_name=$(basename "$file_path")
+                    file_type=$(awk '/^type:/{print $2; exit}' "$file_path" 2>/dev/null)
+                    case "$file_type" in
+                        code) file_icon="󰅩" ;;
+                        chat) file_icon="󰍩" ;;
+                        research) file_icon="󰍉" ;;
+                        planning) file_icon="󰸕" ;;
+                        *) file_icon="󰈙" ;;
+                    esac
+                    if [[ $f -eq $((total_files - 1)) ]]; then
+                        file_branch="└──"
+                    else
+                        file_branch="├──"
+                    fi
+                    printf "%s%s %s %s%s%s\n" "$indent" "$file_branch" "$file_icon" "$file_name" "$meta_delim" "$file_path"
+                done
+            fi
+        done
+    done
+
+    rm -f "$tmp_files" "$tmp_counts"
+}
+
 agr() {
     if [[ ! -d "$AGR_DIR" ]]; then
         echo "agentrepo not found at $AGR_DIR" >&2
@@ -87,63 +200,48 @@ agr_browse() {
         fi
     fi
 
-    local folder_list=""
-    local file_list=""
-    
+    local use_tree=0
     if [[ -z "$scope" ]]; then
-        # Root view: list all top-level folders with counts
-        folder_list=$(
-            for top in "$AGR_DIR"/*/; do
-                [[ -d "$top" ]] || continue
-                top_name=$(basename "$top")
-                [[ "$top_name" == .* || "$top_name" == _* ]] && continue
-                for folder in "$top"*/; do
-                    [[ -d "$folder" ]] || continue
-                    count=$(find "$folder" -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
-                    rel_path=$(echo "$folder" | sed "s|^$AGR_DIR/||;s|/$||")
-                    local dir_icon
-                    case "$top_name" in
-                        code) dir_icon=$'\U000F0228' ;;     # 󰈮 file-code icon
-                        chats) dir_icon=$'\U000F0369' ;;     # 󰍩 chat icon
-                        *) dir_icon=$'\U000F024B' ;;         # 󰉋 folder fallback
-                    esac
-                    echo "$dir_icon $rel_path ($count)"
-                done
-            done | sort
-        )
-    else
-        # Drilled-down view: show .. to go back
-        folder_list=".."
-    fi
-
-    if [[ -n "$query" ]]; then
-        # Content search mode: rg finds matches, fzf fuzzy filters
-        file_list=$(rg -i --files-with-matches --glob "*.md" "$query" "$target" 2>/dev/null |
-            grep -v '_templates\|_scripts\|README' |
-            sed "s|^${AGR_DIR}/||" |
-            sed 's|^\([^/]*\)/\([^/]*\)/\(.*\)|\2 │ \3|')
-    else
-        # Browse mode: list all markdown files
-        file_list=$(rg --files --glob "*.md" "$target" 2>/dev/null |
-            grep -v '_templates\|_scripts\|README' |
-            sort -r |
-            sed "s|^${AGR_DIR}/||" |
-            sed 's|^\([^/]*\)/\([^/]*\)/\(.*\)|\2 │ \3|')
-    fi
-
-    local combined_list
-    if [[ -n "$folder_list" ]]; then
-        combined_list=$(printf "%s\n%s" "$folder_list" "$file_list")
-    else
-        combined_list="$file_list"
+        use_tree=1
     fi
 
     local fzf_preview='
-        if [[ {} != *"│"* ]] && [[ {} != ".." ]]; then
-            folder=$(echo {} | sed "s/^[^ ]* //;s/ (.*//" );
+        entry={};
+        path=$(echo "$entry" | cut -d$'\''\x1F'\'' -f2);
+        if [[ -z "$path" ]]; then
+            echo "No path found";
+        elif [[ "$path" == *.md ]]; then
+            file="$path";
+            date=$(awk "/^date:/{gsub(/\047/,\"\"); print \$2; exit}" "$file" 2>/dev/null);
+            type=$(awk "/^type:/{print \$2; exit}" "$file" 2>/dev/null);
+            folder=$(dirname "$path" | sed "s|^$AGR_DIR/||" | sed "s|^[^/]*/||");
+            tags=$(awk "/^tags:/{found=1;next} found && /^- /{gsub(/^- /,\"\"); printf \"%s, \",\$0} found && !/^- /{exit}" "$file" 2>/dev/null | sed "s/, $//");
+            printf "\033[38;2;128;255;234m󰃭 %s\033[0m \033[38;2;121;112;169m│\033[0m " "${date:-—}";
+            case "${type:-chat}" in
+                code)
+                    printf "\033[38;2;149;128;255m󰅩 %s\033[0m" "${type}"
+                    ;;
+                chat)
+                    printf "\033[38;2;255;128;191m󰍩 %s\033[0m" "${type:-chat}"
+                    ;;
+                research)
+                    printf "\033[38;2;128;255;234m󰍉 %s\033[0m" "${type}"
+                    ;;
+                planning)
+                    printf "\033[38;2;255;202;128m󰸕 %s\033[0m" "${type}"
+                    ;;
+                *)
+                    printf "\033[38;2;255;128;191m󰍩 %s\033[0m" "${type:-chat}"
+                    ;;
+            esac
+            printf " \033[38;2;121;112;169m│\033[0m \033[38;2;255;202;128m󰉋 %s\033[0m" "${folder:-—}";
+            printf " \033[38;2;121;112;169m│\033[0m \033[38;2;138;255;128m󰓹 %s\033[0m\n\n" "${tags:-—}";
+            bat --color=always --style=grid "$file";
+        else
+            folder="$path";
             folder_name=$(basename "$folder");
-            top_name=$(echo "$folder" | cut -d/ -f1);
-            files=$(find "$AGR_DIR/$folder" -name "*.md" -type f 2>/dev/null | while IFS= read -r f; do
+            top_name=$(echo "$folder" | sed "s|^$AGR_DIR/||" | cut -d/ -f1);
+            files=$(find "$folder" -name "*.md" -type f 2>/dev/null | while IFS= read -r f; do
                 d=$(awk "/^date:/{gsub(/\047/,\"\"); print \$2; exit}" "$f" 2>/dev/null);
                 printf "%s\t%s\n" "${d:-0000-00-00}" "$f";
             done | sort -t$'\''\t'\'' -k1,1r | cut -f2);
@@ -193,49 +291,6 @@ agr_browse() {
                 esac
                 printf "\033[38;2;248;248;242m%s\033[0m\n" "$fname";
             done;
-        elif [[ {} == ".." ]]; then
-            echo "← Back to root";
-        else
-            entry={};
-            if [[ "$entry" == *"│"* ]]; then
-                folder=$(echo "$entry" | cut -d"│" -f1 | sed "s/ *$//");
-                filename=$(echo "$entry" | cut -d"│" -f2 | sed "s/^ *//");
-                for top in chats code conversations; do
-                    file="$AGR_DIR/$top/$folder/$filename";
-                    [[ -f "$file" ]] && break;
-                done;
-            else
-                file="$AGR_DIR/$entry";
-            fi;
-            date=$(awk "/^date:/{gsub(/\047/,\"\"); print \$2; exit}" "$file" 2>/dev/null);
-            type=$(awk "/^type:/{print \$2; exit}" "$file" 2>/dev/null);
-            if [[ "$entry" == *"│"* ]]; then
-                folder=$(echo "$entry" | cut -d"│" -f1 | sed "s/ *$//");
-            else
-                folder=$(dirname "$entry" | sed "s|^[^/]*/||");
-            fi;
-            tags=$(awk "/^tags:/{found=1;next} found && /^- /{gsub(/^- /,\"\"); printf \"%s, \",\$0} found && !/^- /{exit}" "$file" 2>/dev/null | sed "s/, $//");
-            printf "\033[38;2;128;255;234m󰃭 %s\033[0m \033[38;2;121;112;169m│\033[0m " "${date:-—}";
-            case "${type:-chat}" in
-                code)
-                    printf "\033[38;2;149;128;255m󰅩 %s\033[0m" "${type}"
-                    ;;
-                chat)
-                    printf "\033[38;2;255;128;191m󰍩 %s\033[0m" "${type:-chat}"
-                    ;;
-                research)
-                    printf "\033[38;2;128;255;234m󰍉 %s\033[0m" "${type}"
-                    ;;
-                planning)
-                    printf "\033[38;2;255;202;128m󰸕 %s\033[0m" "${type}"
-                    ;;
-                *)
-                    printf "\033[38;2;255;128;191m󰍩 %s\033[0m" "${type:-chat}"
-                    ;;
-            esac
-            printf " \033[38;2;121;112;169m│\033[0m \033[38;2;255;202;128m󰉋 %s\033[0m" "${folder:-—}";
-            printf " \033[38;2;121;112;169m│\033[0m \033[38;2;138;255;128m󰓹 %s\033[0m\n\n" "${tags:-—}";
-            bat --color=always --style=grid "$file";
         fi
     '
     local fzf_color="bg:#22212C,fg:#F8F8F2,hl:#9580FF,bg+:#454158,fg+:#F8F8F2,hl+:#9580FF,info:#80FFEA,prompt:#8AFF80,pointer:#FF80BF,marker:#FFCA80,spinner:#9580FF,header:#7970A9,border:#7970A9,gutter:#22212C"
@@ -243,85 +298,155 @@ agr_browse() {
 
     local result key selection
     while true; do
-        if [[ -n "$query" ]]; then
-            result=$(echo "$combined_list" | fzf --expect=ctrl-e,ctrl-y,ctrl-o \
-                --delimiter='│' \
-                --nth=2.. \
-                --with-nth=1,2 \
+        if [[ $use_tree -eq 1 ]]; then
+            result=$(agr_tree "$query" | fzf --expect=ctrl-e,ctrl-y,ctrl-o \
+                --delimiter=$'\x1F' \
+                --with-nth=1 \
+                --bind="change:reload(agr_tree {q})" \
                 --color="$fzf_color" \
                 --preview "$fzf_preview" \
                 --preview-window=right:60% \
                 --bind="$fzf_binds" \
-                --header="$(printf '─── agr: %s ─── ⏎ read  ^e edit  ^y copy  ^o opencode ───' "$query")" \
-                --header-first \
-                --query="")
-        else
-            result=$(echo "$combined_list" | fzf --expect=ctrl-e,ctrl-y,ctrl-o \
-                --delimiter='│' \
-                --nth=2.. \
-                --with-nth=1,2 \
-                --color="$fzf_color" \
-                --preview "$fzf_preview" \
-                --preview-window=right:60% \
-                --bind="$fzf_binds" \
-                --header="$(printf '─── agr: %s ─── ⏎ read  ^e edit  ^y copy  ^o opencode ───' "browse")" \
+                --header="$(printf '─── agr tree ─── ⏎ read/drill  ^e edit  ^y copy  ^o opencode ───')" \
                 --header-first)
+        else
+            local folder_list=""
+            local file_list=""
+            
+            folder_list=".."
+
+            if [[ -n "$query" ]]; then
+                file_list=$(rg -i --files-with-matches --glob "*.md" "$query" "$target" 2>/dev/null |
+                    grep -v '_templates\|_scripts\|README' |
+                    sed "s|^${AGR_DIR}/||" |
+                    sed 's|^\([^/]*\)/\([^/]*\)/\(.*\)|\2 │ \3|')
+            else
+                file_list=$(rg --files --glob "*.md" "$target" 2>/dev/null |
+                    grep -v '_templates\|_scripts\|README' |
+                    sort -r |
+                    sed "s|^${AGR_DIR}/||" |
+                    sed 's|^\([^/]*\)/\([^/]*\)/\(.*\)|\2 │ \3|')
+            fi
+
+            local combined_list
+            combined_list=$(printf "%s\n%s" "$folder_list" "$file_list")
+
+            if [[ -n "$query" ]]; then
+                result=$(echo "$combined_list" | fzf --expect=ctrl-e,ctrl-y,ctrl-o \
+                    --delimiter='│' \
+                    --nth=2.. \
+                    --with-nth=1,2 \
+                    --color="$fzf_color" \
+                    --preview "$fzf_preview" \
+                    --preview-window=right:60% \
+                    --bind="$fzf_binds" \
+                    --header="$(printf '─── agr: %s ─── ⏎ read  ^e edit  ^y copy  ^o opencode ───' "$query")" \
+                    --header-first \
+                    --query="")
+            else
+                result=$(echo "$combined_list" | fzf --expect=ctrl-e,ctrl-y,ctrl-o \
+                    --delimiter='│' \
+                    --nth=2.. \
+                    --with-nth=1,2 \
+                    --color="$fzf_color" \
+                    --preview "$fzf_preview" \
+                    --preview-window=right:60% \
+                    --bind="$fzf_binds" \
+                    --header="$(printf '─── agr: %s ─── ⏎ read  ^e edit  ^y copy  ^o opencode ───' "browse")" \
+                    --header-first)
+            fi
         fi
 
         key=$(head -1 <<< "$result")
         selection=$(tail -1 <<< "$result")
 
         [[ -z "$selection" ]] && return 0
-         [[ "$selection" == ".." ]] && return 0
- 
-         if [[ "$selection" != *"│"* ]] && [[ "$selection" != ".." ]]; then
-             folder=$(echo "$selection" | sed 's/^[^ ]* //;s/ (.*//')
-            folder_name=$(basename "$folder")
-            case "$key" in
-                "")
-                    agr_browse "$folder" "" "$pipe_mode"
-                    ;;
-                ctrl-y)
-                    echo "$AGR_DIR/$folder" | pbcopy
-                    echo "Copied to clipboard: $AGR_DIR/$folder"
-                    ;;
-                ctrl-e)
-                    ${TERMINAL_EDITOR:-nvim} "$AGR_DIR/$folder"
-                    ;;
-                ctrl-o)
-                    if ! command -v opencode &>/dev/null; then
-                        echo "opencode not found in PATH" >&2
-                        continue
-                    fi
-                    file_list=$(find "$AGR_DIR/$folder" -name "*.md" -type f 2>/dev/null | sed "s|^$AGR_DIR/||" | sort)
-                    file_count=$(echo "$file_list" | wc -l | tr -d ' ')
-                    unique_tags=$(find "$AGR_DIR/$folder" -name "*.md" -exec awk '/^tags:/{found=1;next} found && /^- /{gsub(/^- /,""); print} found && !/^- /{exit}' {} \; 2>/dev/null | sort -u | tr '\n' ',' | sed 's/,$//')
-                    opencode --prompt "Read ALL ${file_count} files in the '${folder_name}' project using agr_read, then present a concise summary of the project state: key topics covered, open questions, and where things left off. Tags: ${unique_tags}.
+        [[ "$selection" == ".." ]] && return 0
+
+        if [[ $use_tree -eq 1 ]]; then
+            path=$(echo "$selection" | cut -d$'\x1F' -f2)
+            
+            if [[ "$path" == *.md ]]; then
+                full_path="$path"
+            else
+                folder="$path"
+                folder_rel=$(echo "$folder" | sed "s|^$AGR_DIR/||")
+                folder_name=$(basename "$folder")
+                
+                case "$key" in
+                    "")
+                        agr_browse "$folder_rel" "" "$pipe_mode"
+                        ;;
+                    ctrl-y)
+                        echo "$folder" | pbcopy
+                        echo "Copied to clipboard: $folder"
+                        ;;
+                    ctrl-e)
+                        ${TERMINAL_EDITOR:-nvim} "$folder"
+                        ;;
+                    ctrl-o)
+                        if ! command -v opencode &>/dev/null; then
+                            echo "opencode not found in PATH" >&2
+                            continue
+                        fi
+                        file_list=$(find "$folder" -name "*.md" -type f 2>/dev/null | sed "s|^$AGR_DIR/||" | sort)
+                        file_count=$(echo "$file_list" | wc -l | tr -d ' ')
+                        unique_tags=$(find "$folder" -name "*.md" -exec awk '/^tags:/{found=1;next} found && /^- /{gsub(/^- /,""); print} found && !/^- /{exit}' {} \; 2>/dev/null | sort -u | tr '\n' ',' | sed 's/,$//')
+                        opencode --prompt "Read ALL ${file_count} files in the '${folder_name}' project using agr_read, then present a concise summary of the project state: key topics covered, open questions, and where things left off. Tags: ${unique_tags}.
 
 Files:
 ${file_list}"
-                    ;;
-            esac
-            continue
-        fi
-
-        # Reconstruct full path from folder │ filename format
-        if [[ "$selection" == *"│"* ]]; then
-            folder=$(echo "$selection" | cut -d'│' -f1 | sed 's/ *$//')
-            filename=$(echo "$selection" | cut -d'│' -f2 | sed 's/^ *//')
-            # Try both chats/ and code/ to find the file
-            full_path=""
-            for top in chats code conversations; do
-                candidate="$AGR_DIR/$top/$folder/$filename"
-                if [[ -f "$candidate" ]]; then
-                    full_path="$candidate"
-                    break
-                fi
-            done
-            # Fallback: if not found, use original selection
-            [[ -z "$full_path" ]] && full_path="$AGR_DIR/$selection"
+                        ;;
+                esac
+                continue
+            fi
         else
-            full_path="$AGR_DIR/$selection"
+            if [[ "$selection" != *"│"* ]] && [[ "$selection" != ".." ]]; then
+                folder=$(echo "$selection" | sed 's/^[^ ]* //;s/ (.*//')
+                folder_name=$(basename "$folder")
+                case "$key" in
+                    "")
+                        agr_browse "$folder" "" "$pipe_mode"
+                        ;;
+                    ctrl-y)
+                        echo "$AGR_DIR/$folder" | pbcopy
+                        echo "Copied to clipboard: $AGR_DIR/$folder"
+                        ;;
+                    ctrl-e)
+                        ${TERMINAL_EDITOR:-nvim} "$AGR_DIR/$folder"
+                        ;;
+                    ctrl-o)
+                        if ! command -v opencode &>/dev/null; then
+                            echo "opencode not found in PATH" >&2
+                            continue
+                        fi
+                        file_list=$(find "$AGR_DIR/$folder" -name "*.md" -type f 2>/dev/null | sed "s|^$AGR_DIR/||" | sort)
+                        file_count=$(echo "$file_list" | wc -l | tr -d ' ')
+                        unique_tags=$(find "$AGR_DIR/$folder" -name "*.md" -exec awk '/^tags:/{found=1;next} found && /^- /{gsub(/^- /,""); print} found && !/^- /{exit}' {} \; 2>/dev/null | sort -u | tr '\n' ',' | sed 's/,$//')
+                        opencode --prompt "Read ALL ${file_count} files in the '${folder_name}' project using agr_read, then present a concise summary of the project state: key topics covered, open questions, and where things left off. Tags: ${unique_tags}.
+
+Files:
+${file_list}"
+                        ;;
+                esac
+                continue
+            fi
+
+            if [[ "$selection" == *"│"* ]]; then
+                folder=$(echo "$selection" | cut -d'│' -f1 | sed 's/ *$//')
+                filename=$(echo "$selection" | cut -d'│' -f2 | sed 's/^ *//')
+                full_path=""
+                for top in chats code conversations; do
+                    candidate="$AGR_DIR/$top/$folder/$filename"
+                    if [[ -f "$candidate" ]]; then
+                        full_path="$candidate"
+                        break
+                    fi
+                done
+                [[ -z "$full_path" ]] && full_path="$AGR_DIR/$selection"
+            else
+                full_path="$AGR_DIR/$selection"
+            fi
         fi
 
         case "$key" in
