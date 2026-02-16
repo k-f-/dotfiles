@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# open-dotfiles — Open the dotfiles repo in your editor
+# Used by aerospace keybindings (TOML can't expand env vars)
+[[ -f "${HOME}/.config/dotfiles/env" ]] && source "${HOME}/.config/dotfiles/env"
+exec "$HOME/.bin/em" "${DOTFILES_DIR:?DOTFILES_DIR not set}"
