@@ -53,9 +53,13 @@ check_prerequisites() {
     print_success "All prerequisites found"
 }
 
+has_ssh_auth() {
+    ssh -o StrictHostKeyChecking=accept-new -o ConnectTimeout=5 -o BatchMode=yes -T git@github.com 2>&1 | grep -q "successfully authenticated"
+}
+
 ensure_repo() {
     local name="$1"
-    local url="$2"
+    local ssh_url="$2"
     local dir="${CODE_DIR}/${name}"
 
     if [[ -d "${dir}/.git" ]]; then
@@ -68,8 +72,18 @@ ensure_repo() {
         fi
     else
         print_header "Cloning ${name}..."
-        git clone "${url}" "${dir}"
-        print_success "Cloned ${name}"
+        if git clone "${ssh_url}" "${dir}" 2>/dev/null; then
+            print_success "Cloned ${name}"
+        else
+            local https_url="${ssh_url/git@github.com:/https:\/\/github.com\/}"
+            print_verbose "SSH failed, trying HTTPS: ${https_url}"
+            if git clone "${https_url}" "${dir}" 2>/dev/null; then
+                print_success "Cloned ${name} (via HTTPS)"
+            else
+                print_warning "${name}: clone failed (no SSH key or HTTPS auth)"
+                return 1
+            fi
+        fi
     fi
 }
 

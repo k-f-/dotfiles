@@ -438,13 +438,18 @@ bootstrap_oh_my_zsh() {
         return 0
     fi
     
-    # Check connectivity
+    # Remove stale/empty directory (e.g. from iCloud sync) so installer doesn't bail
+    if [[ -d "$HOME/.oh-my-zsh" ]] && [[ ! -f "$HOME/.oh-my-zsh/oh-my-zsh.sh" ]]; then
+        print_verbose "Removing stale ~/.oh-my-zsh directory"
+        rm -rf "$HOME/.oh-my-zsh"
+    fi
+
     if ! curl -fsSL --connect-timeout 5 https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh > /dev/null 2>&1; then
         print_warning "Cannot reach oh-my-zsh installer (offline?). Skipping."
         return 0
     fi
     
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended && \
+    ZSH= sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended && \
         print_success "oh-my-zsh installed" || \
         print_warning "oh-my-zsh install failed"
 }
