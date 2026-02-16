@@ -16,7 +16,7 @@ set -euo pipefail
 # Configuration
 # -----------------------------------------------------------------------------
 
-DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -L)"
 STOW_TARGET="${HOME}"
 
 # All packages that might be installed (alphabetically sorted)
