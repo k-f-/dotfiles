@@ -5,9 +5,7 @@
 # Use VS Code's built-in Settings Sync for extension management.
 # The Dracula Pro theme is installed separately via aesthetics/scripts/install-theme.sh
 
-# Taps
-tap "homebrew/bundle"
-tap "homebrew/services"
+# Taps (homebrew/bundle and homebrew/services are built-in since Homebrew 4.x)
 tap "nikitabobko/tap"
 tap "felixkratz/formulae"
 
