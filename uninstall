@@ -217,7 +217,8 @@ unstow_package() {
     local dotfiles_physical
     dotfiles_physical="$(cd "${DOTFILES_DIR}" && pwd -P)"
 
-    # Remove file symlinks
+    # Remove file and symlink entries from the stow package
+    # (-type f: regular files, -type l: symlinks within the package like dot-profile -> dot-bashrc)
     while IFS= read -r -d '' file; do
         local rel_path="${file#$package_dir/}"
         local stowed_path="${rel_path//dot-/.}"
@@ -226,12 +227,13 @@ unstow_package() {
         if [[ -L "${target_file}" ]]; then
             local resolved
             resolved="$(readlink -f "${target_file}" 2>/dev/null || true)"
-            if [[ "${resolved}" == "${dotfiles_physical}/${package}/"* ]] || \
-               [[ "${resolved}" == "${DOTFILES_DIR}/${package}/"* ]]; then
+            # Check if resolved path is anywhere inside our dotfiles repo
+            if [[ "${resolved}" == "${dotfiles_physical}/"* ]] || \
+               [[ "${resolved}" == "${DOTFILES_DIR}/"* ]]; then
                 rm -f "${target_file}"
             fi
         fi
-    done < <(find "${package_dir}" -type f -print0)
+    done < <(find "${package_dir}" \( -type f -o -type l \) -print0)
 
     # Remove directory symlinks (tree-folded stow dirs)
     while IFS= read -r -d '' dir; do
