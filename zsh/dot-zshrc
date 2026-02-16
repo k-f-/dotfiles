@@ -237,7 +237,7 @@ source ~/.bashrc.d/path.bash
 source ~/.bashrc.d/agr.bash
 
 # bun completions
-[ -s "/Users/kef/.bun/_bun" ] && source "/Users/kef/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"

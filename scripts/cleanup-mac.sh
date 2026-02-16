@@ -2,7 +2,7 @@
 # macOS Cleanup and Maintenance Script
 # Helps clean up Homebrew packages, caches, and identify unused applications
 
-set -e  # Exit on error
+set -euo pipefail  # Exit on error, unset vars, pipe failures
 
 #==============================================================================
 # Color output helpers
