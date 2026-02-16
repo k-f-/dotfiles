@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
 # =============================================================================
 # dev-start — Bootstrap persistent tmux sessions on Mac Mini
 # =============================================================================
