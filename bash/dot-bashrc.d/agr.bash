@@ -101,7 +101,13 @@ agr_browse() {
                     [[ -d "$folder" ]] || continue
                     count=$(find "$folder" -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
                     rel_path=$(echo "$folder" | sed "s|^$AGR_DIR/||;s|/$||")
-                    echo "󰉋 $rel_path ($count)"
+                    local dir_icon
+                    case "$top_name" in
+                        code) dir_icon=$'\U000F0228' ;;     # 󰈮 file-code icon
+                        chats) dir_icon=$'\U000F0369' ;;     # 󰍩 chat icon
+                        *) dir_icon=$'\U000F024B' ;;         # 󰉋 folder fallback
+                    esac
+                    echo "$dir_icon $rel_path ($count)"
                 done
             done | sort
         )
@@ -133,11 +139,14 @@ agr_browse() {
     fi
 
     local fzf_preview='
-        if [[ {} == "󰉋 "* ]]; then
-            folder=$(echo {} | sed "s/^󰉋 //;s/ (.*//" );
+        if [[ {} != *"│"* ]] && [[ {} != ".." ]]; then
+            folder=$(echo {} | sed "s/^[^ ]* //;s/ (.*//" );
             folder_name=$(basename "$folder");
             top_name=$(echo "$folder" | cut -d/ -f1);
-            files=$(find "$AGR_DIR/$folder" -name "*.md" -type f 2>/dev/null | sort);
+            files=$(find "$AGR_DIR/$folder" -name "*.md" -type f 2>/dev/null | while IFS= read -r f; do
+                d=$(awk "/^date:/{gsub(/\047/,\"\"); print \$2; exit}" "$f" 2>/dev/null);
+                printf "%s\t%s\n" "${d:-0000-00-00}" "$f";
+            done | sort -t$'\''\t'\'' -k1,1r | cut -f2);
             file_count=$(echo "$files" | grep -c . 2>/dev/null);
             dates=$(echo "$files" | xargs -I{} awk "/^date:/{gsub(/\047/,\"\"); print \$2; exit}" {} 2>/dev/null | sort);
             oldest=$(echo "$dates" | head -1);
@@ -191,7 +200,7 @@ agr_browse() {
             if [[ "$entry" == *"│"* ]]; then
                 folder=$(echo "$entry" | cut -d"│" -f1 | sed "s/ *$//");
                 filename=$(echo "$entry" | cut -d"│" -f2 | sed "s/^ *//");
-                for top in chats code; do
+                for top in chats code conversations; do
                     file="$AGR_DIR/$top/$folder/$filename";
                     [[ -f "$file" ]] && break;
                 done;
@@ -200,7 +209,11 @@ agr_browse() {
             fi;
             date=$(awk "/^date:/{gsub(/\047/,\"\"); print \$2; exit}" "$file" 2>/dev/null);
             type=$(awk "/^type:/{print \$2; exit}" "$file" 2>/dev/null);
-            folder=$(dirname "$entry" | sed "s|^[^/]*/||");
+            if [[ "$entry" == *"│"* ]]; then
+                folder=$(echo "$entry" | cut -d"│" -f1 | sed "s/ *$//");
+            else
+                folder=$(dirname "$entry" | sed "s|^[^/]*/||");
+            fi;
             tags=$(awk "/^tags:/{found=1;next} found && /^- /{gsub(/^- /,\"\"); printf \"%s, \",\$0} found && !/^- /{exit}" "$file" 2>/dev/null | sed "s/, $//");
             printf "\033[38;2;128;255;234m󰃭 %s\033[0m \033[38;2;121;112;169m│\033[0m " "${date:-—}";
             case "${type:-chat}" in
@@ -239,7 +252,8 @@ agr_browse() {
                 --preview "$fzf_preview" \
                 --preview-window=right:60% \
                 --bind="$fzf_binds" \
-                --header="agr: $query | ⏎ read  ^e edit  ^y copy  ^o opencode" \
+                --header="$(printf '─── agr: %s ─── ⏎ read  ^e edit  ^y copy  ^o opencode ───' "$query")" \
+                --header-first \
                 --query="")
         else
             result=$(echo "$combined_list" | fzf --expect=ctrl-e,ctrl-y,ctrl-o \
@@ -250,17 +264,18 @@ agr_browse() {
                 --preview "$fzf_preview" \
                 --preview-window=right:60% \
                 --bind="$fzf_binds" \
-                --header="agr: browse | ⏎ read  ^e edit  ^y copy  ^o opencode")
+                --header="$(printf '─── agr: %s ─── ⏎ read  ^e edit  ^y copy  ^o opencode ───' "browse")" \
+                --header-first)
         fi
 
         key=$(head -1 <<< "$result")
         selection=$(tail -1 <<< "$result")
 
         [[ -z "$selection" ]] && return 0
-        [[ "$selection" == ".." ]] && return 0
-
-        if [[ "$selection" == "󰉋 "* ]]; then
-            folder=$(echo "$selection" | sed 's/^󰉋 //;s/ (.*//')
+         [[ "$selection" == ".." ]] && return 0
+ 
+         if [[ "$selection" != *"│"* ]] && [[ "$selection" != ".." ]]; then
+             folder=$(echo "$selection" | sed 's/^[^ ]* //;s/ (.*//')
             folder_name=$(basename "$folder")
             case "$key" in
                 "")
@@ -271,7 +286,7 @@ agr_browse() {
                     echo "Copied to clipboard: $AGR_DIR/$folder"
                     ;;
                 ctrl-e)
-                    ${EDITOR:-nvim} "$AGR_DIR/$folder"
+                    ${TERMINAL_EDITOR:-nvim} "$AGR_DIR/$folder"
                     ;;
                 ctrl-o)
                     if ! command -v opencode &>/dev/null; then
@@ -296,7 +311,7 @@ ${file_list}"
             filename=$(echo "$selection" | cut -d'│' -f2 | sed 's/^ *//')
             # Try both chats/ and code/ to find the file
             full_path=""
-            for top in chats code; do
+            for top in chats code conversations; do
                 candidate="$AGR_DIR/$top/$folder/$filename"
                 if [[ -f "$candidate" ]]; then
                     full_path="$candidate"
@@ -314,7 +329,7 @@ ${file_list}"
                 bat --paging=always "$full_path"
                 ;;
             ctrl-e)
-                ${EDITOR:-nvim} "$full_path"
+                ${TERMINAL_EDITOR:-nvim} "$full_path"
                 ;;
             ctrl-y)
                 echo "$full_path" | pbcopy
