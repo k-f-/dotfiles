@@ -1,1 +1,2 @@
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# Homebrew PATH setup moved to .zshenv for universal availability
+# (non-login shells like SSH commands and mosh-server need it)
