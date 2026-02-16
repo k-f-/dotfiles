@@ -141,7 +141,7 @@ list_symlinks() {
             local target
             target=$(readlink "$symlink")
             echo "  ${symlink} -> ${target}"
-            ((count++))
+            count=$((count + 1))
         fi
     done < <(find_dotfiles_symlinks)
 
@@ -358,9 +358,9 @@ EOF
 
     for package in "${ALL_PACKAGES[@]}"; do
         if unstow_package "${package}"; then
-            ((success_count++))
+            success_count=$((success_count + 1))
         else
-            ((fail_count++))
+            fail_count=$((fail_count + 1))
         fi
     done
 
