@@ -134,7 +134,7 @@ em            # Smart editor (VS Code → neovim → vim)
 - `sketchybar` - macOS status bar
 - `x-windows` - X11 configurations
 - `secrets` - Private configurations
-- `youtube-dl` - YouTube downloader config
+- `yt-dlp` - YouTube downloader config
 
 ### Window Management
 

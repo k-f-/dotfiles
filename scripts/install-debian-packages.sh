@@ -44,7 +44,7 @@ sudo apt install \
      xcape \
      xdotool \
      xsel \
-     youtube-dl \
+     yt-dlp \
      kitty \
      fzf \
      ripgrep \
