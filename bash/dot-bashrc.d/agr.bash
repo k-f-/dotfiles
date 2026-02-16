@@ -63,11 +63,11 @@ agr_tree() {
     while IFS= read -r t; do
         [[ -z "$t" ]] && continue
         case "$t" in
-            code) top_icon="󰈮" ;;
-            chats) top_icon="󰍩" ;;
-            *) top_icon="󰉋" ;;
+            code) top_icon="\033[38;2;149;128;255m󰅩\033[0m" ;;
+            chats) top_icon="\033[38;2;255;128;191m󰍩\033[0m" ;;
+            *) top_icon="\033[38;2;255;202;128m󰉋\033[0m" ;;
         esac
-        printf "%s  %s/%s%s\n" "$top_icon" "$t" "$meta_delim" "$root/$t"
+        printf "%b  \033[1m%s/\033[0m%s%s\n" "$top_icon" "$t" "$meta_delim" "$root/$t"
 
         tmp_flist=$(mktemp)
         awk -F'\t' -v top="$t" '$1 ~ "^" top "/" {print $0}' "$tmp_counts" > "$tmp_flist"
@@ -81,7 +81,7 @@ agr_tree() {
             else
                 branch="├──"
             fi
-            printf "%s %s (%s)%s%s\n" "$branch" "$folder_name" "$cnt" "$meta_delim" "$root/$t/$folder_name"
+            printf "\033[38;2;121;112;169m%s\033[0m %s \033[38;2;128;255;234m(%s)\033[0m%s%s\n" "$branch" "$folder_name" "$cnt" "$meta_delim" "$root/$t/$folder_name"
 
             if [[ -n "$query" ]]; then
                 if [[ $idx -eq $((nfolders - 1)) ]]; then
@@ -98,18 +98,18 @@ agr_tree() {
                         file_name="${file_path##*/}"
                         file_type=$(awk '/^type:/{print $2; exit}' "$file_path" 2>/dev/null)
                         case "$file_type" in
-                            code) file_icon="󰅩" ;;
-                            chat) file_icon="󰍩" ;;
-                            research) file_icon="󰍉" ;;
-                            planning) file_icon="󰸕" ;;
-                            *) file_icon="󰈙" ;;
+                            code) file_icon="\033[38;2;149;128;255m󰅩\033[0m" ;;
+                            chat) file_icon="\033[38;2;255;128;191m󰍩\033[0m" ;;
+                            research) file_icon="\033[38;2;128;255;234m󰍉\033[0m" ;;
+                            planning) file_icon="\033[38;2;255;202;128m󰸕\033[0m" ;;
+                            *) file_icon="\033[38;2;255;128;191m󰈙\033[0m" ;;
                         esac
                         if [[ $fidx -eq $((nfiles - 1)) ]]; then
                             file_branch="└──"
                         else
                             file_branch="├──"
                         fi
-                        printf "%s%s %s %s%s%s\n" "$indent" "$file_branch" "$file_icon" "$file_name" "$meta_delim" "$file_path"
+                        printf "\033[38;2;121;112;169m%s%s\033[0m %b %s%s%s\n" "$indent" "$file_branch" "$file_icon" "$file_name" "$meta_delim" "$file_path"
                         fidx=$((fidx + 1))
                     done
                 fi
@@ -251,7 +251,17 @@ agr_browse() {
             newest=$(echo "$dates" | tail -1);
             all_tags=$(echo "$files" | xargs -I{} awk "/^tags:/{found=1;next} found && /^- /{gsub(/^- /,\"\"); print} found && !/^- /{exit}" {} 2>/dev/null | sort -u | tr "\n" ", " | sed "s/, $//");
             printf "\033[38;2;255;202;128m󰉋 %s\033[0m" "$folder_name";
-            printf " \033[38;2;121;112;169m│\033[0m \033[38;2;149;128;255m󰅩 %s\033[0m" "$top_name";
+            case "$top_name" in
+                chats)
+                    printf " \033[38;2;121;112;169m│\033[0m \033[38;2;255;128;191m󰍩 %s\033[0m" "$top_name"
+                    ;;
+                code)
+                    printf " \033[38;2;121;112;169m│\033[0m \033[38;2;149;128;255m󰅩 %s\033[0m" "$top_name"
+                    ;;
+                *)
+                    printf " \033[38;2;121;112;169m│\033[0m \033[38;2;255;202;128m󰉋 %s\033[0m" "$top_name"
+                    ;;
+            esac;
             printf " \033[38;2;121;112;169m│\033[0m \033[38;2;128;255;234m󰈙 %s files\033[0m" "$file_count";
             if [ -n "$oldest" ]; then
                 printf " \033[38;2;121;112;169m│\033[0m \033[38;2;128;255;234m󰃭 %s → %s\033[0m" "$oldest" "$newest";
@@ -299,7 +309,7 @@ agr_browse() {
     local result key selection
     while true; do
         if [[ $use_tree -eq 1 ]]; then
-            result=$(agr_tree "$query" | SHELL=/bin/bash fzf --layout=reverse-list --expect=ctrl-e,ctrl-y,ctrl-o \
+            result=$(agr_tree "$query" | SHELL=/bin/bash fzf --ansi --layout=reverse-list --expect=ctrl-e,ctrl-y,ctrl-o \
                 --delimiter=$'\x1F' \
                 --with-nth=1 \
                 --bind="change:reload(source ~/.bashrc.d/agr.bash && agr_tree {q})" \
@@ -340,7 +350,7 @@ agr_browse() {
             combined_list=$(printf "%s\n%s" "$folder_list" "$file_list")
 
             if [[ -n "$query" ]]; then
-                result=$(echo "$combined_list" | SHELL=/bin/bash fzf --expect=ctrl-e,ctrl-y,ctrl-o \
+                result=$(echo "$combined_list" | SHELL=/bin/bash fzf --ansi --layout=reverse-list --expect=ctrl-e,ctrl-y,ctrl-o \
                     --delimiter=$'\x1F' \
                     --with-nth=1 \
                     --color="$fzf_color" \
@@ -351,7 +361,7 @@ agr_browse() {
                     --header-first \
                     --query="")
             else
-                result=$(echo "$combined_list" | SHELL=/bin/bash fzf --expect=ctrl-e,ctrl-y,ctrl-o \
+                result=$(echo "$combined_list" | SHELL=/bin/bash fzf --ansi --layout=reverse-list --expect=ctrl-e,ctrl-y,ctrl-o \
                     --delimiter=$'\x1F' \
                     --with-nth=1 \
                     --color="$fzf_color" \
