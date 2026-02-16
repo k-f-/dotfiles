@@ -3,7 +3,7 @@
 	url = https://github.com/CarterMcAlister/aerospace-layout-manager.git
 [submodule "aesthetics"]
 	path = aesthetics
-	url = https://github.com/k-f-/aesthetics.git
+	url = git@github.com:k-f-/aesthetics.git
 [submodule "agentic-dev-standards"]
 	path = agentic-dev-standards
 	url = https://github.com/k-f-/agentic-dev-standards.git
