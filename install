@@ -219,6 +219,58 @@ is_dotfiles_symlink() {
     [[ "$target" == *"/iCloud/"*"/dotfiles/"* ]]
 }
 
+# Remove conflicting targets for a stow package (used in --force mode)
+# This handles the case where existing symlinks point to the same dotfiles
+# through a different path (e.g., iCloud logical vs physical path)
+remove_stow_conflicts() {
+    local package="$1"
+    local package_dir="${DOTFILES_DIR}/${package}"
+
+    [[ ! -d "${package_dir}" ]] && return 0
+
+    while IFS= read -r -d '' file; do
+        local rel_path="${file#$package_dir/}"
+        # Handle stow's --dotfiles convention: dot-foo -> .foo
+        local stowed_path="${rel_path//dot-/.}"
+        local target_file="${STOW_TARGET}/${stowed_path}"
+
+        if [[ -L "${target_file}" ]]; then
+            local link_target
+            link_target=$(readlink "${target_file}")
+            # Remove if it points to any dotfiles directory (same repo, different path)
+            if [[ "$link_target" == *"/dotfiles/"* ]] || [[ "$link_target" == *"dotfiles/"* ]]; then
+                print_verbose "Removing conflicting symlink: ${target_file} -> ${link_target}"
+                rm -f "${target_file}"
+            else
+                print_verbose "Removing non-dotfiles target: ${target_file}"
+                rm -f "${target_file}"
+            fi
+        elif [[ -e "${target_file}" ]]; then
+            # Regular file — back it up before removing
+            local backup_path="${BACKUP_DIR}/${stowed_path}"
+            mkdir -p "$(dirname "${backup_path}")"
+            print_verbose "Backing up and removing: ${target_file}"
+            mv "${target_file}" "${backup_path}"
+        fi
+    done < <(find "${package_dir}" -type f -print0)
+
+    # Also remove conflicting directory symlinks (tree-folded stow dirs)
+    while IFS= read -r -d '' dir; do
+        local rel_path="${dir#$package_dir/}"
+        local stowed_path="${rel_path//dot-/.}"
+        local target_dir="${STOW_TARGET}/${stowed_path}"
+
+        if [[ -L "${target_dir}" ]]; then
+            local link_target
+            link_target=$(readlink "${target_dir}")
+            if [[ "$link_target" == *"/dotfiles/"* ]] || [[ "$link_target" == *"dotfiles/"* ]]; then
+                print_verbose "Removing conflicting dir symlink: ${target_dir} -> ${link_target}"
+                rm -f "${target_dir}"
+            fi
+        fi
+    done < <(find "${package_dir}" -mindepth 1 -type d -print0)
+}
+
 # Backup existing files that would conflict with stow
 backup_conflicts() {
     local package="$1"
@@ -472,10 +524,28 @@ stow_package() {
 
     print_verbose "Running: ${stow_cmd}"
 
-    if eval "cd '${DOTFILES_DIR}' && ${stow_cmd}"; then
+    if eval "cd '${DOTFILES_DIR}' && ${stow_cmd}" 2>/dev/null; then
         print_success "Stowed ${package}"
         return 0
     else
+        # Stow failed — if --force, remove conflicting targets and retry
+        if [[ "${FORCE}" == "true" ]] && [[ "${DRY_RUN}" == "false" ]]; then
+            print_verbose "Stow conflict for ${package}, removing conflicting targets..."
+            remove_stow_conflicts "${package}"
+            # Retry with plain --stow (not restow, since we just cleaned up)
+            local retry_cmd="stow --stow --target=\"${STOW_TARGET}\" --ignore='^README.*' --dotfiles"
+            if [[ "${VERBOSE}" == "true" ]]; then
+                retry_cmd="${retry_cmd} --verbose=4"
+            fi
+            retry_cmd="${retry_cmd} \"${package}\""
+            if eval "cd '${DOTFILES_DIR}' && ${retry_cmd}"; then
+                print_success "Stowed ${package} (after removing conflicts)"
+                return 0
+            else
+                print_error "Failed to stow ${package} even after removing conflicts"
+                return 1
+            fi
+        fi
         print_error "Failed to stow ${package}"
         print_warning "Try running with --dry-run first to see what would happen"
         print_warning "Or manually remove conflicting files/symlinks in your home directory"
