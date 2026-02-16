@@ -218,15 +218,40 @@ fi
 #==============================================================================
 section "Brewfile Cleanup"
 
-BREWFILE="$HOME/.dots/homebrew/Brewfile"
+# Detect DOTFILES_DIR dynamically
+DOTFILES_DIR="${DOTFILES_DIR:-}"
+if [ -z "$DOTFILES_DIR" ]; then
+    DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -L)"
+fi
 
-if [ -f "$BREWFILE" ]; then
+# Check for split Brewfiles (Brewfile.core + Brewfile.desktop)
+BREWFILE_CORE="${DOTFILES_DIR}/homebrew/Brewfile.core"
+BREWFILE_DESKTOP="${DOTFILES_DIR}/homebrew/Brewfile.desktop"
+BREWFILE_LEGACY="${DOTFILES_DIR}/homebrew/Brewfile"
+BREWFILE_COMBINED="/tmp/Brewfile.combined"
+
+# Determine which Brewfile(s) to use
+if [ -f "$BREWFILE_CORE" ] && [ -f "$BREWFILE_DESKTOP" ]; then
+    # Split Brewfiles: concatenate them
+    cat "$BREWFILE_CORE" "$BREWFILE_DESKTOP" > "$BREWFILE_COMBINED"
+    BREWFILE="$BREWFILE_COMBINED"
+    BREWFILE_DIR="${DOTFILES_DIR}/homebrew"
+elif [ -f "$BREWFILE_LEGACY" ]; then
+    # Legacy single Brewfile
+    BREWFILE="$BREWFILE_LEGACY"
+    BREWFILE_DIR="$(dirname "$BREWFILE")"
+else
+    BREWFILE=""
+    BREWFILE_DIR=""
+fi
+
+if [ -n "$BREWFILE" ] && [ -f "$BREWFILE" ]; then
     success "Found Brewfile at: $BREWFILE"
     echo ""
     info "Checking for packages not listed in Brewfile..."
 
     # Run brew bundle cleanup in dry-run mode
-    CLEANUP_OUTPUT=$(cd "$(dirname "$BREWFILE")" && brew bundle cleanup --force --dry-run 2>&1 || echo "")
+    CLEANUP_OUTPUT=$(cd "$BREWFILE_DIR" && brew bundle cleanup --file="$BREWFILE" --force --dry-run 2>&1 || echo "")
 
     if echo "$CLEANUP_OUTPUT" | grep -q "Would uninstall"; then
         warning "Packages not in Brewfile (would be uninstalled):"
@@ -236,15 +261,23 @@ if [ -f "$BREWFILE" ]; then
         ask "Do you want to see the full list? (y/n)"
         read -r response
         if [[ "$response" =~ ^[Yy]$ ]]; then
-            cd "$(dirname "$BREWFILE")" && brew bundle cleanup --force
+            cd "$BREWFILE_DIR" && brew bundle cleanup --file="$BREWFILE" --force
         else
-            info "Run 'cd ~/.dots/homebrew && brew bundle cleanup' to review later"
+            info "Run 'cd $BREWFILE_DIR && brew bundle cleanup --file=\"$BREWFILE\"' to review later"
         fi
     else
         success "All installed packages are in your Brewfile"
     fi
+    
+    # Clean up temporary combined Brewfile if it was created
+    if [ "$BREWFILE" = "$BREWFILE_COMBINED" ] && [ -f "$BREWFILE_COMBINED" ]; then
+        rm "$BREWFILE_COMBINED"
+    fi
 else
-    warning "Brewfile not found at $BREWFILE"
+    warning "Brewfile not found"
+    info "Expected locations:"
+    info "  - Split: $BREWFILE_CORE + $BREWFILE_DESKTOP"
+    info "  - Legacy: $BREWFILE_LEGACY"
     info "Create a Brewfile to track your packages: brew bundle dump"
 fi
 
@@ -359,6 +392,6 @@ echo "  • Clean pip: pip cache purge"
 echo ""
 info "Recommended maintenance:"
 echo "  • Run this script monthly"
-echo "  • Keep your Brewfile updated: cd ~/.dots/homebrew && brew bundle dump --force"
+echo "  • Keep your Brewfile updated: cd $DOTFILES_DIR/homebrew && brew bundle dump --force"
 echo "  • Regular system updates: softwareupdate -l"
 echo ""

@@ -300,6 +300,75 @@ remove_additional_symlinks() {
     done
 }
 
+brew_cleanup() {
+    # Detect OS - only run on macOS
+    if [[ "$OSTYPE" != "darwin"* ]]; then
+        return 0
+    fi
+
+    # Check if brew is installed
+    if ! command -v brew &> /dev/null; then
+        return 0
+    fi
+
+    print_header "Optional: Cleanup untracked Homebrew packages"
+
+    # Paths to Brewfiles
+    local BREWFILE_CORE="${DOTFILES_DIR}/homebrew/Brewfile.core"
+    local BREWFILE_DESKTOP="${DOTFILES_DIR}/homebrew/Brewfile.desktop"
+    local BREWFILE_COMBINED="/tmp/Brewfile.combined"
+
+    # Check if both Brewfiles exist
+    if [[ ! -f "$BREWFILE_CORE" ]] || [[ ! -f "$BREWFILE_DESKTOP" ]]; then
+        print_warning "Split Brewfiles not found, skipping cleanup"
+        return 0
+    fi
+
+    # Create combined Brewfile
+    cat "$BREWFILE_CORE" "$BREWFILE_DESKTOP" > "$BREWFILE_COMBINED"
+
+    # Run dry-run first to show what would be removed
+    print_header "Packages not tracked in Brewfiles:"
+    local cleanup_output
+    cleanup_output=$(brew bundle cleanup --file="$BREWFILE_COMBINED" 2>&1) || true
+    
+    # Check if there are any packages to remove (look for "Would uninstall" in output)
+    if ! echo "$cleanup_output" | grep -q "Would uninstall"; then
+        rm -f "$BREWFILE_COMBINED"
+        print_info "No untracked packages found"
+        return 0
+    fi
+    
+    # Show the cleanup output
+    printf '%s\n' "$cleanup_output"
+
+    # In dry-run mode, skip the interactive prompt
+    if [[ "${DRY_RUN}" == "true" ]]; then
+        print_info "Dry-run mode: skipping interactive cleanup"
+        rm -f "$BREWFILE_COMBINED"
+        return 0
+    fi
+
+    # Ask user for confirmation
+    echo ""
+    read -p "Remove these packages not tracked in Brewfiles? (y/N) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        brew bundle cleanup --file="$BREWFILE_COMBINED" --force
+        print_success "Untracked packages removed"
+    else
+        print_info "Skipped brew cleanup"
+    fi
+
+    # Clean up temp file
+    rm -f "$BREWFILE_COMBINED"
+}
+
+# Add print_info helper if not already defined
+print_info() {
+    echo -e "${BLUE}ℹ${NC} ${1}"
+}
+
 # -----------------------------------------------------------------------------
 # Main
 # -----------------------------------------------------------------------------
@@ -388,6 +457,9 @@ EOF
 
     # Remove additional symlinks
     remove_additional_symlinks
+
+    # Optional: Cleanup untracked Homebrew packages
+    brew_cleanup
 
     # Summary
     echo ""

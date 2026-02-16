@@ -1,0 +1,87 @@
+# Dotfiles Brewfile (Desktop)
+# Install with: brew bundle --file=~/Documents/Code/dotfiles/homebrew/Brewfile.desktop
+#
+# Desktop applications and optional tools.
+# Install with --full flag or manually via: brew bundle --file=homebrew/Brewfile.desktop
+#
+# NOTE: VS Code extensions are NOT managed here.
+# Use VS Code's built-in Settings Sync for extension management.
+# The Dracula Pro theme is installed separately via aesthetics/scripts/install-theme.sh
+
+# Taps (homebrew/bundle and homebrew/services are built-in since Homebrew 4.x)
+tap "nikitabobko/tap"
+tap "felixkratz/formulae"
+
+# =============================================================================
+# Desktop Applications (Casks)
+# =============================================================================
+
+# Window management
+cask "aerospace"            # Tiling window manager
+
+# Terminals & editors
+cask "kitty"                # GPU terminal emulator
+cask "visual-studio-code"   # Code editor (extensions managed via Settings Sync)
+
+# Browsers
+cask "google-chrome"
+
+# Communication
+cask "discord"
+cask "signal"
+cask "slack"
+
+# Media
+cask "calibre"              # E-book management
+cask "iina"                 # Media player
+cask "spotify"
+cask "vlc"
+
+# Productivity
+cask "alfred"               # App launcher
+
+# Quick Look
+cask "qlmarkdown"           # Preview markdown in Finder (spacebar)
+
+# Display & system
+cask "betterdisplay"        # Display management
+cask "caffeine"             # Prevent sleep
+cask "keycastr"             # Keystroke visualizer
+cask "keymapp"              # ZSA keyboard firmware
+cask "monitorcontrol"       # External monitor control
+cask "sf-symbols"           # Apple SF Symbols
+cask "stats"                # Menu bar system monitor
+
+# Utilities
+cask "appcleaner"           # Uninstaller
+cask "chromedriver"         # Chrome automation
+cask "dupeguru"             # Duplicate finder
+cask "transmission"         # BitTorrent client
+
+# Security
+cask "blockblock"           # Persistence monitor
+cask "dhs"                  # Dylib hijack scanner
+cask "kextviewr"            # Kext viewer
+cask "oversight"            # Mic/webcam monitor
+cask "ransomwhere"          # Ransomware protection
+cask "taskexplorer"         # Process explorer
+
+# AI
+cask "claude"
+cask "claude-code"
+
+# =============================================================================
+# Mac App Store
+# =============================================================================
+
+mas "Amphetamine", id: 937984704
+mas "GarageBand", id: 682658836
+mas "iMovie", id: 408981434
+mas "Infuse", id: 1136220934
+mas "Keynote", id: 409183694
+mas "Numbers", id: 409203825
+mas "Pages", id: 409201541
+mas "Pixelmator Pro", id: 1289583905
+mas "Prime Video", id: 545519333
+mas "Remote Desktop", id: 409907375
+mas "WireGuard", id: 1451685025
