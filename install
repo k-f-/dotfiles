@@ -133,7 +133,7 @@ OPTIONS:
     --full          Install desktop packages in addition to core packages (Slack, Aerospace, Kitty, etc.)
     --verbose       Show detailed output
     --force         Skip backups and overwrite existing files (use with caution!)
-    --unattended    Skip all interactive prompts (uses defaults from preferences)
+    --unattended    Non-interactive deploy (implies --force --relink, uses defaults)
     --relink        Automatically relink symlinks from old dotfiles locations
 
 HANDLING EXISTING FILES:
@@ -791,6 +791,8 @@ main() {
                 ;;
             --unattended)
                 UNATTENDED=true
+                FORCE=true
+                RELINK=true
                 shift
                 ;;
             --relink|-r)
