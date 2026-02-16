@@ -61,6 +61,9 @@ alias topgrade-full="command topgrade"
 ### yt-dlp (youtube-dl is dead, long live yt-dlp)
 alias youtube-dl="yt-dlp"
 
+### Homebrew audit
+alias brew-audit='bash "${DOTFILES_DIR:-$HOME/Documents/Code/dotfiles}/scripts/brew-audit.sh"'
+
 ### Package management
 alias agi="sudo apt install"
 ## agr alias removed — conflicts with agr() shell function (agentrepo fuzzy finder)

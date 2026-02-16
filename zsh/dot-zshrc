@@ -48,33 +48,38 @@ unsetopt LIST_BEEP
 # Require 10 consecutive Ctrl+D to exit (prevent accidental exits)
 setopt IGNORE_EOF
 
-# Install oh-my-zsh plugins if missing
-[ ! -d $ZSH_CUSTOM/plugins/zsh-autosuggestions ] && \
-	git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
+# Guard: Only configure oh-my-zsh if it's installed
+if [ -f "$ZSH/oh-my-zsh.sh" ]; then
+  # Install oh-my-zsh plugins if missing
+  [ ! -d $ZSH_CUSTOM/plugins/zsh-autosuggestions ] && \
+  	git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
 
-[ ! -d $ZSH_CUSTOM/plugins/zsh-completions ] && \
-	git clone https://github.com/zsh-users/zsh-completions $ZSH_CUSTOM/plugins/zsh-completions
+  [ ! -d $ZSH_CUSTOM/plugins/zsh-completions ] && \
+  	git clone https://github.com/zsh-users/zsh-completions $ZSH_CUSTOM/plugins/zsh-completions
 
-[ ! -d $ZSH_CUSTOM/plugins/fast-syntax-highlighting ] && \
-	git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git $ZSH_CUSTOM/plugins/fast-syntax-highlighting
+  [ ! -d $ZSH_CUSTOM/plugins/fast-syntax-highlighting ] && \
+  	git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git $ZSH_CUSTOM/plugins/fast-syntax-highlighting
 
-[ ! -d $ZSH_CUSTOM/plugins/zsh-history-substring-search ] && \
-	git clone https://github.com/zsh-users/zsh-history-substring-search.git $ZSH_CUSTOM/plugins/zsh-history-substring-search
+  [ ! -d $ZSH_CUSTOM/plugins/zsh-history-substring-search ] && \
+  	git clone https://github.com/zsh-users/zsh-history-substring-search.git $ZSH_CUSTOM/plugins/zsh-history-substring-search
 
-## PLUGINS CONFIG
-plugins=(
-  docker
-  docker-compose
-  git
-  zsh-autosuggestions
-  zsh-completions
-  fast-syntax-highlighting
-  zsh-history-substring-search
-  macos
-)
+  ## PLUGINS CONFIG
+  plugins=(
+    docker
+    docker-compose
+    git
+    zsh-autosuggestions
+    zsh-completions
+    fast-syntax-highlighting
+    zsh-history-substring-search
+    macos
+  )
 
-# Source OH-MY-ZSH so it loads at all.
-source $ZSH/oh-my-zsh.sh
+  # Source OH-MY-ZSH so it loads at all.
+  source $ZSH/oh-my-zsh.sh
+else
+  echo "⚠ oh-my-zsh not found at $ZSH — install it with the dotfiles installer"
+fi
 
 source <(fzf --zsh)
 

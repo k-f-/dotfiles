@@ -60,6 +60,7 @@ MINIMAL=false
 VERBOSE=false
 FORCE=false
 RELINK=false  # Automatically relink symlinks from old dotfiles locations
+FULL_INSTALL=false  # Install desktop packages in addition to core packages
 
 # Colors for output
 RED='\033[0;31m'
@@ -109,6 +110,7 @@ OPTIONS:
     --dry-run       Show what would be done without making changes
     --no-packages   Skip package manager installations
     --minimal       Install only core packages (bash, git, vim, zsh)
+    --full          Install desktop packages in addition to core packages (Slack, Aerospace, Kitty, etc.)
     --verbose       Show detailed output
     --force         Skip backups and overwrite existing files (use with caution!)
     --relink        Automatically relink symlinks from old dotfiles locations
@@ -124,9 +126,11 @@ HANDLING EXISTING FILES:
     Use --dry-run to see what will happen before making changes.
 
 EXAMPLES:
-    ./install                    # Full installation with backups
+    ./install                    # Install core packages and dotfiles (default)
+    ./install --full             # Install core + desktop packages (Slack, Aerospace, Kitty, etc.)
     ./install --minimal          # Install core configs only
     ./install --dry-run          # Preview changes without applying
+    ./install --full --dry-run   # Preview full installation
     ./install --relink           # Update symlinks from old dotfiles location
     ./install --relink --dry-run # Preview relinking without changes
     ./install --force            # Overwrite existing files without backup
@@ -175,16 +179,35 @@ install_packages() {
                 return 1
             fi
 
-            if [[ -f "${DOTFILES_DIR}/homebrew/Brewfile" ]]; then
-                print_verbose "Running: brew bundle --file=${DOTFILES_DIR}/homebrew/Brewfile"
+            # Install core packages (always)
+            if [[ -f "${DOTFILES_DIR}/homebrew/Brewfile.core" ]]; then
+                print_header "Installing core packages..."
+                print_verbose "Running: brew bundle --file=${DOTFILES_DIR}/homebrew/Brewfile.core"
                 if [[ "${DRY_RUN}" == "false" ]]; then
-                    brew bundle --file="${DOTFILES_DIR}/homebrew/Brewfile" || {
+                    brew bundle --file="${DOTFILES_DIR}/homebrew/Brewfile.core" || {
                         print_warning "Some Homebrew packages failed to install"
                     }
                 fi
-                print_success "Homebrew packages processed"
+                print_success "Core packages processed"
+                
+                # Show reminder if not doing full install
+                if [[ "${FULL_INSTALL}" != "true" ]]; then
+                    print_info "ℹ Run with --full to also install desktop apps (Slack, Aerospace, Kitty, etc.)"
+                fi
             else
-                print_warning "Brewfile not found at ${DOTFILES_DIR}/homebrew/Brewfile"
+                print_warning "Brewfile.core not found at ${DOTFILES_DIR}/homebrew/Brewfile.core"
+            fi
+            
+            # Install desktop packages (only with --full)
+            if [[ "${FULL_INSTALL}" == "true" ]] && [[ -f "${DOTFILES_DIR}/homebrew/Brewfile.desktop" ]]; then
+                print_header "Installing desktop packages..."
+                print_verbose "Running: brew bundle --file=${DOTFILES_DIR}/homebrew/Brewfile.desktop"
+                if [[ "${DRY_RUN}" == "false" ]]; then
+                    brew bundle --file="${DOTFILES_DIR}/homebrew/Brewfile.desktop" || {
+                        print_warning "Some desktop packages failed to install"
+                    }
+                fi
+                print_success "Desktop packages processed"
             fi
             ;;
 
@@ -377,6 +400,31 @@ backup_conflicts() {
             fi
         fi
     done < <(find "${package_dir}" \( -type f -o -type l \) -print0)
+}
+
+# Bootstrap oh-my-zsh if not already installed
+bootstrap_oh_my_zsh() {
+    if [[ -d "$HOME/.oh-my-zsh" ]]; then
+        print_verbose "oh-my-zsh already installed"
+        return 0
+    fi
+    
+    print_header "Bootstrapping oh-my-zsh..."
+    
+    if [[ "${DRY_RUN}" == "true" ]]; then
+        print_verbose "Would install oh-my-zsh"
+        return 0
+    fi
+    
+    # Check connectivity
+    if ! curl -fsSL --connect-timeout 5 https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh > /dev/null 2>&1; then
+        print_warning "Cannot reach oh-my-zsh installer (offline?). Skipping."
+        return 0
+    fi
+    
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended && \
+        print_success "oh-my-zsh installed" || \
+        print_warning "oh-my-zsh install failed"
 }
 
 # Initialize git submodules
@@ -661,6 +709,10 @@ main() {
                 MINIMAL=true
                 shift
                 ;;
+            --full)
+                FULL_INSTALL=true
+                shift
+                ;;
             --verbose|-v)
                 VERBOSE=true
                 shift
@@ -715,6 +767,9 @@ EOF
 
     # Install packages from package managers
     install_packages "${os}"
+
+    # Bootstrap oh-my-zsh if not already installed
+    bootstrap_oh_my_zsh
 
     # Initialize git submodules (including aesthetics)
     init_submodules
