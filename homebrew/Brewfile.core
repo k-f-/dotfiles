@@ -80,6 +80,8 @@ brew "xsel"                 # X selection (clipboard)
 
 # AI
 brew "opencode"
+brew "ollama"  # Create, run, and share large language models (LLMs)
+brew "tmux"  # Terminal multiplexer
 
 # =============================================================================
 # Desktop Applications (Casks) - Core
