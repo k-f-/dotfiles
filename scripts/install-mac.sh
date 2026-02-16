@@ -5,6 +5,19 @@
 set -e  # Exit on error
 
 #==============================================================================
+# Flag Parsing
+#==============================================================================
+NON_INTERACTIVE=false
+for arg in "$@"; do
+  case $arg in
+    --non-interactive|--yes)
+      NON_INTERACTIVE=true
+      shift
+      ;;
+  esac
+done
+
+#==============================================================================
 # Color output helpers
 #==============================================================================
 RED='\033[0;31m'
@@ -92,9 +105,14 @@ if [ -d "$ICLOUD_PATH" ]; then
             return
         fi
 
-        # Ask user
-        ask "Create symlink for $folder_name folder to iCloud Drive? (y/n)"
-        read -r response
+        # Ask user (skip if non-interactive mode)
+        if [ "$NON_INTERACTIVE" = true ]; then
+            response="y"
+        else
+            ask "Create symlink for $folder_name folder to iCloud Drive? (y/n)"
+            read -r response
+        fi
+
         if [[ "$response" =~ ^[Yy]$ ]]; then
             # Backup existing folder if it exists
             if [ -d "$home_path" ] && [ ! -L "$home_path" ]; then
