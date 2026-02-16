@@ -606,16 +606,14 @@ init_submodules() {
                 out_verbose "${RWS_OUTPUT}"
             fi
         else
+            _clear_inline
             read -p "Would you like to install themes from aesthetics? (y/N) " -n 1 -r
             echo
             if [[ $REPLY =~ ^[Yy]$ ]]; then
-                if run_with_status "Installing themes" \
-                    bash "${DOTFILES_DIR}/aesthetics/scripts/install-theme.sh"; then
-                    theme_summary=$(summarize_theme_install "${RWS_OUTPUT}")
-                    out_verbose "${RWS_OUTPUT}"
+                if bash "${DOTFILES_DIR}/aesthetics/scripts/install-theme.sh"; then
+                    theme_summary="installed"
                 else
                     fail "Aesthetics install failed"
-                    out_verbose "${RWS_OUTPUT}"
                 fi
             else
                 out_verbose "Skipping aesthetics theme installation"
