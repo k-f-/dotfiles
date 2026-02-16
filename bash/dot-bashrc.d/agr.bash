@@ -290,7 +290,7 @@ agr_browse() {
     local result key selection
     while true; do
         if [[ $use_tree -eq 1 ]]; then
-            result=$(agr_tree "$query" | fzf --expect=ctrl-e,ctrl-y,ctrl-o \
+            result=$(agr_tree "$query" | fzf --layout=reverse --expect=ctrl-e,ctrl-y,ctrl-o \
                 --delimiter=$'\x1F' \
                 --with-nth=1 \
                 --bind="change:reload(agr_tree {q})" \
