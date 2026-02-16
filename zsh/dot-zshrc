@@ -7,6 +7,9 @@ export GPG_TTY=$(tty)
 
 #[[ -e ~/.profile ]] && emulate sh -c 'source ~/.profile'
 
+# Load dotfiles environment (written by install script)
+[[ -f "${HOME}/.config/dotfiles/env" ]] && source "${HOME}/.config/dotfiles/env"
+
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_CUSTOM="$ZSH/custom"
 
@@ -52,16 +55,16 @@ setopt IGNORE_EOF
 if [ -f "$ZSH/oh-my-zsh.sh" ]; then
   # Install oh-my-zsh plugins if missing
   [ ! -d $ZSH_CUSTOM/plugins/zsh-autosuggestions ] && \
-  	git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
+  	git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
 
   [ ! -d $ZSH_CUSTOM/plugins/zsh-completions ] && \
-  	git clone https://github.com/zsh-users/zsh-completions $ZSH_CUSTOM/plugins/zsh-completions
+  	git clone --depth 1 https://github.com/zsh-users/zsh-completions $ZSH_CUSTOM/plugins/zsh-completions
 
   [ ! -d $ZSH_CUSTOM/plugins/fast-syntax-highlighting ] && \
-  	git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git $ZSH_CUSTOM/plugins/fast-syntax-highlighting
+  	git clone --depth 1 https://github.com/zdharma-continuum/fast-syntax-highlighting.git $ZSH_CUSTOM/plugins/fast-syntax-highlighting
 
   [ ! -d $ZSH_CUSTOM/plugins/zsh-history-substring-search ] && \
-  	git clone https://github.com/zsh-users/zsh-history-substring-search.git $ZSH_CUSTOM/plugins/zsh-history-substring-search
+  	git clone --depth 1 https://github.com/zsh-users/zsh-history-substring-search.git $ZSH_CUSTOM/plugins/zsh-history-substring-search
 
   ## PLUGINS CONFIG
   plugins=(
@@ -81,7 +84,7 @@ else
   echo "⚠ oh-my-zsh not found at $ZSH — install it with the dotfiles installer"
 fi
 
-source <(fzf --zsh)
+command -v fzf &>/dev/null && source <(fzf --zsh)
 
 # ============================================================================
 # Enhanced History & Editing Configuration
@@ -234,7 +237,9 @@ source ~/.bashrc.d/exports.bash
 source ~/.bashrc.d/variables.bash
 source ~/.bashrc.d/utils.bash
 source ~/.bashrc.d/path.bash
-source ~/.bashrc.d/agr.bash
+# agr-cli (submodule — sourced directly, not stowed)
+[[ -n "${DOTFILES_DIR:-}" && -f "${DOTFILES_DIR}/agr-cli/dot-bashrc.d/agr.bash" ]] && \
+  source "${DOTFILES_DIR}/agr-cli/dot-bashrc.d/agr.bash"
 
 # bun completions
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
