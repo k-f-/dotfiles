@@ -14,6 +14,11 @@ export AGR_DIR="${AGR_DIR:-$HOME/Documents/Code/agr}"
 unalias agr 2>/dev/null
 
 agr_tree() {
+    # Ensure PATH includes system and Homebrew directories
+    case ":$PATH:" in
+      *":/usr/bin:"*) ;;
+      *) export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH" ;;
+    esac
     local query="$1"
     local root="$AGR_DIR"
     local meta_delim=$'\x1f'
@@ -163,6 +168,11 @@ agr() {
 }
 
 agr_browse() {
+    # Ensure PATH includes system and Homebrew directories
+    case ":$PATH:" in
+      *":/usr/bin:"*) ;;
+      *) export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH" ;;
+    esac
     local scope="$1"      # "" for root, "chats/fl5-civic-type-r" for drilled-down
     local query="$2"      # Optional search query
     local pipe_mode="$3"  # 0 or 1
@@ -198,14 +208,14 @@ agr_browse() {
 
     local fzf_preview='
         entry={};
-        path=$(echo "$entry" | cut -d$'\''\x1F'\'' -f2);
-        if [[ -z "$path" ]]; then
+        item_path=$(echo "$entry" | cut -d$'\''\x1F'\'' -f2);
+        if [[ -z "$item_path" ]]; then
             echo "No path found";
-        elif [[ "$path" == *.md ]]; then
-            file="$path";
+        elif [[ "$item_path" == *.md ]]; then
+            file="$item_path";
             date=$(awk "/^date:/{gsub(/\047/,\"\"); print \$2; exit}" "$file" 2>/dev/null);
             type=$(awk "/^type:/{print \$2; exit}" "$file" 2>/dev/null);
-            folder=$(dirname "$path" | sed "s|^$AGR_DIR/||" | sed "s|^[^/]*/||");
+            folder=$(dirname "$item_path" | sed "s|^$AGR_DIR/||" | sed "s|^[^/]*/||");
             tags=$(awk "/^tags:/{found=1;next} found && /^- /{gsub(/^- /,\"\"); printf \"%s, \",\$0} found && !/^- /{exit}" "$file" 2>/dev/null | sed "s/, $//");
             printf "\033[38;2;128;255;234m󰃭 %s\033[0m \033[38;2;121;112;169m│\033[0m " "${date:-—}";
             case "${type:-chat}" in
@@ -229,7 +239,7 @@ agr_browse() {
             printf " \033[38;2;121;112;169m│\033[0m \033[38;2;138;255;128m󰓹 %s\033[0m\n\n" "${tags:-—}";
             bat --color=always --style=grid "$file";
         else
-            folder="$path";
+            folder="$item_path";
             folder_name=$(basename "$folder");
             top_name=$(echo "$folder" | sed "s|^$AGR_DIR/||" | cut -d/ -f1);
             files=$(find "$folder" -name "*.md" -type f 2>/dev/null | while IFS= read -r f; do
@@ -355,12 +365,12 @@ agr_browse() {
         [[ "$selection" == ".." ]] && return 0
 
         if [[ $use_tree -eq 1 ]]; then
-            path=$(echo "$selection" | cut -d$'\x1F' -f2)
+            item_path=$(echo "$selection" | cut -d$'\x1F' -f2)
             
-            if [[ "$path" == *.md ]]; then
-                full_path="$path"
+            if [[ "$item_path" == *.md ]]; then
+                full_path="$item_path"
             else
-                folder="$path"
+                folder="$item_path"
                 folder_rel=$(echo "$folder" | sed "s|^$AGR_DIR/||")
                 folder_name=$(basename "$folder")
                 
