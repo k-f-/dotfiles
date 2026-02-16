@@ -57,6 +57,7 @@ brew "uv"                   # Fast Python package manager (used by MCP servers)
 
 # Networking & cloud
 brew "awscli"
+brew "MisterTea/et/et"      # Eternal Terminal - mosh replacement with OSC 52 clipboard
 brew "rclone"               # Cloud storage rsync
 brew "speedtest-cli"
 brew "telnet"

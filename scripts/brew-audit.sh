@@ -101,7 +101,7 @@ check_brewfiles() {
 read_confirm() {
     local prompt="$1"
     local response
-    read -r -p "${prompt} " response
+    read -r -p "${prompt} " response < /dev/tty
     if [[ "${response}" =~ ^[Yy]$ ]]; then
         return 0
     fi
@@ -111,7 +111,7 @@ read_confirm() {
 choose_brewfile() {
     local response
     while true; do
-        read -r -p "Add to (c)ore or (d)esktop? " response
+        read -r -p "Add to (c)ore or (d)esktop? " response < /dev/tty
         case "${response}" in
             c|C)
                 echo "${BREWFILE_CORE}"
@@ -167,7 +167,7 @@ remove_line_from_file() {
 
 get_brewfile_entries() {
     local type="$1"
-    grep "^${type} " "${BREWFILE_CORE}" "${BREWFILE_DESKTOP}" 2>/dev/null || true
+    grep -h "^${type} " "${BREWFILE_CORE}" "${BREWFILE_DESKTOP}" 2>/dev/null || true
 }
 
 get_entry_names() {
@@ -285,7 +285,7 @@ remove_entry() {
                 mas) removed_mas=$((removed_mas + 1)) ;;
             esac
         fi
-    done < <(get_brewfile_entries_with_file "${type}" | grep "${pattern}" || true)
+    done < <(get_brewfile_entries_with_file "${type}" | grep "\"${name}\"" || true)
 }
 
 check_taps() {
@@ -323,15 +323,17 @@ check_taps() {
 
 check_formulas() {
     print_header "Formulas"
-    local installed
+    local installed_leaves
+    local installed_all
     local tracked
-    installed=$(get_installed_formulas || true)
+    installed_leaves=$(brew leaves | sort -u || true)
+    installed_all=$(brew list --formula | sort -u || true)
     tracked=$(get_entry_names "brew" || true)
 
     local untracked
     local stale
-    untracked=$(comm -23 <(printf '%s\n' "${installed}") <(printf '%s\n' "${tracked}") || true)
-    stale=$(comm -13 <(printf '%s\n' "${installed}") <(printf '%s\n' "${tracked}") || true)
+    untracked=$(comm -23 <(printf '%s\n' "${installed_leaves}") <(printf '%s\n' "${tracked}") || true)
+    stale=$(comm -13 <(printf '%s\n' "${installed_all}") <(printf '%s\n' "${tracked}") || true)
 
     if [[ -n "${untracked}" ]]; then
         print_info "Untracked formulas:"
