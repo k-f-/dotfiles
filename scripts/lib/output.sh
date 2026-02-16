@@ -87,9 +87,11 @@ section_end() {
         fi
     fi
 
-    for f in "${_SECTION_FAILURES[@]}"; do
-        echo -e "    ${_RED}✗${_NC} ${f}"
-    done
+    if [[ ${#_SECTION_FAILURES[@]} -gt 0 ]]; then
+        for f in "${_SECTION_FAILURES[@]}"; do
+            echo -e "    ${_RED}✗${_NC} ${f}"
+        done
+    fi
 
     _SECTION_NAME=""
 }
