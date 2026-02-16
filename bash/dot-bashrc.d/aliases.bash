@@ -16,7 +16,7 @@ alias cat="bat"
 alias vim="nvim"
 
 ### Dotfiles - quick access to edit configuration
-alias dotfiles="cd ~/Documents/Code/dotfiles && \$EDITOR ."
+alias dotfiles='cd "${DOTFILES_DIR:?DOTFILES_DIR not set}" && $EDITOR .'
 alias dots="dotfiles"  # shorter alias
 
 alias code="cd ~/Documents/Code"
@@ -62,7 +62,7 @@ alias topgrade-full="command topgrade"
 alias youtube-dl="yt-dlp"
 
 ### Homebrew audit
-alias brew-audit='bash "${DOTFILES_DIR:-$HOME/Documents/Code/dotfiles}/scripts/brew-audit.sh"'
+alias brew-audit='bash "${DOTFILES_DIR:?DOTFILES_DIR not set}/scripts/brew-audit.sh"'
 
 ### Package management
 alias agi="sudo apt install"

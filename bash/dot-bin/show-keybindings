@@ -2,10 +2,8 @@
 
 # show-keybindings - Display keybindings in a floating, transparent overlay
 
-DOTFILES="${HOME}/.dotfiles"
-if [[ ! -d "$DOTFILES" ]]; then
-    DOTFILES="${HOME}/Documents/Code/dotfiles"
-fi
+[[ -f "${HOME}/.config/dotfiles/env" ]] && source "${HOME}/.config/dotfiles/env"
+DOTFILES="${DOTFILES_DIR:?DOTFILES_DIR not set — run ./install first}"
 
 KEYBINDINGS_FILE="${DOTFILES}/docs/KEYBINDINGS.md"
 
