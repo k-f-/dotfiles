@@ -658,7 +658,8 @@ stow_package() {
 
     print_verbose "Running: ${stow_cmd}"
 
-    if eval "cd '${DOTFILES_DIR}' && ${stow_cmd}" 2>/dev/null; then
+    local stow_output
+    if stow_output=$(eval "cd '${DOTFILES_DIR}' && ${stow_cmd}" 2>&1); then
         print_success "Stowed ${package}"
         return 0
     else
@@ -666,23 +667,22 @@ stow_package() {
         if [[ "${FORCE}" == "true" ]] && [[ "${DRY_RUN}" == "false" ]]; then
             print_verbose "Stow conflict for ${package}, removing conflicting targets..."
             remove_stow_conflicts "${package}"
-            # Retry with plain --stow (not restow, since we just cleaned up)
             local retry_cmd="stow --stow --target=\"${STOW_TARGET}\" --ignore='^README.*' --ignore='Brewfile' --ignore='yabai\.sh' --ignore='KEYBINDINGS' --ignore='layouts\.json' --ignore='\.DS_Store' --dotfiles"
             if [[ "${VERBOSE}" == "true" ]]; then
                 retry_cmd="${retry_cmd} --verbose=4"
             fi
             retry_cmd="${retry_cmd} \"${package}\""
-            if eval "cd '${DOTFILES_DIR}' && ${retry_cmd}"; then
+            if eval "cd '${DOTFILES_DIR}' && ${retry_cmd}" 2>&1; then
                 print_success "Stowed ${package} (after removing conflicts)"
                 return 0
-            else
-                print_error "Failed to stow ${package} even after removing conflicts"
-                return 1
             fi
         fi
         print_error "Failed to stow ${package}"
-        print_warning "Try running with --dry-run first to see what would happen"
-        print_warning "Or manually remove conflicting files/symlinks in your home directory"
+        if [[ -n "${stow_output}" ]]; then
+            echo "${stow_output}" | while IFS= read -r line; do
+                echo "  ${line}"
+            done
+        fi
         return 1
     fi
 }
