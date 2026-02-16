@@ -21,21 +21,13 @@ CODE_DIR="$(cd "${DOTFILES_DIR}/.." && pwd)"
 OPENCODE_CONFIG="${HOME}/.config/opencode"
 UPDATE_MODE=false
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
-
-print_header() { echo -e "\n${BLUE}==>${NC} ${1}"; }
-print_success() { echo -e "${GREEN}✓${NC} ${1}"; }
-print_warning() { echo -e "${YELLOW}!${NC} ${1}"; }
-print_error() { echo -e "${RED}✗${NC} ${1}" >&2; }
+# Source shared output library
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/output.sh"
 
 command_exists() { command -v "$1" &>/dev/null; }
 
 check_prerequisites() {
-    print_header "Checking prerequisites..."
+    out_info "Checking prerequisites..."
     local missing=()
 
     command_exists git   || missing+=("git")
@@ -44,13 +36,13 @@ check_prerequisites() {
     command_exists uv    || missing+=("uv (brew install uv)")
 
     if [[ ${#missing[@]} -gt 0 ]]; then
-        print_error "Missing required tools:"
+        out_error "Missing required tools:"
         for tool in "${missing[@]}"; do
-            echo "  - ${tool}"
+            out_detail "$tool"
         done
         return 1
     fi
-    print_success "All prerequisites found"
+    tick
 }
 
 has_ssh_auth() {
@@ -64,23 +56,23 @@ ensure_repo() {
 
     if [[ -d "${dir}/.git" ]]; then
         if [[ "${UPDATE_MODE}" == "true" ]]; then
-            print_header "Updating ${name}..."
+            out_info "Updating ${name}..."
             (cd "${dir}" && git pull --ff-only 2>/dev/null) \
-                || print_warning "${name}: pull skipped (local changes or not on a branch)"
+                || out_warning "${name}: pull skipped (local changes or not on a branch)"
         else
-            print_success "${name} already cloned"
+            tick
         fi
     else
-        print_header "Cloning ${name}..."
+        out_info "Cloning ${name}..."
         if git clone "${ssh_url}" "${dir}" 2>/dev/null; then
-            print_success "Cloned ${name}"
+            tick
         else
             local https_url="${ssh_url/git@github.com:/https:\/\/github.com\/}"
-            print_verbose "SSH failed, trying HTTPS: ${https_url}"
+            out_verbose "SSH failed, trying HTTPS: ${https_url}"
             if git clone "${https_url}" "${dir}" 2>/dev/null; then
-                print_success "Cloned ${name} (via HTTPS)"
+                tick
             else
-                print_warning "${name}: clone failed (no SSH key or HTTPS auth)"
+                fail "${name}: clone failed (no SSH key or HTTPS auth)"
                 return 1
             fi
         fi
@@ -88,70 +80,70 @@ ensure_repo() {
 }
 
 setup_agr_mcp() {
-    print_header "Setting up agr-mcp (Python/uv)..."
+    out_info "Setting up agr-mcp (Python/uv)..."
     ensure_repo "agr-mcp" "git@github.com:k-f-/agr-mcp.git"
 
     if (cd "${CODE_DIR}/agr-mcp" && uv sync 2>&1); then
-        print_success "agr-mcp dependencies installed"
+        tick
     else
-        print_warning "agr-mcp: uv sync failed (check pyproject.toml)"
+        fail "agr-mcp: uv sync failed (check pyproject.toml)"
     fi
 }
 
 setup_agr_plugin() {
-    print_header "Setting up agr-opencode-plugin (TypeScript/bun)..."
+    out_info "Setting up agr-opencode-plugin (TypeScript/bun)..."
     ensure_repo "agr-opencode-plugin" "git@github.com:k-f-/agr-opencode-plugin.git"
 
     local dir="${CODE_DIR}/agr-opencode-plugin"
     if (cd "${dir}" && bun install && bun run build 2>&1); then
-        print_success "agr-opencode-plugin built"
+        tick
     else
-        print_warning "agr-opencode-plugin: build failed (check package.json)"
+        fail "agr-opencode-plugin: build failed (check package.json)"
     fi
 }
 
 setup_agentic_standards() {
-    print_header "Setting up agentic-dev-standards MCP server..."
+    out_info "Setting up agentic-dev-standards MCP server..."
 
     local dir="${CODE_DIR}/agentic-dev-standards"
     if [[ ! -d "${dir}" ]]; then
-        print_warning "agentic-dev-standards not found at ${dir}"
-        print_warning "Run 'git submodule update --init' from the dotfiles repo first"
+        out_warning "agentic-dev-standards not found at ${dir}"
+        out_detail "Run 'git submodule update --init' from the dotfiles repo first"
         return 0
     fi
 
     if (cd "${dir}" && npm install --production 2>&1); then
-        print_success "agentic-dev-standards dependencies installed"
+        tick
     else
-        print_warning "agentic-dev-standards: npm install failed"
+        fail "agentic-dev-standards: npm install failed"
     fi
 }
 
 setup_opencode_plugins() {
-    print_header "Installing opencode plugin dependencies..."
+    out_info "Installing opencode plugin dependencies..."
 
     if [[ ! -f "${OPENCODE_CONFIG}/package.json" ]]; then
-        print_warning "opencode config not found at ${OPENCODE_CONFIG}"
-        print_warning "Run the dotfiles installer first to stow opencode config"
+        out_warning "opencode config not found at ${OPENCODE_CONFIG}"
+        out_detail "Run the dotfiles installer first to stow opencode config"
         return 0
     fi
 
     if (cd "${OPENCODE_CONFIG}" && bun install --frozen-lockfile 2>/dev/null || bun install); then
-        print_success "opencode plugin dependencies installed"
+        tick
     else
-        print_warning "opencode plugin install failed"
+        fail "opencode plugin install failed"
     fi
 }
 
 setup_agr_archive() {
-    print_header "Ensuring AGR archive directory..."
+    out_info "Ensuring AGR archive directory..."
 
     local agr_dir="${CODE_DIR}/agr"
     if [[ -d "${agr_dir}" ]]; then
-        print_success "AGR archive directory exists"
+        tick
     else
         mkdir -p "${agr_dir}"
-        print_success "Created AGR archive directory at ${agr_dir}"
+        tick
     fi
 }
 
@@ -168,40 +160,40 @@ main() {
                 exit 0
                 ;;
             *)
-                print_error "Unknown option: $1"
+                out_error "Unknown option: $1"
                 exit 1
                 ;;
         esac
     done
 
-    cat << "EOF"
-╔═══════════════════════════════════════╗
-║   OpenCode Ecosystem Bootstrap        ║
-╚═══════════════════════════════════════╝
-EOF
+    banner "OpenCode Ecosystem Bootstrap"
 
     if [[ "${UPDATE_MODE}" == "true" ]]; then
-        print_warning "UPDATE MODE — pulling latest for existing repos"
+        out_warning "UPDATE MODE — pulling latest for existing repos"
     fi
 
     mkdir -p "${CODE_DIR}"
 
+    section "Prerequisites"
     check_prerequisites || exit 1
+    section_end
 
+    section "Repository Setup"
     setup_agr_archive
     setup_agr_mcp
     setup_agr_plugin
     setup_agentic_standards
     setup_opencode_plugins
+    section_end "5 components configured"
 
-    echo ""
-    print_success "OpenCode ecosystem bootstrap complete!"
-    echo ""
-    echo "  agr-mcp            ${CODE_DIR}/agr-mcp"
-    echo "  agr-opencode-plugin ${CODE_DIR}/agr-opencode-plugin"
-    echo "  agentic-dev-standards ${CODE_DIR}/agentic-dev-standards"
-    echo "  opencode plugins    ${OPENCODE_CONFIG}"
-    echo "  AGR archive         ${CODE_DIR}/agr"
+    out_success "OpenCode ecosystem bootstrap complete!"
+    out_detail "agr-mcp: ${CODE_DIR}/agr-mcp"
+    out_detail "agr-opencode-plugin: ${CODE_DIR}/agr-opencode-plugin"
+    out_detail "agentic-dev-standards: ${CODE_DIR}/agentic-dev-standards"
+    out_detail "opencode plugins: ${OPENCODE_CONFIG}"
+    out_detail "AGR archive: ${CODE_DIR}/agr"
+
+    final_summary
 }
 
 main "$@"

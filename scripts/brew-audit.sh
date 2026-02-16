@@ -7,12 +7,10 @@
 
 set -euo pipefail
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
+# Source shared output library
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/output.sh"
 
+# Local helper to prepend [DRY RUN] prefix when needed
 format_message() {
     if [[ "${DRY_RUN}" == "true" ]]; then
         printf '[DRY RUN] %s' "$1"
@@ -21,11 +19,12 @@ format_message() {
     fi
 }
 
-print_header() { echo -e "\n${BLUE}==>${NC} $(format_message "$1")"; }
-print_success() { echo -e "${GREEN}✓${NC} $(format_message "$1")"; }
-print_warning() { echo -e "${YELLOW}!${NC} $(format_message "$1")"; }
-print_error() { echo -e "${RED}✗${NC} $(format_message "$1")" >&2; }
-print_info() { echo -e "${BLUE}ℹ${NC} $(format_message "$1")"; }
+# Wrappers around lib functions that apply format_message
+print_header() { out_info "$(format_message "$1")"; }
+print_success() { out_success "$(format_message "$1")"; }
+print_warning() { out_warning "$(format_message "$1")"; }
+print_error() { out_error "$(format_message "$1")"; }
+print_info() { out_info "$(format_message "$1")"; }
 
 DRY_RUN=false
 DOTFILES_DIR=""

@@ -1,0 +1,141 @@
+#!/usr/bin/env bash
+# scripts/lib/output.sh — Shared output library for dotfiles scripts
+#
+# Usage:
+#   source "$(dirname "${BASH_SOURCE[0]}")/../scripts/lib/output.sh"  # from root scripts
+#   source "${DOTFILES_DIR}/scripts/lib/output.sh"                     # when DOTFILES_DIR set
+#
+# Section API (compact grouped output):
+#   section "Installing packages"   → prints "==> Installing packages..."
+#   tick                            → silent success counter
+#   fail "pkg: reason"              → failure counter + stores message
+#   section_end                     → prints summary: "24 succeeded, 0 failed"
+#   section_end "54 installed"      → custom summary text
+#
+# Direct output (always shown):
+#   out_success "message"           → ✓ message
+#   out_warning "message"           → ! message
+#   out_error "message"             → ✗ message (stderr)
+#   out_info "message"              → ℹ message
+#   out_verbose "message"           → only if VERBOSE=true
+#   out_detail "message"            →     indented dim text
+
+[[ -n "${_OUTPUT_LIB_LOADED:-}" ]] && return 0
+_OUTPUT_LIB_LOADED=1
+
+# Colors (skip if not a terminal)
+if [[ -t 1 ]]; then
+    _RED='\033[0;31m'
+    _GREEN='\033[0;32m'
+    _YELLOW='\033[1;33m'
+    _BLUE='\033[0;34m'
+    _DIM='\033[2m'
+    _BOLD='\033[1m'
+    _NC='\033[0m'
+else
+    _RED='' _GREEN='' _YELLOW='' _BLUE='' _DIM='' _BOLD='' _NC=''
+fi
+
+# Section state
+_SECTION_NAME=""
+_SECTION_OK=0
+_SECTION_FAIL=0
+_SECTION_FAILURES=()
+
+# Global failure counter (for final summary)
+_TOTAL_FAILURES=0
+
+# ---------------------------------------------------------------------------
+# Section tracking
+# ---------------------------------------------------------------------------
+
+section() {
+    [[ -n "$_SECTION_NAME" ]] && section_end
+    _SECTION_NAME="$1"
+    _SECTION_OK=0
+    _SECTION_FAIL=0
+    _SECTION_FAILURES=()
+}
+
+tick() {
+    ((_SECTION_OK++)) || true
+}
+
+fail() {
+    local msg="${1:-unknown error}"
+    ((_SECTION_FAIL++)) || true
+    ((_TOTAL_FAILURES++)) || true
+    _SECTION_FAILURES+=("$msg")
+}
+
+section_end() {
+    [[ -z "$_SECTION_NAME" ]] && return
+
+    local custom_summary="${1:-}"
+
+    if [[ -n "$custom_summary" ]]; then
+        if [[ $_SECTION_FAIL -eq 0 ]]; then
+            echo -e "${_BLUE}==>${_NC} ${_SECTION_NAME}: ${custom_summary}"
+        else
+            echo -e "${_BLUE}==>${_NC} ${_SECTION_NAME}: ${custom_summary}, ${_RED}${_SECTION_FAIL} failed${_NC}"
+        fi
+    else
+        if [[ $_SECTION_FAIL -eq 0 ]]; then
+            echo -e "${_BLUE}==>${_NC} ${_SECTION_NAME}: ${_SECTION_OK} succeeded"
+        else
+            echo -e "${_BLUE}==>${_NC} ${_SECTION_NAME}: ${_SECTION_OK} succeeded, ${_RED}${_SECTION_FAIL} failed${_NC}"
+        fi
+    fi
+
+    for f in "${_SECTION_FAILURES[@]}"; do
+        echo -e "    ${_RED}✗${_NC} ${f}"
+    done
+
+    _SECTION_NAME=""
+}
+
+# ---------------------------------------------------------------------------
+# Direct output
+# ---------------------------------------------------------------------------
+
+out_success() { echo -e "${_GREEN}✓${_NC} $1"; }
+out_warning() { echo -e "${_YELLOW}!${_NC} $1"; }
+out_error()   { echo -e "${_RED}✗${_NC} $1" >&2; }
+out_info()    { echo -e "${_BLUE}ℹ${_NC} $1"; }
+out_detail()  { echo -e "    ${_DIM}$1${_NC}"; }
+
+out_verbose() {
+    [[ "${VERBOSE:-false}" == "true" ]] && echo -e "  $1"
+    return 0
+}
+
+# Aliases (legacy compat — some scripts use print_* naming)
+print_success() { out_success "$@"; }
+print_warning() { out_warning "$@"; }
+print_error()   { out_error "$@"; }
+print_info()    { out_info "$@"; }
+print_verbose() { out_verbose "$@"; }
+print_detail()  { out_detail "$@"; }
+print_header()  { echo -e "\n${_BLUE}==>${_NC} ${_BOLD}$1${_NC}"; }
+
+# ---------------------------------------------------------------------------
+# Banner
+# ---------------------------------------------------------------------------
+
+banner() {
+    local title="${1:-dotfiles}"
+    echo -e "${_BOLD}${title}${_NC}"
+}
+
+# ---------------------------------------------------------------------------
+# Final summary
+# ---------------------------------------------------------------------------
+
+final_summary() {
+    echo ""
+    if [[ $_TOTAL_FAILURES -eq 0 ]]; then
+        echo -e "${_GREEN}✓${_NC} ${_BOLD}Done${_NC} (0 failures)"
+    else
+        echo -e "${_YELLOW}!${_NC} ${_BOLD}Done${_NC} (${_RED}${_TOTAL_FAILURES} failures${_NC} — review above)"
+    fi
+}
