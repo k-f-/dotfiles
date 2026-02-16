@@ -215,10 +215,13 @@ install_packages() {
 
             # Install core packages (always)
             if [[ -f "${DOTFILES_DIR}/homebrew/Brewfile.core" ]]; then
-                out_verbose "Running: brew bundle --file=${DOTFILES_DIR}/homebrew/Brewfile.core"
                 local core_output=""
                 if [[ "${DRY_RUN}" == "false" ]]; then
-                    if ! core_output=$(brew bundle --file="${DOTFILES_DIR}/homebrew/Brewfile.core" 2>&1); then
+                    if run_with_status "Installing core packages" \
+                        brew bundle --file="${DOTFILES_DIR}/homebrew/Brewfile.core"; then
+                        core_output="${RWS_OUTPUT}"
+                    else
+                        core_output="${RWS_OUTPUT}"
                         fail "core packages"
                     fi
                     out_verbose "${core_output}"
@@ -232,10 +235,13 @@ install_packages() {
             
             # Install desktop packages (only with --full)
             if [[ "${FULL_INSTALL}" == "true" ]] && [[ -f "${DOTFILES_DIR}/homebrew/Brewfile.desktop" ]]; then
-                out_verbose "Running: brew bundle --file=${DOTFILES_DIR}/homebrew/Brewfile.desktop"
                 local desktop_output=""
                 if [[ "${DRY_RUN}" == "false" ]]; then
-                    if ! desktop_output=$(brew bundle --file="${DOTFILES_DIR}/homebrew/Brewfile.desktop" 2>&1); then
+                    if run_with_status "Installing desktop packages" \
+                        brew bundle --file="${DOTFILES_DIR}/homebrew/Brewfile.desktop"; then
+                        desktop_output="${RWS_OUTPUT}"
+                    else
+                        desktop_output="${RWS_OUTPUT}"
                         fail "desktop packages"
                     fi
                     out_verbose "${desktop_output}"
@@ -507,54 +513,42 @@ init_submodules() {
     local public_count=0
     local private_count=0
 
-    # Initialize public submodules first
-    out_verbose "Initializing public submodules..."
-    if git -C "${DOTFILES_DIR}" submodule update --init "${public_submodules[@]}" 2>/dev/null; then
+    if run_with_status "Initializing public submodules" \
+        git -C "${DOTFILES_DIR}" submodule update --init "${public_submodules[@]}"; then
         public_count=${#public_submodules[@]}
         tick
     else
         fail "public submodules"
     fi
 
-    # Check authentication for private submodules
-    out_verbose "Checking authentication for private submodules..."
-
     if ssh -o StrictHostKeyChecking=accept-new -o ConnectTimeout=5 -o BatchMode=yes -T git@github.com 2>&1 | grep -q "successfully authenticated"; then
-        # SSH works - init normally
-        if git -C "${DOTFILES_DIR}" submodule update --init "${private_submodules[@]}" 2>/dev/null; then
+        if run_with_status "Initializing private submodules (SSH)" \
+            git -C "${DOTFILES_DIR}" submodule update --init "${private_submodules[@]}"; then
             private_count=${#private_submodules[@]}
             tick
         else
             fail "private submodules (SSH)"
         fi
     elif command -v gh >/dev/null 2>&1 && gh auth status 2>&1 | grep -q "Logged in"; then
-        out_verbose "Using GitHub CLI authentication..."
-
-        # Temporarily override SSH URLs to HTTPS
         git -C "${DOTFILES_DIR}" config submodule.aesthetics.url "https://github.com/k-f-/aesthetics.git" || true
         git -C "${DOTFILES_DIR}" config submodule.agr-cli.url "https://github.com/k-f-/agr-cli.git" || true
 
-        # Init private submodules with gh CLI as credential helper.
-        # Uses git -c to avoid writing to the global gitconfig (which is
-        # symlinked into the repo via stow and would dirty the working tree).
         local gh_path
         gh_path="$(command -v gh)"
-        local init_result=0
-        git -C "${DOTFILES_DIR}" \
-            -c "credential.https://github.com.helper=" \
-            -c "credential.https://github.com.helper=!${gh_path} auth git-credential" \
-            submodule update --init "${private_submodules[@]}" 2>/dev/null || init_result=$?
 
-        # Restore SSH URLs
-        git -C "${DOTFILES_DIR}" config submodule.aesthetics.url "git@github.com:k-f-/aesthetics.git" || true
-        git -C "${DOTFILES_DIR}" config submodule.agr-cli.url "git@github.com:k-f-/agr-cli.git" || true
-
-        if [[ ${init_result} -eq 0 ]]; then
+        if run_with_status "Initializing private submodules (gh CLI)" \
+            git -C "${DOTFILES_DIR}" \
+                -c "credential.https://github.com.helper=" \
+                -c "credential.https://github.com.helper=!${gh_path} auth git-credential" \
+                submodule update --init "${private_submodules[@]}"; then
             private_count=${#private_submodules[@]}
             tick
         else
             fail "private submodules (GitHub CLI)"
         fi
+
+        git -C "${DOTFILES_DIR}" config submodule.aesthetics.url "git@github.com:k-f-/aesthetics.git" || true
+        git -C "${DOTFILES_DIR}" config submodule.agr-cli.url "git@github.com:k-f-/agr-cli.git" || true
     else
         # No auth available - print instructions
         out_warning "Private submodules require authentication"
@@ -603,26 +597,25 @@ init_submodules() {
                 fi
             fi
 
-            local theme_output=""
-            if theme_output=$(bash "${DOTFILES_DIR}/aesthetics/scripts/install-theme.sh" "${aesthetics_args[@]}" 2>&1); then
-                theme_summary=$(summarize_theme_install "${theme_output}")
-                out_verbose "${theme_output}"
+            if run_with_status "Installing themes" \
+                bash "${DOTFILES_DIR}/aesthetics/scripts/install-theme.sh" "${aesthetics_args[@]}"; then
+                theme_summary=$(summarize_theme_install "${RWS_OUTPUT}")
+                out_verbose "${RWS_OUTPUT}"
             else
                 fail "Aesthetics install failed"
-                out_verbose "${theme_output}"
+                out_verbose "${RWS_OUTPUT}"
             fi
         else
-            # Ask user
             read -p "Would you like to install themes from aesthetics? (y/N) " -n 1 -r
             echo
             if [[ $REPLY =~ ^[Yy]$ ]]; then
-                local theme_output=""
-                if theme_output=$(bash "${DOTFILES_DIR}/aesthetics/scripts/install-theme.sh" 2>&1); then
-                    theme_summary=$(summarize_theme_install "${theme_output}")
-                    out_verbose "${theme_output}"
+                if run_with_status "Installing themes" \
+                    bash "${DOTFILES_DIR}/aesthetics/scripts/install-theme.sh"; then
+                    theme_summary=$(summarize_theme_install "${RWS_OUTPUT}")
+                    out_verbose "${RWS_OUTPUT}"
                 else
                     fail "Aesthetics install failed"
-                    out_verbose "${theme_output}"
+                    out_verbose "${RWS_OUTPUT}"
                 fi
             else
                 out_verbose "Skipping aesthetics theme installation"
@@ -799,13 +792,13 @@ install_package_dependencies() {
             out_info "Would run: scripts/bootstrap-opencode.sh"
             section_end "skipped (dry run)"
         else
-            local opencode_output=""
-            if opencode_output=$(bash "${DOTFILES_DIR}/scripts/bootstrap-opencode.sh" 2>&1); then
-                out_verbose "${opencode_output}"
+            if run_with_status "Bootstrapping OpenCode ecosystem" \
+                bash "${DOTFILES_DIR}/scripts/bootstrap-opencode.sh"; then
+                out_verbose "${RWS_OUTPUT}"
                 section_end "installed"
             else
                 fail "OpenCode bootstrap had issues"
-                out_verbose "${opencode_output}"
+                out_verbose "${RWS_OUTPUT}"
                 section_end "issues"
             fi
         fi
@@ -927,14 +920,14 @@ main() {
     # Validate stow configuration
     if [[ "${DRY_RUN}" != "true" ]] && [[ -x "${DOTFILES_DIR}/scripts/validate-stow.sh" ]]; then
         section "Validation"
-        local validation_output
-        if validation_output=$(bash "${DOTFILES_DIR}/scripts/validate-stow.sh" 2>&1); then
-            out_verbose "${validation_output}"
+        if run_with_status "Validating stow symlinks" \
+            bash "${DOTFILES_DIR}/scripts/validate-stow.sh"; then
+            out_verbose "${RWS_OUTPUT}"
             local validation_summary
-            validation_summary=$(printf "%s\n" "${validation_output}" | tail -1)
+            validation_summary=$(printf "%s\n" "${RWS_OUTPUT}" | tail -1)
             section_end "${validation_summary}"
         else
-            out_verbose "${validation_output}"
+            out_verbose "${RWS_OUTPUT}"
             section_end "issues"
             fail "stow validation"
         fi

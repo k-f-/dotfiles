@@ -55,6 +55,16 @@ section() {
     _SECTION_OK=0
     _SECTION_FAIL=0
     _SECTION_FAILURES=()
+    # Print immediately so the user sees what phase they're in
+    echo -ne "${_BLUE}==>${_NC} ${_SECTION_NAME}..."
+    # If stdout is a terminal, the cursor stays on the same line;
+    # section_end will overwrite with the final summary via \r.
+    if [[ -t 1 ]]; then
+        _SECTION_INLINE=true
+    else
+        echo ""   # non-interactive: just newline
+        _SECTION_INLINE=false
+    fi
 }
 
 tick() {
@@ -71,21 +81,29 @@ fail() {
 section_end() {
     [[ -z "$_SECTION_NAME" ]] && return
 
+    _stop_spinner
+
     local custom_summary="${1:-}"
+    local line=""
 
     if [[ -n "$custom_summary" ]]; then
         if [[ $_SECTION_FAIL -eq 0 ]]; then
-            echo -e "${_BLUE}==>${_NC} ${_SECTION_NAME}: ${custom_summary}"
+            line="${_BLUE}==>${_NC} ${_SECTION_NAME}: ${custom_summary}"
         else
-            echo -e "${_BLUE}==>${_NC} ${_SECTION_NAME}: ${custom_summary}, ${_RED}${_SECTION_FAIL} failed${_NC}"
+            line="${_BLUE}==>${_NC} ${_SECTION_NAME}: ${custom_summary}, ${_RED}${_SECTION_FAIL} failed${_NC}"
         fi
     else
         if [[ $_SECTION_FAIL -eq 0 ]]; then
-            echo -e "${_BLUE}==>${_NC} ${_SECTION_NAME}: ${_SECTION_OK} succeeded"
+            line="${_BLUE}==>${_NC} ${_SECTION_NAME}: ${_SECTION_OK} succeeded"
         else
-            echo -e "${_BLUE}==>${_NC} ${_SECTION_NAME}: ${_SECTION_OK} succeeded, ${_RED}${_SECTION_FAIL} failed${_NC}"
+            line="${_BLUE}==>${_NC} ${_SECTION_NAME}: ${_SECTION_OK} succeeded, ${_RED}${_SECTION_FAIL} failed${_NC}"
         fi
     fi
+
+    if [[ "${_SECTION_INLINE:-false}" == "true" ]]; then
+        printf '\r\033[K'
+    fi
+    echo -e "${line}"
 
     if [[ ${#_SECTION_FAILURES[@]} -gt 0 ]]; then
         for f in "${_SECTION_FAILURES[@]}"; do
@@ -94,17 +112,81 @@ section_end() {
     fi
 
     _SECTION_NAME=""
+    _SECTION_INLINE=false
+}
+
+# ---------------------------------------------------------------------------
+# Spinner — animated progress for long-running commands
+# ---------------------------------------------------------------------------
+
+_SPINNER_PID=""
+
+_start_spinner() {
+    [[ -t 1 ]] || return 0
+    local msg="${1:-}"
+    (
+        local frames=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
+        local i=0 elapsed=0
+        while true; do
+            printf '\r\033[K%b %b %b(%ds)' \
+                "${_BLUE}==>${_NC}" "${msg}" "${_DIM}${frames[$i]}${_NC}" "${elapsed}"
+            i=$(( (i + 1) % ${#frames[@]} ))
+            sleep 0.5
+            elapsed=$(( (elapsed * 2 + 1) / 2 ))
+            sleep 0.5
+            ((elapsed++))
+        done
+    ) &
+    _SPINNER_PID=$!
+    disown "$_SPINNER_PID" 2>/dev/null
+}
+
+_stop_spinner() {
+    if [[ -n "${_SPINNER_PID:-}" ]]; then
+        kill "$_SPINNER_PID" 2>/dev/null
+        wait "$_SPINNER_PID" 2>/dev/null || true
+        _SPINNER_PID=""
+        printf '\r\033[K'
+    fi
+}
+
+# run_with_status "message" command [args...]
+#   Runs a command in the background while showing a spinner.
+#   Captures stdout+stderr; sets RWS_OUTPUT and returns the command's exit code.
+#   The spinner replaces the section's "==>" line and section_end overwrites it.
+RWS_OUTPUT=""
+run_with_status() {
+    local msg="$1"; shift
+
+    local tmpfile
+    tmpfile=$(mktemp)
+
+    _start_spinner "${msg}"
+    "$@" > "$tmpfile" 2>&1
+    local rc=$?
+    _stop_spinner
+
+    RWS_OUTPUT=$(<"$tmpfile")
+    rm -f "$tmpfile"
+    return $rc
 }
 
 # ---------------------------------------------------------------------------
 # Direct output
 # ---------------------------------------------------------------------------
 
-out_success() { echo -e "${_GREEN}✓${_NC} $1"; }
-out_warning() { echo -e "${_YELLOW}!${_NC} $1"; }
-out_error()   { echo -e "${_RED}✗${_NC} $1" >&2; }
-out_info()    { echo -e "${_BLUE}ℹ${_NC} $1"; }
-out_detail()  { echo -e "    ${_DIM}$1${_NC}"; }
+_clear_inline() {
+    if [[ "${_SECTION_INLINE:-false}" == "true" ]]; then
+        printf '\r\033[K'
+        _SECTION_INLINE=false
+    fi
+}
+
+out_success() { _clear_inline; echo -e "${_GREEN}✓${_NC} $1"; }
+out_warning() { _clear_inline; echo -e "${_YELLOW}!${_NC} $1"; }
+out_error()   { _clear_inline; echo -e "${_RED}✗${_NC} $1" >&2; }
+out_info()    { _clear_inline; echo -e "${_BLUE}ℹ${_NC} $1"; }
+out_detail()  { _clear_inline; echo -e "    ${_DIM}$1${_NC}"; }
 
 out_verbose() {
     [[ "${VERBOSE:-false}" == "true" ]] && echo -e "  $1"
