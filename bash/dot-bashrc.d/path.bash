@@ -1,11 +1,14 @@
 pathmunge () {
-  if ! echo $PATH | egrep -q "(^|:)$1($|:)" ; then
-    if [ "$2" = "after" ] ; then
-      PATH=$PATH:$1
-    else
-      PATH=$1:$PATH
-    fi
-  fi
+  case ":$PATH:" in
+    *":$1:"*) ;;
+    *)
+      if [ "$2" = "after" ] ; then
+        PATH=$PATH:$1
+      else
+        PATH=$1:$PATH
+      fi
+      ;;
+  esac
 }
 
 pathmunge /usr/local/sbin
@@ -14,7 +17,6 @@ pathmunge /sbin after
 pathmunge $HOME/bin after
 pathmunge $HOME/.bin after
 pathmunge $HOME/.local/bin after
-pathmunge $GOPATH/bin after
 pathmunge /snap/bin after
 pathmunge /Users/kef/Library/Python/3.11/bin
 pathmunge $HOME/.emacs.d/bin after
