@@ -207,8 +207,7 @@ agr_browse() {
     fi
 
     local fzf_preview='
-        entry={};
-        item_path=$(echo "$entry" | cut -d$'\''\x1F'\'' -f2);
+        item_path={2};
         if [[ -z "$item_path" ]]; then
             echo "No path found";
         elif [[ "$item_path" == *.md ]]; then
