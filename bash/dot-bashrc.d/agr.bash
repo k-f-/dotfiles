@@ -299,7 +299,7 @@ agr_browse() {
     local result key selection
     while true; do
         if [[ $use_tree -eq 1 ]]; then
-            result=$(agr_tree "$query" | fzf --layout=reverse-list --expect=ctrl-e,ctrl-y,ctrl-o \
+            result=$(agr_tree "$query" | SHELL=/bin/bash fzf --layout=reverse-list --expect=ctrl-e,ctrl-y,ctrl-o \
                 --delimiter=$'\x1F' \
                 --with-nth=1 \
                 --bind="change:reload(source ~/.bashrc.d/agr.bash && agr_tree {q})" \
@@ -318,24 +318,31 @@ agr_browse() {
             if [[ -n "$query" ]]; then
                 file_list=$(rg -i --files-with-matches --glob "*.md" "$query" "$target" 2>/dev/null |
                     grep -v '_templates\|_scripts\|README' |
-                    sed "s|^${AGR_DIR}/||" |
-                    sed 's|^\([^/]*\)/\([^/]*\)/\(.*\)|\2 │ \3|')
+                    while IFS= read -r fpath; do
+                        rel="${fpath#${AGR_DIR}/}"
+                        folder=$(echo "$rel" | cut -d/ -f2)
+                        fname=$(basename "$rel")
+                        printf '%s │ %s\x1f%s\n' "$folder" "$fname" "$fpath"
+                    done)
             else
                 file_list=$(rg --files --glob "*.md" "$target" 2>/dev/null |
                     grep -v '_templates\|_scripts\|README' |
                     sort -r |
-                    sed "s|^${AGR_DIR}/||" |
-                    sed 's|^\([^/]*\)/\([^/]*\)/\(.*\)|\2 │ \3|')
+                    while IFS= read -r fpath; do
+                        rel="${fpath#${AGR_DIR}/}"
+                        folder=$(echo "$rel" | cut -d/ -f2)
+                        fname=$(basename "$rel")
+                        printf '%s │ %s\x1f%s\n' "$folder" "$fname" "$fpath"
+                    done)
             fi
 
             local combined_list
             combined_list=$(printf "%s\n%s" "$folder_list" "$file_list")
 
             if [[ -n "$query" ]]; then
-                result=$(echo "$combined_list" | fzf --expect=ctrl-e,ctrl-y,ctrl-o \
-                    --delimiter='│' \
-                    --nth=2.. \
-                    --with-nth=1,2 \
+                result=$(echo "$combined_list" | SHELL=/bin/bash fzf --expect=ctrl-e,ctrl-y,ctrl-o \
+                    --delimiter=$'\x1F' \
+                    --with-nth=1 \
                     --color="$fzf_color" \
                     --preview "$fzf_preview" \
                     --preview-window=right:60% \
@@ -344,10 +351,9 @@ agr_browse() {
                     --header-first \
                     --query="")
             else
-                result=$(echo "$combined_list" | fzf --expect=ctrl-e,ctrl-y,ctrl-o \
-                    --delimiter='│' \
-                    --nth=2.. \
-                    --with-nth=1,2 \
+                result=$(echo "$combined_list" | SHELL=/bin/bash fzf --expect=ctrl-e,ctrl-y,ctrl-o \
+                    --delimiter=$'\x1F' \
+                    --with-nth=1 \
                     --color="$fzf_color" \
                     --preview "$fzf_preview" \
                     --preview-window=right:60% \
@@ -401,49 +407,11 @@ ${file_list}"
                 continue
             fi
         else
-            if [[ "$selection" != *"│"* ]] && [[ "$selection" != ".." ]]; then
-                folder=$(echo "$selection" | sed 's/^[^ ]* //;s/ (.*//')
-                folder_name=$(basename "$folder")
-                case "$key" in
-                    "")
-                        agr_browse "$folder" "" "$pipe_mode"
-                        ;;
-                    ctrl-y)
-                        echo "$AGR_DIR/$folder" | pbcopy
-                        echo "Copied to clipboard: $AGR_DIR/$folder"
-                        ;;
-                    ctrl-e)
-                        ${TERMINAL_EDITOR:-nvim} "$AGR_DIR/$folder"
-                        ;;
-                    ctrl-o)
-                        if ! command -v opencode &>/dev/null; then
-                            echo "opencode not found in PATH" >&2
-                            continue
-                        fi
-                        file_list=$(find "$AGR_DIR/$folder" -name "*.md" -type f 2>/dev/null | sed "s|^$AGR_DIR/||" | sort)
-                        file_count=$(echo "$file_list" | wc -l | tr -d ' ')
-                        unique_tags=$(find "$AGR_DIR/$folder" -name "*.md" -exec awk '/^tags:/{found=1;next} found && /^- /{gsub(/^- /,""); print} found && !/^- /{exit}' {} \; 2>/dev/null | sort -u | tr '\n' ',' | sed 's/,$//')
-                        opencode --prompt "Read ALL ${file_count} files in the '${folder_name}' project using agr_read, then present a concise summary of the project state: key topics covered, open questions, and where things left off. Tags: ${unique_tags}.
-
-Files:
-${file_list}"
-                        ;;
-                esac
-                continue
-            fi
-
-            if [[ "$selection" == *"│"* ]]; then
-                folder=$(echo "$selection" | cut -d'│' -f1 | sed 's/ *$//')
-                filename=$(echo "$selection" | cut -d'│' -f2 | sed 's/^ *//')
-                full_path=""
-                for top in chats code conversations; do
-                    candidate="$AGR_DIR/$top/$folder/$filename"
-                    if [[ -f "$candidate" ]]; then
-                        full_path="$candidate"
-                        break
-                    fi
-                done
-                [[ -z "$full_path" ]] && full_path="$AGR_DIR/$selection"
+            item_path=$(echo "$selection" | cut -d$'\x1F' -f2)
+            if [[ -z "$item_path" ]]; then
+                full_path="$AGR_DIR/$selection"
+            elif [[ "$item_path" == *.md ]]; then
+                full_path="$item_path"
             else
                 full_path="$AGR_DIR/$selection"
             fi
