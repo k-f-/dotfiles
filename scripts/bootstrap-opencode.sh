@@ -12,7 +12,12 @@
 
 set -euo pipefail
 
-CODE_DIR="${HOME}/Documents/Code"
+# Derive CODE_DIR from DOTFILES_DIR (parent of the dotfiles repo) or env file
+if [[ -z "${DOTFILES_DIR:-}" && -f "${HOME}/.config/dotfiles/env" ]]; then
+    source "${HOME}/.config/dotfiles/env"
+fi
+DOTFILES_DIR="${DOTFILES_DIR:?DOTFILES_DIR not set — run ./install first}"
+CODE_DIR="$(cd "${DOTFILES_DIR}/.." && pwd)"
 OPENCODE_CONFIG="${HOME}/.config/opencode"
 UPDATE_MODE=false
 

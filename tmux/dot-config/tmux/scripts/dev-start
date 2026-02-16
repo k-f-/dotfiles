@@ -17,7 +17,7 @@ set -euo pipefail
 # Format: "session-name:working-directory"
 SESSIONS=(
     "main:$HOME"
-    "opencode-dotfiles:$HOME/Documents/Code/dotfiles"
+    "opencode-dotfiles:${DOTFILES_DIR:-$HOME/Code/dotfiles}"
     # Add more as needed:
     # "opencode-myproject:$HOME/Documents/Code/myproject"
     # "scratch:$HOME"

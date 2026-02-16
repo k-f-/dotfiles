@@ -47,7 +47,7 @@ fi
 # Check 2: All symlinks in HOME should point to dotfiles repo
 echo ""
 echo "Checking HOME directory symlinks..."
-home_symlinks=$(find "${HOME}" -maxdepth 1 -type l 2>/dev/null | xargs ls -ld 2>/dev/null | grep "Documents/Code/dotfiles" || true)
+home_symlinks=$(find "${HOME}" -maxdepth 1 -type l 2>/dev/null | xargs ls -ld 2>/dev/null | grep "${DOTFILES_DIR}" || true)
 
 if [[ -n "${home_symlinks}" ]]; then
     # Validate each symlink uses relative path correctly
