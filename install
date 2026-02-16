@@ -921,14 +921,13 @@ main() {
 
     # Validate stow configuration
     if [[ "${DRY_RUN}" != "true" ]] && [[ -x "${DOTFILES_DIR}/scripts/validate-stow.sh" ]]; then
+        section "Validation"
         local validation_output
         if validation_output=$(bash "${DOTFILES_DIR}/scripts/validate-stow.sh" 2>&1); then
             out_verbose "${validation_output}"
-            section_end "${validation_output##*}
-
-# Run main function
-main "$@"
-\n'}"
+            local validation_summary
+            validation_summary=$(printf "%s\n" "${validation_output}" | tail -1)
+            section_end "${validation_summary}"
         else
             out_verbose "${validation_output}"
             section_end "issues"
