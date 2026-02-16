@@ -10,3 +10,6 @@
 [submodule "kitty/dot-config/kitty/kitty_search"]
 	path = kitty/dot-config/kitty/kitty_search
 	url = https://github.com/trygveaa/kitty-kitten-search
+[submodule "agr-cli"]
+	path = agr-cli
+	url = git@github.com:k-f-/agr-cli.git
