@@ -48,6 +48,16 @@ claude-code/dot-claude/statusline-command.sh
 claude-code/dot-claude/tasks/
 claude-code/dot-claude/todos/
 
+# gh CLI runtime data (hosts.yml contains auth tokens — NEVER track)
+gh/dot-config/gh/*
+!gh/dot-config/gh/config.yml
+
+# GPG runtime data (only track config files, not keyrings or sockets)
+gnupg/dot-gnupg/*
+!gnupg/dot-gnupg/gpg.conf
+!gnupg/dot-gnupg/gpg-agent.conf
+!gnupg/dot-gnupg/pinentry-wrapper.sh
+
 # AI tool per-project configs (machine-specific, not tracked)
 .claude/
 .sisyphus/
