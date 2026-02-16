@@ -44,6 +44,7 @@ ALL_PACKAGES=(
     vim
     x-windows
     yabai
+    youtube-dl
     yt-dlp
     zsh
 )
@@ -270,6 +271,33 @@ remove_additional_symlinks() {
             print_success "Removed .bash_profile link"
         fi
     fi
+
+    # Clean up broken symlinks pointing to renamed/deleted dotfiles packages
+    # (e.g., youtube-dl → yt-dlp rename leaves stale .config/youtube-dl symlink)
+    local dotfiles_physical
+    dotfiles_physical="$(cd "${DOTFILES_DIR}" && pwd -P)"
+
+    local stale_paths=(
+        "${HOME}/.config"/*
+        "${HOME}/."*
+    )
+
+    for path in "${stale_paths[@]}"; do
+        [[ ! -L "$path" ]] && continue
+        # Only consider broken symlinks
+        [[ -e "$path" ]] && continue
+
+        local target
+        target=$(readlink "$path" 2>/dev/null || true)
+        # Check if the broken link pointed to our dotfiles
+        if [[ "$target" == *"/dotfiles/"* ]] || [[ "$target" == *"dotfiles/"* ]]; then
+            print_verbose "Removing stale symlink: $path -> $target"
+            if [[ "${DRY_RUN}" == "false" ]]; then
+                rm -f "$path"
+                print_success "Removed stale symlink: $(basename "$path")"
+            fi
+        fi
+    done
 }
 
 # -----------------------------------------------------------------------------

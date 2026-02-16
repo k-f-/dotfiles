@@ -410,9 +410,28 @@ init_submodules() {
         echo ""
 
         if [[ "${FORCE}" == "true" ]]; then
-            # In force mode, auto-install
+            # In force mode, auto-install with non-interactive flags
+            # Read preferred variants from the first theme's preferences.md
+            local aesthetics_args=()
+            local first_theme_dir
+            first_theme_dir=$(find "${DOTFILES_DIR}/aesthetics/themes" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | head -1)
+            if [[ -n "${first_theme_dir}" ]]; then
+                local theme_name
+                theme_name=$(basename "${first_theme_dir}")
+                aesthetics_args+=(--theme "${theme_name}")
+
+                local prefs="${first_theme_dir}/preferences.md"
+                if [[ -f "${prefs}" ]]; then
+                    local pref_variant pref_toggle
+                    pref_variant=$(grep '^\*\*Primary variant\*\*:' "${prefs}" 2>/dev/null | sed 's/.*: *//' || true)
+                    pref_toggle=$(grep '^\*\*Toggle variant\*\*:' "${prefs}" 2>/dev/null | sed 's/.*: *//' || true)
+                    [[ -n "${pref_variant}" ]] && aesthetics_args+=(--variant "${pref_variant}")
+                    [[ -n "${pref_toggle}" ]] && aesthetics_args+=(--toggle "${pref_toggle}")
+                fi
+            fi
+
             print_success "Auto-installing aesthetics themes..."
-            bash "${DOTFILES_DIR}/aesthetics/scripts/install-theme.sh" || print_warning "Aesthetics install failed"
+            bash "${DOTFILES_DIR}/aesthetics/scripts/install-theme.sh" "${aesthetics_args[@]}" || print_warning "Aesthetics install failed"
         else
             # Ask user
             read -p "Would you like to install themes from aesthetics? (y/N) " -n 1 -r
@@ -566,6 +585,29 @@ create_additional_symlinks() {
         fi
         print_success "Linked .bash_profile -> .bashrc"
     fi
+
+    # Clean up broken symlinks from renamed/deleted packages
+    # (e.g., youtube-dl → yt-dlp rename leaves stale .config/youtube-dl)
+    local stale_paths=(
+        "${HOME}/.config"/*
+        "${HOME}/."*
+    )
+
+    for path in "${stale_paths[@]}"; do
+        [[ ! -L "$path" ]] && continue
+        [[ -e "$path" ]] && continue  # Only broken symlinks
+
+        local target
+        target=$(readlink "$path" 2>/dev/null || true)
+        if [[ "$target" == *"/dotfiles/"* ]] || [[ "$target" == *"dotfiles/"* ]]; then
+            if [[ "${DRY_RUN}" == "false" ]]; then
+                rm -f "$path"
+                print_success "Cleaned stale symlink: $(basename "$path")"
+            else
+                print_warning "Would remove stale symlink: $(basename "$path") -> $target"
+            fi
+        fi
+    done
 }
 
 # Install dependencies for packages that need them
