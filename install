@@ -252,7 +252,7 @@ remove_stow_conflicts() {
             print_verbose "Backing up and removing: ${target_file}"
             mv "${target_file}" "${backup_path}"
         fi
-    done < <(find "${package_dir}" -type f -print0)
+    done < <(find "${package_dir}" \( -type f -o -type l \) -print0)
 
     # Also remove conflicting directory symlinks (tree-folded stow dirs)
     while IFS= read -r -d '' dir; do
@@ -376,7 +376,7 @@ backup_conflicts() {
                 mv "${target_file}" "${BACKUP_DIR}/${stowed_path}"
             fi
         fi
-    done < <(find "${package_dir}" -type f -print0)
+    done < <(find "${package_dir}" \( -type f -o -type l \) -print0)
 }
 
 # Initialize git submodules
