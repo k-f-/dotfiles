@@ -1,0 +1,5 @@
+eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null
+case ":$PATH:" in
+  *":/usr/bin:"*) ;;
+  *) PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH" ;;
+esac
