@@ -431,7 +431,6 @@ bootstrap_oh_my_zsh() {
 init_submodules() {
     print_header "Initializing git submodules..."
 
-    # Check if .gitmodules exists
     if [[ ! -f "${DOTFILES_DIR}/.gitmodules" ]]; then
         print_verbose "No submodules found"
         return 0
@@ -442,12 +441,58 @@ init_submodules() {
         return 0
     fi
 
-    # Initialize and update all submodules
-    if git -C "${DOTFILES_DIR}" submodule init && \
-       git -C "${DOTFILES_DIR}" submodule update --init --recursive; then
-        print_success "Submodules initialized"
+    # Public submodules (HTTPS - always work)
+    local public_submodules=("aerospace-layout-manager" "agentic-dev-standards" "kitty/dot-config/kitty/kitty_search")
+    local private_submodules=("aesthetics" "agr-cli")
+
+    # Initialize public submodules first
+    print_verbose "Initializing public submodules..."
+    git -C "${DOTFILES_DIR}" submodule update --init "${public_submodules[@]}" 2>/dev/null && \
+        print_success "Public submodules initialized" || \
+        print_warning "Some public submodules failed to initialize"
+
+    # Check authentication for private submodules
+    print_verbose "Checking authentication for private submodules..."
+    
+    if ssh -T git@github.com 2>&1 | grep -q "successfully authenticated"; then
+        # SSH works - init normally
+        git -C "${DOTFILES_DIR}" submodule update --init "${private_submodules[@]}" 2>/dev/null && \
+            print_success "Private submodules initialized (SSH)" || \
+            print_warning "Failed to initialize private submodules"
+    elif command -v gh >/dev/null 2>&1 && gh auth status 2>&1 | grep -q "Logged in"; then
+        # Use gh CLI credential helper
+        print_verbose "Using GitHub CLI authentication..."
+        gh auth setup-git 2>/dev/null || true
+        
+        # Temporarily override SSH URLs to HTTPS
+        git -C "${DOTFILES_DIR}" config submodule.aesthetics.url "https://github.com/k-f-/aesthetics.git" || true
+        git -C "${DOTFILES_DIR}" config submodule.agr-cli.url "https://github.com/k-f-/agr-cli.git" || true
+        
+        # Init private submodules
+        local init_result=0
+        git -C "${DOTFILES_DIR}" submodule update --init "${private_submodules[@]}" 2>/dev/null || init_result=$?
+        
+        # Restore SSH URLs
+        git -C "${DOTFILES_DIR}" config submodule.aesthetics.url "git@github.com:k-f-/aesthetics.git" || true
+        git -C "${DOTFILES_DIR}" config submodule.agr-cli.url "git@github.com:k-f-/agr-cli.git" || true
+        
+        [[ ${init_result} -eq 0 ]] && \
+            print_success "Private submodules initialized (GitHub CLI)" || \
+            print_warning "Failed to initialize private submodules"
     else
-        print_warning "Failed to initialize some submodules (may need manual setup)"
+        # No auth available - print instructions
+        echo ""
+        print_warning "Private submodules require authentication"
+        echo "  The following submodules could not be initialized:"
+        echo "    - aesthetics (terminal themes)"
+        echo "    - agr-cli (session archive tool)"
+        echo ""
+        echo "  To enable these submodules, choose one option:"
+        echo "    Option 1: Run 'gh auth login' then re-run './install'"
+        echo "    Option 2: Set up SSH key and add to GitHub:"
+        echo "              https://docs.github.com/en/authentication/connecting-to-github-with-ssh"
+        echo ""
+        echo "  Continuing without private submodules..."
     fi
 
     # Check if aesthetics submodule exists and offer to run its installer
@@ -579,14 +624,14 @@ stow_package() {
     # --restow first unstows then restows, handling changes better
     # CRITICAL: Always run from DOTFILES_DIR with target set to HOME
     # This prevents stow from creating symlinks in the wrong location
-    local stow_cmd="stow --restow --target=\"${STOW_TARGET}\" --ignore='^README.*' --dotfiles"
+    local stow_cmd="stow --restow --target=\"${STOW_TARGET}\" --ignore='^README.*' --ignore='Brewfile' --ignore='yabai\.sh' --ignore='KEYBINDINGS' --ignore='layouts\.json' --ignore='\.DS_Store' --dotfiles"
     if [[ "${VERBOSE}" == "true" ]]; then
         stow_cmd="${stow_cmd} --verbose=4"
     fi
     stow_cmd="${stow_cmd} \"${package}\""
 
     if [[ "${DRY_RUN}" == "true" ]]; then
-        stow_cmd="stow --no --target=\"${STOW_TARGET}\" --ignore='^README.*' --dotfiles \"${package}\""
+        stow_cmd="stow --no --target=\"${STOW_TARGET}\" --ignore='^README.*' --ignore='Brewfile' --ignore='yabai\.sh' --ignore='KEYBINDINGS' --ignore='layouts\.json' --ignore='\.DS_Store' --dotfiles \"${package}\""
     fi
 
     print_verbose "Running: ${stow_cmd}"
@@ -600,7 +645,7 @@ stow_package() {
             print_verbose "Stow conflict for ${package}, removing conflicting targets..."
             remove_stow_conflicts "${package}"
             # Retry with plain --stow (not restow, since we just cleaned up)
-            local retry_cmd="stow --stow --target=\"${STOW_TARGET}\" --ignore='^README.*' --dotfiles"
+            local retry_cmd="stow --stow --target=\"${STOW_TARGET}\" --ignore='^README.*' --ignore='Brewfile' --ignore='yabai\.sh' --ignore='KEYBINDINGS' --ignore='layouts\.json' --ignore='\.DS_Store' --dotfiles"
             if [[ "${VERBOSE}" == "true" ]]; then
                 retry_cmd="${retry_cmd} --verbose=4"
             fi
