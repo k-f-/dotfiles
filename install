@@ -833,7 +833,7 @@ main() {
                 ;;
             --dry-run)
                 DRY_RUN=true
-                print_warning "DRY RUN MODE - No changes will be made"
+                out_warning "DRY RUN MODE - No changes will be made"
                 shift
                 ;;
             --no-packages)
@@ -854,7 +854,7 @@ main() {
                 ;;
             --force|-f)
                 FORCE=true
-                print_warning "FORCE MODE - Existing files will be overwritten without backup"
+                out_warning "FORCE MODE - Existing files will be overwritten without backup"
                 shift
                 ;;
             --unattended)
@@ -865,33 +865,29 @@ main() {
                 ;;
             --relink|-r)
                 RELINK=true
-                print_success "RELINK MODE - Will update symlinks from old dotfiles locations"
+                out_success "RELINK MODE - Will update symlinks from old dotfiles locations"
                 shift
                 ;;
             *)
-                print_error "Unknown option: $1"
+                out_error "Unknown option: $1"
                 show_help
                 ;;
         esac
     done
 
     # Banner
-    cat << "EOF"
-╔═══════════════════════════════════════╗
-║     Dotfiles Installation Script      ║
-╚═══════════════════════════════════════╝
-EOF
+    banner "dotfiles"
 
     # Detect OS
     local os
     os=$(detect_os)
-    print_header "Detected OS: ${os}"
+    out_info "Detected OS: ${os}"
 
     write_dotfiles_env
 
     # Check for stow
     if ! command_exists stow; then
-        print_error "GNU Stow is not installed!"
+        out_error "GNU Stow is not installed!"
         echo "Install it first:"
         case "${os}" in
             macos)
@@ -906,7 +902,7 @@ EOF
         esac
         exit 1
     fi
-    print_success "GNU Stow is installed"
+    out_success "GNU Stow is installed"
 
     # Install packages from package managers
     install_packages "${os}"
@@ -925,29 +921,43 @@ EOF
 
     # Validate stow configuration
     if [[ "${DRY_RUN}" != "true" ]] && [[ -x "${DOTFILES_DIR}/scripts/validate-stow.sh" ]]; then
-        echo ""
-        print_info "Validating stow configuration..."
-        if bash "${DOTFILES_DIR}/scripts/validate-stow.sh"; then
-            print_success "Stow validation passed"
+        local validation_output
+        if validation_output=$(bash "${DOTFILES_DIR}/scripts/validate-stow.sh" 2>&1); then
+            out_verbose "${validation_output}"
+            section_end "${validation_output##*}
+
+# Run main function
+main "$@"
+\n'}"
         else
-            print_warning "Stow validation found issues (see above)"
+            out_verbose "${validation_output}"
+            section_end "issues"
+            fail "stow validation"
         fi
     fi
 
-    # Final message
     if [[ "${DRY_RUN}" != "true" ]]; then
-        echo ""
-        print_success "Installation complete!"
-        echo ""
-        echo "Next steps:"
-        echo "  1. Restart your shell or run: source ~/.zshrc (or ~/.bashrc)"
+        local next_steps=()
+        next_steps+=("Restart your shell or run: source ~/.zshrc (or ~/.bashrc)")
         if [[ -d "${BACKUP_DIR}" ]] && [[ -n "$(ls -A "${BACKUP_DIR}" 2>/dev/null)" ]]; then
-            echo "  2. Review the backup directory if needed: ${BACKUP_DIR}"
+            next_steps+=("Review the backup directory if needed: ${BACKUP_DIR}")
         fi
         if [[ "${os}" == "macos" ]]; then
-            echo "  3. Optionally run macOS setup: bash ${DOTFILES_DIR}/scripts/install-mac.sh"
+            next_steps+=("Optionally run macOS setup: bash ${DOTFILES_DIR}/scripts/install-mac.sh")
+        fi
+
+        if [[ ${#next_steps[@]} -gt 0 ]]; then
+            echo ""
+            out_info "Next steps:"
+            local step_num=1
+            for step in "${next_steps[@]}"; do
+                out_detail "${step_num}. ${step}"
+                ((step_num++))
+            done
         fi
     fi
+
+    final_summary
 }
 
 # Run main function
