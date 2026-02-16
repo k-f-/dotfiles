@@ -36,7 +36,7 @@ ALL_PACKAGES=(
     vim
     x-windows
     yabai
-    youtube-dl
+    yt-dlp
     zsh
 )
 
