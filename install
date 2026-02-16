@@ -426,7 +426,7 @@ backup_conflicts() {
 
 # Bootstrap oh-my-zsh if not already installed
 bootstrap_oh_my_zsh() {
-    if [[ -d "$HOME/.oh-my-zsh" ]]; then
+    if [[ -f "$HOME/.oh-my-zsh/oh-my-zsh.sh" ]]; then
         print_verbose "oh-my-zsh already installed"
         return 0
     fi
