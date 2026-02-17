@@ -400,7 +400,7 @@ backup_conflicts() {
                 resolved_target="${link_target}"
             else
                 # Relative path - resolve from $HOME
-                resolved_target="$(cd "${HOME}" && cd "$(dirname "${link_target}")" 2>/dev/null && pwd)/$(basename "${link_target}")" || resolved_target=""
+                resolved_target="$(cd "$(dirname "${target_file}")" && cd "$(dirname "${link_target}")" 2>/dev/null && pwd)/$(basename "${link_target}")" || resolved_target=""
             fi
 
             if [[ "${link_target}" == *"${DOTFILES_DIR}"* ]] || [[ "${resolved_target}" == "${DOTFILES_DIR}"* ]]; then
