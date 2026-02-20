@@ -166,10 +166,12 @@ async function getWindowsInWorkspace(workspace: string): Promise<
 }
 
 async function joinItemWithPreviousWindow(windowId: string, orientation: "horizontal" | "vertical" = "horizontal") {
-	// For a vertical group (windows stacked top/bottom), join "up" to create a vertical container
-	// For a horizontal group (windows side by side), join "left" to create a horizontal container
-	const direction = orientation === "vertical" ? "up" : "left";
-	await $`aerospace join-with --window-id ${windowId} ${direction}`.nothrow();
+	// After flatten, all windows are in a flat horizontal row — previous sibling is always to the left
+	await $`aerospace join-with --window-id ${windowId} left`.nothrow();
+	if (orientation === "vertical") {
+		await $`aerospace focus --window-id ${windowId}`.nothrow();
+		await $`aerospace layout v_tiles`.nothrow();
+	}
 }
 
 async function focusWindow(windowId: string) {
