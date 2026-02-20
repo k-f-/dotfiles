@@ -409,11 +409,8 @@ async function traverseTreeReposition(tree: LayoutItem[], workspace: string, dep
 	for (const [i, item] of tree.entries()) {
 		if (depth === 0 && i === 0) {
 			await flattenWorkspace(workspace);
-			const mappedLayout = mapLayoutType(
-				"tiles" as any,
-				windowManager,
-			) as WorkspaceLayout;
-			await setWorkspaceLayout(workspace, mappedLayout);
+			// Explicitly h_tiles so join-with left always finds the previous sibling
+			await setWorkspaceLayout(workspace, "h_tiles");
 		}
 		if (isLayoutWindow(item) || isLayoutWindowWithSize(item)) {
 			if (depth > 0 && i > 0) {
