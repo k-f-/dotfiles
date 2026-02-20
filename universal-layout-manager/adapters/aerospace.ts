@@ -165,8 +165,11 @@ async function getWindowsInWorkspace(workspace: string): Promise<
 	return await $`aerospace list-windows --workspace ${workspace} --json --format "%{window-id} %{app-name} %{window-title} %{app-bundle-id}"`.json();
 }
 
-async function joinItemWithPreviousWindow(windowId: string) {
-	await $`aerospace join-with --window-id ${windowId} left`.nothrow();
+async function joinItemWithPreviousWindow(windowId: string, orientation: "horizontal" | "vertical" = "horizontal") {
+	// For a vertical group (windows stacked top/bottom), join "up" to create a vertical container
+	// For a horizontal group (windows side by side), join "left" to create a horizontal container
+	const direction = orientation === "vertical" ? "up" : "left";
+	await $`aerospace join-with --window-id ${windowId} ${direction}`.nothrow();
 }
 
 async function focusWindow(windowId: string) {
@@ -400,7 +403,7 @@ async function traverseTreeMove(
 	}
 }
 
-async function traverseTreeReposition(tree: LayoutItem[], workspace: string, depth = 0) {
+async function traverseTreeReposition(tree: LayoutItem[], workspace: string, depth = 0, parentOrientation: "horizontal" | "vertical" = "horizontal") {
 	for (const [i, item] of tree.entries()) {
 		if (depth === 0 && i === 0) {
 			await flattenWorkspace(workspace);
@@ -415,12 +418,12 @@ async function traverseTreeReposition(tree: LayoutItem[], workspace: string, dep
 				const windowId = await getWindowId(item.app);
 				if (windowId) {
 					await focusWindow(windowId);
-					await joinItemWithPreviousWindow(windowId);
+					await joinItemWithPreviousWindow(windowId, parentOrientation);
 				}
 			}
 		} else if (isLayoutGroup(item) || isLayoutGroupWithSize(item)) {
 			console.log("section:", item.orientation, "depth:", depth);
-			await traverseTreeReposition(item.windows, workspace, depth + 1);
+			await traverseTreeReposition(item.windows, workspace, depth + 1, item.orientation);
 		}
 	}
 }
