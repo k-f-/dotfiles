@@ -1,0 +1,15 @@
+\.DS_Store
+\.git
+\.gitignore
+README.*
+\.stow-local-ignore
+# GPG state/data files — only config files should be stowed
+pubring\.kbx
+pubring\.kbx~
+private-keys-v1\.d
+trustdb\.gpg
+random_seed
+openpgp-revocs\.d
+\.#lk.*
+S\.gpg-agent.*
+S\.scdaemon

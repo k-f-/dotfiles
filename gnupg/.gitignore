@@ -1,0 +1,10 @@
+# GPG state/data — never track these
+dot-gnupg/pubring.kbx
+dot-gnupg/pubring.kbx~
+dot-gnupg/private-keys-v1.d/
+dot-gnupg/trustdb.gpg
+dot-gnupg/random_seed
+dot-gnupg/openpgp-revocs.d/
+dot-gnupg/.#lk*
+dot-gnupg/S.gpg-agent*
+dot-gnupg/S.scdaemon
