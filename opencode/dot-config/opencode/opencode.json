@@ -50,17 +50,6 @@
       ],
       "enabled": true
     },
-    "basic-memory": {
-      "type": "local",
-      "command": [
-        "uvx",
-        "basic-memory",
-        "mcp",
-        "--project",
-        "agr"
-      ],
-      "enabled": true
-    },
     "splitrail": {
       "type": "local",
       "command": [
