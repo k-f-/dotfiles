@@ -22,34 +22,6 @@
       ],
       "enabled": true
     },
-    "filesystem": {
-      "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "@modelcontextprotocol/server-filesystem",
-        "/Users/kef/Documents",
-        "/Users/kef/Desktop",
-        "/Users/kef/Downloads"
-      ],
-      "enabled": true
-    },
-    "fetch": {
-      "type": "local",
-      "command": [
-        "uvx",
-        "mcp-server-fetch"
-      ],
-      "enabled": true
-    },
-    "agentic-dev-standards": {
-      "type": "local",
-      "command": [
-        "node",
-        "/Users/kef/Documents/Code/agentic-dev-standards/mcp-server.js"
-      ],
-      "enabled": true
-    },
     "splitrail": {
       "type": "local",
       "command": [
@@ -61,11 +33,7 @@
     "agr": {
       "type": "local",
       "command": [
-        "uv",
-        "run",
-        "--directory",
-        "/Users/kef/Documents/Code/agr-mcp",
-        "agr-mcp"
+        "/Users/kef/Documents/Code/agr-mcp/start.sh"
       ],
       "environment": {
         "AGENTREPO_PATH": "/Users/kef/Documents/Code/agr"
