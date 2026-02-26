@@ -5,6 +5,13 @@ Host github.com
   UseKeychain yes
   IdentityFile ~/.ssh/id_ed25519
 
+Host ha
+  HostName 192.168.7.5
+  User kef
+  AddKeysToAgent yes
+  UseKeychain yes
+  IdentityFile ~/.ssh/id_ed25519
+
 Host macmini
   HostName 192.168.7.20
   User kef

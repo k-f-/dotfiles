@@ -97,3 +97,16 @@ alias l='ls -CFh'
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+### IPv6 toggle for Wi-Fi (fixes macOS "no internet" icon when IPv6 is misconfigured)
+ipv6() {
+  local state
+  state=$(networksetup -getinfo Wi-Fi | grep "IPv6:" | awk '{print $2}')
+  if [[ "$state" == "Off" ]]; then
+    sudo networksetup -setv6automatic Wi-Fi
+    echo "IPv6: off → on (automatic)"
+  else
+    sudo networksetup -setv6off Wi-Fi
+    echo "IPv6: $state → off"
+  fi
+}
