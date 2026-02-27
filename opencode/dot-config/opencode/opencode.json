@@ -44,6 +44,7 @@
   "plugin": [
     "oh-my-opencode@latest",
     "opencode-token-monitor@latest",
-    "file:///Users/kef/Documents/Code/agr-opencode-plugin"
+    "file:///Users/kef/Documents/Code/agr-opencode-plugin",
+    "file:///Users/kef/Documents/Code/kitty-tab-notify-plugin"
   ]
 }
