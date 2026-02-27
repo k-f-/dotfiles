@@ -649,7 +649,7 @@ remove_entry() {
                 mas) removed_mas=$((removed_mas + 1)) ;;
             esac
         fi
-    done < <(get_brewfile_entries_with_file "${type}" | grep "\"${name}\"" || true)
+    done < <(get_brewfile_entries_with_file "${type}" | grep "${pattern#^}" || true)
 }
 
 check_taps() {
