@@ -9,6 +9,7 @@
 # The Dracula Pro theme is installed separately via aesthetics/scripts/install-theme.sh
 
 tap "nikitabobko/tap"
+tap "recyclarr/recyclarr"
 
 # =============================================================================
 # Desktop Applications (Casks)
@@ -39,7 +40,6 @@ cask "vlc"
 cask "alfred"               # App launcher
 
 # Quick Look
-cask "qlmarkdown"           # Preview markdown in Finder (spacebar)
 
 # Display & system
 cask "betterdisplay"        # Display management
@@ -52,8 +52,6 @@ cask "stats"                # Menu bar system monitor
 
 # Utilities
 cask "appcleaner"           # Uninstaller
-cask "chromedriver"         # Chrome automation
-cask "dupeguru"             # Duplicate finder
 cask "transmission"         # BitTorrent client
 
 # Security
@@ -66,7 +64,6 @@ cask "taskexplorer"         # Process explorer
 
 # AI
 cask "claude"
-cask "claude-code"
 
 # =============================================================================
 # Mac App Store
@@ -85,3 +82,4 @@ mas "Remote Desktop", id: 409907375
 mas "WireGuard", id: 1451685025
 
 brew "transmission-cli"  # Lightweight BitTorrent client
+brew "recyclarr/recyclarr/recyclarr"
