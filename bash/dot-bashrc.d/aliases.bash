@@ -52,6 +52,7 @@ alias pbpaste="xsel --clipboard --output"
 alias speedtest='echo "scale=2; `curl  --progress-bar -w "%{speed_download}" http://speedtest.wdc01.softlayer.com/downloads/test10.zip -o /dev/null` / 131072" | bc | xargs -I {} echo {} mbps'
 alias tree="tree -C" # add colors
 alias ut="tar xavf"
+alias 1p="/opt/homebrew/bin/op"
 
 ### Topgrade - curated update (brew + casks + App Store + self-update only)
 # Use `topgrade-full` for the unfiltered kitchen-sink run
@@ -72,7 +73,11 @@ alias agu="sudo apt update && sudo apt full-upgrade && sudo apt autoremove && su
 alias ali="apt-mark showmanual"
 #alias pkgcount="sudo dpkg-query -f '${binary:Package}\n' -W | wc -l"
 
-alias oports="echo 'User:      Command:   Port:'; echo '----------------------------' ; lsof -i 4 -P -n | grep -i 'listen' | awk '{print \$3, \$1, \$9}' | sed 's/ [a-z0-9\.\*]*:/ /' | sort -k 3 -n |xargs printf '%-10s %-10s %-10s\n' | uniq"
+oports() {
+  echo 'User:      Command:   Port:'
+  echo '----------------------------'
+  lsof -i 4 -P -n | grep -i 'listen' | awk '{print $3, $1, $9}' | sed 's/ [a-z0-9\.\*]*:/ /' | sort -k 3 -n | xargs printf '%-10s %-10s %-10s\n' | uniq
+}
 alias serve="python -m SimpleHTTPServer"
 
 ### ls and grep
