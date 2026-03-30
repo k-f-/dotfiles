@@ -55,8 +55,8 @@
 [rebase]
   	autosquash = true
 [user]
-	email = kyle@fring.io 
-	name = Kyle Fring
+	email = sisyphus@sisyphuslabs.ai
+	name = Sisyphus
 	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOlBe1vBsrKH5xPKAYQGyzvsRp8iWhWBDHMqgoPol6uz
 [github]
 	user = k-f-

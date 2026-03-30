@@ -20,7 +20,7 @@
         "-y",
         "@modelcontextprotocol/server-sequential-thinking"
       ],
-      "enabled": true
+      "enabled": false
     },
     "splitrail": {
       "type": "local",
@@ -42,8 +42,8 @@
     }
   },
   "plugin": [
-    "oh-my-opencode@latest",
-    "opencode-token-monitor@latest",
+    "oh-my-openagent@latest",
+    "opencode-claude-bridge@latest",
     "file:///Users/kef/Documents/Code/agr-opencode-plugin",
     "file:///Users/kef/Documents/Code/kitty-tab-notify-plugin"
   ]
