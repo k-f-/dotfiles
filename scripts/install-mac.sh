@@ -330,6 +330,14 @@ out_success "Appearance: auto dark/light mode"
 defaults write NSGlobalDomain NSTableViewDefaultSizeMode -int 1
 out_success "Sidebar icon size: small"
 
+# Menu Bar - Reduce spacing between status bar items (tighter layout)
+defaults -currentHost write -globalDomain NSStatusItemSpacing -int 2
+out_success "Menu bar status item spacing: 2 (compact)"
+
+# Menu Bar - Reduce selection padding for status bar items
+defaults -currentHost write -globalDomain NSStatusItemSelectionPadding -int 2
+out_success "Menu bar status item selection padding: 2 (compact)"
+
 # Dock - Set icon size
 defaults write com.apple.dock tilesize -int 70
 out_success "Dock icon size: 70"
