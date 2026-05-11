@@ -54,6 +54,7 @@ OPTIONAL_PACKAGES=(
     ssh
     tmux
     universal-wm
+    vscode
     yabai
     yt-dlp
 )
