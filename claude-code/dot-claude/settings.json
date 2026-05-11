@@ -101,20 +101,18 @@
       "Bash(git -C /Users/kef/Documents/Code/kf.sql.formatter log --all --pretty=format:\"%h %s\" -- \"*.vsix\")",
       "Bash(git -C /Users/kef/Documents/Code/kf.sql.formatter status --ignored)",
       "Bash(git -C /Users/kef/Documents/Code/kf.sql.formatter ls-files:*)",
-      "Bash(git -C /Users/kef/Documents/Code/kf.sql.formatter log --oneline -5)"
+      "Bash(git -C /Users/kef/Documents/Code/kf.sql.formatter log --oneline -5)",
+      "mcp__agr__agr_search",
+      "mcp__agr__agr_list",
+      "mcp__agr__agr_read",
+      "mcp__agr__agr_folders"
     ],
     "deny": [],
     "ask": [],
     "defaultMode": "acceptEdits"
   },
-  "statusLine": {
-    "type": "command",
-    "command": "bash ~/.claude/statusline-command.sh"
-  },
-  "alwaysThinkingEnabled": true,
-  "effortLevel": "high",
   "hooks": {
-    "Stop": [
+    "SessionEnd": [
       {
         "hooks": [
           {
@@ -125,6 +123,26 @@
           }
         ]
       }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "ExitPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"systemMessage\": \"Plan finalized. Invoke plan-reviewer for adversarial review before implementing.\"}'",
+            "timeout": 5
+          }
+        ]
+      }
     ]
-  }
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline-command.sh"
+  },
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "high",
+  "skipAutoPermissionPrompt": true,
+  "model": "opus"
 }
