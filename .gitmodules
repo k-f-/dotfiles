@@ -1,6 +1,3 @@
-[submodule "aerospace-layout-manager"]
-	path = aerospace-layout-manager
-	url = https://github.com/CarterMcAlister/aerospace-layout-manager.git
 [submodule "aesthetics"]
 	path = aesthetics
 	url = git@github.com:k-f-/aesthetics.git
