@@ -54,9 +54,7 @@ AeroSpace uses `Alt` (Option) as its primary modifier. All bindings below are in
 
 | Keys | Action |
 |------|--------|
-| `Alt + Shift + R` | Toggle horizontal/vertical |
-| `Alt + Shift + Y` | Mirror Y-axis |
-| `Alt + Shift + X` | Mirror X-axis |
+| `Alt + Shift + R` | Rotate layout (horizontal ↔ vertical) |
 | `Alt + Shift + T` | Toggle floating/tiling |
 | `Alt + Shift + M` | Toggle fullscreen |
 | `Alt + Shift + E` | Balance (equalize) sizes |
@@ -84,8 +82,6 @@ AeroSpace uses `Alt` (Option) as its primary modifier. All bindings below are in
 |------|--------|
 | `Alt + Tab` | Next workspace |
 | `Alt + Shift + Tab` | Previous workspace |
-| `Alt + Shift + N` | Next workspace |
-| `Alt + Shift + P` | Previous workspace |
 | `Alt + Backtick` | Toggle last workspace |
 
 ### Utility
@@ -382,5 +378,5 @@ These are macOS defaults worth knowing alongside the above:
 ## Legacy
 
 The `skhd` + `yabai` window management system was the predecessor to AeroSpace.
-All keybindings have been migrated to AeroSpace. The skhd/yabai config
-directories are retained in the repo but are empty/inactive.
+All keybindings have been migrated to AeroSpace; the yabai/skhd/sketchybar
+packages were removed from this repo.
