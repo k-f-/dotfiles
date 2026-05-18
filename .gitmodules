@@ -1,9 +1,6 @@
 [submodule "aesthetics"]
 	path = aesthetics
 	url = git@github.com:k-f-/aesthetics.git
-[submodule "agentic-dev-standards"]
-	path = agentic-dev-standards
-	url = https://github.com/k-f-/agentic-dev-standards.git
 [submodule "kitty/dot-config/kitty/kitty_search"]
 	path = kitty/dot-config/kitty/kitty_search
 	url = https://github.com/trygveaa/kitty-kitten-search
