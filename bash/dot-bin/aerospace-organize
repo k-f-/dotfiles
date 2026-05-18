@@ -2,8 +2,8 @@
 #
 # aerospace-organize - Apply all workspace layouts
 #
-# This script applies all defined layouts from the universal-layout-manager
-# to organize windows into their designated workspaces.
+# Reads ~/.config/universal-wm/layouts.json and runs each layout through the
+# aerospace adapter at universal-layout-manager/adapters/aerospace.ts via bun.
 #
 # Usage:
 #   aerospace-organize           # Launch apps and organize

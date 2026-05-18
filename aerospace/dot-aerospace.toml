@@ -93,11 +93,9 @@ alt-shift-minus = 'resize smart -50'
 alt-shift-equal = 'resize smart +50'
 
 # ============================================================================
-# Layout Modifications (matches skhd: shift+alt-r/y/x)
+# Layout Modifications
 # ============================================================================
 alt-shift-r = 'layout tiles horizontal vertical'  # Rotate/toggle layout
-alt-shift-y = 'layout tiles vertical horizontal'  # Mirror Y-axis equivalent
-alt-shift-x = 'layout tiles horizontal vertical'  # Mirror X-axis equivalent
 
 # ============================================================================
 # Window State Toggles (matches skhd)
@@ -128,12 +126,8 @@ alt-shift-5 = 'move-node-to-workspace 5'
 alt-shift-6 = 'move-node-to-workspace 6'
 
 # ============================================================================
-# Workspace Navigation (matches skhd: shift+alt-p/n for prev/next)
+# Workspace Cycling (Alt+Tab feels like macOS app-switcher)
 # ============================================================================
-alt-shift-p = 'workspace --wrap-around prev'
-alt-shift-n = 'workspace --wrap-around next'
-
-# Workspace cycling with Alt+Tab (like switching desktops)
 alt-tab = 'workspace --wrap-around next'
 alt-shift-tab = 'workspace --wrap-around prev'
 
@@ -209,9 +203,7 @@ alt-shift-l = ['join-with right', 'mode main']
 if.app-id = 'com.apple.finder'
 run = 'move-node-to-workspace 1'
 
-[[on-window-detected]]
-if.app-id = 'com.apple.ActivityMonitor'
-run = 'move-node-to-workspace 1'
+# ActivityMonitor is floating-only (see "Apps to Always Float" below) — no WS-1 assignment.
 
 # Add Filezilla and Todoist if you use them
 # [[on-window-detected]]
