@@ -111,6 +111,7 @@
     "ask": [],
     "defaultMode": "acceptEdits"
   },
+  "model": "opus",
   "hooks": {
     "SessionEnd": [
       {
@@ -135,6 +136,29 @@
           }
         ]
       }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/kef/.claude/hooks/subagent-announce.sh start",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/kef/.claude/hooks/subagent-announce.sh stop",
+            "timeout": 5
+          }
+        ]
+      }
     ]
   },
   "statusLine": {
@@ -142,7 +166,6 @@
     "command": "bash ~/.claude/statusline-command.sh"
   },
   "alwaysThinkingEnabled": true,
-  "effortLevel": "high",
-  "skipAutoPermissionPrompt": true,
-  "model": "opus"
+  "effortLevel": "xhigh",
+  "skipAutoPermissionPrompt": true
 }
