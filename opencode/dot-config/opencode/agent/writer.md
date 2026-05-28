@@ -1,7 +1,7 @@
 ---
 description: Drafts prose (essays, blog posts, shortform social posts, READMEs, memos) in Kyle's voice. Use when the user asks to write, draft, or compose prose. Do not use for code generation or commit messages.
 mode: subagent
-model: github-copilot/claude-opus-4.6-fast
+model: github-copilot/claude-opus-4.8
 tools:
   read: true
   grep: true

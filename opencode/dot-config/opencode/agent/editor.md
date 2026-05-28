@@ -1,7 +1,7 @@
 ---
 description: Critiques existing prose: scores slop level 0–10, names AI-slop tells, proposes targeted edits with reasons. Use when the user asks to edit, tighten, de-slop, or critique a piece of writing they have shared. Do not use for code review or for reviewing prose the user has not explicitly asked to be edited.
 mode: subagent
-model: github-copilot/claude-opus-4.6-fast
+model: github-copilot/claude-opus-4.8
 tools:
   read: true
   grep: true
