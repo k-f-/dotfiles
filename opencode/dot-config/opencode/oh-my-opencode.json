@@ -2,19 +2,19 @@
   "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-openagent/dev/assets/oh-my-opencode.schema.json",
   "agents": {
     "sisyphus": {
-      "model": "anthropic/claude-opus-4-6",
+      "model": "anthropic/claude-opus-4-8",
       "variant": "max"
     },
     "hephaestus": {
-      "model": "anthropic/claude-opus-4-6",
+      "model": "anthropic/claude-opus-4-8",
       "variant": "medium"
     },
     "oracle": {
-      "model": "anthropic/claude-opus-4-6",
+      "model": "anthropic/claude-opus-4-8",
       "variant": "high"
     },
     "librarian": {
-      "model": "anthropic/claude-opus-4-6",
+      "model": "anthropic/claude-opus-4-8",
       "variant": "medium"
     },
     "explore": {
@@ -22,39 +22,39 @@
       "variant": "low"
     },
     "multimodal-looker": {
-      "model": "anthropic/claude-opus-4-6"
+      "model": "anthropic/claude-opus-4-8"
     },
     "prometheus": {
-      "model": "anthropic/claude-opus-4-6",
+      "model": "anthropic/claude-opus-4-8",
       "variant": "max"
     },
     "metis": {
-      "model": "anthropic/claude-opus-4-6",
+      "model": "anthropic/claude-opus-4-8",
       "variant": "max"
     },
     "momus": {
-      "model": "anthropic/claude-opus-4-6",
+      "model": "anthropic/claude-opus-4-8",
       "variant": "medium"
     },
     "atlas": {
-      "model": "anthropic/claude-opus-4-6",
+      "model": "anthropic/claude-opus-4-8",
       "variant": "medium"
     }
   },
   "categories": {
     "visual-engineering": {
-      "model": "anthropic/claude-opus-4-6"
+      "model": "anthropic/claude-opus-4-8"
     },
     "ultrabrain": {
-      "model": "anthropic/claude-opus-4-6",
+      "model": "anthropic/claude-opus-4-8",
       "variant": "xhigh"
     },
     "deep": {
-      "model": "anthropic/claude-opus-4-6",
+      "model": "anthropic/claude-opus-4-8",
       "variant": "medium"
     },
     "artistry": {
-      "model": "anthropic/claude-opus-4-6",
+      "model": "anthropic/claude-opus-4-8",
       "variant": "high"
     },
     "quick": {
@@ -62,19 +62,20 @@
       "variant": "low"
     },
     "unspecified-low": {
-      "model": "anthropic/claude-opus-4-6",
+      "model": "anthropic/claude-opus-4-8",
       "variant": "medium"
     },
     "unspecified-high": {
-      "model": "anthropic/claude-opus-4-6",
+      "model": "anthropic/claude-opus-4-8",
       "variant": "high"
     },
     "writing": {
-      "model": "anthropic/claude-opus-4-6"
+      "model": "anthropic/claude-opus-4-8"
     }
   },
   "_migrations": [
     "model-version:anthropic/claude-sonnet-4-5->anthropic/claude-sonnet-4-6",
-    "model-version:github-copilot/gemini-3-pro-preview->github-copilot/gemini-3.1-pro-preview"
+    "model-version:github-copilot/gemini-3-pro-preview->github-copilot/gemini-3.1-pro-preview",
+    "model-version:anthropic/claude-opus-4-6->anthropic/claude-opus-4-8"
   ]
 }
