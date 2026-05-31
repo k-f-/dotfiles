@@ -21,6 +21,15 @@ pathmunge /snap/bin after
 pathmunge /Users/kef/Library/Python/3.11/bin
 pathmunge $HOME/.emacs.d/bin after
 pathmunge $HOME/.poetry/env after
-pathmunge /opt/homebrew/bin after
 pathmunge /opt/homebrew/opt/ruby/bin
+
+# Force Homebrew bin/sbin to the front so brew tools beat system /usr/bin
+# equivalents (git, jq, python3, openssl, etc.). Strip any existing entries
+# first because pathmunge would otherwise skip them.
+PATH=":$PATH:"
+PATH="${PATH//:\/opt\/homebrew\/bin:/:}"
+PATH="${PATH//:\/opt\/homebrew\/sbin:/:}"
+PATH="${PATH#:}"; PATH="${PATH%:}"
+PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+
 export PATH
