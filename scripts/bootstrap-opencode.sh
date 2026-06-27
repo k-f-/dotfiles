@@ -92,14 +92,14 @@ setup_agr_mcp() {
 }
 
 setup_agr_plugin() {
-    ensure_repo "agr-opencode-plugin" "git@github.com:k-f-/agr-opencode-plugin.git"
+    ensure_repo "agr-plugin" "git@github.com:k-f-/agr-plugin.git"
 
-    local dir="${CODE_DIR}/agr-opencode-plugin"
-    if run_with_status "agr-opencode-plugin: bun install + build" \
+    local dir="${CODE_DIR}/agr-plugin"
+    if run_with_status "agr-plugin: bun install + build" \
         bash -c 'cd "${1}" && bun install && bun run build' _ "${dir}"; then
         tick
     else
-        fail "agr-opencode-plugin: build failed (check package.json)"
+        fail "agr-plugin: build failed (check package.json)"
     fi
 }
 
@@ -187,7 +187,7 @@ main() {
 
     out_success "OpenCode ecosystem bootstrap complete!"
     out_detail "agr-mcp: ${CODE_DIR}/agr-mcp"
-    out_detail "agr-opencode-plugin: ${CODE_DIR}/agr-opencode-plugin"
+    out_detail "agr-plugin: ${CODE_DIR}/agr-plugin"
     out_detail "agentic-dev-standards: ${CODE_DIR}/agentic-dev-standards"
     out_detail "opencode plugins: ${OPENCODE_CONFIG}"
     out_detail "AGR archive: ${CODE_DIR}/agr"
