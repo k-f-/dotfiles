@@ -43,7 +43,7 @@
   },
   "plugin": [
     "oh-my-openagent@latest",
-    "file:///Users/kef/Documents/Code/agr-opencode-plugin",
+    "file:///Users/kef/Documents/Code/agr-plugin",
     "file:///Users/kef/Documents/Code/kitty-tab-notify-plugin"
   ]
 }
