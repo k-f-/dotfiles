@@ -336,3 +336,5 @@ TSWLatexianTemp*
 
 # glossaries-extra
 *.ist
+
+**/.claude/settings.local.json
