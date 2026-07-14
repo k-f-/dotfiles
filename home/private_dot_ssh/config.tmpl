@@ -1,3 +1,7 @@
+{{ if eq .chezmoi.hostname "macmini" -}}
+Include /Users/kef/.colima/ssh_config
+
+{{ end -}}
 Host github.com
   Hostname ssh.github.com
   Port 443

@@ -18,7 +18,10 @@ fi
 export HOMEBREW_BUNDLE_NO_UPGRADE=1
 status=0
 brew bundle --file="{{ .chezmoi.workingTree }}/homebrew/Brewfile.core" || status=1
+{{ if default false .desktop -}}
+# Desktop apps (this machine has [data] desktop = true in chezmoi.toml)
 brew bundle --file="{{ .chezmoi.workingTree }}/homebrew/Brewfile.desktop" || status=1
+{{ end -}}
 if [[ "$status" -ne 0 ]]; then
     echo "WARNING: brew bundle reported failures — investigate with:" >&2
     echo "  brew bundle --file={{ .chezmoi.workingTree }}/homebrew/Brewfile.core" >&2
