@@ -26,16 +26,12 @@ BACKUP_DIR="${HOME}/.dotfiles-backup-$(date +%Y%m%d-%H%M%S)"
 
 source "${DOTFILES_DIR}/scripts/lib/output.sh"
 
-# Core packages that should be installed on all systems (alphabetically sorted)
-CORE_PACKAGES=(
-)
-
-# Optional packages - can be skipped with --minimal (alphabetically sorted)
-OPTIONAL_PACKAGES=(
-    aerospace
-    homebrew
-    universal-wm
-)
+# All packages are now managed by chezmoi (source state in home/) — see
+# docs/development/planning/chezmoi-migration.md. These arrays are kept empty
+# so this script's remaining duties (packages, oh-my-zsh, submodules, theme)
+# still work; machines pinned at the stow-final tag use the old arrays.
+CORE_PACKAGES=()
+OPTIONAL_PACKAGES=()
 
 # Flags
 DRY_RUN=false
@@ -620,10 +616,18 @@ init_submodules() {
 install_dotfiles() {
     local os="$1"
 
-    # Build packages array
-    local packages=("${CORE_PACKAGES[@]}")
+    # Build packages array (guarded expansion: empty arrays error under
+    # set -u on macOS's bash 3.2)
+    local packages=(${CORE_PACKAGES[@]+"${CORE_PACKAGES[@]}"})
     if [[ "${MINIMAL}" != "true" ]]; then
-        packages+=("${OPTIONAL_PACKAGES[@]}")
+        packages+=(${OPTIONAL_PACKAGES[@]+"${OPTIONAL_PACKAGES[@]}"})
+    fi
+
+    if [[ ${#packages[@]} -eq 0 ]]; then
+        section "Dotfiles"
+        out_info "No stow packages remain — dotfiles are managed by chezmoi (chezmoi apply)"
+        section_end "chezmoi-managed"
+        return 0
     fi
 
     # Stow all packages
