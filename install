@@ -37,9 +37,7 @@ CORE_PACKAGES=(
 # Optional packages - can be skipped with --minimal (alphabetically sorted)
 OPTIONAL_PACKAGES=(
     aerospace
-    aws
     claude-code
-    gh
     gnupg
     homebrew
     kitty
@@ -51,7 +49,6 @@ OPTIONAL_PACKAGES=(
     tmux
     universal-wm
     vscode
-    yt-dlp
 )
 
 # Flags
