@@ -39,8 +39,6 @@ OPTIONAL_PACKAGES=(
     aerospace
     aws
     claude-code
-    doom
-    emacs
     gh
     gnupg
     homebrew
@@ -49,13 +47,10 @@ OPTIONAL_PACKAGES=(
     mail
     opencode
     secrets
-    sketchybar
-    skhd
     ssh
     tmux
     universal-wm
     vscode
-    yabai
     yt-dlp
 )
 
@@ -296,6 +291,24 @@ is_dotfiles_symlink() {
     [[ "$target" == *"/iCloud/"*"/dotfiles/"* ]]
 }
 
+# Return 0 if the target path is reached through a tree-folded stow directory
+# (a parent dir is a symlink resolving into the dotfiles repo). Acting on such
+# paths mv/rm's files INSIDE the repo — the cause of the 2025-10-14 data loss.
+is_tree_folded_path() {
+    local _check_path="$1"
+    while [[ "${_check_path}" != "${STOW_TARGET}" && "${_check_path}" != "/" ]]; do
+        _check_path="$(dirname "${_check_path}")"
+        if [[ -L "${_check_path}" ]]; then
+            local _resolved
+            _resolved="$(readlink -f "${_check_path}" 2>/dev/null)" || true
+            if [[ "${_resolved}" == "${DOTFILES_DIR}"* ]]; then
+                return 0
+            fi
+        fi
+    done
+    return 1
+}
+
 # Remove conflicting targets for a stow package (used in --force mode)
 # This handles the case where existing symlinks point to the same dotfiles
 # through a different path (e.g., iCloud logical vs physical path)
@@ -310,6 +323,13 @@ remove_stow_conflicts() {
         # Handle stow's --dotfiles convention: dot-foo -> .foo
         local stowed_path="${rel_path//dot-/.}"
         local target_file="${STOW_TARGET}/${stowed_path}"
+
+        # Never touch paths reached through a tree-folded stow dir: the "target"
+        # is really a file inside the repo, and mv/rm here destroys repo content.
+        if is_tree_folded_path "${target_file}"; then
+            out_verbose "Skipping tree-folded stow path: ${target_file}"
+            continue
+        fi
 
         if [[ -L "${target_file}" ]]; then
             local link_target
@@ -371,20 +391,7 @@ backup_conflicts() {
         # (a parent dir is a symlink pointing into our dotfiles repo).
         # Without this check, backup_conflicts will mv files OUT of the repo
         # when stow has tree-folded a directory (e.g. ~/.bashrc.d -> dotfiles/bash/dot-bashrc.d)
-        local _check_path="${target_file}"
-        local _is_tree_folded=false
-        while [[ "${_check_path}" != "${STOW_TARGET}" && "${_check_path}" != "/" ]]; do
-            _check_path="$(dirname "${_check_path}")"
-            if [[ -L "${_check_path}" ]]; then
-                local _resolved
-                _resolved="$(readlink -f "${_check_path}" 2>/dev/null)" || true
-                if [[ "${_resolved}" == "${DOTFILES_DIR}"* ]]; then
-                    _is_tree_folded=true
-                    break
-                fi
-            fi
-        done
-        if [[ "${_is_tree_folded}" == "true" ]]; then
+        if is_tree_folded_path "${target_file}"; then
             out_verbose "Skipping tree-folded stow path: ${target_file}"
             continue
         fi
@@ -509,7 +516,7 @@ init_submodules() {
     fi
 
     # Public submodules (HTTPS - always work)
-    local public_submodules=("aerospace-layout-manager" "agentic-dev-standards" "kitty/dot-config/kitty/kitty_search")
+    local public_submodules=("kitty/dot-config/kitty/kitty_search")
     local private_submodules=("aesthetics" "agr-cli")
     local public_count=0
     local private_count=0
@@ -704,14 +711,14 @@ stow_package() {
     # --restow first unstows then restows, handling changes better
     # CRITICAL: Always run from DOTFILES_DIR with target set to HOME
     # This prevents stow from creating symlinks in the wrong location
-    local stow_cmd="stow --restow --target=\"${STOW_TARGET}\" --ignore='^README.*' --ignore='Brewfile' --ignore='yabai\.sh' --ignore='KEYBINDINGS' --ignore='layouts\.json' --ignore='\.DS_Store' --dotfiles"
+    local stow_cmd="stow --restow --target=\"${STOW_TARGET}\" --ignore='^README.*' --ignore='Brewfile' --ignore='KEYBINDINGS' --ignore='layouts\.json' --ignore='\.DS_Store' --dotfiles"
     if [[ "${VERBOSE}" == "true" ]]; then
         stow_cmd="${stow_cmd} --verbose=4"
     fi
     stow_cmd="${stow_cmd} \"${package}\""
 
     if [[ "${DRY_RUN}" == "true" ]]; then
-        stow_cmd="stow --no --target=\"${STOW_TARGET}\" --ignore='^README.*' --ignore='Brewfile' --ignore='yabai\.sh' --ignore='KEYBINDINGS' --ignore='layouts\.json' --ignore='\.DS_Store' --dotfiles \"${package}\""
+        stow_cmd="stow --no --target=\"${STOW_TARGET}\" --ignore='^README.*' --ignore='Brewfile' --ignore='KEYBINDINGS' --ignore='layouts\.json' --ignore='\.DS_Store' --dotfiles \"${package}\""
     fi
 
     out_verbose "Running: ${stow_cmd}"
@@ -725,7 +732,7 @@ stow_package() {
         if [[ "${FORCE}" == "true" ]] && [[ "${DRY_RUN}" == "false" ]]; then
             out_verbose "Stow conflict for ${package}, removing conflicting targets..."
             remove_stow_conflicts "${package}"
-            local retry_cmd="stow --stow --target=\"${STOW_TARGET}\" --ignore='^README.*' --ignore='Brewfile' --ignore='yabai\.sh' --ignore='KEYBINDINGS' --ignore='layouts\.json' --ignore='\.DS_Store' --dotfiles"
+            local retry_cmd="stow --stow --target=\"${STOW_TARGET}\" --ignore='^README.*' --ignore='Brewfile' --ignore='KEYBINDINGS' --ignore='layouts\.json' --ignore='\.DS_Store' --dotfiles"
             if [[ "${VERBOSE}" == "true" ]]; then
                 retry_cmd="${retry_cmd} --verbose=4"
             fi

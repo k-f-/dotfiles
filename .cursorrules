@@ -37,19 +37,22 @@ This is a personal dotfiles repository managed with GNU Stow for symlink managem
 - zsh
 
 #### Optional Packages (alphabetically sorted)
-- aerospace (window manager - macOS)
-- doom (Doom Emacs)
-- emacs
+- aerospace (window manager - macOS, ACTIVELY USED)
+- aws (AWS CLI config)
+- claude-code (Claude Code config)
+- gh (GitHub CLI config)
 - gnupg
+- homebrew (Brewfile.core / Brewfile.desktop)
 - kitty (terminal emulator - ACTIVELY USED)
+- mackup (app settings sync)
 - mail
+- opencode (opencode config)
 - secrets
-- sketchybar (status bar - macOS)
-- skhd (hotkey daemon - macOS, legacy)
 - ssh
-- x-windows
-- yabai (window manager - macOS, legacy - replaced by AeroSpace)
-- youtube-dl
+- tmux
+- universal-wm (window manager config - AeroSpace/i3/Sway)
+- vscode
+- yt-dlp
 
 #### Package Structure Rules
 - One package = one application/tool
@@ -83,7 +86,7 @@ Follow conventional commits:
 - Merge to main with `--no-ff` for clear history
 
 #### What NOT to Commit
-- Auto-generated files (Emacs .desktop, bookmarks, etc.)
+- Auto-generated files (editor state, desktop entries, bookmarks, etc.)
 - Binary files (wallpapers, images) - use Git LFS if needed
 - Application caches and temp files
 - Private keys or tokens
@@ -92,11 +95,15 @@ Follow conventional commits:
 
 #### Standard Installation
 ```bash
-./install                    # Full install with all packages
+./install                    # Core + optional packages (no desktop)
 ./install --dry-run         # Preview changes
 ./install --verbose         # Detailed output
-./install --core-only       # Just core packages
-./install --minimal         # Alias for --core-only
+./install --minimal         # Core packages only (bash, git, vim, zsh)
+./install --full            # Core + optional + desktop packages (Brewfile.desktop)
+./install --no-packages     # Skip package manager installations
+./install --force           # Skip backups, overwrite existing files
+./install --unattended      # Non-interactive (implies --force --relink)
+./install --relink          # Relink symlinks from old dotfiles locations
 ```
 
 #### Install Script Features
@@ -125,7 +132,7 @@ Follow conventional commits:
 #### macOS
 - Primary development platform
 - Uses Homebrew for package management
-- Window manager: AeroSpace (yabai/skhd are legacy)
+- Window manager: AeroSpace (yabai/skhd were removed, fully replaced)
 - Terminal: kitty (actively used)
 - GPG via Homebrew
 
@@ -189,7 +196,7 @@ Before committing major changes:
 
 - Install script: `./install`
 - Uninstall script: `./uninstall`
-- Homebrew bundle: `homebrew/Brewfile`
+- Homebrew bundles: `homebrew/Brewfile.core`, `homebrew/Brewfile.desktop`
 - Stow ignore patterns: `.stow-local-ignore`
 - This rules file: `.cursorrules`
 
@@ -206,4 +213,4 @@ Before committing major changes:
 > Follow these rules to avoid repeating our mistakes!"
 > - Future You
 
-Last Updated: 2025-10-12
+Last Updated: 2026-07-14

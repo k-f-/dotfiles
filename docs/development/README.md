@@ -2,7 +2,7 @@
 
 Planning, analysis, and development-related documentation.
 
-**Note**: Most files in this directory are AI-generated during development and may become outdated as the project evolves.
+**Note**: Files in this directory are working documents and may become outdated as the project evolves.
 
 ## Structure
 
@@ -10,30 +10,13 @@ Planning, analysis, and development-related documentation.
 
 Future plans, refactoring ideas, and outstanding work.
 
-- **[refactor-plan.md](./planning/refactor-plan.md)** - Plans for future code refactoring
-- **[remaining-issues.md](./planning/remaining-issues.md)** - Outstanding issues and TODOs
+- **[known-issues.md](./planning/known-issues.md)** - Currently open issues (and recently resolved ones)
+- **[script-audit-plan.md](./planning/script-audit-plan.md)** - Audit of scripts and their dependencies
 
-### 📊 Summaries (`summaries/`)
-
-Analysis and summary documents created during development.
-
-- **[before-after.md](./summaries/before-after.md)** - Before/after comparison of changes
-- **[summary.md](./summaries/summary.md)** - General project summary
-- **[issues-detail.md](./summaries/issues-detail.md)** - Detailed issue analysis
-
-### 📝 Updates (`updates/`)
-
-Change logs and update summaries.
-
-- **[updates.md](./updates/updates.md)** - Recent updates and changes
-- **[cleanup-complete.md](./updates/cleanup-complete.md)** - Repository cleanup summary
-
-## Purpose
-
-This directory serves as a workspace for:
-- **Planning**: Documenting future work and refactoring plans
-- **Analysis**: AI-generated analysis and summaries during development
-- **History**: Tracking what changed and why
+`summaries/` and `updates/` directories are created as needed for session summaries
+and changelog-style notes; resolved point-in-time material is deleted rather than
+archived in-repo (git history is the archive). See
+[../DOCUMENTATION_GUIDELINES.md](../DOCUMENTATION_GUIDELINES.md).
 
 ## For AI Assistants
 
@@ -47,8 +30,6 @@ Use lowercase-with-hyphens for filenames (e.g., `feature-analysis.md`).
 
 ## Maintenance
 
-These documents are working files and may become stale. Consider:
-- Archiving outdated documents to `archives/` subdirectory
-- Removing completed plans from `planning/`
-- Consolidating summaries when they proliferate
-- Moving important information to user-facing docs in `docs/setup/`
+- Remove completed plans from `planning/`
+- Consolidate summaries when they proliferate
+- Move important information to user-facing docs in `docs/setup/`

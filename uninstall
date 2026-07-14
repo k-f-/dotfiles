@@ -25,8 +25,6 @@ ALL_PACKAGES=(
     aws
     bash
     claude-code
-    doom
-    emacs
     gh
     git
     gnupg
@@ -36,14 +34,10 @@ ALL_PACKAGES=(
     mail
     opencode
     secrets
-    sketchybar
-    skhd
     ssh
     tmux
     universal-wm
     vim
-    x-windows
-    yabai
     youtube-dl
     yt-dlp
     zsh

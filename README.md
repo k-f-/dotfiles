@@ -11,16 +11,17 @@ This repository contains my personal configuration files (dotfiles) for various 
 ### What's Included
 
 - **Shell**: Bash and Zsh configurations with enhanced prompts
-- **Window Management**: Universal WM (Aerospace/i3/Sway) - Cross-platform layout management
-- **Editor**: Vim, Emacs, and Doom Emacs
-- **Development**: Git, SSH, GPG
+- **Window Management**: AeroSpace + universal-layout-manager - cross-platform layout automation
+- **Editor**: Neovim (daily driver) and Vim
+- **Development**: Git, SSH, GPG, tmux
 - **Terminal**: Kitty terminal emulator
-- **macOS**: Yabai, skhd, Sketchybar
+- **AI Tooling**: Claude Code, opencode
+- **Secrets**: 1Password + GPG-encrypted configs
 - **Email**: mbsync, msmtp, mu (email workflow)
-- **Other**: X11 configs, YouTube downloader settings
+- **Other**: YouTube downloader settings
 
 **📖 See [keybindings.md](keybindings.md) for keyboard shortcuts**
-**📖 See [universal-layout-manager/](universal-layout-manager/) for window management setup**
+**📖 See [docs/setup/window-manager.md](docs/setup/window-manager.md) for window management setup**
 
 ## 🚀 Quick Start
 
@@ -80,6 +81,7 @@ OPTIONS:
   --dry-run       Preview changes without making them
   --no-packages   Skip package manager installations
   --minimal       Install only core packages (bash, git, vim, zsh)
+  --full          Also install desktop packages (Homebrew Brewfile.desktop)
   --verbose       Show detailed output
   --force         Skip backups and overwrite existing files
 ```
@@ -122,18 +124,21 @@ em            # Smart editor (VS Code → neovim → vim)
 - `zsh` - Zsh shell configuration
 
 ### Optional Packages (installed by default, skip with `--minimal`)
-- `emacs` - Emacs configuration
-- `doom` - Doom Emacs configuration
-- `kitty` - Kitty terminal config
+- `aerospace` - AeroSpace window manager configuration (macOS)
+- `aws` - AWS CLI configuration
+- `claude-code` - Claude Code configuration
+- `gh` - GitHub CLI configuration
 - `gnupg` - GPG configuration
+- `homebrew` - Homebrew Bundle files (`--full` adds desktop packages)
+- `kitty` - Kitty terminal config
+- `mackup` - Mackup application settings sync
 - `mail` - Email client configs (mbsync, msmtp, mu)
+- `opencode` - opencode configuration
+- `secrets` - Private, GPG-encrypted configurations
 - `ssh` - SSH configuration
-- `universal-wm` - Universal window manager configuration (Aerospace/i3/Sway)
-- `yabai` - macOS tiling window manager
-- `skhd` - macOS hotkey daemon
-- `sketchybar` - macOS status bar
-- `x-windows` - X11 configurations
-- `secrets` - Private configurations
+- `tmux` - Tmux configuration
+- `universal-wm` - Universal window manager configuration (AeroSpace/i3/Sway)
+- `vscode` - VS Code configuration
 - `yt-dlp` - YouTube downloader config
 
 ### Window Management
@@ -159,7 +164,7 @@ universal-wm apply code
 universal-wm apply --all
 ```
 
-See [universal-layout-manager/QUICKSTART.md](universal-layout-manager/QUICKSTART.md) for full documentation.
+See [docs/setup/window-manager.md](docs/setup/window-manager.md) for full documentation.
 
 ## 🔧 Manual Configuration
 
@@ -183,14 +188,19 @@ This will:
 
 ### Homebrew Bundle
 
-Install all macOS applications and packages:
+Install core packages:
 
 ```bash
-cd homebrew
-brew bundle
+brew bundle --file=homebrew/Brewfile.core
 ```
 
-This installs everything defined in `homebrew/Brewfile`.
+Add desktop applications too:
+
+```bash
+brew bundle --file=homebrew/Brewfile.desktop
+```
+
+`./install --full` runs both automatically.
 
 ## 🗑️ Uninstallation
 
@@ -219,38 +229,39 @@ dotfiles/
 │   └── dot-bin/                # User scripts (→ ~/.bin/)
 │       └── universal-wm        # Universal WM CLI
 ├── zsh/                        # Zsh configuration
-│   ├── dot-zshrc
-│   └── dot-zshrc.d/            # Modular zsh configs
+│   └── dot-zshrc
 ├── git/                        # Git configuration
 ├── vim/                        # Vim/Neovim config
-├── emacs/                      # Emacs configuration
-├── doom/                       # Doom Emacs config
 ├── kitty/                      # Kitty terminal
-├── aerospace/                  # Aerospace config (macOS)
+├── tmux/                       # Tmux configuration
+├── aerospace/                  # AeroSpace config (macOS)
 │   └── dot-aerospace.toml      # → ~/.aerospace.toml
 ├── universal-wm/               # Universal WM config (stow package)
 │   └── dot-config/
 │       └── universal-wm/
 │           └── layouts.json    # → ~/.config/universal-wm/layouts.json
-├── universal-layout-manager/   # Universal WM code (not stowed)
+├── universal-layout-manager/   # Universal WM source (not stowed, bun-run)
 │   ├── cli.ts                  # Universal CLI
-│   ├── migrate-config.ts       # Migration tool
 │   ├── adapters/
-│   │   ├── aerospace.ts        # macOS adapter
-│   │   ├── i3-sway.ts          # Linux adapter
-│   │   ├── komorebi.ts         # Windows (planned)
-│   │   └── glazewm.ts          # Windows (planned)
-│   └── docs/                   # Full documentation
-├── aerospace-layout-manager/   # Legacy (deprecated)
-├── yabai/                      # macOS window manager
-├── skhd/                       # macOS hotkey daemon
-├── sketchybar/                 # macOS status bar
+│   │   ├── aerospace.ts        # macOS adapter (the one that runs)
+│   │   └── i3-sway.ts          # Linux adapter
+│   └── core/                   # Shared types, platform detection
 ├── gnupg/                      # GPG configuration
 ├── ssh/                        # SSH configuration
 ├── mail/                       # Email configs
-├── secrets/                    # Private configurations
-├── homebrew/                   # Homebrew bundle
-│   └── Brewfile                # macOS packages
+├── secrets/                    # Private, GPG-encrypted configurations
+├── aws/                        # AWS CLI config
+├── gh/                         # GitHub CLI config
+├── claude-code/                # Claude Code config
+├── opencode/                   # opencode config
+├── vscode/                     # VS Code config
+├── mackup/                     # Mackup application settings sync
+├── yt-dlp/                     # YouTube downloader config
+├── homebrew/                   # Homebrew bundles
+│   ├── Brewfile.core           # Core packages
+│   └── Brewfile.desktop        # Desktop packages (--full)
+├── aesthetics/                 # Theme system (submodule)
+├── agr-cli/                    # agr archive CLI (submodule)
 ├── scripts/                    # Installation scripts
 ├── docs/                       # Documentation
 │   ├── setup/                  # User guides
@@ -366,7 +377,7 @@ chmod +x install uninstall
 
 Install packages individually or update the Brewfile:
 ```bash
-brew bundle --file=homebrew/Brewfile --no-lock
+brew bundle --file=homebrew/Brewfile.core --no-lock
 ```
 
 ## 📚 Further Reading
@@ -374,32 +385,6 @@ brew bundle --file=homebrew/Brewfile --no-lock
 - [GNU Stow Manual](https://www.gnu.org/software/stow/manual/stow.html)
 - [Managing Dotfiles with Stow](https://brandon.invergo.net/news/2012-05-26-using-gnu-stow-to-manage-your-dotfiles.html)
 - [Homebrew Bundle](https://github.com/Homebrew/homebrew-bundle)
-
-## 🔄 Migration from Old Setup
-
-If you're coming from the old install scripts:
-
-1. **Backup your current setup**
-   ```bash
-   cp -r ~/.dotfiles ~/.dotfiles.backup
-   ```
-
-2. **Pull the latest changes**
-   ```bash
-   cd ~/.dotfiles
-   git pull origin refactor/improvements
-   ```
-
-3. **Unstow old configs** (if you used the old scripts)
-   ```bash
-   # The new uninstall script will handle this
-   ./uninstall
-   ```
-
-4. **Run the new installer**
-   ```bash
-   ./install
-   ```
 
 ## 📝 Notes
 
@@ -420,8 +405,6 @@ This is a personal dotfiles repo, but feel free to:
 - Submit PRs for general improvements
 
 ## 📖 Changelog
-
-See [REFACTOR_PLAN.md](REFACTOR_PLAN.md) for detailed improvement plans and changes.
 
 ### Recent Changes
 

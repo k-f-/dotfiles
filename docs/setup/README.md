@@ -6,24 +6,14 @@ User-facing guides for configuring and using dotfiles features.
 
 ### Window Management
 
-- **[universal-wm.md](./universal-wm.md)** - ✨ **NEW**: Universal window manager setup
-  - Cross-platform support (macOS/Linux/Windows)
-  - Auto-detection and unified CLI
-  - Layout configuration with JSON
-  - Keyboard shortcuts
-  - Migration from old setup
-  - **👉 START HERE for window management**
-
-- **[aerospace-layout-manager.md](./aerospace-layout-manager.md)** - ⚠️ DEPRECATED: Legacy Aerospace-only setup
-  - Use [universal-wm.md](./universal-wm.md) instead
-  - Migration guide included
-
-- **[aerospace-quick-reference.md](./aerospace-quick-reference.md)** - ⚠️ DEPRECATED: Legacy quick reference
-  - Use [universal-wm.md](./universal-wm.md) instead
+- **[window-manager.md](./window-manager.md)** — AeroSpace + universal-layout-manager + universal-wm setup
+  - Architecture and invocation chain (service-mode `s`/`o`)
+  - Layout configuration (`~/.config/universal-wm/layouts.json`)
+  - Manual CLI usage and troubleshooting
 
 ### General Configuration
 
-- **[keybindings.md](./keybindings.md)** - Comprehensive keybinding reference
+- **[keybindings.md](../../keybindings.md)** (repo root) — comprehensive keybinding reference
   - Window manager keybindings
   - Shell keybindings
   - Editor keybindings
