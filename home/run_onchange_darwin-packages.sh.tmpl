@@ -1,0 +1,27 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+# Installs Homebrew packages when the Brewfiles change. The hashes below embed
+# the Brewfiles' content into this rendered script, so chezmoi re-runs it on
+# any Brewfile edit (run_onchange_ triggers on rendered-script hash only).
+# Brewfile.core:    {{ include (joinPath .chezmoi.workingTree "homebrew/Brewfile.core") | sha256sum }}
+# Brewfile.desktop: {{ include (joinPath .chezmoi.workingTree "homebrew/Brewfile.desktop") | sha256sum }}
+set -euo pipefail
+
+if ! command -v brew >/dev/null 2>&1; then
+    echo "brew not found; skipping bundle (install from https://brew.sh)" >&2
+    exit 0
+fi
+
+# Install missing packages only; upgrades stay a deliberate manual step.
+# Warn-don't-fail: a single broken formula (machine state) must not block
+# chezmoi apply for every other managed file.
+export HOMEBREW_BUNDLE_NO_UPGRADE=1
+status=0
+brew bundle --file="{{ .chezmoi.workingTree }}/homebrew/Brewfile.core" || status=1
+brew bundle --file="{{ .chezmoi.workingTree }}/homebrew/Brewfile.desktop" || status=1
+if [[ "$status" -ne 0 ]]; then
+    echo "WARNING: brew bundle reported failures — investigate with:" >&2
+    echo "  brew bundle --file={{ .chezmoi.workingTree }}/homebrew/Brewfile.core" >&2
+fi
+exit 0
+{{ end -}}

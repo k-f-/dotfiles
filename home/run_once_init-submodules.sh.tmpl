@@ -1,0 +1,16 @@
+#!/bin/bash
+# One-time submodule init (aesthetics, agr-cli, third_party/kitty-kitten-search).
+# Private submodules need SSH or gh auth; failure is non-fatal with instructions.
+set -uo pipefail
+
+REPO="{{ .chezmoi.workingTree }}"
+
+if git -C "$REPO" submodule update --init --recursive; then
+    exit 0
+fi
+
+echo "Submodule init failed (private submodules need auth)." >&2
+echo "Fix with either:" >&2
+echo "  ssh -T git@github.com   # then re-run: git -C $REPO submodule update --init --recursive" >&2
+echo "  gh auth login           # then re-run the same command" >&2
+exit 0
