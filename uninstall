@@ -22,10 +22,8 @@ STOW_TARGET="${HOME}"
 # All packages that might be installed (alphabetically sorted)
 ALL_PACKAGES=(
     aerospace
-    aws
     bash
     claude-code
-    gh
     git
     gnupg
     homebrew
@@ -39,7 +37,6 @@ ALL_PACKAGES=(
     universal-wm
     vim
     youtube-dl
-    yt-dlp
     zsh
 )
 
