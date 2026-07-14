@@ -33,17 +33,17 @@
     "agr": {
       "type": "local",
       "command": [
-        "/Users/kef/Documents/Code/agr-mcp/start.sh"
+        "{{ .chezmoi.homeDir }}/Documents/Code/agr-mcp/start.sh"
       ],
       "environment": {
-        "AGENTREPO_PATH": "/Users/kef/Documents/Code/agr"
+        "AGENTREPO_PATH": "{{ .chezmoi.homeDir }}/Documents/Code/agr"
       },
       "enabled": true
     }
   },
   "plugin": [
     "oh-my-openagent@latest",
-    "file:///Users/kef/Documents/Code/agr-plugin",
-    "file:///Users/kef/Documents/Code/kitty-tab-notify-plugin"
+    "file://{{ .chezmoi.homeDir }}/Documents/Code/agr-plugin",
+    "file://{{ .chezmoi.homeDir }}/Documents/Code/kitty-tab-notify-plugin"
   ]
 }

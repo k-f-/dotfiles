@@ -23,11 +23,8 @@ STOW_TARGET="${HOME}"
 ALL_PACKAGES=(
     aerospace
     bash
-    claude-code
     homebrew
-    mackup
     mail
-    opencode
     secrets
     universal-wm
     youtube-dl

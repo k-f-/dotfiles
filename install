@@ -35,14 +35,10 @@ CORE_PACKAGES=(
 # Optional packages - can be skipped with --minimal (alphabetically sorted)
 OPTIONAL_PACKAGES=(
     aerospace
-    claude-code
     homebrew
-    mackup
     mail
-    opencode
     secrets
     universal-wm
-    vscode
 )
 
 # Flags
