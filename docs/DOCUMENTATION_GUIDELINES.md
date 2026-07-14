@@ -9,11 +9,13 @@ docs/
 ├── setup/                      # User-facing documentation (never archive)
 ├── development/
 │   ├── planning/              # Active plans and roadmaps
-│   ├── summaries/             # Work session summaries
-│   ├── updates/               # Changelog-style updates
-│   └── issue-resolutions/     # GitHub issue documentation
+│   ├── summaries/             # Work session summaries (created as needed)
+│   └── updates/               # Changelog-style updates (created as needed)
 └── DOCUMENTATION_GUIDELINES.md
 ```
+
+Point-in-time material (session summaries, closed-issue write-ups) is deleted once
+resolved rather than archived in-repo — git history is the archive.
 
 ## Naming Conventions
 

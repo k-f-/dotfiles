@@ -18,11 +18,11 @@ aerospace-organize --no-launch        # Organize only, don't launch apps
 **Features:**
 - Predefined layouts for different workflows (comms, dev, etc.)
 - Automatic app launching and workspace assignment
-- Integration with AeroSpace layout manager submodule
+- Integration with the universal-layout-manager
 
 **Configuration:**
-- Layouts defined in `~/.config/aerospace/layouts.json`
-- See `aerospace-layout-manager` submodule for details
+- Layouts defined in `~/.config/universal-wm/layouts.json`
+- See `docs/setup/window-manager.md` for details
 
 ### `aerospace-organize-wrapper` - AeroSpace Wrapper
 
@@ -78,28 +78,6 @@ em /path/to/file
 - Linux: Supports `code` and `code-insiders`
 - Windows (Git Bash/WSL): Supports `code.cmd`
 
-### `eem` - Emacs Client Launcher
-
-Dedicated Emacs launcher using emacsclient for fast startup.
-
-**Usage:**
-```bash
-eem file.txt
-eem /path/to/file
-```
-
-**Features:**
-- Connects to existing Emacs server if running
-- Starts new Emacs instance if no server exists
-- Creates new frame for each file
-- Runs in background (doesn't block terminal)
-
-**Emacs server setup:**
-Add to your Emacs config (`~/.emacs` or `~/.emacs.d/init.el`):
-```elisp
-(server-start)
-```
-
 ## Installation
 
 These scripts are automatically installed via the dotfiles `install` script using GNU Stow.
@@ -107,11 +85,10 @@ These scripts are automatically installed via the dotfiles `install` script usin
 Manual installation:
 ```bash
 # Make executable
-chmod +x em eem
+chmod +x em
 
 # Add to PATH (if not already via dotfiles)
 ln -s ~/Documents/Code/dotfiles/bash/dot-bin/em ~/.local/bin/em
-ln -s ~/Documents/Code/dotfiles/bash/dot-bin/eem ~/.local/bin/eem
 ```
 
 ## Neovim Configuration
@@ -155,18 +132,6 @@ The script checks these locations:
 
 If installed elsewhere, add it to your PATH or symlink to one of these locations.
 
-### Emacs server not starting
-Make sure Emacs server is enabled in your config:
-```elisp
-;; In ~/.emacs or ~/.emacs.d/init.el
-(server-start)
-```
-
-Or start manually:
-```bash
-emacs --daemon
-```
-
 ## System Utilities
 
 ### `extract` - Universal Archive Extractor
@@ -206,32 +171,16 @@ lock
 
 Cross-platform screenshot capture.
 
-### `checkmail` - Mail Checker
-
-Check for new mail (requires mail configuration).
-
-### `set-wallpaper` - Wallpaper Setter
-
-Set desktop wallpaper from aesthetics/wallpapers.
-
-### `set-capslock` - Caps Lock Manager
-
-Enable/disable Caps Lock programmatically.
-
-### `wake-set-capslock` - Wake Handler
-
-Re-enable Caps Lock after system wake (for macOS sleep/wake cycle).
-
 ## Removed Scripts
 
 See `REMOVED_BINARIES.md` for documentation of scripts that were archived or replaced:
 - `diff-so-fancy` - Now installed via package manager
 - `gotop` - Now installed via package manager
 - Display management scripts - Archived (use built-in display settings)
+- `eem`, `checkmail`, `set-wallpaper`, `set-capslock`, `wake-set-capslock` - Removed 2026-07 (emacs/mu4e/X11-era tooling no longer in use)
 
 ## See Also
 
 - Main dotfiles README: `../../README.md`
-- AeroSpace setup guide: `../../docs/setup/aerospace-layout-manager.md`
-- AeroSpace quick reference: `../../docs/setup/aerospace-quick-reference.md`
-- Keybindings reference: `../../docs/setup/keybindings.md`
+- Window manager setup guide: `../../docs/setup/window-manager.md`
+- Keybindings reference: `../../keybindings.md`

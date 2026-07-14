@@ -33,11 +33,7 @@ A comprehensive macOS configuration script that sets up system preferences, syml
    - AppCleaner integration
    - Homebrew cleanup commands
 
-5. **Yabai Configuration**
-   - Instructions for disabling SIP (optional)
-   - Sudoers configuration guide
-
-6. **Hostname Setup**
+5. **Hostname Setup**
    - Interactive hostname configuration
 
 #### Usage
@@ -53,7 +49,7 @@ The script will:
 1. Check for iCloud Drive and offer to create symlinks
 2. Configure Homebrew GNU utilities
 3. Apply all macOS system defaults
-4. Provide instructions for optional Yabai setup
+4. Point to the AeroSpace/universal-wm setup (see docs/setup/window-manager.md)
 5. Optionally set hostname
 
 #### Requirements
@@ -249,7 +245,7 @@ Run this script:
 #### Integration with Other Tools
 
 Works well with:
-- **Brewfile** (`~/.dots/homebrew/Brewfile`) - Package tracking
+- **Brewfiles** (`homebrew/Brewfile.core`, `homebrew/Brewfile.desktop`) - Package tracking
 - **mas** - Mac App Store management
 - **AppCleaner** - Complete app removal
 - **brew bundle** - Brewfile operations
@@ -267,17 +263,25 @@ Edit the script to:
 ## Other Scripts
 
 ### `install-debian-packages.sh`
-Debian/Ubuntu package installation script.
+Debian/Ubuntu package installation script (invoked by `./install` on Debian systems).
 
-### `install.sh`
-Generic installation script (cross-platform).
+### `validate-stow.sh`
+Post-install validation — checks that stowed symlinks resolve into the repo. Run automatically at the end of `./install`; safe to run standalone anytime.
 
-### Display Scripts
-- `disp-external-and-laptop.sh` - Configure external display + laptop
-- `disp-laptop-only.sh` - Configure laptop display only
+### `brew-audit.sh`
+Compares installed Homebrew packages against the Brewfiles (also available via the `brew-audit` alias).
 
-### `gnome-terminal.sh`
-GNOME Terminal configuration.
+### `bootstrap-opencode.sh`
+Clones/builds the opencode ecosystem repos (agr-mcp, agr-plugin, agentic-dev-standards) next to the dotfiles checkout.
+
+### `archive-old-docs.sh`
+Moves dated docs into their `archive/` subdirectories per docs/DOCUMENTATION_GUIDELINES.md.
+
+### `lib/output.sh`
+Shared output library (sections, spinners, `out_*`/`print_*` helpers) sourced by `install`, `uninstall`, and the scripts above.
+
+### `archive/`
+Retired Linux/X11-era scripts (display layout, GNOME Terminal) kept for reference.
 
 ## Contributing
 

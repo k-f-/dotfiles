@@ -4,7 +4,6 @@
 # Priority: VS Code > Neovim > Vim > Emacs
 # Works across macOS, Linux, and other Unix-like systems
 #
-# Use 'eem' for emacs-only launcher
 # ---------------------------------------------------------
 
 set -euo pipefail

@@ -4,4 +4,4 @@
 
 FILE1=$1
 
-magick "$FILE1" -strip -interlace Plane -gaussian-blur 0.05 -quality 85% "$FILE"_sm.jpg
+magick "$FILE1" -strip -interlace Plane -gaussian-blur 0.05 -quality 85% "${FILE1%.*}"_sm.jpg

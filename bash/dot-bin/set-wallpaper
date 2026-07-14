@@ -1,4 +1,0 @@
-#!/bin/sh
-
-feh --bg-fill ~/.wallpaper/plant02.png 
-

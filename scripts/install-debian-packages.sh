@@ -2,7 +2,7 @@
 
 sudo apt install \
      aptitude \
-     autorandr \ 
+     autorandr \
      build-essential \
      curl \
      fonts-font-awesome \

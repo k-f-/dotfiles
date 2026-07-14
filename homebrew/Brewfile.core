@@ -36,6 +36,7 @@ brew "git"
 brew "git-secrets"          # Prevent committing secrets
 brew "gitleaks"             # Secret scanning
 brew "bfg"                  # Repo history cleaner
+brew "diff-so-fancy"        # Git pager (configured in git/dot-gitconfig)
 brew "gh"                   # GitHub CLI
 
 # Editors

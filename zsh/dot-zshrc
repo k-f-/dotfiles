@@ -228,7 +228,6 @@ PROMPT='${prompt_jobs}${prompt_host}${vcs_info_msg_0_} ${prompt_dir} ${prompt_ch
 RPROMPT='${prompt_return_status}%*'
 
 # Turn on zsh-autosuggestions
-fpath=($ZSH_HOME/zsh-completions/src $fpath)
 
 # Load supplementary scripts
 source ~/.bashrc.d/secrets.bash
@@ -249,4 +248,4 @@ export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
 # opencode
-export PATH=/Users/kef/.opencode/bin:$PATH
+export PATH="$HOME/.opencode/bin:$PATH"

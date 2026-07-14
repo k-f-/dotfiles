@@ -30,11 +30,9 @@ See `dot-bashrc.d/aliases.bash` for all available aliases:
 Scripts in `dot-bin/` are symlinked to `~/.bin/` and available in PATH:
 
 - `em` - Smart editor launcher (VS Code → neovim → vim → emacs)
-- `eem` - Emacs client launcher
 - `aerospace-organize` - Organize windows into designated workspaces
 - `extract` - Universal archive extractor
 - `screenshot` - Screenshot utility
-- `checkmail` - Check mail status
 - And more...
 
 ## Structure
@@ -52,7 +50,6 @@ bash/
 │   └── variables.bash       # Shell variables
 └── dot-bin/                 # User scripts (symlinked to ~/.bin/)
     ├── em                   # Editor launcher
-    ├── eem                  # Emacs client
     ├── aerospace-organize   # Window organization
     └── ...                  # More scripts
 ```

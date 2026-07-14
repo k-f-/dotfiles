@@ -275,35 +275,32 @@ if.app-id = 'com.apple.mail'
 run = 'move-node-to-workspace 5'
 
 # ----------------------------------------------------------------------------
-# Workspace 6: Games (Note: These should be floating in yabai)
-# AeroSpace doesn't have per-workspace layout settings yet
-# These apps will default to floating via the layout.floating rules below
+# Workspace 6: Games — float and assign in one rule.
+# AeroSpace stops at the first matching on-window-detected callback
+# (check-further-callbacks defaults to false), so floating must be combined
+# inline here; a separate 'layout floating' block later would never run.
 # ----------------------------------------------------------------------------
 [[on-window-detected]]
 if.app-id = 'com.riotgames.LeagueofLegends.GameClient'
-run = 'move-node-to-workspace 6'
+run = ['layout floating', 'move-node-to-workspace 6']
 
 [[on-window-detected]]
 if.app-id = 'com.riotgames.RiotClient'
-run = 'move-node-to-workspace 6'
+run = ['layout floating', 'move-node-to-workspace 6']
 
 [[on-window-detected]]
 if.app-id = 'com.valvesoftware.steam'
-run = 'move-node-to-workspace 6'
+run = ['layout floating', 'move-node-to-workspace 6']
 
 [[on-window-detected]]
 if.app-id = 'com.hnc.Discord'
 run = 'move-node-to-workspace 6'
 
 # ============================================================================
-# Apps to Always Float (matches yabai manage=off rules)
+# Apps to Always Float
 # ============================================================================
 [[on-window-detected]]
 if.app-id = 'com.apple.systempreferences'
-run = 'layout floating'
-
-[[on-window-detected]]
-if.app-id = 'com.apple.SystemPreferences'
 run = 'layout floating'
 
 [[on-window-detected]]
@@ -338,18 +335,6 @@ run = 'layout floating'
 if.app-id = 'org.virtualbox.app.VirtualBox'
 run = 'layout floating'
 
-# Game launchers and clients should be floating
-[[on-window-detected]]
-if.app-id = 'com.riotgames.LeagueofLegends.GameClient'
-run = 'layout floating'
-
-[[on-window-detected]]
-if.app-id = 'com.riotgames.RiotClient'
-run = 'layout floating'
-
-[[on-window-detected]]
-if.app-id = 'com.valvesoftware.steam'
-run = 'layout floating'
 
 # Keybindings overlay window (show-keybindings script)
 [[on-window-detected]]

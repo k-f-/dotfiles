@@ -5,7 +5,7 @@
 [[ -f "${HOME}/.config/dotfiles/env" ]] && source "${HOME}/.config/dotfiles/env"
 DOTFILES="${DOTFILES_DIR:?DOTFILES_DIR not set — run ./install first}"
 
-KEYBINDINGS_FILE="${DOTFILES}/docs/KEYBINDINGS.md"
+KEYBINDINGS_FILE="${DOTFILES}/keybindings.md"
 
 if [[ ! -f "$KEYBINDINGS_FILE" ]]; then
     echo "Error: Keybindings file not found at $KEYBINDINGS_FILE" >&2

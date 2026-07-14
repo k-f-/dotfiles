@@ -46,7 +46,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/kef/.claude/hooks/agr-archive.sh",
+            "command": "$HOME/.claude/hooks/agr-archive.sh",
             "timeout": 60,
             "async": true
           }
@@ -71,7 +71,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/kef/.claude/hooks/subagent-announce.sh start",
+            "command": "$HOME/.claude/hooks/subagent-announce.sh start",
             "timeout": 5
           }
         ]
@@ -82,7 +82,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/kef/.claude/hooks/subagent-announce.sh stop",
+            "command": "$HOME/.claude/hooks/subagent-announce.sh stop",
             "timeout": 5
           }
         ]

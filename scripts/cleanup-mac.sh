@@ -9,15 +9,15 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/output.sh"
 
 # Local helper for interactive prompts (not in lib)
 ask() {
-    echo -e "${YELLOW}?${NC} $1"
+    echo -e "${_YELLOW}?${_NC} $1"
 }
 
 # Local section header with custom formatting (lib has section() for tracking)
 section_header() {
     echo ""
-    echo -e "${CYAN}╔════════════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${CYAN}║${NC} $1"
-    echo -e "${CYAN}╚════════════════════════════════════════════════════════════════╝${NC}"
+    echo -e "${_BLUE}╔════════════════════════════════════════════════════════════════╗${_NC}"
+    echo -e "${_BLUE}║${_NC} $1"
+    echo -e "${_BLUE}╚════════════════════════════════════════════════════════════════╝${_NC}"
 }
 
 #==============================================================================

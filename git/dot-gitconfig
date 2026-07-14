@@ -1,5 +1,5 @@
 [core]
-	editor = neovim 
+	editor = nvim
 [alias]
 	aa = add --all
   	amend = commit --amend
@@ -77,10 +77,10 @@
 [tag]
 	gpgSign = true
 [init]
-	templateDir = /Users/kef/.git-templates/git-secrets
+	templateDir = ~/.git-templates/git-secrets
 [credential "https://github.com"]
 	helper = 
-	helper = !/opt/homebrew/bin/gh auth git-credential
+	helper = !gh auth git-credential
 [credential "https://gist.github.com"]
 	helper = 
-	helper = !/opt/homebrew/bin/gh auth git-credential
+	helper = !gh auth git-credential
