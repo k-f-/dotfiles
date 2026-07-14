@@ -24,7 +24,6 @@ ALL_PACKAGES=(
     aerospace
     bash
     claude-code
-    git
     gnupg
     homebrew
     kitty
@@ -33,9 +32,7 @@ ALL_PACKAGES=(
     opencode
     secrets
     ssh
-    tmux
     universal-wm
-    vim
     youtube-dl
     zsh
 )
