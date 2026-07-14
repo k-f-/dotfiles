@@ -24,13 +24,11 @@ ALL_PACKAGES=(
     aerospace
     bash
     claude-code
-    gnupg
     homebrew
     mackup
     mail
     opencode
     secrets
-    ssh
     universal-wm
     youtube-dl
     zsh

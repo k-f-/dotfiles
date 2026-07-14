@@ -36,13 +36,11 @@ CORE_PACKAGES=(
 OPTIONAL_PACKAGES=(
     aerospace
     claude-code
-    gnupg
     homebrew
     mackup
     mail
     opencode
     secrets
-    ssh
     universal-wm
     vscode
 )
