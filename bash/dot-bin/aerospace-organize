@@ -17,18 +17,21 @@ if [[ "${1:-}" == "--no-launch" ]]; then
     NO_LAUNCH_FLAG="--noLaunch"
 fi
 
-# Find dotfiles directory (this script is in dotfiles/bash/dot-bin/)
-# Resolve symlink to get the actual script location
-SCRIPT_PATH="${BASH_SOURCE[0]}"
-# If it's a symlink, resolve it (macOS readlink doesn't have -f, so we use a different approach)
-while [ -L "$SCRIPT_PATH" ]; do
+# Find dotfiles directory: prefer ~/.config/dotfiles/env (works whether this
+# script is a symlink or a chezmoi-managed copy); fall back to walking our own
+# symlink for checkouts where ./install hasn't written the env file yet.
+[[ -f "${HOME}/.config/dotfiles/env" ]] && source "${HOME}/.config/dotfiles/env"
+if [[ -z "${DOTFILES_DIR:-}" || ! -d "${DOTFILES_DIR}" ]]; then
+    SCRIPT_PATH="${BASH_SOURCE[0]}"
+    # macOS readlink has no -f, so walk symlinks manually
+    while [ -L "$SCRIPT_PATH" ]; do
+        SCRIPT_DIR="$(cd -P "$(dirname "$SCRIPT_PATH")" && pwd)"
+        SCRIPT_PATH="$(readlink "$SCRIPT_PATH")"
+        [[ "$SCRIPT_PATH" != /* ]] && SCRIPT_PATH="$SCRIPT_DIR/$SCRIPT_PATH"
+    done
     SCRIPT_DIR="$(cd -P "$(dirname "$SCRIPT_PATH")" && pwd)"
-    SCRIPT_PATH="$(readlink "$SCRIPT_PATH")"
-    # If readlink gives relative path, make it absolute
-    [[ "$SCRIPT_PATH" != /* ]] && SCRIPT_PATH="$SCRIPT_DIR/$SCRIPT_PATH"
-done
-SCRIPT_DIR="$(cd -P "$(dirname "$SCRIPT_PATH")" && pwd)"
-DOTFILES_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+    DOTFILES_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+fi
 LAYOUT_MANAGER="$DOTFILES_DIR/universal-layout-manager/adapters/aerospace.ts"
 
 # Use full path to bun
