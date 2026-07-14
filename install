@@ -38,7 +38,6 @@ OPTIONAL_PACKAGES=(
     claude-code
     gnupg
     homebrew
-    kitty
     mackup
     mail
     opencode
@@ -510,7 +509,7 @@ init_submodules() {
     fi
 
     # Public submodules (HTTPS - always work)
-    local public_submodules=("kitty/dot-config/kitty/kitty_search")
+    local public_submodules=("third_party/kitty-kitten-search")
     local private_submodules=("aesthetics" "agr-cli")
     local public_count=0
     local private_count=0
