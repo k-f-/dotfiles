@@ -249,3 +249,6 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 
 # opencode
 export PATH="$HOME/.opencode/bin:$PATH"
+
+### local machine overrides, if any
+[[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"

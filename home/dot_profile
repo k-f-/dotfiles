@@ -1,0 +1,18 @@
+# Location-independent DOTFILES_DIR (written by ./install)
+[[ -f "$HOME/.config/dotfiles/env" ]] && source "$HOME/.config/dotfiles/env"
+
+# Load supplementary scripts
+source ~/.bashrc.d/secrets.bash
+source ~/.bashrc.d/aliases.bash
+source ~/.bashrc.d/1password.bash
+source ~/.bashrc.d/prompt.bash
+source ~/.bashrc.d/path.bash
+source ~/.bashrc.d/exports.bash
+source ~/.bashrc.d/variables.bash
+source ~/.bashrc.d/utils.bash
+
+# agr-cli (submodule — sourced directly, not stowed)
+[[ -n "${DOTFILES_DIR:-}" && -f "${DOTFILES_DIR}/agr-cli/dot-bashrc.d/agr.bash" ]] && \
+  source "${DOTFILES_DIR}/agr-cli/dot-bashrc.d/agr.bash"
+
+export PATH="$HOME/.poetry/bin:$PATH"

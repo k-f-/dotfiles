@@ -28,16 +28,12 @@ source "${DOTFILES_DIR}/scripts/lib/output.sh"
 
 # Core packages that should be installed on all systems (alphabetically sorted)
 CORE_PACKAGES=(
-    bash
-    zsh
 )
 
 # Optional packages - can be skipped with --minimal (alphabetically sorted)
 OPTIONAL_PACKAGES=(
     aerospace
     homebrew
-    mail
-    secrets
     universal-wm
 )
 

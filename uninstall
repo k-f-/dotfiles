@@ -22,13 +22,9 @@ STOW_TARGET="${HOME}"
 # All packages that might be installed (alphabetically sorted)
 ALL_PACKAGES=(
     aerospace
-    bash
     homebrew
-    mail
-    secrets
     universal-wm
     youtube-dl
-    zsh
 )
 
 DRY_RUN=false
