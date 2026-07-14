@@ -29,8 +29,6 @@ source "${DOTFILES_DIR}/scripts/lib/output.sh"
 # Core packages that should be installed on all systems (alphabetically sorted)
 CORE_PACKAGES=(
     bash
-    git
-    vim
     zsh
 )
 
@@ -46,7 +44,6 @@ OPTIONAL_PACKAGES=(
     opencode
     secrets
     ssh
-    tmux
     universal-wm
     vscode
 )
