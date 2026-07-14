@@ -26,7 +26,6 @@ ALL_PACKAGES=(
     claude-code
     gnupg
     homebrew
-    kitty
     mackup
     mail
     opencode
