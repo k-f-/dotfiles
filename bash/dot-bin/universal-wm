@@ -1,1 +1,18 @@
-/Users/kef/Documents/Code/dotfiles/universal-layout-manager/cli.ts
+#!/usr/bin/env bash
+#
+# universal-wm - run the universal-layout-manager CLI via bun.
+# (Replaces a git-committed absolute symlink to cli.ts, which was not
+# portable and broke under copy-based dotfile managers.)
+
+set -euo pipefail
+
+[[ -f "${HOME}/.config/dotfiles/env" ]] && source "${HOME}/.config/dotfiles/env"
+DOTFILES="${DOTFILES_DIR:?DOTFILES_DIR not set — run ./install first}"
+
+BUN="${HOME}/.bun/bin/bun"
+if [[ ! -x "$BUN" ]]; then
+    BUN="$(command -v bun || true)"
+fi
+[[ -n "$BUN" && -x "$BUN" ]] || { echo "universal-wm: bun not found" >&2; exit 1; }
+
+exec "$BUN" "${DOTFILES}/universal-layout-manager/cli.ts" "$@"
