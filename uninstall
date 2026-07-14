@@ -19,11 +19,10 @@ set -euo pipefail
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -L)"
 STOW_TARGET="${HOME}"
 
-# All packages that might be installed (alphabetically sorted)
+# All packages are now managed by chezmoi — see
+# docs/development/planning/chezmoi-migration.md. youtube-dl stays for
+# legacy symlink cleanup on machines that had the pre-rename package.
 ALL_PACKAGES=(
-    aerospace
-    homebrew
-    universal-wm
     youtube-dl
 )
 

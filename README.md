@@ -25,51 +25,48 @@ This repository contains my personal configuration files (dotfiles) for various 
 
 ## 🚀 Quick Start
 
-### Prerequisites
+Dotfiles are managed by [chezmoi](https://chezmoi.io) (source state in `home/`,
+per `.chezmoiroot`). GNU Stow is retired on migrated machines; the `stow-final`
+git tag marks the last fully stow-based commit for machines not yet migrated.
 
-#### macOS
+### Prerequisites (macOS)
+
 ```bash
 # Install Homebrew if not already installed
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-# Install Stow
-brew install stow
-```
-
-#### Debian/Ubuntu
-```bash
-sudo apt update
-sudo apt install stow
+brew install chezmoi
 ```
 
 ### Installation
 
-1. **Clone this repository**
+1. **Clone this repository** (submodules can be initialized later — a
+   chezmoi run_once script handles them)
    ```bash
-   git clone https://github.com/k-f-/dotfiles.git ~/.dotfiles
-   cd ~/.dotfiles
+   git clone https://github.com/k-f-/dotfiles.git ~/Documents/Code/dotfiles
    ```
 
-2. **Run the installer**
+2. **Point chezmoi at it and apply**
    ```bash
-   # Full installation (recommended)
-   ./install
-
-   # Minimal installation (core configs only)
-   ./install --minimal
-
-   # Preview changes without applying
-   ./install --dry-run
+   printf 'sourceDir = "%s"\n' "$HOME/Documents/Code/dotfiles" > ~/.config/chezmoi/chezmoi.toml
+   chezmoi doctor     # sanity check
+   chezmoi diff       # preview
+   chezmoi apply      # deploy configs + run bootstrap scripts (brew bundle, oh-my-zsh, submodules)
    ```
 
 3. **Restart your shell**
-   ```bash
-   # For zsh
-   source ~/.zshrc
 
-   # For bash
-   source ~/.bashrc
-   ```
+### Day-to-day
+
+```bash
+chezmoi edit ~/.zshrc   # edit the source, then:
+chezmoi apply           # deploy
+chezmoi diff            # what would change
+chezmoi verify          # drift check ($HOME vs source)
+```
+
+Never edit templated files with `chezmoi re-add` (it destroys the template);
+use `chezmoi merge` instead.
 
 ### Installation Options
 
