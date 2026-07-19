@@ -1,6 +1,10 @@
 # chezmoi Migration Plan
 
-**Status**: Approved with revisions — in execution 2026-07-14
+**Status**: COMPLETE — MacBook migrated 2026-07-14, mac mini 2026-07-14, GPG
+identity restored on the mini 2026-07-18. Both machines chezmoi-managed; stow
+retired (the `stow-final` tag marks the last stow-based commit). Known open
+item: `authinfo.gpg` is encrypted to a lost 2020 key and needs re-encryption
+to the 2023 key whenever mail sync is revived.
 **Created**: 2026-07-14
 **Prerequisite reading**: [known-issues.md](./known-issues.md), `docs/setup/window-manager.md`
 
