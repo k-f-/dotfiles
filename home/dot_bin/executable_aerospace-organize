@@ -47,23 +47,46 @@ echo "Using bun: $BUN" >> "$LOG_FILE"
 echo "No-launch flag: $NO_LAUNCH_FLAG" >> "$LOG_FILE"
 
 # Get all available layouts
-if ! layouts=$("$BUN" "$LAYOUT_MANAGER" --listLayouts 2>&1); then
-    echo "ERROR: Failed to list layouts: $layouts" >> "$LOG_FILE"
+# stderr goes to the log, NOT into $layouts. It used to be folded in with 2>&1,
+# so any warning line would word-split into bogus "layout names" that then fail —
+# which the new fail_count would report as a red notification. The `if !` still
+# catches a genuine failure via the exit status.
+if ! layouts=$("$BUN" "$LAYOUT_MANAGER" --listLayouts 2>>"$LOG_FILE"); then
+    echo "ERROR: Failed to list layouts (see stderr above)" >> "$LOG_FILE"
     osascript -e 'display notification "Failed to list layouts" with title "Aerospace Organize"'
     exit 1
 fi
 
 echo "Found layouts: $layouts" >> "$LOG_FILE"
 
-# Apply each layout
+# Apply each layout.
+# IFS=$'\n': --listLayouts emits one name per line, and a layout key containing a
+# space would otherwise split into two bogus names that fail and red-notify.
+total_count=0
+fail_count=0
+IFS=$'\n'
 for layout in $layouts; do
+    total_count=$((total_count + 1))
     echo "Applying layout: $layout" >> "$LOG_FILE"
     if "$BUN" "$LAYOUT_MANAGER" $NO_LAUNCH_FLAG "$layout" 2>>"$LOG_FILE"; then
         echo "  ✓ Applied: $layout" >> "$LOG_FILE"
     else
         echo "  ✗ Failed: $layout" >> "$LOG_FILE"
+        fail_count=$((fail_count + 1))
     fi
 done
+
+if [[ "$total_count" -eq 0 ]]; then
+    echo "✗ No layouts found" >> "$LOG_FILE"
+    osascript -e "display notification \"No layouts found to apply — see $LOG_FILE\" with title \"Aerospace Organize\""
+    exit 1
+fi
+
+if [[ "$fail_count" -gt 0 ]]; then
+    echo "✗ $fail_count of $total_count layouts failed" >> "$LOG_FILE"
+    osascript -e "display notification \"$fail_count of $total_count layouts failed — see $LOG_FILE\" with title \"Aerospace Organize\""
+    exit 1
+fi
 
 if [[ -n "$NO_LAUNCH_FLAG" ]]; then
     echo "✓ All layouts organized" >> "$LOG_FILE"
