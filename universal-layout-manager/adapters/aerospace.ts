@@ -136,6 +136,22 @@ if (!layoutName && !args.values.all) {
 	process.exit(0);
 }
 
+// Preflight: a live AeroSpace process is not the same as a reachable server.
+// A stale server surviving a CLI upgrade breaks the socket handshake silently,
+// so probe it with one cheap command before doing any real work.
+const healthCheck = await $`aerospace list-workspaces --focused`.quiet().nothrow();
+if (healthCheck.exitCode !== 0) {
+	const healthStderr = healthCheck.stderr.toString().trim();
+	if (healthStderr.includes("SOCKET_PROTOCOL_VERSION")) {
+		console.error(
+			`AeroSpace CLI/server version mismatch — restart AeroSpace (osascript -e 'quit app "AeroSpace"' && open -a AeroSpace)`,
+		);
+	} else {
+		console.error(`AeroSpace is not responding: ${healthStderr}`);
+	}
+	process.exit(1);
+}
+
 const stashWorkspace = config.stashWorkspace ?? "S";
 const appMappings = config.appMappings ?? {};
 let selectedDisplay: DisplayInfo | undefined;
@@ -151,7 +167,10 @@ async function switchToWorkspace(workspace: string) {
 }
 
 async function moveWindow(windowId: string, workspace: string) {
-	await $`aerospace move-node-to-workspace --window-id "${windowId}" "${workspace}" --focus-follows-window`;
+	// `.nothrow()`: a window can close between resolution and the move, which
+	// exits 2. That is environmental, not a layout failure, and must not
+	// escalate into a red notification.
+	await $`aerospace move-node-to-workspace --window-id "${windowId}" "${workspace}" --focus-follows-window`.nothrow();
 }
 
 async function getWindowsInWorkspace(workspace: string): Promise<
@@ -181,6 +200,10 @@ async function focusWindow(windowId: string) {
 async function getDisplays(): Promise<DisplayInfo[]> {
 	const data = await $`system_profiler SPDisplaysDataType -json`.json();
 
+	// `?? []` matters: flatMap does not flatten away a bare `undefined`, it keeps
+	// it as an element. A GPU entry with no attached displays (which
+	// system_profiler also returns transiently under load) would otherwise yield
+	// [undefined] and crash every consumer on `d.isMain`.
 	return data.SPDisplaysDataType.flatMap((gpu: SPDisplaysDataType) =>
 		gpu.spdisplays_ndrvs?.map((d) => ({
 			name: d._name,
@@ -199,7 +222,7 @@ async function getDisplays(): Promise<DisplayInfo[]> {
 			),
 			isMain: d.spdisplays_main === SPDisplaysValues.Yes,
 			isInternal: d.spdisplays_connection_type === SPDisplaysValues.Internal,
-		})),
+		})) ?? [],
 	);
 }
 
@@ -291,7 +314,16 @@ function selectDisplay(layout: Layout, displays: DisplayInfo[]): DisplayInfo {
 				`Display not found: ${layout.display}. Defaulting to the main display.`,
 			);
 		}
-		display = getDisplayByAlias("main", displays) as DisplayInfo;
+		// Not a safe cast: system_profiler can report displays with none flagged
+		// as main, and the caller's `displays.length === 0` check does not cover
+		// that. Fail with a readable message instead of a TypeError downstream.
+		display =
+			getDisplayByAlias("main", displays) ??
+			(() => {
+				throw new Error(
+					`No main display found among ${displays.length} display(s): ${displays.map((d) => d.name).join(", ")}`,
+				);
+			})();
 	}
 
 	console.log(
@@ -313,14 +345,19 @@ async function getDisplayHeight(): Promise<number | null> {
 
 // Functions using universal config
 
-async function clearWorkspace(workspace: string) {
+// Returns the ids it evacuated so the caller can put them back if the layout
+// turns out to place nothing — see the rollback in applyLayout.
+async function clearWorkspace(workspace: string): Promise<string[]> {
 	const windows = await getWindowsInWorkspace(workspace);
+	const evacuated: string[] = [];
 
 	for (const window of windows) {
 		if (window["window-id"]) {
 			await moveWindow(window["window-id"], stashWorkspace);
+			evacuated.push(window["window-id"]);
 		}
 	}
+	return evacuated;
 }
 
 async function getWindowId(appKey: string): Promise<string | null> {
@@ -346,10 +383,23 @@ async function launchIfNotRunning(appKey: string) {
 		return;
 	}
 
-	const result = await $`osascript -e "application id \"${bundleId}\" is running"`.text();
+	const result = await $`osascript -e "application id \"${bundleId}\" is running"`
+		.quiet()
+		.nothrow()
+		.text();
 	const isRunning = result.trim() === "true";
-	if (!isRunning) {
-		await $`open -b "${bundleId}"`;
+
+	// "Running" is not the same as "has a window": closing an app's last window
+	// leaves it running and windowless on macOS. `open -b` on an already-running
+	// app is what re-creates that window, so don't skip it on isRunning alone.
+	const needsLaunch = !isRunning || (await getWindowId(appKey)) === null;
+	if (needsLaunch) {
+		const openResult = await $`open -b "${bundleId}"`.quiet().nothrow();
+		if (openResult.exitCode !== 0) {
+			console.error(
+				`Could not launch ${appKey} (${bundleId}): ${openResult.stderr.toString().trim()}`,
+			);
+		}
 	}
 }
 
@@ -387,22 +437,29 @@ async function setWorkspaceLayout(
 	}
 }
 
-async function traverseTreeMove(
+type ResolvedWindow = { app: string; windowId: string | null };
+
+// Resolve every window the layout asks for — launching if allowed — WITHOUT
+// touching any workspace. Callers need to know what can actually be placed
+// before `clearWorkspace` evacuates the target, otherwise a layout that can
+// place nothing still empties the workspace into the stash. Returns entries in
+// tree order, which the move phase relies on.
+async function resolveTreeWindows(
 	tree: LayoutItem[],
-	workspace: string,
 	shouldLaunch = true,
-) {
+): Promise<ResolvedWindow[]> {
+	const resolved: ResolvedWindow[] = [];
 	for (const item of tree) {
 		if (isLayoutWindow(item) || isLayoutWindowWithSize(item)) {
-			const windowId = await ensureWindow(item.app, shouldLaunch);
-
-			if (windowId) {
-				await moveWindow(windowId, workspace);
-			}
+			resolved.push({
+				app: item.app,
+				windowId: await ensureWindow(item.app, shouldLaunch),
+			});
 		} else if (isLayoutGroup(item) || isLayoutGroupWithSize(item)) {
-			await traverseTreeMove(item.windows, workspace, shouldLaunch);
+			resolved.push(...(await resolveTreeWindows(item.windows, shouldLaunch)));
 		}
 	}
+	return resolved;
 }
 
 async function traverseTreeReposition(tree: LayoutItem[], workspace: string, depth = 0, parentOrientation: "horizontal" | "vertical" = "horizontal") {
@@ -522,11 +579,48 @@ async function applyLayout(layout: Layout, shouldLaunch: boolean) {
 		);
 	}
 
-	// Step 1: Clear workspace
-	await clearWorkspace(workspace);
+	// Step 1: Resolve every window FIRST, before touching the workspace.
+	// `clearWorkspace` evacuates the target to the stash, so if we cleared first
+	// and then discovered nothing could be placed, the workspace would be left
+	// empty and its windows stranded in the stash. A missing app is a normal
+	// state (layouts.json is a catalog, not a manifest), so this stays silent to
+	// the user — exit 0, traced to stderr/log only.
+	const resolved = await resolveTreeWindows(layout.windows, shouldLaunch);
+	const placed = resolved.filter((r) => r.windowId);
+	const unplacedApps = resolved.filter((r) => !r.windowId).map((r) => r.app);
 
-	// Step 2: Move all windows to workspace
-	await traverseTreeMove(layout.windows, workspace, shouldLaunch);
+	if (placed.length === 0) {
+		console.error(
+			`Layout for workspace ${layout.workspace} skipped — no windows to place (checked: ${resolved.map((r) => r.app).join(", ")})`,
+		);
+		return;
+	}
+
+	// Step 2: Clear the workspace, then move the resolved windows in tree order
+	// (the reposition step below depends on that order).
+	const evacuated = await clearWorkspace(workspace);
+
+	for (const { app, windowId } of placed) {
+		// Re-resolve: resolution above can be seconds old by the time we get here
+		// (each unresolvable app burns its full ensureWindow retry budget first),
+		// and a window closed in that gap would leave us moving a dead id.
+		const fresh = await getWindowId(app);
+		await moveWindow(fresh ?? (windowId as string), workspace);
+	}
+
+	// Safety net: if every move failed, we have emptied a workspace and stranded
+	// its windows in the stash — the exact outcome this whole guard exists to
+	// prevent. Put them back and leave the workspace as we found it.
+	const landed = await getWindowsInWorkspace(workspace);
+	if (landed.length === 0) {
+		console.error(
+			`Layout for workspace ${layout.workspace} placed nothing — restoring ${evacuated.length} evacuated window(s)`,
+		);
+		for (const windowId of evacuated) {
+			await moveWindow(windowId, workspace);
+		}
+		return;
+	}
 
 	// Step 3: Reposition windows
 	await traverseTreeReposition(layout.windows, workspace);
@@ -537,7 +631,16 @@ async function applyLayout(layout: Layout, shouldLaunch: boolean) {
 	// Step 5: Resize windows
 	await traverseTreeResize(layout.windows, layout.orientation);
 
-	console.log(`✓ Layout applied for workspace ${layout.workspace}`);
+	console.log(
+		`✓ Layout applied for workspace ${layout.workspace} (${landed.length} window(s))`,
+	);
+
+	if (unplacedApps.length > 0) {
+		// Log trace only — a partially-placed layout is not a failure.
+		console.error(
+			`Layout for workspace ${layout.workspace} incomplete — could not place: ${unplacedApps.join(", ")}`,
+		);
+	}
 }
 
 // Main Execution
