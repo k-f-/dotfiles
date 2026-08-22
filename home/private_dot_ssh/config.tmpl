@@ -1,6 +1,14 @@
 {{ if eq .chezmoi.hostname "macmini" -}}
 Include /Users/kef/.colima/ssh_config
 
+# Synology NAS. The mini has its own scoped key (macmini-nas-health) and
+# passwordless sudo there, so scripts/synology/deploy.sh works unattended.
+Host nas 192.168.7.4
+  HostName 192.168.7.4
+  User kef
+  IdentityFile ~/.ssh/id_ed25519_nas
+  IdentitiesOnly yes
+
 {{ end -}}
 Host github.com
   Hostname ssh.github.com
