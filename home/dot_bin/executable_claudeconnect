@@ -1,0 +1,146 @@
+#!/usr/bin/env bash
+# =============================================================================
+# claudeconnect — one command to reach every Claude Code session on the mini
+# =============================================================================
+# The mini runs a herdr server as a LaunchAgent in the GUI login session. That
+# placement is load-bearing: Claude Code keeps its OAuth credential in the login
+# keychain, and a keychain read from an SSH session fails with
+# errSecInteractionNotAllowed. Panes spawned by the GUI-session server inherit
+# the working login; panes spawned from SSH do not.
+#
+# So this script ATTACHES to a server that is already running. It never starts
+# one over SSH. If the server is down, it asks launchd to bring it back.
+#
+#   claudeconnect            attach to the mini's herdr session
+#   claudeconnect --list     what is running, without attaching (no TTY needed)
+#   claudeconnect --local    run herdr here instead (mini unreachable)
+#   claudeconnect --ssh      force ssh transport instead of Eternal Terminal
+#   claudeconnect --status   health check: server, versions, config drift
+# =============================================================================
+
+set -uo pipefail
+
+HOST="${CLAUDECONNECT_HOST:-macmini}"
+AGENT="com.macmini.herdr"
+CONNECT_TIMEOUT=5
+
+say()  { printf '%s\n' "$*" >&2; }
+warn() { printf '\033[0;33m ⚠\033[0m %s\n' "$*" >&2; }
+err()  { printf '\033[0;31m ✗\033[0m %s\n' "$*" >&2; }
+
+usage() { sed -n '4,20p' "$0" | sed 's/^# \{0,1\}//'; }
+
+remote() { ssh -o BatchMode=yes -o ConnectTimeout="$CONNECT_TIMEOUT" "$HOST" "$@"; }
+
+reachable() { remote true >/dev/null 2>&1; }
+
+# --- drift check -------------------------------------------------------------
+# The mini has silently fallen behind before (Claude pinned at 2.1.42 for six
+# months, a stale hook, a chezmoi source path pointing at a directory that did
+# not exist). Surfacing it on every connect is cheap; noticing it by accident
+# months later is not.
+fingerprint_local() {
+    printf '%s|%s|%s\n' \
+        "$(claude --version 2>/dev/null | awk '{print $1}')" \
+        "$(shasum -a 256 "$HOME/.claude/settings.json" 2>/dev/null | awk '{print $1}')" \
+        "$(shasum -a 256 "$HOME/.claude/hooks/agr-archive.sh" 2>/dev/null | awk '{print $1}')"
+}
+
+fingerprint_remote() {
+    remote 'printf "%s|%s|%s\n" \
+        "$($HOME/.local/bin/claude --version 2>/dev/null | awk "{print \$1}")" \
+        "$(shasum -a 256 $HOME/.claude/settings.json 2>/dev/null | awk "{print \$1}")" \
+        "$(shasum -a 256 $HOME/.claude/hooks/agr-archive.sh 2>/dev/null | awk "{print \$1}")"'
+}
+
+check_drift() {
+    local l r
+    l="$(fingerprint_local)"; r="$(fingerprint_remote)"
+    [ -z "$r" ] && return 0
+    [ "$l" = "$r" ] && return 0
+    local lv rv; lv="${l%%|*}"; rv="${r%%|*}"
+    if [ "$lv" != "$rv" ]; then
+        warn "Claude version differs — here $lv, $HOST $rv. Run: ssh $HOST 'claude update'"
+    else
+        warn "Claude config differs from $HOST. Run: ssh $HOST 'chezmoi diff'"
+    fi
+}
+
+# --- server ------------------------------------------------------------------
+server_running() {
+    remote 'PATH=/opt/homebrew/bin:$PATH herdr status server 2>/dev/null | grep -q "status: running"'
+}
+
+ensure_server() {
+    server_running && return 0
+    warn "herdr server is not running on $HOST — asking launchd to start it"
+    # kickstart, not a bare `herdr server`: launchd owns it so it lands in the
+    # GUI session where the keychain is readable.
+    remote "launchctl kickstart -k gui/\$(id -u)/$AGENT" >/dev/null 2>&1
+    for _ in 1 2 3 4 5 6 7 8; do
+        sleep 1
+        server_running && { say "server is up"; return 0; }
+    done
+    err "herdr server did not come up. Check: ssh $HOST 'tail -30 /tmp/macmini-herdr.log'"
+    return 1
+}
+
+# --- transport ---------------------------------------------------------------
+# Eternal Terminal survives IP changes and VPN flips, and keeps OSC52 clipboard
+# working. mosh roams too but breaks OSC52, so it is deliberately not used here.
+attach() {
+    local force_ssh="$1"
+    if [ "$force_ssh" = "no" ] && command -v et >/dev/null 2>&1 \
+       && remote 'command -v etserver >/dev/null 2>&1'; then
+        et "$HOST" -c 'PATH=/opt/homebrew/bin:$PATH herdr' && return 0
+        warn "Eternal Terminal failed — falling back to ssh"
+    fi
+    ssh -t "$HOST" 'PATH=/opt/homebrew/bin:$PATH herdr'
+}
+
+# --- main --------------------------------------------------------------------
+force_ssh=no
+case "${1:-}" in
+    -h|--help) usage; exit 0 ;;
+    --local)
+        command -v herdr >/dev/null 2>&1 || { err "herdr is not installed here"; exit 1; }
+        exec herdr
+        ;;
+    --list)
+        reachable || { err "$HOST is unreachable. On the road? Bring up WireGuard first."; exit 1; }
+        remote 'PATH=/opt/homebrew/bin:$PATH herdr agent list 2>/dev/null' \
+            | python3 -c '
+import json, sys
+try:
+    d = json.load(sys.stdin)
+except Exception:
+    print("no agents running"); sys.exit(0)
+rows = d.get("result", {}).get("agents", [])
+if not rows:
+    print("no agents running"); sys.exit(0)
+for a in rows:
+    print(f'"'"'{a.get("agent_status","?"):<10} {a.get("label") or a.get("pane_id","?"):<28} {a.get("cwd","")}'"'"')
+'
+        exit 0
+        ;;
+    --status)
+        reachable || { err "$HOST is unreachable."; exit 1; }
+        remote 'PATH=/opt/homebrew/bin:$PATH; echo "herdr:"; herdr status server 2>&1 | sed "s/^/  /" | head -5; echo "claude: $($HOME/.local/bin/claude --version 2>/dev/null)"; echo "agr:    $($HOME/go/bin/agr version 2>/dev/null)"'
+        check_drift
+        exit 0
+        ;;
+    --ssh) force_ssh=yes ;;
+    "") ;;
+    *) err "unknown option: $1"; usage; exit 1 ;;
+esac
+
+if ! reachable; then
+    warn "$HOST did not answer on the LAN."
+    say  "If you are away from home, bring up WireGuard, then run this again."
+    sleep 2
+    reachable || { err "still unreachable — giving up"; exit 1; }
+fi
+
+ensure_server || exit 1
+check_drift
+attach "$force_ssh"

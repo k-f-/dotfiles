@@ -84,3 +84,11 @@
 [credential "https://gist.github.com"]
 	helper = 
 	helper = !gh auth git-credential
+{{ if eq .chezmoi.hostname "macmini" }}
+# The mini has no id_ed25519 -- its only keys are scoped deploy keys, so
+# git@github.com: cannot authenticate. Route git over HTTPS instead and let
+# the gh credential helper above supply the token. Mini only; the MacBook
+# keeps SSH via the 1Password agent.
+[url "https://github.com/"]
+	insteadOf = git@github.com:
+{{- end }}
