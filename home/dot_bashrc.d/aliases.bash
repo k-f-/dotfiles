@@ -20,7 +20,6 @@ alias dotfiles='cd "${DOTFILES_DIR:?DOTFILES_DIR not set}" && $EDITOR .'
 alias dots="dotfiles"  # shorter alias
 
 alias code="cd ~/Documents/Code"
-alias tmx="~/.config/tmux/scripts/tmx"
 
 ### Keybindings - display keybindings reference
 # Use: keys (or keys?) - terminal view
