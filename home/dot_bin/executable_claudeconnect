@@ -85,13 +85,51 @@ ensure_server() {
     return 1
 }
 
+# --- filesystem access -------------------------------------------------------
+# herdr needs macOS permission to read protected folders. TCC attributes a pane
+# to the binary that spawned it, so without a grant every pane inherits the
+# denial and any read under ~/Documents blocks forever waiting on a consent
+# prompt that can never be shown. The symptom is a pane with no shell prompt
+# that swallows what you type -- it looks like herdr is broken rather than
+# unpermitted.
+#
+# A symlink does not help (TCC resolves to the real binary) and neither does
+# wrapping herdr in an already-granted interpreter; both were tested. The grant
+# records the resolved Cellar path, so `brew upgrade herdr` moves the binary
+# and silently invalidates it -- the same way this machine ended up with two
+# separate grants for python@3.14.
+#
+# Accept any granted service, in either database. Approving the prompt macOS
+# raises writes kTCCServiceFileProviderDomain to the user db, which is enough;
+# insisting on Full Disk Access here produced a false alarm on a working setup.
+check_fs_access() {
+    local real granted
+    real="$(remote 'python3 -c "import os;print(os.path.realpath(\"/opt/homebrew/bin/herdr\"))"' 2>/dev/null)"
+    [ -n "$real" ] || return 0
+    granted="$(remote "for db in \"\$HOME/Library/Application Support/com.apple.TCC/TCC.db\" \
+                              '/Library/Application Support/com.apple.TCC/TCC.db'; do \
+        sqlite3 \"\$db\" \"select 1 from access where client='$real' and auth_value=2\" 2>/dev/null; \
+      done | head -1" 2>/dev/null)"
+    [ -n "$granted" ] && return 0
+    warn "herdr has no filesystem grant recorded on $HOST."
+    say  "If panes open with no shell prompt and swallow what you type, that is why."
+    say  "Fix: System Settings > Privacy & Security > Full Disk Access > +"
+    say  "     add  $real     (or re-approve the prompt macOS raises)"
+    say  "then: ssh $HOST 'launchctl kickstart -k gui/\$(id -u)/$AGENT'"
+    return 0   # warn, never block -- a wrong read here must not strand you
+}
+
 # --- transport ---------------------------------------------------------------
 # Eternal Terminal survives IP changes and VPN flips, and keeps OSC52 clipboard
 # working. mosh roams too but breaks OSC52, so it is deliberately not used here.
 attach() {
     local force_ssh="$1"
+    # Check that etserver is LISTENING, not merely installed. Testing for the
+    # binary is what let this try ET against a dead server: Homebrew's et had
+    # been broken since a protobuf upgrade, so etserver aborted on launch while
+    # the binary sat there looking healthy.
     if [ "$force_ssh" = "no" ] && command -v et >/dev/null 2>&1 \
-       && remote 'command -v etserver >/dev/null 2>&1'; then
+       && remote 'nc -z -G 3 127.0.0.1 2022 >/dev/null 2>&1'; then
         et "$HOST" -c 'PATH=/opt/homebrew/bin:$PATH herdr' && return 0
         warn "Eternal Terminal failed — falling back to ssh"
     fi
@@ -142,5 +180,6 @@ if ! reachable; then
 fi
 
 ensure_server || exit 1
+check_fs_access
 check_drift
 attach "$force_ssh"
