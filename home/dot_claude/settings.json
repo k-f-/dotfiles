@@ -98,6 +98,17 @@
           }
         ]
       }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/style-reminder.sh",
+            "timeout": 5
+          }
+        ]
+      }
     ]
   },
   "statusLine": {
