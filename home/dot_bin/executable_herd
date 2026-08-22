@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# claudeconnect — one command to reach every Claude Code session on the mini
+# herd — one command to reach every Claude Code session on the mini
 # =============================================================================
 # The mini runs a herdr server as a LaunchAgent in the GUI login session. That
 # placement is load-bearing: Claude Code keeps its OAuth credential in the login
@@ -11,16 +11,21 @@
 # So this script ATTACHES to a server that is already running. It never starts
 # one over SSH. If the server is down, it asks launchd to bring it back.
 #
-#   claudeconnect            attach to the mini's herdr session
-#   claudeconnect --list     what is running, without attaching (no TTY needed)
-#   claudeconnect --local    run herdr here instead (mini unreachable)
-#   claudeconnect --ssh      force ssh transport instead of Eternal Terminal
-#   claudeconnect --status   health check: server, versions, config drift
+#   herd            attach to the mini's herdr session
+#   herd --list     what is running, without attaching (no TTY needed)
+#   herd --local    run herdr here instead (mini unreachable)
+#   herd --ssh      force ssh transport instead of Eternal Terminal
+#   herd --status   health check: server, versions, config drift
+#   herd --reap     kill stale herdr clients left by closed terminals
+#
+# Detach with ctrl+b q. Closing the terminal instead leaves ET waiting for a
+# peer that never returns, because surviving a dropped connection is the whole
+# point of ET -- so the window will not close and the client leaks.
 # =============================================================================
 
 set -uo pipefail
 
-HOST="${CLAUDECONNECT_HOST:-macmini}"
+HOST="${HERD_HOST:-macmini}"
 AGENT="com.macmini.herdr"
 CONNECT_TIMEOUT=5
 
@@ -28,7 +33,7 @@ say()  { printf '%s\n' "$*" >&2; }
 warn() { printf '\033[0;33m ⚠\033[0m %s\n' "$*" >&2; }
 err()  { printf '\033[0;31m ✗\033[0m %s\n' "$*" >&2; }
 
-usage() { sed -n '4,20p' "$0" | sed 's/^# \{0,1\}//'; }
+usage() { sed -n '5,23p' "$0" | sed 's/^# \{0,1\}//'; }
 
 remote() { ssh -o BatchMode=yes -o ConnectTimeout="$CONNECT_TIMEOUT" "$HOST" "$@"; }
 
@@ -165,6 +170,19 @@ for a in rows:
         reachable || { err "$HOST is unreachable."; exit 1; }
         remote 'PATH=/opt/homebrew/bin:$PATH; echo "herdr:"; herdr status server 2>&1 | sed "s/^/  /" | head -5; echo "claude: $($HOME/.local/bin/claude --version 2>/dev/null)"; echo "agr:    $($HOME/go/bin/agr version 2>/dev/null)"'
         check_drift
+        exit 0
+        ;;
+    --reap)
+        # ET is built to survive a dropped connection, so closing the terminal
+        # without detaching (ctrl+b q) leaves the herdr client on the mini
+        # waiting for a peer that will never return. They accumulate. Killing a
+        # client is safe: panes live in the server, not the client.
+        reachable || { err "$HOST is unreachable."; exit 1; }
+        remote 'n=0; for p in $(pgrep -x herdr); do
+              case "$(ps -o command= -p $p)" in *"herdr server"*) continue ;; esac
+              kill $p 2>/dev/null && n=$((n+1))
+            done; echo "reaped $n stale client(s)"'
+        remote 'PATH=/opt/homebrew/bin:$PATH herdr status server 2>/dev/null | head -2'
         exit 0
         ;;
     --ssh) force_ssh=yes ;;
