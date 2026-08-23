@@ -17,6 +17,9 @@
 #   herd --ssh      force ssh transport instead of Eternal Terminal
 #   herd --status   health check: server, versions, config drift
 #   herd --reap     kill stale herdr clients left by closed terminals
+#   herd thread <agr-folder> [-- cmd...]
+#                   open one Thread on the mini with AGR_FOLDER set, so the
+#                   archiver files the transcript there instead of guessing
 #
 # Detach with ctrl+b q. Closing the terminal instead leaves ET waiting for a
 # peer that never returns, because surviving a dropped connection is the whole
@@ -33,7 +36,11 @@ say()  { printf '%s\n' "$*" >&2; }
 warn() { printf '\033[0;33m ⚠\033[0m %s\n' "$*" >&2; }
 err()  { printf '\033[0;31m ✗\033[0m %s\n' "$*" >&2; }
 
-usage() { sed -n '5,23p' "$0" | sed 's/^# \{0,1\}//'; }
+# Print the header block as help. Derived from the banner lines rather than a
+# hardcoded range, which silently truncated twice when the header grew.
+usage() {
+    awk '/^# ={10,}/ {n++; next} n==3 {exit} n>=1 {print}' "$0" | sed 's/^# \{0,1\}//'
+}
 
 remote() { ssh -o BatchMode=yes -o ConnectTimeout="$CONNECT_TIMEOUT" "$HOST" "$@"; }
 
@@ -183,6 +190,42 @@ for a in rows:
               kill $p 2>/dev/null && n=$((n+1))
             done; echo "reaped $n stale client(s)"'
         remote 'PATH=/opt/homebrew/bin:$PATH herdr status server 2>/dev/null | head -2'
+        exit 0
+        ;;
+    thread)
+        shift
+        folder="${1:-}"
+        [ -n "$folder" ] || { err "usage: herd thread <agr-folder> [-- cmd...]"; exit 1; }
+        shift
+        [ "${1:-}" = "--" ] && shift
+        reachable || { err "$HOST is unreachable."; exit 1; }
+        ensure_server || exit 1
+
+        # herdr agent names must match [a-z][a-z0-9_-]{0,31} and be unique
+        # among live agents. Derive one from the folder's last segment.
+        agent_name="$(printf '%s' "${folder##*/}" | tr '[:upper:]' '[:lower:]' | tr -c 'a-z0-9_-' '-' | cut -c1-32)"
+        case "$agent_name" in [a-z]*) ;; *) agent_name="t$agent_name" ;; esac
+
+        rq() { printf '%q' "$1"; }
+
+        # tab create returns the new pane id; agent start needs it.
+        pane="$(remote "PATH=/opt/homebrew/bin:\$PATH herdr tab create --label $(rq "agr: $folder") --env AGR_FOLDER=$(rq "$folder")" 2>/dev/null \
+            | python3 -c 'import json,sys
+try:
+    d = json.load(sys.stdin)["result"]
+    print(d.get("pane", {}).get("pane_id") or d.get("root_pane", {}).get("pane_id") or "")
+except Exception:
+    print("")' 2>/dev/null)"
+        [ -n "$pane" ] || { err "could not create a Thread on $HOST"; exit 1; }
+
+        agent_args=""
+        for arg in "$@"; do agent_args="$agent_args $(rq "$arg")"; done
+
+        if ! remote "PATH=/opt/homebrew/bin:\$PATH herdr agent start $(rq "$agent_name") --kind claude --pane $(rq "$pane")${agent_args:+ --$agent_args}" >/dev/null 2>&1; then
+            warn "Thread $pane created, but the agent did not start. Attach and run claude yourself."
+            exit 1
+        fi
+        say "Opened Thread $pane on $HOST for $folder (agent: $agent_name)"
         exit 0
         ;;
     --ssh) force_ssh=yes ;;
