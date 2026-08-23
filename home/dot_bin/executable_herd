@@ -232,13 +232,19 @@ print(next((w['workspace_id'] for w in ws if w.get('label') == '$ws_label'), '')
         if [ -z "$ws" ]; then
             # A new workspace comes with a root pane. Use it rather than
             # creating a tab beside it, which would leave an empty one.
-            pane="$(remote "PATH=/opt/homebrew/bin:\$PATH herdr workspace create --label $(rq "$ws_label")$cwd_arg$env_arg --focus" 2>/dev/null \
+            read -r pane tab <<<"$(remote "PATH=/opt/homebrew/bin:\$PATH herdr workspace create --label $(rq "$ws_label")$cwd_arg$env_arg --focus" 2>/dev/null \
                 | python3 -c "import json,sys
 try:
-    print(json.load(sys.stdin)['result']['root_pane']['pane_id'])
+    p = json.load(sys.stdin)['result']['root_pane']
+    print(p['pane_id'], p['tab_id'])
 except Exception:
     print('')" 2>/dev/null)"
-            [ -n "$pane" ] && say "Created Project workspace: $ws_label"
+            if [ -n "$pane" ]; then
+                say "Created Project workspace: $ws_label"
+                # workspace create labels the workspace, not its root tab, so
+                # without this the Thread tab keeps its bare number.
+                remote "PATH=/opt/homebrew/bin:\$PATH herdr tab rename $(rq "$tab") $(rq "agr: $folder")" >/dev/null 2>&1
+            fi
         else
             remote "PATH=/opt/homebrew/bin:\$PATH herdr workspace focus $(rq "$ws")" >/dev/null 2>&1
             pane="$(remote "PATH=/opt/homebrew/bin:\$PATH herdr tab create --label $(rq "agr: $folder")$cwd_arg$env_arg" 2>/dev/null \
