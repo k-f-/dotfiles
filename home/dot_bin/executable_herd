@@ -17,7 +17,7 @@
 #   herd --ssh      force ssh transport instead of Eternal Terminal
 #   herd --status   health check: server, versions, config drift
 #   herd --reap     kill stale herdr clients left by closed terminals
-#   herd thread <agr-folder> [--cwd <dir>] [-- cmd...]
+#   herd thread <agr-folder> [--cwd <dir>] [--label <text>] [-- cmd...]
 #                   open one Thread on the mini with AGR_FOLDER set, so the
 #                   archiver files the transcript there instead of guessing.
 #                   --cwd sets the pane's directory, which is what decides
@@ -197,11 +197,18 @@ for a in rows:
     thread)
         shift
         folder="${1:-}"
-        [ -n "$folder" ] || { err "usage: herd thread <agr-folder> [--cwd <dir>] [-- cmd...]"; exit 1; }
+        [ -n "$folder" ] || { err "usage: herd thread <agr-folder> [--cwd <dir>] [--label <text>] [-- cmd...]"; exit 1; }
         shift
         thread_cwd=""
-        if [ "${1:-}" = "--cwd" ]; then thread_cwd="${2:-}"; shift 2; fi
-        [ "${1:-}" = "--" ] && shift
+        thread_label=""
+        while [ $# -gt 0 ]; do
+            case "$1" in
+                --cwd)   thread_cwd="${2:-}"; shift 2 ;;
+                --label) thread_label="${2:-}"; shift 2 ;;
+                --)      shift; break ;;
+                *)       break ;;
+            esac
+        done
         reachable || { err "$HOST is unreachable."; exit 1; }
         ensure_server || exit 1
 
@@ -216,6 +223,10 @@ for a in rows:
         cwd_arg=""
         [ -n "$thread_cwd" ] && cwd_arg=" --cwd $(rq "$thread_cwd")"
         env_arg=" --env AGR_FOLDER=$(rq "$folder")"
+
+        # agr passes the conversation title. Fall back to the folder so a
+        # hand-typed `herd thread <folder>` still labels its tab.
+        tab_label="${thread_label:-agr: $folder}"
 
         # A Project is a workspace; a Thread is a tab inside it. `tab create`
         # targets whichever workspace is focused, so without this every Thread
@@ -243,11 +254,11 @@ except Exception:
                 say "Created Project workspace: $ws_label"
                 # workspace create labels the workspace, not its root tab, so
                 # without this the Thread tab keeps its bare number.
-                remote "PATH=/opt/homebrew/bin:\$PATH herdr tab rename $(rq "$tab") $(rq "agr: $folder")" >/dev/null 2>&1
+                remote "PATH=/opt/homebrew/bin:\$PATH herdr tab rename $(rq "$tab") $(rq "$tab_label")" >/dev/null 2>&1
             fi
         else
             remote "PATH=/opt/homebrew/bin:\$PATH herdr workspace focus $(rq "$ws")" >/dev/null 2>&1
-            pane="$(remote "PATH=/opt/homebrew/bin:\$PATH herdr tab create --label $(rq "agr: $folder")$cwd_arg$env_arg" 2>/dev/null \
+            pane="$(remote "PATH=/opt/homebrew/bin:\$PATH herdr tab create --label $(rq "$tab_label")$cwd_arg$env_arg" 2>/dev/null \
                 | python3 -c "import json,sys
 try:
     d = json.load(sys.stdin)['result']
