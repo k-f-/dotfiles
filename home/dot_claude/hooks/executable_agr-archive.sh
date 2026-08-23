@@ -12,9 +12,19 @@ set -uo pipefail
 
 log="${TMPDIR:-/tmp}/agr-plugin-hook-failures.log"
 
+# AGR_FOLDER states the destination folder outright. `herd` sets it per
+# Thread. Without it the archiver derives from a /Code/ path or asks the model,
+# which is how chats/general accumulated 22 files.
+# Written without an empty-array expansion on purpose: under `set -u`,
+# "${arr[@]}" on an empty array is an unbound-variable error in bash 3.2,
+# which is still what /bin/bash is on macOS.
 archive_status=0
-if ! "$HOME/go/bin/agr" archive claude-hook; then
-    archive_status=$?
+if [ -n "${AGR_FOLDER:-}" ]; then
+    "$HOME/go/bin/agr" archive claude-hook --folder "$AGR_FOLDER" || archive_status=$?
+else
+    "$HOME/go/bin/agr" archive claude-hook || archive_status=$?
+fi
+if [ "$archive_status" -ne 0 ]; then
     echo "$(date '+%Y-%m-%d %H:%M:%S') agr archive claude-hook failed (exit ${archive_status})" >> "$log"
 fi
 
