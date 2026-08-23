@@ -45,9 +45,6 @@
       "linux_wayland": "org.mozilla.firefox",
       "windows": "firefox.exe"
     },
-    "safari": {
-      "macOS": "com.apple.Safari"
-    },
     "calendar": {
       "macOS": "com.apple.iCal",
       "linux_x11": "thunderbird",
@@ -130,9 +127,6 @@
       "windows": [
         {
           "app": "browser"
-        },
-        {
-          "app": "safari"
         }
       ]
     },
