@@ -10,3 +10,9 @@ agent_panel_sort = "spaces"
 rows = [
   ["state_icon", { token = "tab", bold = true }],
 ]
+
+# Worktrees live outside iCloud on purpose. ~/Documents is iCloud-synced to
+# both Macs, and a worktree's .git file points back into the main repo's
+# .git/worktrees/ -- two machines syncing that metadata corrupts it.
+[worktrees]
+directory = "~/.local/state/herdr/worktrees"
