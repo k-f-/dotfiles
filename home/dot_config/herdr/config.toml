@@ -1,0 +1,12 @@
+onboarding = false
+
+[ui.sound]
+enabled = false
+
+[ui]
+agent_panel_sort = "spaces"
+
+[ui.sidebar.agents]
+rows = [
+  ["state_icon", { token = "tab", bold = true }],
+]

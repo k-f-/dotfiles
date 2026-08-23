@@ -1,0 +1,95 @@
+{
+  "version": 3,
+  "lines": [
+    [
+      {
+        "id": "8867506e-84ea-48e5-b207-628f420854e6",
+        "type": "session-name",
+        "backgroundColor": "bgBrightMagenta",
+        "rawValue": true
+      },
+      {
+        "id": "7",
+        "type": "git-branch",
+        "color": "magenta",
+        "merge": true
+      },
+      {
+        "id": "9",
+        "type": "git-changes",
+        "color": "yellow"
+      },
+      {
+        "id": "1",
+        "type": "model",
+        "color": "cyan",
+        "bold": true,
+        "rawValue": true
+      },
+      {
+        "id": "d210e94d-450a-465e-817f-3657a23d9bc8",
+        "type": "tokens-total",
+        "backgroundColor": "bgBrightCyan",
+        "rawValue": true
+      },
+      {
+        "id": "2e0f154e-913e-4b12-adfc-960891ecafc1",
+        "type": "flex-separator",
+        "backgroundColor": "bgBlue"
+      },
+      {
+        "id": "ae55ee20-2f07-4196-8cc5-7085e990e9ab",
+        "type": "session-usage",
+        "backgroundColor": "bgYellow",
+        "rawValue": true,
+        "metadata": {
+          "display": "time"
+        }
+      },
+      {
+        "id": "dbc467e3-183c-44eb-a19c-f5515e512556",
+        "type": "session-cost",
+        "backgroundColor": "bgMagenta",
+        "rawValue": true
+      },
+      {
+        "id": "a8b3db3b-73d3-45f8-8cdf-04738992b20d",
+        "type": "weekly-usage",
+        "backgroundColor": "bgBrightYellow",
+        "rawValue": true,
+        "metadata": {
+          "display": "slider"
+        }
+      }
+    ]
+  ],
+  "flexMode": "full-minus-40",
+  "compactThreshold": 60,
+  "colorLevel": 2,
+  "defaultPaddingSide": "both",
+  "inheritSeparatorColors": false,
+  "globalBold": false,
+  "gitCacheTtlSeconds": 5,
+  "minimalistMode": false,
+  "powerline": {
+    "enabled": true,
+    "separators": [
+      "",
+      ""
+    ],
+    "separatorInvertBackground": [
+      false,
+      false
+    ],
+    "startCaps": [
+      ""
+    ],
+    "endCaps": [
+      ""
+    ],
+    "theme": "dracula",
+    "autoAlign": false,
+    "continueThemeAcrossLines": false
+  },
+  "defaultPadding": " "
+}
