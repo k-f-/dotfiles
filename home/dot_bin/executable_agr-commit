@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Commit and push anything uncommitted in the agr archive.
+#
+# agr-archive.sh commits at SessionEnd. Persistent herdr sessions do not end,
+# so an SME document edited in a long-running Thread can sit uncommitted for
+# days. This is the net; session-end commits still do the normal work.
+#
+# Safe to run blind: agr's .gitignore is an allowlist, so `git add -A` cannot
+# pick up scratch files a session left in a topic folder.
+set -uo pipefail
+
+repo="${AGR_DIR:-$HOME/Documents/Code/agr}"
+log="${TMPDIR:-/tmp}/agr-commit.log"
+
+git -C "$repo" rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
+
+git -C "$repo" add -A
+if git -C "$repo" diff --cached --quiet; then exit 0; fi
+
+files=$(git -C "$repo" diff --cached --name-only | wc -l | tr -d ' ')
+
+if ! git -C "$repo" commit -q -m "docs: uncommitted archive changes (hourly, $(date '+%Y-%m-%d %H:%M'))"; then
+    echo "$(date '+%Y-%m-%d %H:%M:%S') commit failed" >> "$log"
+    exit 1
+fi
+
+# Both machines push to this repo, so rebase before pushing. Must come after
+# the commit: pull --rebase refuses to run with a dirty index.
+git -C "$repo" pull --rebase -q 2>/dev/null || true
+if git -C "$repo" push -q 2>/dev/null; then
+    echo "$(date '+%Y-%m-%d %H:%M:%S') committed and pushed $files file(s)" >> "$log"
+else
+    echo "$(date '+%Y-%m-%d %H:%M:%S') committed $files file(s), push failed" >> "$log"
+fi
