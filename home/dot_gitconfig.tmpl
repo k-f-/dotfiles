@@ -64,6 +64,7 @@
 	format = ssh
 [gpg "ssh"]
 	program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+	allowedSignersFile = ~/.config/git/allowed_signers
 [pull]
 	rebase = false
 [interactive]
@@ -91,4 +92,13 @@
 # keeps SSH via the 1Password agent.
 [url "https://github.com/"]
 	insteadOf = git@github.com:
+
+# The mini is headless, so op-ssh-sign cannot reach the 1Password agent
+# socket and every commit fails to sign. Sign with an on-disk key via
+# ssh-keygen instead. Later values win, so these override the blocks
+# above. Mini only; the MacBook keeps 1Password.
+[gpg "ssh"]
+	program = ssh-keygen
+[user]
+	signingkey = ~/.ssh/id_ed25519_signing.pub
 {{- end }}

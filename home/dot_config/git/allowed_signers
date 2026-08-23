@@ -1,0 +1,11 @@
+# Public keys trusted to sign commits as Kyle Fring.
+# Consumed by gpg.ssh.allowedSignersFile so `git log --show-signature`
+# and `git verify-commit` can check signatures locally.
+# Public keys only -- safe in a public repo.
+
+# MacBook (kef-mbp), held in 1Password, signed via op-ssh-sign.
+kyle@fring.io ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOlBe1vBsrKH5xPKAYQGyzvsRp8iWhWBDHMqgoPol6uz
+
+# Mac mini (macmini), on-disk key, signed via ssh-keygen. Headless: the mini
+# has no GUI session to unlock the 1Password agent.
+kyle@fring.io ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDUdeLdywYCMFUpIGv/mX4KtZk/bpcBDEWSW74qe35bF
