@@ -42,6 +42,7 @@ alias less="less -R" # display colors correctly
 alias sbcl="rlwrap sbcl"
 alias lisp="sbcl --noinform"
 alias lispi="sbcl -noinform --load"
+alias fable="claude --model 'claude-fable-5[1m]'" # session-only; /model writes settings.json
 alias la="ls -la"
 alias ln="ln -v"
 alias mkdir="mkdir -p"
