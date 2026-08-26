@@ -17,11 +17,14 @@
 #   herd --ssh      force ssh transport instead of Eternal Terminal
 #   herd --status   health check: server, versions, config drift
 #   herd --reap     kill stale herdr clients left by closed terminals
-#   herd thread <agr-folder> [--cwd <dir>] [--label <text>] [-- cmd...]
+#   herd thread <agr-folder> [--cwd <dir>] [--label <text>] [--prompt <text>]
+#                            [-- agent-flags...]
 #                   open one Thread on the mini with AGR_FOLDER set, so the
 #                   archiver files the transcript there instead of guessing.
 #                   --cwd sets the pane's directory, which is what decides
-#                   whether a repo's AGENTS.md loads.
+#                   whether a repo's AGENTS.md loads. --prompt is sent after
+#                   the agent is up, because herdr refuses an argv element
+#                   that holds a newline and agr prompts are multi-line.
 #
 # Detach with ctrl+b q. Closing the terminal instead leaves ET waiting for a
 # peer that never returns, because surviving a dropped connection is the whole
@@ -197,16 +200,18 @@ for a in rows:
     thread)
         shift
         folder="${1:-}"
-        [ -n "$folder" ] || { err "usage: herd thread <agr-folder> [--cwd <dir>] [--label <text>] [-- cmd...]"; exit 1; }
+        [ -n "$folder" ] || { err "usage: herd thread <agr-folder> [--cwd <dir>] [--label <text>] [--prompt <text>] [-- agent-flags...]"; exit 1; }
         shift
         thread_cwd=""
         thread_label=""
+        thread_prompt=""
         while [ $# -gt 0 ]; do
             case "$1" in
-                --cwd)   thread_cwd="${2:-}"; shift 2 ;;
-                --label) thread_label="${2:-}"; shift 2 ;;
-                --)      shift; break ;;
-                *)       break ;;
+                --cwd)    thread_cwd="${2:-}"; shift 2 ;;
+                --label)  thread_label="${2:-}"; shift 2 ;;
+                --prompt) thread_prompt="${2:-}"; shift 2 ;;
+                --)       shift; break ;;
+                *)        break ;;
             esac
         done
         reachable || { err "$HOST is unreachable."; exit 1; }
@@ -287,6 +292,17 @@ except Exception:
             warn "Thread $pane created, but the agent did not start. Attach and run claude yourself."
             err "herdr agent start: $start_out"
             exit 1
+        fi
+        # The prompt goes in its own call. herdr rejects an argv element that
+        # holds a newline (invalid_agent_argument), and every folder prompt is
+        # multi-line. `agent prompt` takes multi-line text and delivers it as
+        # one message.
+        if [ -n "$thread_prompt" ]; then
+            if ! prompt_out="$(remote "PATH=/opt/homebrew/bin:\$PATH herdr agent prompt $(rq "$agent_name") $(rq "$thread_prompt")" 2>&1)"; then
+                warn "Thread $pane is up, but the prompt did not go through. Type it in the pane."
+                err "herdr agent prompt: $prompt_out"
+                exit 1
+            fi
         fi
         say "Opened Thread $pane on $HOST for $folder (agent: $agent_name)"
         exit 0
