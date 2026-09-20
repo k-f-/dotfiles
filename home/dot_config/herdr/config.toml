@@ -4,7 +4,7 @@ onboarding = false
 enabled = false
 
 [ui]
-agent_panel_sort = "spaces"
+agent_panel_sort = "priority"
 
 [ui.sidebar.agents]
 rows = [
