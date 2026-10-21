@@ -1,4 +1,12 @@
 {
+  "env": {
+    "CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION": "1000"
+  },
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
   "permissions": {
     "allow": [
       "Bash(git:*)",
@@ -39,6 +47,7 @@
     "ask": [],
     "defaultMode": "auto"
   },
+  "model": "claude-fable-5[1m]",
   "hooks": {
     "SessionEnd": [
       {
@@ -140,10 +149,19 @@
   "enabledPlugins": {
     "clangd-lsp@claude-plugins-official": true
   },
+  "outputStyle": "ELI5",
+  "feedbackDrafts": "off",
   "alwaysThinkingEnabled": true,
   "effortLevel": "xhigh",
+  "modelSettings": {
+    "claude-fable-5": {
+      "effortLevel": "xhigh"
+    }
+  },
   "tui": "fullscreen",
   "skipWorkflowUsageWarning": true,
+  "autoContinueAtUsageLimit": true,
+  "remoteControlAtStartup": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
   "autoMode": {
@@ -172,11 +190,5 @@
       "**Trusted repo**: The git repository the agent started in (/Users/kef/Documents/Code) — note this repo currently has zero tracked files and no configured remotes, so there is no verified remote or visibility to scope against; treat pushes/publication decisions cautiously until a remote is configured",
       "**Org-specific CLIs**: None configured (chezmoi, osascript, and agr seen in use, but no org affiliation evidenced)"
     ]
-  },
-  "env": {
-    "CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION": "1000"
-  },
-  "outputStyle": "ELI5",
-  "autoContinueAtUsageLimit": true,
-  "remoteControlAtStartup": true
+  }
 }
