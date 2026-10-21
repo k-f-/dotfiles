@@ -56,7 +56,7 @@ alias 1p="/opt/homebrew/bin/op"
 
 ### Topgrade - curated update (brew + casks + App Store + self-update only)
 # Use `topgrade-full` for the unfiltered kitchen-sink run
-alias topgrade="command topgrade --only brew_formula,brew_cask,mas,self_update,shell,vim,git_repos"
+alias topgrade="command topgrade --only brew_formula brew_cask mas self_update shell vim git_repos"
 alias topgrade-full="command topgrade"
 
 ### yt-dlp (youtube-dl is dead, long live yt-dlp)
