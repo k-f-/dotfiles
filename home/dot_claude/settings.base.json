@@ -165,6 +165,10 @@
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
   "autoMode": {
+    "allow": [
+      "$defaults",
+      "Git push to the user's own GitHub repos under github.com/k-f-/ (including the public dotfiles repo) when the user has asked in this session to push"
+    ],
     "environment": [
       "### Org-wide",
       "**Organization**: None configured",
