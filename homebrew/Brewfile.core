@@ -38,6 +38,7 @@ brew "gitleaks"             # Secret scanning
 brew "bfg"                  # Repo history cleaner
 brew "diff-so-fancy"        # Git pager (configured in git/dot-gitconfig)
 brew "gh"                   # GitHub CLI
+brew "git-filter-repo"      # History rewriting
 
 # Editors
 brew "neovim"
@@ -76,6 +77,15 @@ brew "mas"                  # Mac App Store CLI
 brew "syncthing"            # File sync
 brew "unison"               # File sync
 brew "xsel"                 # X selection (clipboard)
+brew "chezmoi"              # Dotfiles manager (this repo)
+brew "herdr"                # Remote sessions
+brew "nut"                  # UPS monitor (the mini runs upsmon)
+
+# Containers
+brew "colima"               # Container runtime for docker
+brew "docker"
+brew "docker-buildx"
+brew "docker-compose"
 
 # AI
 brew "opencode"
@@ -96,6 +106,7 @@ brew "shellcheck"  # Static analysis and lint tool, for (ba)sh scripts
 
 # Productivity
 cask "1password"
+cask "stats"                # Menu bar system monitor
 
 # Fonts
 cask "font-awesome-terminal-fonts"

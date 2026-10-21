@@ -31,7 +31,6 @@ cask "signal"
 cask "slack"
 
 # Media
-cask "calibre"              # E-book management
 cask "iina"                 # Media player
 cask "spotify"
 cask "vlc"
@@ -48,7 +47,6 @@ cask "keycastr"             # Keystroke visualizer
 cask "keymapp"              # ZSA keyboard firmware
 cask "monitorcontrol"       # External monitor control
 cask "sf-symbols"           # Apple SF Symbols
-cask "stats"                # Menu bar system monitor
 
 # Utilities
 cask "appcleaner"           # Uninstaller

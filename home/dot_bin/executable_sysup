@@ -17,6 +17,21 @@ set -uo pipefail
 
 step() { printf '\n\033[1;34m==> %s\033[0m\n' "$*"; }
 
+# iCloud syncs the working tree, and a conflict leaves "name 2" copies. chezmoi
+# would install a copy from home/ into ~, so stop before it runs.
+step "iCloud duplicates"
+repo=$(chezmoi execute-template '{{ .chezmoi.workingTree }}')
+dupes=$(find "$repo/home" "$repo/.git" \( -name '* [0-9]' -o -name '* [0-9].*' \) -prune -print)
+if [[ -n $dupes ]]; then
+    echo "$dupes"
+    echo "stopped: check each copy for edits the original lacks, then remove them and re-run:"
+    printf 'rm -rf'
+    while IFS= read -r f; do printf ' %q' "$f"; done <<< "$dupes"
+    echo
+    exit 1
+fi
+echo "none"
+
 step "dotfiles (chezmoi)"
 chezmoi status
 chezmoi update   # pull, then apply; asks about files changed on both sides
