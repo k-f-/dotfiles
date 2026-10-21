@@ -1,0 +1,12 @@
+#!/bin/bash
+# Claude Code rewrites "model" on every /model. As a plain managed file,
+# settings.json then drifts and the nightly `chezmoi update` stops to ask.
+# This installs settings.base.json but keeps the live "model" value.
+# Edit settings.base.json; `chezmoi re-add` does not work on this file.
+base="{{ joinPath .chezmoi.sourceDir "dot_claude/settings.base.json" }}"
+model=$(jq -r '.model // empty' 2>/dev/null)
+if [[ -z $model ]]; then
+    cat "$base"
+else
+    jq --arg m "$model" '.model = $m' "$base"
+fi

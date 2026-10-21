@@ -10,7 +10,7 @@ chezmoi-managed dotfiles for two machines: a MacBook (`kef-mbp`) and a Mac mini
 ## This repo is public
 
 Check before every push. Generated Claude Code config is the usual leak: the
-`autoMode` block in `dot_claude/settings.json` is derived from the environment
+`autoMode` block in `dot_claude/settings.base.json` is derived from the environment
 and has held machine paths and org detail. `gitleaks protect --staged` catches
 credentials but not that.
 
@@ -65,6 +65,9 @@ blocks carry things the MacBook must not get: the `nas` ssh host, and the
   `chezmoi apply` on the mini straight after an edit here reads the old file.
 - **Do not rewrite `settings.json` with a plain `json.dump`.** It escapes
   non-ASCII, which produces a large spurious diff. Pass `ensure_ascii=False`.
+- **Do not `chezmoi re-add ~/.claude/settings.json`.** It is a modify script
+  that installs `dot_claude/settings.base.json` and keeps the live `model`, so
+  `/model` no longer blocks the nightly update. Edit the base file instead.
 - **Do not add a rule to `dot_claude/CLAUDE.md` that must always hold.** That
   is a guidance file and drifts. Hooks in `settings.json` are the enforcement
   layer; eight hook commands across seven events are wired.
