@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# =============================================================================
+# sysup — bring this Mac up to date, then surface anything that needs a click
+# =============================================================================
+# Order matters. Dotfiles go first, so a Brewfile change installs before the
+# upgrades run. Then topgrade (brew formulae and casks, App Store, oh-my-zsh),
+# then mackup.
+#
+# The last pass is the point of running this by hand. An upgrade changes an
+# app's code signature, and macOS can drop its privacy grant (TCC) with it. The
+# next headless run then fails with nobody there to see the prompt. So every
+# upgraded app opens once now, and every launchd job whose last run failed is
+# listed, while someone is watching.
+# =============================================================================
+
+set -uo pipefail
+
+step() { printf '\n\033[1;34m==> %s\033[0m\n' "$*"; }
+
+step "dotfiles (chezmoi)"
+chezmoi status
+chezmoi update   # pull, then apply; asks about files changed on both sides
+
+step "upgrades (topgrade)"
+brew update --quiet
+upgraded_casks=$(brew outdated --cask --quiet)
+command topgrade --yes --no-retry --only brew_formula brew_cask mas shell
+
+step "app settings (mackup)"
+if [[ "$(chezmoi execute-template '{{ default false .desktop }}')" == true ]]; then
+    mackup backup --force
+else
+    echo "skipped: only the desktop machine writes the shared mackup copy"
+fi
+
+step "permissions"
+opened=no
+for cask in $upgraded_casks; do
+    while IFS= read -r app; do
+        [[ -d "/Applications/$app" ]] || continue
+        echo "opening $app"
+        open -a "/Applications/$app" && opened=yes
+    done < <(brew info --cask --json=v2 "$cask" |
+        jq -r '.casks[].artifacts[] | select(type=="object" and has("app")) | .app[] | strings')
+done
+[[ $opened == no ]] && echo "no upgraded apps to open"
+
+failed=no
+for plist in "$HOME"/Library/LaunchAgents/*.plist; do
+    label=$(plutil -extract Label raw -o - "$plist" 2>/dev/null) || continue
+    code=$(launchctl print "gui/$UID/$label" 2>/dev/null |
+        awk -F'= ' '/last exit code/ {print $2; exit}')
+    [[ -z $code || $code == 0 || $code == "(never exited)" ]] && continue
+    failed=yes
+    log=$(plutil -extract StandardErrorPath raw -o - "$plist" 2>/dev/null)
+    echo "FAILED last run (exit $code): $label${log:+  log: $log}"
+done
+if [[ $failed == yes ]]; then
+    echo "re-run one while watching: launchctl kickstart -k gui/$UID/<label>"
+    open "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles"
+fi
+
+if [[ $opened == yes || $failed == yes ]]; then
+    echo
+    echo "Any prompts are on this Mac's screen. Not in front of it? From the other Mac:"
+    echo "  open vnc://$(scutil --get LocalHostName).local"
+fi
