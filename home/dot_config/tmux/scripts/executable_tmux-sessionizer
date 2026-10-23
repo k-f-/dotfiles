@@ -12,6 +12,7 @@
 
 # --- Configure your project roots here ---
 PROJECT_DIRS=(
+    ~/Code
     ~/Documents/Code
 )
 
