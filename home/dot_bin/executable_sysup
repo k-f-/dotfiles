@@ -39,7 +39,16 @@ chezmoi update   # pull, then apply; asks about files changed on both sides
 step "upgrades (topgrade)"
 brew update --quiet
 upgraded_casks=$(brew outdated --cask --quiet)
+upgraded_formulae=$(brew outdated --formula --quiet)
 command topgrade --yes --no-retry --only brew_formula brew_cask mas shell
+
+# et is built from source against the exact protobuf dylib, so a protobuf bump
+# leaves etserver unable to load. The running daemon masks it until the next
+# reboot, then every remote session fails (2026-10-23).
+if grep -qx protobuf <<< "$upgraded_formulae"; then
+    step "rebuild et (protobuf changed)"
+    brew reinstall mistertea/et/et
+fi
 
 step "app settings (mackup)"
 if [[ "$(chezmoi execute-template '{{ default false .desktop }}')" == true ]]; then
