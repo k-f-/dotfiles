@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# =============================================================================
+# brew-prune — remove what Homebrew has that this machine's Brewfiles lack
+# =============================================================================
+# Picks the Brewfiles the same way run_onchange_darwin-packages.sh does: core on
+# every Mac, desktop only where chezmoi has [data] desktop = true. A bare
+# `brew bundle cleanup --file=Brewfile.core --force` run on the MacBook removed
+# 27 casks and 15 App Store apps (2026-10-21), so this always previews first and
+# asks before --force.
+# =============================================================================
+
+set -uo pipefail
+
+repo=$(chezmoi execute-template '{{ .chezmoi.workingTree }}')
+tmp=$(mktemp)
+trap 'rm -f "$tmp"' EXIT
+
+cat "$repo/homebrew/Brewfile.core" > "$tmp"
+if [[ "$(chezmoi execute-template '{{ default false .desktop }}')" == true ]]; then
+    cat "$repo/homebrew/Brewfile.desktop" >> "$tmp"
+    echo "$(hostname -s): core + desktop Brewfiles"
+else
+    echo "$(hostname -s): core Brewfile only"
+fi
+
+brew bundle cleanup --file="$tmp"
+read -r -p "Remove everything listed above? [y/N] " answer
+[[ $answer == [yY] ]] || exit 0
+brew bundle cleanup --force --file="$tmp"
