@@ -50,6 +50,25 @@ if grep -qx protobuf <<< "$upgraded_formulae"; then
     brew reinstall mistertea/et/et
 fi
 
+# A running daemon keeps its old libraries mapped, so a binary an upgrade broke
+# fails only at the next reboot. Check every KeepAlive agent that runs a brew
+# binary now: each library it links must still exist. Restarting them instead
+# would kill this session (etserver) or drop Remote Control (herdr).
+step "daemon binaries"
+broken=no
+for plist in "$HOME"/Library/LaunchAgents/*.plist; do
+    plutil -extract KeepAlive xml1 -o /dev/null "$plist" 2>/dev/null || continue
+    prog=$(plutil -extract ProgramArguments.0 raw -o - "$plist" 2>/dev/null)
+    [[ $prog == /opt/homebrew/* ]] || continue
+    while IFS= read -r lib; do
+        [[ $lib == /opt/homebrew/* && ! -e $lib ]] || continue
+        broken=yes
+        echo "BROKEN $(basename "$prog"): $lib is gone. Reinstall it, then:"
+        echo "  launchctl kickstart -k gui/$UID/$(plutil -extract Label raw -o - "$plist")"
+    done < <(otool -L "$prog" 2>/dev/null | awk 'NR>1 {print $1}')
+done
+[[ $broken == no ]] && echo "all daemon binaries load"
+
 step "app settings (mackup)"
 if [[ "$(chezmoi execute-template '{{ default false .desktop }}')" == true ]]; then
     mackup backup --force
