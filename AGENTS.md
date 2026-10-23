@@ -60,9 +60,11 @@ blocks carry things the MacBook must not get: the `nas` ssh host, and the
   in both source and destination shows as `MM` and apply stops to ask, which
   fails outright in a non-interactive session with "could not open a new TTY".
   Render it with `chezmoi cat` and install that instead.
-- **Do not assume the other machine sees your edit yet.** `~/Documents/Code` is
-  iCloud-synced, so a source change takes about a minute to arrive. A
-  `chezmoi apply` on the mini straight after an edit here reads the old file.
+- **Do not put the repo in iCloud.** Each machine has its own clone at
+  `~/Code/dotfiles`; GitHub is the sync. Commit, push, then `chezmoi update` on
+  the other Mac (the mini runs it on a schedule). Two Macs sharing one synced
+  `.git` gave `bad object HEAD`, ` 2` duplicate files and stale commit graphs
+  (2026-10-21), because iCloud moves files one at a time.
 - **Do not rewrite `settings.json` with a plain `json.dump`.** It escapes
   non-ASCII, which produces a large spurious diff. Pass `ensure_ascii=False`.
 - **Do not `chezmoi re-add ~/.claude/settings.json`.** It is a modify script
@@ -83,4 +85,4 @@ chezmoi source-path               # confirm which source dir is active
 ```
 
 The mini has pointed at a stale source directory before. `source-path` should
-print `/Users/kef/Documents/Code/dotfiles/home` on both machines.
+print `/Users/kef/Code/dotfiles/home` on both machines.
