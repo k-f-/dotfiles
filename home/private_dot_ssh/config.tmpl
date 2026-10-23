@@ -9,6 +9,14 @@ Host nas 192.168.7.4
   IdentityFile ~/.ssh/id_ed25519_nas
   IdentitiesOnly yes
 
+# MacBook, while it is on the home LAN. Away from home it needs its WireGuard
+# address instead; Bonjour does not cross the tunnel.
+Host mbp kef-mbp.local
+  HostName kef-mbp.local
+  User kef
+  IdentityFile ~/.ssh/id_ed25519_mbp
+  IdentitiesOnly yes
+
 {{ end -}}
 Host github.com
   Hostname ssh.github.com
