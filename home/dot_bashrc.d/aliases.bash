@@ -19,7 +19,6 @@ alias vim="nvim"
 alias dotfiles='cd "${DOTFILES_DIR:?DOTFILES_DIR not set}" && $EDITOR .'
 alias dots="dotfiles"  # shorter alias
 
-alias code="cd ~/Code"
 
 ### Keybindings - display keybindings reference
 # Use: keys (or keys?) - terminal view
