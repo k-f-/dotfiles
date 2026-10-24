@@ -1,5 +1,5 @@
 # Dotfiles Brewfile (Desktop)
-# Install with: brew bundle --file=~/Documents/Code/dotfiles/homebrew/Brewfile.desktop
+# Install with: brew bundle --file=~/Code/dotfiles/homebrew/Brewfile.desktop
 #
 # Desktop applications and optional tools.
 # Install with --full flag or manually via: brew bundle --file=homebrew/Brewfile.desktop

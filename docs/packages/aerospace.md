@@ -139,7 +139,7 @@ brew install bun                # for the organize chain
 ### Stow the configs
 
 ```bash
-cd ~/Documents/Code/dotfiles
+cd ~/Code/dotfiles
 stow --target="$HOME" aerospace bash universal-wm universal-layout-manager
 ```
 

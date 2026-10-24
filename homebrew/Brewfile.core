@@ -1,5 +1,5 @@
 # Dotfiles Brewfile (Core)
-# Install with: brew bundle --file=~/Documents/Code/dotfiles/homebrew/Brewfile.core
+# Install with: brew bundle --file=~/Code/dotfiles/homebrew/Brewfile.core
 #
 # Core CLI tools and essential applications.
 # Always installed as part of the base setup.
