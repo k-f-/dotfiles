@@ -121,6 +121,6 @@ cask "1password-cli"  # (1Password CLI) Command-line interface for 1Password
 # =============================================================================
 
 mas "1Password for Safari", id: 1569813296
-mas "Numbers", id: 409203825      # the finance agent reads the portfolio workbook on the mini
+mas "Numbers", id: 361304891      # the finance agent reads the portfolio workbook on the mini
 
 tap "mistertea/et"
