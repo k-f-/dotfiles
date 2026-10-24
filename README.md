@@ -43,12 +43,12 @@ brew install chezmoi
 1. **Clone this repository** (submodules can be initialized later — a
    chezmoi run_once script handles them)
    ```bash
-   git clone https://github.com/k-f-/dotfiles.git ~/Documents/Code/dotfiles
+   git clone https://github.com/k-f-/dotfiles.git ~/Code/dotfiles
    ```
 
 2. **Point chezmoi at it and apply**
    ```bash
-   printf 'sourceDir = "%s"\n' "$HOME/Documents/Code/dotfiles" > ~/.config/chezmoi/chezmoi.toml
+   printf 'sourceDir = "%s"\n' "$HOME/Code/dotfiles" > ~/.config/chezmoi/chezmoi.toml
    chezmoi doctor     # sanity check
    chezmoi diff       # preview
    chezmoi apply      # deploy configs + run bootstrap scripts (brew bundle, oh-my-zsh, submodules)
@@ -355,9 +355,9 @@ cd ~
 stow --target="$HOME" --dotfiles dotfiles/bash  # Don't do this!
 ```
 
-If you accidentally created symlinks in the wrong location (e.g., `.bashrc` appears in `~/Documents/Code/` instead of just `~`), remove them and re-run the installer:
+If you accidentally created symlinks in the wrong location (e.g., `.bashrc` appears in `~/Code/` instead of just `~`), remove them and re-run the installer:
 ```bash
-cd ~/Documents/Code
+cd ~/Code
 rm -f .bashrc .bashrc.d .bin .profile  # Remove incorrect symlinks
 cd ~/dotfiles
 ./install  # Re-run installer to create correct symlinks

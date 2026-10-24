@@ -88,7 +88,7 @@ Manual installation:
 chmod +x em
 
 # Add to PATH (if not already via dotfiles)
-ln -s ~/Documents/Code/dotfiles/bash/dot-bin/em ~/.local/bin/em
+ln -s ~/Code/dotfiles/bash/dot-bin/em ~/.local/bin/em
 ```
 
 ## Neovim Configuration

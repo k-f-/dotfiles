@@ -179,7 +179,7 @@
       "**Default / protected branches**: unknown — origin/HEAD unset, no remotes configured for this repo",
       "**CI/CD deploy targets**: None configured",
       "**Network posture**: None configured",
-      "**Source control**: The trusted repo (/Users/kef/Documents/Code) only — no remotes are configured, and no additional orgs configured",
+      "**Source control**: The trusted repo (/Users/kef/Code) only — no remotes are configured, and no additional orgs configured",
       "**Trusted internal domains**: None configured",
       "**Trusted cloud buckets**: fring.io (config-derived — not a confirmed upload destination; uploads of local data still require confirmation)",
       "**Key internal services**: None configured",
@@ -191,7 +191,7 @@
       "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
       "### User-specific",
       "**Primary use of Claude Code**: software development",
-      "**Trusted repo**: The git repository the agent started in (/Users/kef/Documents/Code) — note this repo currently has zero tracked files and no configured remotes, so there is no verified remote or visibility to scope against; treat pushes/publication decisions cautiously until a remote is configured",
+      "**Trusted repo**: The git repository the agent started in (/Users/kef/Code) — note this repo currently has zero tracked files and no configured remotes, so there is no verified remote or visibility to scope against; treat pushes/publication decisions cautiously until a remote is configured",
       "**Org-specific CLIs**: None configured (chezmoi, osascript, and agr seen in use, but no org affiliation evidenced)"
     ]
   }

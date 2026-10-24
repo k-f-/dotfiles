@@ -55,7 +55,7 @@ print("\n".join(str(r.get("sessionId") or r.get("session_id") or "") for r in ro
 # Everything the archive already holds. Archived conversations carry their
 # session_id in frontmatter, so this is authoritative -- far better than
 # trusting a local state file that a reinstall or a second machine would miss.
-AGR_REPO="${AGR_REPO:-$HOME/Documents/Code/agr}"
+AGR_REPO="${AGR_REPO:-$HOME/Code/agr}"
 archived_ids="$(grep -rhoE '^session_id: .+' "$AGR_REPO" 2>/dev/null | sed 's/^session_id: //' | tr -d "'\"")"
 
 swept_count=0

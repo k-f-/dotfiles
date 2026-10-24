@@ -9,7 +9,7 @@
 # pick up scratch files a session left in a topic folder.
 set -uo pipefail
 
-repo="${AGR_DIR:-$HOME/Documents/Code/agr}"
+repo="${AGR_DIR:-$HOME/Code/agr}"
 log="${TMPDIR:-/tmp}/agr-commit.log"
 
 git -C "$repo" rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0

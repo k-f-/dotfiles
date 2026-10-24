@@ -14,7 +14,7 @@ Employment/manager-side questions get a triage step first: is this really a comp
 
 ## Pipeline
 
-1. **Intake.** Check `~/Documents/Code/agr/chats/legal/` for an existing memo (one file per matter, `<matter-slug>.md`). New matter → create from the template below. Pin jurisdiction in the memo header — default Chattanooga, Tennessee (Hamilton County) + federal; ask Kyle only if the matter obviously lives elsewhere. Pull prior context from the agr archive when the matter references past events.
+1. **Intake.** Check `~/Code/agr/chats/legal/` for an existing memo (one file per matter, `<matter-slug>.md`). New matter → create from the template below. Pin jurisdiction in the memo header — default Chattanooga, Tennessee (Hamilton County) + federal; ask Kyle only if the matter obviously lives elsewhere. Pull prior context from the agr archive when the matter references past events.
 
 2. **Research fan-out.** Decompose the question into 2–4 angles, no more. Launch one `legal-researcher` subagent (model sonnet) per angle, all in parallel. Each prompt carries: matter summary, jurisdiction, the one assigned angle, relevant memo excerpts. Fallback: if the `legal-researcher` agent type is not registered in this session, launch a `general-purpose` Sonnet agent instructed to read `/Users/kef/.claude/agents/legal-researcher.md` and follow it exactly.
 

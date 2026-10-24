@@ -3,7 +3,7 @@
 # Receives session_id, transcript_path, cwd on stdin (Claude Code hook contract).
 # On failure, leave a breadcrumb: the hook runs async, so a broken archiver
 # is otherwise completely silent.
-# Rollback to the TS archiver: re-run ~/Documents/Code/agr-plugin/install.sh
+# Rollback to the TS archiver: re-run ~/Code/agr-plugin/install.sh
 #
 # After archiving, sweep working docs (build sheets, briefs, memos) the session
 # wrote into chats/ — the archiver commits only the transcript it generates,
@@ -28,7 +28,7 @@ if [ "$archive_status" -ne 0 ]; then
     echo "$(date '+%Y-%m-%d %H:%M:%S') agr archive claude-hook failed (exit ${archive_status})" >> "$log"
 fi
 
-repo="$HOME/Documents/Code/agr"
+repo="$HOME/Code/agr"
 if git -C "$repo" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
     git -C "$repo" add -A chats/
     if ! git -C "$repo" diff --cached --quiet; then

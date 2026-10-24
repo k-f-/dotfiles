@@ -13,7 +13,7 @@ set -uo pipefail
 
 [ -n "${AGR_FOLDER:-}" ] || exit 0
 
-root="${AGR_DIR:-$HOME/Documents/Code/agr}"
+root="${AGR_DIR:-$HOME/Code/agr}"
 dir="$root/$AGR_FOLDER"
 [ -d "$dir" ] || exit 0
 
