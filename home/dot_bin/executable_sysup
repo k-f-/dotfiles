@@ -50,6 +50,20 @@ if grep -qx protobuf <<< "$upgraded_formulae"; then
     brew reinstall mistertea/et/et
 fi
 
+# A pipx venv links the brew python it was built on. When brew drops that
+# python (upgrade, autoremove) every script in the venv dies with "bad
+# interpreter"; osxphotos failed four nights that way (2026-10-21). Rebuild
+# only the venvs whose python is gone.
+step "pipx venvs"
+rebuilt=no
+for py in "$HOME"/.local/pipx/venvs/*/bin/python; do
+    [[ -L $py && ! -e $py ]] || continue
+    name=$(basename "${py%/bin/python}")
+    echo "rebuilding $name: its python is gone"
+    pipx reinstall "$name" && rebuilt=yes
+done
+[[ $rebuilt == no ]] && echo "all pipx venvs load"
+
 # A running daemon keeps its old libraries mapped, so a binary an upgrade broke
 # fails only at the next reboot. Check every KeepAlive agent that runs a brew
 # binary now: each library it links must still exist. Restarting them instead
