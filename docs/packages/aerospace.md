@@ -10,7 +10,7 @@ macOS
      ├─ ~/.aerospace.toml  (stowed from dotfiles/aerospace/dot-aerospace.toml)
      ├─ MAIN MODE  — Alt+hjkl nav, Alt+1-6 workspaces, Cmd+Enter→Kitty, …
      └─ SERVICE MODE  (gateway: Alt+Shift+;)
-         ├─ t = ~/.bin/toggle-theme            (theme toggle: kitty + vscode)
+         ├─ t = ~/.bin/toggle-theme            (next theme in cycle: kitty + vscode)
          ├─ c = ~/.bin/toggle-theme --cycle    (stays in service mode)
          ├─ s = ~/.bin/aerospace-organize-wrapper       ← "startup"
          ├─ o = ~/.bin/aerospace-organize-wrapper --no-launch
@@ -98,8 +98,8 @@ ORGANIZE FLOW (service-mode S / O)
 | Key | Action | Exits service mode? |
 |-----|--------|---------------------|
 | `Esc` | Reload config | Yes |
-| `t` | Toggle theme (primary ↔ alucard) | Yes |
-| `c` | Cycle through all theme variants | **No** (rapid cycling) |
+| `t` | Next theme in cycle (default → nosferatu → alucard) | Yes |
+| `c` | Next theme in cycle | **No** (rapid cycling) |
 | `s` | "Startup" — launch all apps + organize into workspaces | Yes |
 | `o` | Organize existing windows only (no launch) | Yes |
 | `r` | Reset / flatten workspace tree | Yes |

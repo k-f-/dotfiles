@@ -161,8 +161,8 @@ alt-shift-d = 'exec-and-forget ~/.bin/open-dotfiles'
 # Press Option+Shift+; to enter service mode, then:
 #   s = startup (launch all apps and organize into workspaces)
 #   o = organize existing windows only (no launching)
-#   t = toggle theme (Dracula Pro default ↔ alucard) - exits service mode
-#   c = cycle theme (through all variants) - stays in service mode for rapid cycling
+#   t = next theme in cycle (Dracula Pro default → nosferatu → alucard) - exits service mode
+#   c = next theme in cycle - stays in service mode for rapid cycling
 #   / = show keybindings reference (? key)
 #   r = reset layout, f = toggle floating, esc = reload config & exit
 # ============================================================================
@@ -170,14 +170,14 @@ alt-shift-semicolon = 'mode service'
 
 # ============================================================================
 # Service Mode - Advanced Operations (Option+Shift+;)
-# Press: s=startup, o=organize, t=toggle theme & exit, c=cycle theme (repeat!), r=reset, f=float, ?=help, esc=exit
+# Press: s=startup, o=organize, t=next theme & exit, c=next theme (repeat!), r=reset, f=float, ?=help, esc=exit
 # ============================================================================
 [mode.service.binding]
 esc = ['reload-config', 'mode main']
 r = ['flatten-workspace-tree', 'mode main']  # Reset layout
 f = ['layout floating tiling', 'mode main']  # Toggle floating
-t = ['exec-and-forget ~/.bin/toggle-theme', 'mode main']  # Toggle theme (exits)
-c = 'exec-and-forget ~/.bin/toggle-theme --cycle'  # Cycle theme (stays in service mode)
+t = ['exec-and-forget ~/.bin/toggle-theme', 'mode main']  # Next theme in cycle (exits)
+c = 'exec-and-forget ~/.bin/toggle-theme --cycle'  # Next theme in cycle (stays in service mode)
 backspace = ['close-all-windows-but-current', 'mode main']
 s = ['exec-and-forget ~/.bin/aerospace-organize-wrapper', 'mode main']  # Startup: launch & organize all workspaces
 o = ['exec-and-forget ~/.bin/aerospace-organize-wrapper --no-launch', 'mode main']  # Organize existing windows only

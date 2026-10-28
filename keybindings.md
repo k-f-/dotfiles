@@ -100,8 +100,8 @@ Press `Alt + Shift + ;` to enter. Most actions exit back to main mode.
 | `Esc` | Reload config, exit | No |
 | `R` | Reset layout (flatten workspace), exit | No |
 | `F` | Toggle floating, exit | No |
-| `T` | Toggle theme (Dracula Pro default/alucard), exit | No |
-| `C` | Cycle through all theme variants | **Yes** |
+| `T` | Next theme in cycle (Dracula Pro default → nosferatu → alucard), exit | No |
+| `C` | Next theme in cycle, stay in service mode | **Yes** |
 | `S` | Startup: launch & organize all workspaces, exit | No |
 | `O` | Organize existing windows (no launch), exit | No |
 | `/` | Show keybindings reference, exit | No |
