@@ -16,3 +16,8 @@ rows = [
 # .git/worktrees/ -- two machines syncing that metadata corrupts it.
 [worktrees]
 directory = "~/.local/state/herdr/worktrees"
+
+# Follow the host terminal palette, so the kitty theme cycle recolors the
+# herdr UI too. toggle-theme.sh sends SIGWINCH so herdr re-reads host colors.
+[theme]
+name = "terminal"
