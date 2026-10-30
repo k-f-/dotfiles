@@ -17,6 +17,31 @@ Host mbp kef-mbp.local
   IdentityFile ~/.ssh/id_ed25519_mbp
   IdentitiesOnly yes
 
+# The mini has no ~/.ssh/id_ed25519, so it uses its own key for the Pi5 and
+# the UDM. These come before the shared entries, so their settings win; the
+# shared id_ed25519 line still applies but is skipped because the file is absent.
+Host ha
+  HostName 192.168.7.5
+  User kef
+  IdentityFile ~/.ssh/id_ed25519_mbp
+  IdentitiesOnly yes
+
+Host udm
+  HostName 192.168.7.1
+  User root
+  IdentityFile ~/.ssh/id_ed25519_mbp
+  IdentitiesOnly yes
+
+{{ else -}}
+# UniFi Dream Machine SE. A firmware update can wipe root's authorized_keys;
+# re-run ssh-copy-id if the key stops working.
+Host udm
+  HostName 192.168.7.1
+  User root
+  AddKeysToAgent yes
+  UseKeychain yes
+  IdentityFile ~/.ssh/id_ed25519
+
 {{ end -}}
 Host github.com
   Hostname ssh.github.com
